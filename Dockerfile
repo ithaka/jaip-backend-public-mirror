@@ -4,10 +4,10 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN yarn install
+RUN yarn install --immutable --immutable-cache
 
 EXPOSE 8080
 
 RUN yarn build
 
-CMD ["yarn", "node", "dist/index.js"]
+CMD ["yarn", "node", "dist/server.js"]
