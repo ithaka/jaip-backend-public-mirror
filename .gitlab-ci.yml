@@ -7,7 +7,7 @@
 # Expected dev workflow:
 # Update _setup.yml with the latest $TAG and create a merge request.
 
-image: ${DOCKER_VIRTUAL}/node:22-alpine
+image: ${DOCKER_VIRTUAL}/node:22.13.0-alpine
 
 stages:
   - deploy
