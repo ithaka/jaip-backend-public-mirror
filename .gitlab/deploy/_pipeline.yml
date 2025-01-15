@@ -7,13 +7,24 @@
 
 include:
   - ".gitlab/deploy/_setup.yml"
-  - ".gitlab/deploy/verifications.yml"
 
 stages:
   - prepare
   - deploy
   - post-deploy
   - test
+
+# See Dockerfile. Note that the contents of the repository are _ignored by
+# default_ and only built into the app when explicitly exempted in the
+# .dockerignore. This is because the top-level repo contains lots of apparatus
+# for test, CI, etc. that we don't actually need to deploy. In other words, if
+# you have reached this comment because you're confused that your app builds
+# fine locally with npm run build but isn't deploying properly, check the
+# .dockerignore and consider whether you have recently added files or
+# directories that you need to build.
+build app image:
+  stage: prepare
+  extends: .build-image
 
 scan vulnerabilities:
   stage: prepare

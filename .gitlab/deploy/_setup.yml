@@ -43,6 +43,9 @@ workflow:
 
 include:
   - project: capstan/pow/gitlab-templates
+    file: /build-image/template.yml
+    ref: build-image-v3
+  - project: capstan/pow/gitlab-templates
     file: /vulnerability-scanner/template.yml
     ref: vulnerability-scanner-v1
   - project: capstan/pow/gitlab-templates
