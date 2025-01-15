@@ -11,6 +11,7 @@ include:
 stages:
   - build
   - prepare
+  - promote
   - deploy
   - post-deploy
   - test
@@ -58,6 +59,10 @@ render capstan chart:
   stage: prepare
   extends: .render-charts
   needs: []
+
+promote image:
+  stage: promote
+  extends: .promote-image
 
 wait for eureka:
   extends: .check-healthy-deployment

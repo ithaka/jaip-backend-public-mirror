@@ -25,6 +25,7 @@
     APP_NAME: jaip-backend-$CI_MERGE_REQUEST_IID
     DEPLOY_JOB: ephemeral
     ENVIRONMENT: test
+    PROMOTE_TO: release-candidate
     TARGET_CLUSTER: ephemeral
     # Ephemeral only
     EKS_CLUSTER: ephemeral
@@ -36,6 +37,7 @@
     API_TARGET: test
     APP_NAME: jaip-backend
     ENVIRONMENT: test
+    PROMOTE_TO: release-candidate
     TARGET_CLUSTER: integration
     BASE_URL: https://jaip-backend.apps.test.cirrostratus.org/jaip/api
 
@@ -45,6 +47,7 @@
     APP_NAME: jaip-backend
     DEPLOY_JOB: persistent
     ENVIRONMENT: prod
+    PROMOTE_TO: stable
     TARGET_CLUSTER: production
     BASE_URL: https://jaip-backend.apps.prod.cirrostratus.org/jaip/api
 
