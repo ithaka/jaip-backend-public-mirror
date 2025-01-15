@@ -1,0 +1,19 @@
+include:
+  - ".gitlab/deploy/_pipeline.yml"
+  - project: capstan/pow/gitlab-templates
+    file: /ephemeral-deployer/template.yml
+    ref: ephemeral-deployer-v3
+
+deploy:
+  stage: deploy
+  extends: .ephemeral-deployer
+  # workaround that will no longer be needed after https://jira.jstor.org/browse/POW-4382
+  before_script:
+    - export KUBECONFIG=$HOME/.kube/config
+  variables:
+    EKS_CLUSTER: ephemeral
+    K8S_ACTION: apply
+    MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY
+  environment:
+    name: $TARGET_CLUSTER-$API_TARGET
+    url: https://$EUREKA_SERVICE_NAME.apps.$ENVIRONMENT.cirrostratus.org

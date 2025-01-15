@@ -1,0 +1,16 @@
+stages:
+  - undeploy
+
+include:
+  # This has more than we need, but ensures that the variables are the same
+  # between deploy and undeploy.
+  - ".gitlab/deploy/_setup.yml"
+  - project: capstan/pow/gitlab-templates
+    file: /run-argo-deployer/template.yml
+    ref: run-argo-deployer-v3
+
+undeploy:
+  stage: undeploy
+  extends: .run-argo-deployer
+  variables:
+    ACTION: undeploy

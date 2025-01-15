@@ -1,0 +1,62 @@
+default:
+  tags:
+    - $ENVIRONMENT-runner
+
+.artifacts:
+  rendered_templates: $CI_PROJECT_DIR/manifest-output
+
+variables:
+  # Variables which should be defined first because they are referenced later.
+  # $CI_PROJECT_DIR differs in the child and parent pipelines, so we must be
+  # careful to define anything that depends on it here!
+  ENVIRONMENT: $JAIP_ENV
+  TAG: $CI_COMMIT_SHA
+  IMAGE_TAG: $DOCKER_VIRTUAL/$CI_PROJECT_PATH:$CI_COMMIT_SHA
+  MANIFEST_OUTPUT_DIRECTORY: $CI_PROJECT_DIR/manifests
+  # Remaining variables
+  APP_IMAGE: $IMAGE_TAG
+  API_TARGET: $API_TARGET
+  APP_SERVICE_NAME: $APP_NAME
+  BASE_URL: $BASE_URL
+  DOCKER_REPOSITORY: $CI_PROJECT_PATH
+  EUREKA_SERVICE_NAME: $APP_NAME
+  FAIL_ON_SEVERITY: critical unknown
+  GROUP_NAME: $ITHAKA_OWNER
+  HELM_CHART_PATH: https://artifactory.acorn.cirrostratus.org/artifactory/helm/capstan-app/capstan-app.tgz:1.23.2
+  BASIC_HELM_TEMPLATE_OPTIONS: '-f $CI_PROJECT_DIR/k8s/values.yml --set environment=$ENVIRONMENT'
+  EXTRA_HELM_TEMPLATE_OPTIONS: $BASIC_HELM_TEMPLATE_OPTIONS
+  INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
+  ITHAKA_OWNER: jaip
+  ITHAKA_BUSINESS_UNIT: labs
+  PROMOTE_TO: $PROMOTE_TO
+  MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY
+  SEVERITY: critical high unknown
+
+# Child pipelines inherit parent pipeline workflows, but the parent pipeline
+# rules will never evaluate to true here. (The source is a trigger, not a merge
+# request.)
+# This pipeline should always run when triggered.
+# https://stackoverflow.com/questions/70386448/gitlab-ci-multi-project-pipeline
+workflow:
+  rules:
+    - when: always
+
+include:
+  - project: capstan/pow/gitlab-templates
+    file: /vulnerability-scanner/template.yml
+    ref: vulnerability-scanner-v1
+  - project: capstan/pow/gitlab-templates
+    file: /render-charts/template.yml
+    ref: render-charts-v3
+  - project: capstan/pow/gitlab-templates
+    file: /ephemeral-deployer/template.yml
+    ref: ephemeral-deployer-v3
+  - project: capstan/pow/gitlab-templates
+    file: /run-argo-deployer/template.yml
+    ref: run-argo-deployer-v3
+  - project: capstan/pow/gitlab-templates
+    file: /argocd-sync/template.yml
+    ref: argocd-sync-v3
+  - project: capstan/pow/gitlab-templates
+    file: /check-healthy-deployment/template.yml
+    ref: check-healthy-deployment-v3

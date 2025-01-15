@@ -1,0 +1,14 @@
+enableGlobalCache: false
+
+npmRegistryServer: "https://artifactory.acorn.cirrostratus.org/artifactory/api/npm/npms/"
+
+packageExtensions:
+    dependencies:
+      source-map-support: "*"
+
+supportedArchitectures:
+  os:
+    - darwin
+    - linux
+
+yarnPath: .yarn/releases/yarn-4.6.0.cjs

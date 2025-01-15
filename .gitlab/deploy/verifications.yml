@@ -1,0 +1,29 @@
+.verification-jobs:
+  image: $DOCKER_VIRTUAL/python:3.10.13-alpine
+  stage: test
+  variables:
+    POETRY_VIRTUALENVS_PATH: $CI_PROJECT_DIR/venv
+  before_script:
+    - apk add python3-dev
+    - apk add poetry=1.7.1-r0
+    - poetry install
+  cache:
+    - key:
+        files:
+          - poetry.lock
+      paths:
+        - venv/
+  tags:
+    - test-runner
+
+verify:
+  extends: .verification-jobs
+  script:
+    - poetry run pytest tests/test_api.py
+
+perf:
+  extends: .verification-jobs
+  script:
+    - poetry run pytest tests/test_perf.py
+  # This job should _warn_ but not _fail_.
+  allow_failure: true

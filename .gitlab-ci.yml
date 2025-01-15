@@ -1,0 +1,81 @@
+# This file deploys an API container on artifactory with Capstan.
+#
+# Prerequisites:
+# A docker image on artifactory, named docker-virtual.artifactory.acorn.cirrostratus.org/capstan/platform-apps/labs/jaip-backend:$TAG-{test,prod}
+# The _setup.yml file has been updated with the matching TAG
+#
+# Expected dev workflow:
+# Update _setup.yml with the latest $TAG and create a merge request.
+
+image: ${DOCKER_VIRTUAL}/node:18-alpine
+
+stages:
+  - deploy
+  - undeploy
+
+variables:
+  PIPELINE:
+    value: "default"
+    description: "Values: 'default', 'deploy-prod', 'undeploy-prod', 'deploy-test', or 'undeploy-test'"
+
+include:
+  - ".gitlab/mixins.yml"
+
+# Short-lived sites that automatically spin up on MR and automatically tear
+# down. They are intended for verifying deployability. (We could also run
+# integration tests against them, though at the moment we run those in our
+# pre-deploy pipeline.) They run in the ephemeral cluster and have names that
+# are pinned to a SHA.
+trigger deploy merge request:
+  extends:
+    - .test-rules
+    - .deploy
+    - .ephemeral-env
+  trigger:
+    include: .gitlab/deploy/ephemeral.yml
+
+# A persistent api that should deploy automatically to whenever main
+# updates. It runs in the integration cluster and is always named
+# jaip-backend.apps.test.cirrostratus.org.
+# This gives us a staging deploy and also makes sure that we have the latest
+# docker image available in the release-candidate area, so the prod deploy can
+# find it when it promotes from release-candidate to stable.
+trigger deploy test to staging:
+  extends:
+    - .staging-rules
+    - .deploy
+    - .test-env
+  trigger:
+    include: .gitlab/deploy/persistent.yml
+
+# A persistent api that must be spun up manually and torn down manually.
+# This is the production api.
+# It runs in the production cluster and is always named
+# jaip-backend.apps.prod.cirrostratus.org.
+trigger deploy prod:
+  extends:
+    - .prod-rules
+    - .deploy
+    - .prod-env
+  trigger:
+    include: .gitlab/deploy/persistent.yml
+
+# We don't need to undeploy apps in merge requests. Since they deploy to ephemeral,
+# they clean up automatically.
+trigger undeploy prod:
+  extends:
+    - .undeploy
+    - .prod-env
+  rules:
+    - if: $PIPELINE == 'undeploy-prod'
+  trigger:
+    include: .gitlab/undeploy/persistent.yml
+
+trigger undeploy staging:
+  extends:
+    - .undeploy
+    - .test-env
+  rules:
+    - if: $PIPELINE == 'undeploy-test'
+  trigger:
+    include: .gitlab/undeploy/persistent.yml

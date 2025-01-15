@@ -1,0 +1,7 @@
+# If you ever need to test this locally, install helm and then
+# `helm template k8s/chart --values k8s/values.yml`.
+apiVersion: v2
+appVersion: "2.0"
+description: A helm chart for the backend of the JAIP web application.
+name: jaip-backend
+version: 0.1.0

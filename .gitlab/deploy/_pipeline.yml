@@ -1,0 +1,47 @@
+# Typically, a Capstan pipeline would include a promote stage (see
+# https://wiki.ithaka.org/pages/viewpage.action?spaceKey=softdel&title=The+container+image+promotion+process).
+# However, since we are pulling an image from a remote repo, promotion:
+# * does not work (the image is not located where the promotion job would look)
+# * is not necessary (the deploy script will look at the remote repo before
+#   looking through our snapshot/rc/stable repos).
+
+include:
+  - ".gitlab/deploy/_setup.yml"
+  - ".gitlab/deploy/verifications.yml"
+
+stages:
+  - prepare
+  - deploy
+  - post-deploy
+  - test
+
+scan vulnerabilities:
+  stage: prepare
+  extends: .vulnerability-scanner
+  variables:
+    SEVERITY: critical high unknown
+    FAIL_ON_SEVERITY: critical high unknown
+  before_script:
+    # replace / with - in branch name to be friendly w/ job
+    - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
+
+# Local chart. This chart configures the database secrets.
+render local chart:
+  stage: prepare
+  extends: .render-charts
+  needs: []
+  variables:
+    HELM_CHART_PATH: $CI_PROJECT_DIR/k8s/chart
+  after_script:
+    - mv $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml $MANIFEST_OUTPUT_DIRECTORY/app-manifest-extras.yml
+
+# Default chart, configured via any `EXTRA_HELM_TEMPLATE_OPTIONS` referenced
+# in `_setup.yml`. This chart deploys the app.
+render capstan chart:
+  stage: prepare
+  extends: .render-charts
+  needs: []
+
+wait for eureka:
+  extends: .check-healthy-deployment
+  stage: post-deploy

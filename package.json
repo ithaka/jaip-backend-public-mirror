@@ -1,0 +1,36 @@
+{
+  "name": "jaip-backend",
+  "packageManager": "yarn@4.6.0",
+  "scripts": {
+    "build": "tsc",
+    "dev": "LOG_LEVEL=info nodemon  --inspect src/index.ts",
+    "test": "LOG_LEVEL=error jest src --maxWorkers=50%",
+    "test:ci": "LOG_LEVEL=error jest src --runInBand --coverage",
+    "postinstall": "husky",
+    "pre-commit": "lint-staged",
+    "lint:ci": "eslint src",
+    "lint": "yarn lint:ci --fix",
+    "format:ci": "prettier --check **/*.{js,ts,json}",
+    "format": "yarn format:ci --write"
+  },
+  "dependencies": {
+    "fastify": "^5.2.1",
+    "prettier": "^3.4.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^22.10.6",
+    "eslint": "^9.18.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "prettier --write"
+    ]
+  }
+}

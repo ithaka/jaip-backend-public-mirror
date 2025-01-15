@@ -1,0 +1,38 @@
+# See the base values file at
+# https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml .
+# Values set here override those.
+
+# Variables set in the pipeline are available here.
+commitHash: $CI_COMMIT_SHA
+
+requiredTags:
+  owner: $ITHAKA_OWNER
+  app: jaip-backend
+  environment: $ENVIRONMENT
+  businessUnit: $ITHAKA_BUSINESS_UNIT
+
+
+registerInEureka: true
+serviceLocatable: true
+eurekaServiceName: $EUREKA_SERVICE_NAME
+
+# We'll likely want to enable these in future, but there are things we need to
+# configure first.
+prometheus:
+  enable: false
+
+# The port that your application itself listens on.
+internalPort: 8080
+healthcheckPath: /jaip/api/#/
+
+spec:
+  template:
+    spec:
+      containers:
+        ports:
+          containerPort: 8080
+
+# Opt in to the new Sirius sidecar container that ensures this application is discoverable in Capstan, and replaces ITHAKA's legacy sidecar container
+# https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml?ref_type=heads#L85
+sirius:
+  enabled: true

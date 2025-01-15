@@ -1,0 +1,19 @@
+include:
+  - ".gitlab/mixins.yml"
+  - ".gitlab/deploy/_pipeline.yml"
+  - project: capstan/pow/gitlab-templates
+    file: /run-argo-deployer/template.yml
+    ref: run-argo-deployer-v3
+
+deploy:
+  stage: deploy
+  extends: .run-argo-deployer
+  variables:
+    ACTION: deploy
+  environment:
+    name: $TARGET_CLUSTER
+    url: https://$EUREKA_SERVICE_NAME.apps.$ENVIRONMENT.cirrostratus.org
+
+sync:
+  stage: post-deploy
+  extends: .argocd-sync
