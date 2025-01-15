@@ -31,6 +31,8 @@ build app image:
 
 scan vulnerabilities:
   stage: prepare
+  dependencies:
+    - build app image
   extends: .vulnerability-scanner
   variables:
     SEVERITY: critical high unknown
