@@ -11,8 +11,8 @@ const opts: RouteShorthandOptions = {
           pong: {
             type: "string",
           },
-          health: {
-            type: "string",
+          up: {
+            type: "boolean",
           },
         },
       },
@@ -21,11 +21,7 @@ const opts: RouteShorthandOptions = {
 };
 
 server.get("/healthz", opts, async () => {
-  return { pong: "it worked!" };
-});
-
-server.get("/jaip/api", opts, async () => {
-  return { health: "yes 1!" };
+  return { up: true };
 });
 
 const start = async () => {
