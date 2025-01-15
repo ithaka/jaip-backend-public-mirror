@@ -66,4 +66,4 @@ include:
     ref: check-healthy-deployment-v3
   - file: /promote-image/template.yml
     project: capstan/pow/gitlab-templates
-    ref: promote-image-[current-version]
+    ref: promote-image-v3
