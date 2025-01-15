@@ -25,6 +25,9 @@ stages:
 build app image:
   stage: prepare
   extends: .build-image
+  variables:
+    CI_DEBUG_TRACE: true
+
 
 scan vulnerabilities:
   stage: prepare
