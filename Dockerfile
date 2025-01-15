@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN yarn install --immutable --immutable-cache
+RUN yarn install
 
 EXPOSE 8080
 
