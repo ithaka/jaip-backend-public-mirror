@@ -20,12 +20,12 @@ const opts: RouteShorthandOptions = {
   },
 };
 
-server.get("/ping", opts, async () => {
+server.get("/healthz", opts, async () => {
   return { pong: "it worked!" };
 });
 
 server.get("/jaip/api", opts, async () => {
-  return { health: "yes!" };
+  return { health: "yes 1!" };
 });
 
 const start = async () => {

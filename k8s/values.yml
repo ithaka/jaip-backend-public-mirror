@@ -23,7 +23,7 @@ prometheus:
 
 # The port that your application itself listens on.
 internalPort: 8080
-healthcheckPath: /jaip/api/#/
+healthcheckPath: /healthz
 
 spec:
   template:
