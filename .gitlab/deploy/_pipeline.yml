@@ -9,6 +9,7 @@ include:
   - ".gitlab/deploy/_setup.yml"
 
 stages:
+  - build
   - prepare
   - deploy
   - post-deploy
@@ -23,7 +24,7 @@ stages:
 # .dockerignore and consider whether you have recently added files or
 # directories that you need to build.
 build app image:
-  stage: prepare
+  stage: build
   extends: .build-image
   variables:
     CI_DEBUG_TRACE: true
