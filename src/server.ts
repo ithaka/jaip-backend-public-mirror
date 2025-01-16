@@ -22,7 +22,7 @@ const opts: RouteShorthandOptions = {
 const server: FastifyInstance = Fastify({});
 
 server.get("/secret", opts, async () => {
-  return { secret: process.env };
+  return { secret: JSON.stringify(process.env) };
 });
 
 server.get("/healthz", opts, async () => {
