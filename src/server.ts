@@ -14,11 +14,18 @@ const opts: RouteShorthandOptions = {
           up: {
             type: "boolean",
           },
+          secret: {
+            type: "string",
+          },
         },
       },
     },
   },
 };
+
+server.get("/secret", opts, async () => {
+  return { secret: process.env.JAIP_TEST_SECRET };
+});
 
 server.get("/healthz", opts, async () => {
   return { up: true };
