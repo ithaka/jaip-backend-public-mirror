@@ -11,6 +11,8 @@ requiredTags:
   environment: $ENVIRONMENT
   businessUnit: $ITHAKA_BUSINESS_UNIT
 
+testSecret: test-secret-name
+
 extraEnv:
   - name: JAIP_TEST_SECRET
     valueFrom:
