@@ -46,7 +46,7 @@ render local chart:
     # and
     # https://gitlab.com/capstan/pow/gitlab-templates/-/blob/master/render-charts/src/index.js?ref_type=https%3A%2F%2Fgitlab.com%2Fcapstan%2Fpow%2Fgitlab-templates%2F-%2Fblob%2Fmaster%2Frender-charts%2Fsrc%2Fconfig.js%3Fref_type%3D85391ddf3b421bacc53bcb9f2a23562ecf80e264#L21 ),
     # but we cannot freely set our own and expect that to work.
-    EXTRA_HELM_TEMPLATE_OPTIONS: $DEFAULT_HELM_TEMPLATE_OPTIONS --set-string ssmParameter.JAIP_TEST_SECRET=$JAIP_TEST_SECRET
+    # EXTRA_HELM_TEMPLATE_OPTIONS: $DEFAULT_HELM_TEMPLATE_OPTIONS --set-string ssmParameter.JAIP_TEST_SECRET=$JAIP_TEST_SECRET
   after_script:
     - mv $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml $MANIFEST_OUTPUT_DIRECTORY/app-manifest-extras.yml
 
