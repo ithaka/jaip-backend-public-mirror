@@ -23,9 +23,9 @@ const opts: RouteShorthandOptions = {
   },
 };
 
-server.get("/secret", opts, async () => {
-  return { secret: process.env.JAIP_TEST_SECRET };
-});
+// server.get("/secret", opts, async () => {
+//   return { secret: process.env.JAIP_TEST_SECRET };
+// });
 
 server.get("/healthz", opts, async () => {
   return { up: true };
