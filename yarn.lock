@@ -835,6 +835,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.4.7":
+  version: 16.4.7
+  resolution: "dotenv@npm:16.4.7"
+  checksum: 10c0/be9f597e36a8daf834452daa1f4cc30e5375a5968f98f46d89b16b983c567398a330580c88395069a77473943c06b877d1ca25b4afafcdd6d4adb549e8293462
+  languageName: node
+  linkType: hard
+
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
@@ -1537,6 +1544,7 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.18.0"
     "@types/node": "npm:^22.10.6"
+    dotenv: "npm:^16.4.7"
     eslint: "npm:^9.18.0"
     fastify: "npm:^5.2.1"
     husky: "npm:^9.1.7"
