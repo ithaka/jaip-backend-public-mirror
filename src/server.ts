@@ -1,6 +1,5 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
-
-const server: FastifyInstance = Fastify({});
+import "dotenv/config";
 
 const opts: RouteShorthandOptions = {
   schema: {
@@ -23,9 +22,11 @@ const opts: RouteShorthandOptions = {
   },
 };
 
-// server.get("/secret", opts, async () => {
-//   return { secret: process.env.JAIP_TEST_SECRET };
-// });
+const server: FastifyInstance = Fastify({});
+
+server.get("/secret", opts, async () => {
+  return { secret: process.env.JAIP_TEST_SECRET };
+});
 
 server.get("/healthz", opts, async () => {
   return { up: true };
@@ -34,7 +35,6 @@ server.get("/healthz", opts, async () => {
 const start = async () => {
   try {
     await server.listen({ port: 8080, host: "0.0.0.0" });
-
     const address = server.server.address();
     const port = typeof address === "string" ? address : address?.port;
 
