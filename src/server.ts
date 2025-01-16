@@ -7,9 +7,6 @@ const opts: RouteShorthandOptions = {
       200: {
         type: "object",
         properties: {
-          pong: {
-            type: "string",
-          },
           up: {
             type: "boolean",
           },
