@@ -1,5 +1,5 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
-// import "dotenv/config";
+import "dotenv/config";
 
 const opts: RouteShorthandOptions = {
   schema: {
