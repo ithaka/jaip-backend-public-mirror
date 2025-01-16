@@ -12,7 +12,7 @@ variables:
   TAG: $CI_COMMIT_SHA
   IMAGE_TAG: $DOCKER_VIRTUAL/$CI_PROJECT_PATH:$CI_COMMIT_SHA
   MANIFEST_OUTPUT_DIRECTORY: $CI_PROJECT_DIR/manifests
-  # DEFAULT_HELM_TEMPLATE_OPTIONS: "-f $CI_PROJECT_DIR/k8s/values.yml -f $CI_PROJECT_DIR/k8s/values-$TARGET_CLUSTER.yml --set extraEnv[0].valueFrom.secretKeyRef.name=$JAIP_TEST_SECRET"
+  DEFAULT_HELM_TEMPLATE_OPTIONS: "-f $CI_PROJECT_DIR/k8s/values.yml -f $CI_PROJECT_DIR/k8s/values-$TARGET_CLUSTER.yml --set extraEnv[0].valueFrom.secretKeyRef.name=$JAIP_TEST_SECRET"
   # Remaining variables
   APP_IMAGE: $IMAGE_TAG
   API_TARGET: $API_TARGET
@@ -30,7 +30,7 @@ variables:
   INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
   ITHAKA_OWNER: jaip
   ITHAKA_BUSINESS_UNIT: labs
-  # JAIP_TEST_SECRET: "/$API_TARGET/labs/jaip/jaip-backend/test"
+  JAIP_TEST_SECRET: "/$API_TARGET/labs/jaip/jaip-backend/test"
   PROMOTE_TO: $PROMOTE_TO
   MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY
   SEVERITY: critical high unknown

@@ -11,12 +11,12 @@ requiredTags:
   environment: $ENVIRONMENT
   businessUnit: $ITHAKA_BUSINESS_UNIT
 
-# extraEnv:
-#   - name: JAIP_TEST_SECRET
-#     valueFrom:
-#       secretKeyRef:
-#         key: JAIP_TEST_SECRET
-#         name: test-secret-name
+extraEnv:
+  - name: JAIP_TEST_SECRET
+    valueFrom:
+      secretKeyRef:
+        key: JAIP_TEST_SECRET
+        name: test-secret-name
 
 
 registerInEureka: true
