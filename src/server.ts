@@ -1,6 +1,6 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
 import "dotenv/config";
-import axios from "fastify-axios";
+import axios from "axios";
 const opts: RouteShorthandOptions = {
   schema: {
     response: {
@@ -25,13 +25,12 @@ const opts: RouteShorthandOptions = {
 const fastify: FastifyInstance = Fastify({
   logger: true,
 });
-fastify.register(axios);
 fastify.get("/", opts, async () => {
   fastify.log.info("Starting Polaris Healthcheck");
   const url = "http://localhost:8888/healthcheck";
   let str = "";
   try {
-    const response = await fastify.axios.get(url);
+    const response = await axios.get(url);
     str = JSON.stringify(response);
     fastify.log.info("Polaris Healthcheck Response:", str);
     fastify.log.info("Polaris Healthcheck Data:", response.data);
@@ -54,7 +53,7 @@ fastify.get("/secret", opts, async () => {
   const url = "http://localhost:8888/v1/apps/pdf-delivery-service/instances";
   let str = "";
   try {
-    const response = await fastify.axios.get(url);
+    const response = await axios.get(url);
     str = JSON.stringify(response);
     fastify.log.info("Polaris Response:", str);
     fastify.log.info("Polaris Data:", response.data);
