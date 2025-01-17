@@ -53,11 +53,11 @@ fastify.get("/secret", opts, async () => {
   const url = "http://localhost:8888/v1/apps/pdf-delivery-service/instances";
   let str = "";
   try {
-    const response = await axios.get(url);
-    str = JSON.stringify(response);
+    const { data, status } = await axios.get(url);
+    str = JSON.stringify(data);
     console.log("Polaris Response:", str);
-    console.log("Polaris Data:", response.data);
-    console.log("Polaris Status:", response.status);
+    console.log("Polaris Data:", data);
+    console.log("Polaris Status:", status);
   } catch (err) {
     console.log(
       "Error:",
