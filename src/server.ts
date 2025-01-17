@@ -26,7 +26,29 @@ const fastify: FastifyInstance = Fastify({
   logger: true,
 });
 fastify.register(axios);
+fastify.get("/", opts, async () => {
+  fastify.log.info("Starting Polaris Healthcheck");
+  const url = "http://localhost:8888/healthcheck";
+  let str = "";
+  try {
+    const response = await fastify.axios.get(url);
+    str = JSON.stringify(response);
+    fastify.log.info("Polaris Healthcheck Response:", str);
+    fastify.log.info("Polaris Healthcheck Data:", response.data);
+    fastify.log.info("Polaris Healthcheck Status:", response.status);
+  } catch (err) {
+    fastify.log.error(
+      "Polaris Healthcheck Error:",
+      JSON.stringify(err, Object.getOwnPropertyNames(err)),
+    );
+    str = "Failed to Healthcheck";
+  }
 
+  fastify.log.info("Ending Polaris Healthcheck");
+  return {
+    up: str,
+  };
+});
 fastify.get("/secret", opts, async () => {
   fastify.log.info("Starting Get Secret");
   const url = "http://localhost:8888/v1/apps/pdf-delivery-service/instances";
