@@ -26,22 +26,23 @@ const server: FastifyInstance = Fastify({});
 
 server.get("/secret", opts, async () => {
   const url = "http://0.0.0.0:8888/v1/apps/iac-service/instance";
-  let json = {};
+  let str = "";
   try {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
 
-    json = await response.json();
-    console.log(json);
+    const resp = await response;
+    str = JSON.stringify(resp);
+    console.log(str);
   } catch (error) {
     console.error(JSON.stringify(error));
   }
 
   return {
     secret: process.env.JAIP_TEST_SECRET,
-    service: JSON.stringify(json),
+    service: str,
   };
 });
 
