@@ -14,7 +14,7 @@ stages:
   - promote
   - deploy
   - post-deploy
-  - test
+  - verify
 
 # See Dockerfile. Note that the contents of the repository are _ignored by
 # default_ and only built into the app when explicitly exempted in the
@@ -75,4 +75,4 @@ promote image:
 
 wait for eureka:
   extends: .check-healthy-deployment
-  stage: post-deploy
+  stage: verify
