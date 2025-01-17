@@ -29,7 +29,7 @@ fastify.register(axios);
 
 fastify.get("/secret", opts, async () => {
   fastify.log.info("Starting Get Secret");
-  const url = "http://localhost:8888/v1/apps/pdf-delivery-service";
+  const url = "http://localhost:8888/v1/apps/pdf-delivery-service/instances";
   let str = "";
   try {
     const { data, status } = await fastify.axios.get(url);
