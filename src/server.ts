@@ -31,8 +31,9 @@ fastify.get("/secret", opts, async () => {
   let str = "";
   try {
     const response = await fetch(url);
-    str = JSON.stringify(response);
-    fastify.log.info(str);
+    const json = await response.json();
+    fastify.log.info("Polaris Response:", json);
+    str = json;
   } catch (error) {
     fastify.log.error(JSON.stringify(error));
     str = "Failed to fetch";
