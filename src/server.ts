@@ -62,6 +62,7 @@ fastify.get("/secret", opts, async () => {
     fastify.log.error(
       "Error:",
       JSON.stringify(err, Object.getOwnPropertyNames(err)),
+      typeof err,
     );
     str = "Failed to fetch";
   }
