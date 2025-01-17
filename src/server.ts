@@ -32,12 +32,11 @@ server.get("/secret", opts, async () => {
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
-
-    const resp = await response;
-    str = JSON.stringify(resp);
+    str = JSON.stringify(response);
     console.log(str);
   } catch (error) {
     console.error(JSON.stringify(error));
+    str = "Failed to fetch";
   }
 
   return {
