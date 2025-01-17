@@ -37,8 +37,11 @@ fastify.get("/secret", opts, async () => {
     fastify.log.info("Polaris Response:", str);
     fastify.log.info("Polaris Data:", response.data);
     fastify.log.info("Polaris Status:", response.status);
-  } catch (error) {
-    fastify.log.error("Error:", JSON.stringify(error));
+  } catch (err) {
+    fastify.log.error(
+      "Error:",
+      JSON.stringify(err, Object.getOwnPropertyNames(err)),
+    );
     str = "Failed to fetch";
   }
 
