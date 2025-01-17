@@ -25,7 +25,7 @@ const opts: RouteShorthandOptions = {
 const server: FastifyInstance = Fastify({});
 
 server.get("/secret", opts, async () => {
-  const url = "https://localhost:8888/v1/apps/iac-service/instance";
+  const url = "http://0.0.0.0:8888/v1/apps/iac-service/instance";
   let json = {};
   try {
     const response = await fetch(url);
