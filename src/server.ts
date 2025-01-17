@@ -22,7 +22,9 @@ const opts: RouteShorthandOptions = {
   },
 };
 
-const fastify: FastifyInstance = Fastify({});
+const fastify: FastifyInstance = Fastify({
+  logger: true,
+});
 
 fastify.get("/secret", opts, async () => {
   const url = "http://localhost:8888/v1/apps/PDF-DELIVERY-SERVICE/";
