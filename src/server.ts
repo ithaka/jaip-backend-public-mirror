@@ -1,6 +1,6 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
 import "dotenv/config";
-
+import axios from "fastify-axios";
 const opts: RouteShorthandOptions = {
   schema: {
     response: {
@@ -25,15 +25,15 @@ const opts: RouteShorthandOptions = {
 const fastify: FastifyInstance = Fastify({
   logger: true,
 });
+fastify.register(axios);
 
 fastify.get("/secret", opts, async () => {
   const url = "http://localhost:8888/v1/apps/pdf-delivery-service";
   let str = "";
   try {
-    const response = await fetch(url);
-    const json = await response.json();
-    fastify.log.info("Polaris Response:", json);
-    str = json;
+    const response = await fastify.axios.get(url);
+    str = JSON.stringify(response);
+    fastify.log.info("Polaris Response:", str);
   } catch (error) {
     fastify.log.error(JSON.stringify(error));
     str = "Failed to fetch";
