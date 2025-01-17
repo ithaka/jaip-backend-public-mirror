@@ -13,6 +13,9 @@ const opts: RouteShorthandOptions = {
           secret: {
             type: "string",
           },
+          service: {
+            type: "string",
+          },
         },
       },
     },
@@ -22,7 +25,21 @@ const opts: RouteShorthandOptions = {
 const server: FastifyInstance = Fastify({});
 
 server.get("/secret", opts, async () => {
-  return { secret: process.env.JAIP_TEST_SECRET };
+  const url = "https://localhost:8888/v1/apps/iac-service/instance";
+  let json = {};
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.error(JSON.stringify(error));
+  }
+
+  return { secret: process.env.JAIP_TEST_SECRET, service: json };
 });
 
 server.get("/healthz", opts, async () => {
