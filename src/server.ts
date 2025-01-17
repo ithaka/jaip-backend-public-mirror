@@ -31,12 +31,12 @@ fastify.get("/", opts, async () => {
   let str = "";
   try {
     const response = await axios.get(url);
-    str = JSON.stringify(response);
-    fastify.log.info("Polaris Healthcheck Response:", str);
-    fastify.log.info("Polaris Healthcheck Data:", response.data);
-    fastify.log.info("Polaris Healthcheck Status:", response.status);
+    str = typeof response;
+    console.log("Polaris Healthcheck Response:", str);
+    console.log("Polaris Healthcheck Data:", response.data);
+    console.log("Polaris Healthcheck Status:", response.status);
   } catch (err) {
-    fastify.log.error(
+    console.log(
       "Polaris Healthcheck Error:",
       JSON.stringify(err, Object.getOwnPropertyNames(err)),
     );
@@ -55,11 +55,11 @@ fastify.get("/secret", opts, async () => {
   try {
     const response = await axios.get(url);
     str = JSON.stringify(response);
-    fastify.log.info("Polaris Response:", str);
-    fastify.log.info("Polaris Data:", response.data);
-    fastify.log.info("Polaris Status:", response.status);
+    console.log("Polaris Response:", str);
+    console.log("Polaris Data:", response.data);
+    console.log("Polaris Status:", response.status);
   } catch (err) {
-    fastify.log.error(
+    console.log(
       "Error:",
       JSON.stringify(err, Object.getOwnPropertyNames(err)),
       typeof err,
