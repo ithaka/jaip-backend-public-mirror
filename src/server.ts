@@ -22,17 +22,17 @@ const opts: RouteShorthandOptions = {
   },
 };
 
-const server: FastifyInstance = Fastify({});
+const fastify: FastifyInstance = Fastify({});
 
-server.get("/secret", opts, async () => {
+fastify.get("/secret", opts, async () => {
   const url = "http://localhost:8888/v1/apps/PDF-DELIVERY-SERVICE/";
   let str = "";
   try {
     const response = await fetch(url);
     str = JSON.stringify(response);
-    console.log(str);
+    fastify.log.info(str);
   } catch (error) {
-    console.error(JSON.stringify(error));
+    fastify.log.error(JSON.stringify(error));
     str = "Failed to fetch";
   }
 
@@ -42,19 +42,18 @@ server.get("/secret", opts, async () => {
   };
 });
 
-server.get("/healthz", opts, async () => {
+fastify.get("/healthz", opts, async () => {
   return { up: true };
 });
 
 const start = async () => {
   try {
-    await server.listen({ port: 8080, host: "0.0.0.0" });
-    const address = server.server.address();
+    await fastify.listen({ port: 8080, host: "0.0.0.0" });
+    const address = fastify.server.address();
     const port = typeof address === "string" ? address : address?.port;
-
-    console.log(address, port);
+    fastify.log.info(address);
   } catch (err) {
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
 };
