@@ -34,7 +34,7 @@ fastify.get("/secret", opts, async () => {
   try {
     const response = await fastify.axios.get(url);
     str = JSON.stringify(response);
-    fastify.log.info("Polaris Response:");
+    fastify.log.info("Polaris Response:", str);
     fastify.log.info("Polaris Data:", response.data);
     fastify.log.info("Polaris Status:", response.status);
   } catch (error) {
