@@ -39,7 +39,10 @@ server.get("/secret", opts, async () => {
     console.error(JSON.stringify(error));
   }
 
-  return { secret: process.env.JAIP_TEST_SECRET, service: json };
+  return {
+    secret: process.env.JAIP_TEST_SECRET,
+    service: JSON.stringify(json),
+  };
 });
 
 server.get("/healthz", opts, async () => {
