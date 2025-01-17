@@ -27,7 +27,7 @@ const fastify: FastifyInstance = Fastify({
 });
 
 fastify.get("/secret", opts, async () => {
-  const url = "http://localhost:8888/v1/apps/PDF-DELIVERY-SERVICE/";
+  const url = "http://localhost:8888/v1/apps/PDF-DELIVERY-SERVICE";
   let str = "";
   try {
     const response = await fetch(url);
