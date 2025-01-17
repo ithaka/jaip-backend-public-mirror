@@ -28,17 +28,21 @@ const fastify: FastifyInstance = Fastify({
 fastify.register(axios);
 
 fastify.get("/secret", opts, async () => {
+  fastify.log.info("Starting Get Secret");
   const url = "http://localhost:8888/v1/apps/pdf-delivery-service";
   let str = "";
   try {
     const response = await fastify.axios.get(url);
     str = JSON.stringify(response);
     fastify.log.info("Polaris Response:", str);
+    console.log("CL Polaris Response:", str);
   } catch (error) {
-    fastify.log.error(JSON.stringify(error));
+    fastify.log.error("Error:", JSON.stringify(error));
+    console.log("CL Error:", JSON.stringify(error));
     str = "Failed to fetch";
   }
 
+  fastify.log.info("Ending Get Secret");
   return {
     secret: process.env.JAIP_TEST_SECRET,
     service: str,
