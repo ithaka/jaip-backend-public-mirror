@@ -32,10 +32,11 @@ fastify.get("/secret", opts, async () => {
   const url = "http://localhost:8888/v1/apps/pdf-delivery-service/instances";
   let str = "";
   try {
-    const { data, status } = await fastify.axios.get(url);
-    fastify.log.info("Polaris Response:", data);
-    fastify.log.info("Polaris Status:", status);
-    str = data;
+    const response = await fastify.axios.get(url);
+    str = JSON.stringify(response);
+    fastify.log.info("Polaris Response:");
+    fastify.log.info("Polaris Data:", response.data);
+    fastify.log.info("Polaris Status:", response.status);
   } catch (error) {
     fastify.log.error("Error:", JSON.stringify(error));
     str = "Failed to fetch";
