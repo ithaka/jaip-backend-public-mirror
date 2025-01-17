@@ -25,13 +25,10 @@ const opts: RouteShorthandOptions = {
 const server: FastifyInstance = Fastify({});
 
 server.get("/secret", opts, async () => {
-  const url = "http://localhost:8888/v1/apps/IAC-SERVICE";
+  const url = "http://localhost:8888/v1/apps/PDF-DELIVERY-SERVICE";
   let str = "";
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
     str = JSON.stringify(response);
     console.log(str);
   } catch (error) {
