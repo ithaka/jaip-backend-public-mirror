@@ -45,3 +45,16 @@ spec:
 # https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml?ref_type=heads#L85
 sirius:
   enabled: true
+
+# Polaris is the new service discovery sidecar. Set this to enabled if you
+# want to use this instead of the deprecated Sidecar.
+#
+# This will remove The Sidecar from the deployment if polaris.enabled is set
+# to true.
+#
+# For more information about Polaris, check out the documentation in Backstage:
+# https://capstan-backstage.apps.prod.cirrostratus.org/catalog/default/component/polaris/docs
+polaris:
+  enabled: true
+  debug: false
+  port: 8888
