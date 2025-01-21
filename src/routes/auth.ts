@@ -50,7 +50,7 @@ const newSession = async (
   request: FastifyRequest,
 ): Promise<AxiosResponse<any, any>> => {
   const sg = await getSessionManagement(fastify);
-  const response = await axios.post(sg + "/v1/graphql", {
+  const response = await axios.post(sg + "v1/graphql", {
     query: `mutation { session { uuid }}`,
   });
   console.log(response.data);
