@@ -13,14 +13,6 @@ const schema = {
       properties: {
         hello: { type: "string" },
         route: { type: "string" },
-        ip_data: {
-          type: "object",
-          properties: {
-            ip: { type: "string" },
-            ips: { type: "array" },
-            headers: { type: "object" },
-          },
-        },
       },
     },
   },
@@ -45,6 +37,7 @@ const getSessionManagement = async (
     return "";
   }
 };
+
 const manageSession = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
