@@ -7,6 +7,7 @@ const opts: RouteShorthandOptions = {};
 
 const fastify: FastifyInstance = Fastify({
   logger: true,
+  trustProxy: true,
 });
 
 for (const decorator in decorators) {
