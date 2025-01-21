@@ -13,6 +13,14 @@ const schema = {
       properties: {
         hello: { type: "string" },
         route: { type: "string" },
+        ip_data: {
+          type: "object",
+          properties: {
+            ip: { type: "string" },
+            ips: { type: "array" },
+            raw: { type: "object" },
+          },
+        },
       },
     },
   },
@@ -53,7 +61,14 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         console.log(err);
       }
 
-      return { hello: "world" };
+      return {
+        hello: "world",
+        ip_data: {
+          ip: request.ip,
+          ips: request.ips,
+          raw: request.raw,
+        },
+      };
     },
   );
 }
