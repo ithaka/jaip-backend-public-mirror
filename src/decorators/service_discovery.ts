@@ -2,7 +2,10 @@ import axios from "axios";
 
 declare module "fastify" {
   interface FastifyInstance {
-    discover(service: string): Promise<string>;
+    discover(service: string): Promise<{
+      route: string;
+      error: Error;
+    }>;
   }
 }
 
@@ -17,7 +20,10 @@ export default async function (service: string) {
       if (data.length) {
         const homePageUrl = data.find((instance: any) => instance.homePageUrl);
         if (homePageUrl) {
-          return homePageUrl.homePageUrl;
+          return {
+            route: homePageUrl.homePageUrl,
+            error: null,
+          };
         } else {
           throw new Error(
             "Service discovery failed: No homepage URLs found in instances",
@@ -31,6 +37,9 @@ export default async function (service: string) {
     }
   } catch (err) {
     console.log(err);
-    return "";
+    return {
+      route: "",
+      error: err,
+    };
   }
 }
