@@ -16,11 +16,16 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
             type: "object",
             properties: {
               hello: { type: "string" },
+              route: { type: "string" },
             },
           },
         },
       };
-      return { hello: "world" };
+
+      const route = await fastify.discover("pdf-delivery-service");
+      console.log("SERVICE ROUTE:");
+      console.log(route);
+      return { hello: "world", route: JSON.stringify(route.data) };
     },
   );
 }
