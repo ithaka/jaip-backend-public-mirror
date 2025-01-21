@@ -4,7 +4,7 @@ import {
   FastifyRequest,
   RouteShorthandOptions,
 } from "fastify";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const schema = {
   response: {
@@ -25,13 +25,18 @@ const schema = {
     },
   },
 };
-const getSessionGateway = async (fastify: FastifyInstance): Promise<string> => {
+
+const session_manager = "session-service";
+
+const getSessionManagement = async (
+  fastify: FastifyInstance,
+): Promise<string> => {
   try {
-    const { route, error } = await fastify.discover("session-gateway");
+    const { route, error } = await fastify.discover(session_manager);
     if (error) throw error;
     if (route === "") {
       throw new Error(
-        "Service discovery failed: No route found for session-gateway",
+        `Service discovery failed: No route found for ${session_manager}`,
       );
     }
     return route;
@@ -40,9 +45,17 @@ const getSessionGateway = async (fastify: FastifyInstance): Promise<string> => {
     return "";
   }
 };
-const newSession = async (url: string, ip: string): Promise<boolean> => {
-  const response = await axios.post(url + "/v1/graphql", {});
-  return true;
+const newSession = async (
+  fastify: FastifyInstance,
+  request: FastifyRequest,
+): Promise<AxiosResponse<any, any>> => {
+  const sg = await getSessionManagement(fastify);
+  const response = await axios.post(sg + "/v1/graphql", {
+    query: `mutation { session { uuid }}`,
+  });
+  console.log(response.data);
+  console.log(response.status);
+  return response;
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
@@ -51,20 +64,19 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     opts,
     async (request: FastifyRequest, reply: FastifyReply) => {
       opts.schema = schema;
+      let uuid = "";
       try {
-        const sg = await getSessionGateway(fastify);
-        console.log(sg);
-        console.log(request.raw);
+        const session = await newSession(fastify, request);
+        uuid = session.data;
+        console.log(uuid);
+        console.log(session);
       } catch (err) {
         console.log(err);
       }
 
       return {
         hello: "world",
-        ip_data: {
-          ip: request.ip,
-          ips: request.ips,
-        },
+        uuid: uuid,
       };
     },
   );
