@@ -1,14 +1,13 @@
 import axios from "axios";
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyInstance {
     discover(service: string): Promise<{
-      data: any,
-      status: number
+      data: any;
+      status: number;
     }>;
   }
 }
-
 
 export default async function (service: string) {
   const url = `http://localhost:8888/v1/apps/${service}/instance`;
