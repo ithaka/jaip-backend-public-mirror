@@ -16,11 +16,12 @@ export default async function (service: string) {
     if (Array.isArray(data)) {
       if (data.length) {
         data.forEach((instance: any) => {
+          console.log(instance);
+          console.log(instance.homePageUrl);
           if (instance.homePageUrl) {
             return instance.homePageUrl;
           }
         });
-        console.log(data);
         throw new Error(
           "Service discovery failed: No homepage URLs found in instances",
         );
