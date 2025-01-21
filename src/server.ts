@@ -1,4 +1,5 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import fc from "@fastify/cookie";
 import "dotenv/config";
 import routes from "./routes";
 import decorators from "./decorators";
@@ -9,6 +10,7 @@ const fastify: FastifyInstance = Fastify({
   logger: true,
   trustProxy: true,
 });
+fastify.register(fc);
 
 for (const decorator in decorators) {
   fastify.decorate(decorator, decorators[decorator]);

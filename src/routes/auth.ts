@@ -45,31 +45,33 @@ const getSessionManagement = async (
     return "";
   }
 };
-const newSession = async (
+const manageSession = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
 ): Promise<AxiosResponse<any, any>> => {
   const sg = await getSessionManagement(fastify);
+  const uuid = request.cookies.uuid || "";
+  console.log("UUID: ", uuid);
+
+  const query = uuid
+    ? `mutation { session(uuid: "${uuid}") { uuid }}`
+    : `mutation { session { uuid }}`;
   const response = await axios.post(sg + "v1/graphql", {
-    query: `mutation { session { uuid }}`,
+    query,
   });
-  console.log(response.data);
-  console.log(response.status);
   return response;
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get(
-    "/",
+    "/auth/session",
     opts,
     async (request: FastifyRequest, reply: FastifyReply) => {
       opts.schema = schema;
       let uuid = "";
       try {
-        const session = await newSession(fastify, request);
+        const session = await manageSession(fastify, request);
         uuid = session.data;
-        console.log(uuid);
-        console.log(session);
       } catch (err) {
         console.log(err);
       }
