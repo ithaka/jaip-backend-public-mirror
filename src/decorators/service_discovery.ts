@@ -20,6 +20,7 @@ export default async function (service: string) {
             return instance.homePageUrl;
           }
         });
+        console.log(data);
         throw new Error(
           "Service discovery failed: No homepage URLs found in instances",
         );
