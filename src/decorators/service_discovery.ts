@@ -10,9 +10,13 @@ declare module "fastify" {
 }
 
 export default async function (service: string) {
-  const url = `http://localhost:8888/v1/apps/${service}/instance`;
+  const url = `http://localhost:8888/v1/apps/${service}/instances`;
   try {
     const { data, status } = await axios.get(url);
+    if (status !== 200) {
+      throw new Error("Service discovery failed");
+    }
+
     return { data, status };
   } catch (err) {
     console.log(err);
