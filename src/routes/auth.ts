@@ -18,7 +18,7 @@ const schema = {
           properties: {
             ip: { type: "string" },
             ips: { type: "array" },
-            raw: { type: "object" },
+            headers: { type: "object" },
           },
         },
       },
@@ -54,9 +54,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       try {
         const sg = await getSessionGateway(fastify);
         console.log(sg);
-        console.log(request.ip);
-        console.log(request.raw);
-        console.log(request.ips);
+        console.log(request.headers);
       } catch (err) {
         console.log(err);
       }
@@ -66,7 +64,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         ip_data: {
           ip: request.ip,
           ips: request.ips,
-          raw: request.raw,
+          headers: request.headers,
         },
       };
     },
