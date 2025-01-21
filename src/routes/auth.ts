@@ -23,9 +23,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       };
 
       const route = await fastify.discover("pdf-delivery-service");
-      console.log("SERVICE ROUTE:");
-      console.log(route);
-      return { hello: "world", route: JSON.stringify(route.data) };
+      return { hello: "world", route: route };
     },
   );
 }
