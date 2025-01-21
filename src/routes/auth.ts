@@ -51,6 +51,7 @@ const manageSession = async (
 ): Promise<AxiosResponse<any, any>> => {
   const sg = await getSessionManagement(fastify);
   const uuid = request.cookies.uuid || "";
+  console.log(request.cookies);
   console.log("UUID: ", uuid);
 
   const query = uuid
