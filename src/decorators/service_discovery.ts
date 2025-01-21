@@ -2,10 +2,7 @@ import axios from "axios";
 
 declare module "fastify" {
   interface FastifyInstance {
-    discover(service: string): Promise<{
-      data: any;
-      status: number;
-    }>;
+    discover(service: string): Promise<string>;
   }
 }
 
@@ -14,12 +11,26 @@ export default async function (service: string) {
   try {
     const { data, status } = await axios.get(url);
     if (status !== 200) {
-      throw new Error("Service discovery failed");
+      throw new Error("Service discovery failed: Status code not 200");
     }
-
-    return { data, status };
+    if (Array.isArray(data)) {
+      if (data.length) {
+        data.forEach((instance: any) => {
+          if (instance.homePageUrl) {
+            return instance.homePageUrl;
+          }
+        });
+        throw new Error(
+          "Service discovery failed: No homepage URLs found in instances",
+        );
+      } else {
+        throw new Error("Service discovery failed: No instances found");
+      }
+    } else {
+      throw new Error("Service discovery failed: Response is not an array");
+    }
   } catch (err) {
     console.log(err);
-    return { data: null, status: 500 };
+    return "";
   }
 }
