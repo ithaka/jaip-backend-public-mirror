@@ -54,7 +54,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       try {
         const sg = await getSessionGateway(fastify);
         console.log(sg);
-        console.log(request.headers);
+        console.log(request.raw);
       } catch (err) {
         console.log(err);
       }
@@ -64,7 +64,6 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         ip_data: {
           ip: request.ip,
           ips: request.ips,
-          headers: request.headers,
         },
       };
     },
