@@ -47,13 +47,16 @@ const manageSession = async (
   let uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
-    const sg = await getSessionManagement(fastify);
-    if (!sg) throw new Error("Service discovery failed: No route found");
+    const sessionService = await getSessionManagement(fastify);
+    if (!sessionService)
+      throw new Error(
+        `Service discovery failed: No route found for ${session_manager}`,
+      );
 
     const query = uuid
       ? `mutation { session(uuid: "${uuid}") ${sessionQuery}}`
       : `mutation { session ${sessionQuery}}`;
-    const response = await axios.post(sg + "v1/graphql", {
+    const response = await axios.post(sessionService + "v1/graphql", {
       query,
     });
     if (response.status !== 200) {
@@ -66,8 +69,6 @@ const manageSession = async (
   } catch (err) {
     console.log(err);
   }
-  console.log("Returning Session: ");
-  console.log(session);
   return session;
 };
 
@@ -80,17 +81,15 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       let uuid = "";
       let session: Session = {} as Session;
       try {
-        const session = await manageSession(fastify, request);
+        session = await manageSession(fastify, request);
         uuid = session.uuid;
-        console.log("Returned Session: ");
-        console.log(session);
       } catch (err) {
         console.log(err);
       }
 
       return {
         uuid,
-        session: JSON.stringify(session),
+        session: session,
       };
     },
   );
