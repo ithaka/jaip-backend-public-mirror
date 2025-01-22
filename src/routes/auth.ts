@@ -92,7 +92,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
       return {
         uuid: uuid,
-        session: session,
+        session: JSON.stringify(session),
       };
     },
   );
