@@ -4,15 +4,17 @@ import {
   FastifyRequest,
   RouteShorthandOptions,
 } from "fastify";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
+import type { Session } from "../types/sessions";
+import { sessionQuery } from "./queries/session";
 
 const schema = {
   response: {
     200: {
       type: "object",
       properties: {
-        hello: { type: "string" },
-        route: { type: "string" },
+        uuid: { type: "string" },
+        session: { type: "string" },
       },
     },
   },
@@ -41,14 +43,16 @@ const getSessionManagement = async (
 const manageSession = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
-): Promise<string> => {
+): Promise<Session> => {
   let uuid = request.cookies.uuid || "";
+  let session: Session = {} as Session;
   try {
     const sg = await getSessionManagement(fastify);
     if (!sg) throw new Error("Service discovery failed: No route found");
+
     const query = uuid
-      ? `mutation { session(uuid: "${uuid}") { uuid }}`
-      : `mutation { session { uuid }}`;
+      ? `mutation { session(uuid: "${uuid}") ${sessionQuery}}`
+      : `mutation { session ${sessionQuery}}`;
     const response = await axios.post(sg + "v1/graphql", {
       query,
     });
@@ -58,12 +62,12 @@ const manageSession = async (
     if (!response.data) {
       throw new Error("Session management failed: No uuid returned");
     }
-    uuid = response.data;
+    session = response.data;
   } catch (err) {
     console.log(err);
   }
 
-  return uuid;
+  return session;
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
@@ -73,15 +77,17 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       opts.schema = schema;
       let uuid = "";
+      let session: Session = {} as Session;
       try {
         const session = await manageSession(fastify, request);
-        uuid = session;
+        uuid = session.uuid;
       } catch (err) {
         console.log(err);
       }
 
       return {
         uuid: uuid,
+        session: session,
       };
     },
   );
