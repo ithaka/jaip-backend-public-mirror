@@ -59,14 +59,15 @@ const manageSession = async (
     if (response.status !== 200) {
       throw new Error("Session management failed: Status code not 200");
     }
-    if (!response.data) {
-      throw new Error("Session management failed: No uuid returned");
+    if (!response.data?.data?.session) {
+      throw new Error("Session management failed: No session returned");
     }
-    session = response.data;
+    session = response.data?.data?.session;
   } catch (err) {
     console.log(err);
   }
-
+  console.log("Returning Session: ");
+  console.log(session);
   return session;
 };
 
@@ -81,6 +82,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       try {
         const session = await manageSession(fastify, request);
         uuid = session.uuid;
+        console.log("Returned Session: ");
+        console.log(session);
       } catch (err) {
         console.log(err);
       }
