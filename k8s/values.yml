@@ -20,6 +20,10 @@ extraEnv:
         key: JAIP_TEST_SECRET
         name: test-secret-name
 
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 8
 
 registerInEureka: true
 serviceLocatable: true
@@ -58,3 +62,10 @@ polaris:
   enabled: true
   debug: false
   port: 8888
+
+# Never fall under 100% capacity when rolling updates are executed and ensure new replicas are
+# stood up before terminating old
+rollingUpdate:
+  maxSurge: 100%
+  maxUnavailable: 0
+
