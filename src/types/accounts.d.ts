@@ -1,4 +1,4 @@
-import type { v4 as uuidv4 } from "uuid";
+import type { v4 as uuidv4 } from "@types/uuid";
 
 export interface Account {
   id: uuidv4;
