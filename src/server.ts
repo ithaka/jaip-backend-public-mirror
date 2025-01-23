@@ -21,7 +21,7 @@ for (const route of routes) {
   fastify.register(route, opts);
 }
 
-const db_url = `postgres://${process.env.JAIP_DB_USERNAME}:${process.env.JAIP_DB_PASSWORD}@${process.env.JAIP_DB_LOCATION}/${process.env.JAIP_DB_NAME}`;
+const db_url = `postgres://${process.env.JAIP_DB_USERNAME}:${process.env.JAIP_DB_PASSWORD}@${process.env.JAIP_DB_LOCATION}:3306/${process.env.JAIP_DB_NAME}`;
 fastify.register(fp, {
   connectionString: db_url,
 });
