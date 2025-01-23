@@ -26,15 +26,19 @@ fastify.register(fp, {
   connectionString: db_url,
 });
 
-fastify.get("/names", (req, reply) => {
-  fastify.pg.query(
-    "SELECT id, name FROM entities",
-    function onResult(err, result) {
-      reply.send(err || result);
-    },
-  );
+fastify.get("/names", async (req, reply) => {
+  const client = await fastify.pg.connect();
+  console.log("Client: ");
+  console.log(client);
+  try {
+    const { rows } = await client.query("SELECT id, name FROM entities");
+    console.log(rows);
+    return rows;
+  } finally {
+    // Release the client immediately after query resolves, or upon error
+    client.release();
+  }
 });
-
 const start = async () => {
   try {
     await fastify.listen({ port: 8080, host: "0.0.0.0" });
