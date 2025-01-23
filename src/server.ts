@@ -36,6 +36,9 @@ fastify.get("/names", async (req, reply) => {
     const { rows } = await client.query("SELECT id, name FROM entities");
     console.log(rows);
     return rows;
+  } catch (err) {
+    console.log("DB Connection Error: ");
+    console.log(err);
   } finally {
     // Release the client immediately after query resolves, or upon error
     client.release();
