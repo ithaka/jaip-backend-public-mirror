@@ -11,14 +11,30 @@ requiredTags:
   environment: $ENVIRONMENT
   businessUnit: $ITHAKA_BUSINESS_UNIT
 
-testSecret: test-secret-name
+databaseSecretName: jaip-database-creds
 
 extraEnv:
-  - name: JAIP_TEST_SECRET
+  - name: JAIP_DB_USERNAME
     valueFrom:
       secretKeyRef:
-        key: JAIP_TEST_SECRET
-        name: test-secret-name
+        key: JAIP_DB_USERNAME
+        name: jaip-database-creds
+  - name: JAIP_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: JAIP_DB_PASSWORD
+        name: jaip-database-creds
+  - name: JAIP_DB_LOCATION
+    valueFrom:
+      secretKeyRef:
+        key: JAIP_DB_LOCATION
+        name: jaip-database-creds
+  - name: JAIP_DB_NAME
+    valueFrom:
+      secretKeyRef:
+        key: JAIP_DB_NAME
+        name: jaip-database-creds
+
 
 autoscaling:
   enabled: true

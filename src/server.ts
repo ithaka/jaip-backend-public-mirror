@@ -22,6 +22,7 @@ for (const route of routes) {
 
 const start = async () => {
   try {
+    console.log(process.env);
     await fastify.listen({ port: 8080, host: "0.0.0.0" });
     const address = fastify.server.address();
     fastify.log.info(address);
