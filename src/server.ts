@@ -27,6 +27,8 @@ fastify.register(fp, {
 });
 
 fastify.get("/names", async (req, reply) => {
+  console.log("Starting DB Connection");
+  console.log(db_url);
   const client = await fastify.pg.connect();
   console.log("Client: ");
   console.log(client);
