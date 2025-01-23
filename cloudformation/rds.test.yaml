@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS CloudFormation Template for an Aurora serverless database
+Parameters:
+  MasterUsername:
+    Type: String
+  MasterUserPassword:
+    Type: String
+    NoEcho: true
+Resources:
+  RDSDBCluster:
+    Type: "AWS::RDS::DBCluster"
+    Properties:
+      DBClusterIdentifier: jaip-test
+      DatabaseName: jaip
+      Engine: aurora-postgresql
+      EngineMode: provisioned
+      EngineVersion: "16.6"
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      ServerlessV2ScalingConfiguration:
+        MaxCapacity: 1
+        MinCapacity: 0.5
+      NetworkType: IPV4
+      StorageEncrypted: true
+      DBSubnetGroupName: sequoia-platform-1io78chbpnm2v-vpcrdssubnetgroup-enulol2ifmog
+      VpcSecurityGroupIds:
+        - sg-65089e1d # test-Platform-BESRY91EIJJN-VpcRdsSecurityGroup-1DUZ28VVQGUMD
+      Tags:
+        - Key: Name
+          Value: jaip-test
+        - Key: ithaka/environment
+          Value: test
+        - Key: ithaka/app
+          Value: jaip-db
+        - Key: ithaka/owner
+          Value: jaip
+        - Key: ithaka/business.unit
+          Value: labs
+  RDSDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      Engine: aurora-postgresql
+      DBInstanceClass: db.serverless
+      DBClusterIdentifier: !Ref RDSDBCluster
