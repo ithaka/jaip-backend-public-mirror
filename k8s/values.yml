@@ -11,8 +11,6 @@ requiredTags:
   environment: $ENVIRONMENT
   businessUnit: $ITHAKA_BUSINESS_UNIT
 
-databaseSecretName: jaip-database-creds
-
 extraEnv:
   - name: JAIP_DB_USERNAME
     valueFrom:
