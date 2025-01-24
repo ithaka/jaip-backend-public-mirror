@@ -135,8 +135,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       let uuid = "";
       let session = {} as Session;
-      let user1 = {} as QueryResult<any>;
-      let user2 = {} as QueryResult<any>;
+      let user1 = "";
+      let user2 = "";
 
       try {
         session = await manageSession(fastify, request);
@@ -146,16 +146,11 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         codes.push("jstor.org");
         if (emails.length) {
           const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
-          console.log(error);
-          console.log(result);
-          user1 = result;
+          user1 = JSON.stringify(result.rows);
         }
         if (codes.length) {
           const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
-          console.log(error);
-          console.log(result);
-
-          user2 = result;
+          user2 = JSON.stringify(result.rows);
         }
 
         uuid = session.uuid;
@@ -167,8 +162,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       return {
         uuid,
         session: session,
-        user1: JSON.stringify(user1),
-        user2: JSON.stringify(user2),
+        user1,
+        user2,
       };
     },
   );
