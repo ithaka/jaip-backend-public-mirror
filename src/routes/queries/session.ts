@@ -20,6 +20,7 @@ export const sessionQuery = `{
     userAccount {
       id
       createTime
+      code
       name
       contact {
         firstName
@@ -396,6 +397,7 @@ export const sessionQuery = `{
       id
       createTime
       name
+      code
       contact {
         firstName
         lastName
