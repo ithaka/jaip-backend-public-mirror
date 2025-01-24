@@ -101,13 +101,13 @@ const getEntity = async (
 ): Promise<[QueryResult<any>, any]> => {
   const jstor_id_query =
     "SELECT * FROM whole_entities WHERE jstor_id = ANY($1) ORDER BY id DESC LIMIT 1";
-  let result = {} as QueryResult<any>;
-  let error: any;
-  await db.query(jstor_id_query, [arr], (err, res) => {
-    result = res;
-    error = err;
-  });
-  return [result, error];
+  try {
+    const result = await db.query(jstor_id_query, [arr]);
+    return [result, null];
+  } catch (err) {
+    console.log(err);
+    return [{} as QueryResult, err];
+  }
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
@@ -145,6 +145,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         if (emails.length) {
           const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
           console.log(result);
+          console.log(result.rows);
           user1 = JSON.stringify(result.rows);
         }
         if (codes.length) {
