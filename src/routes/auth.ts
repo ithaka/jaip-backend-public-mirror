@@ -9,6 +9,7 @@ import type { Session } from "../types/sessions";
 import { sessionQuery } from "./queries/session";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
 import { publicEndpointDisclaimer } from "../utils/messages";
+
 const schema = {
   description: `Returns auth information based on ip address or email associated with UUID cookie. ${publicEndpointDisclaimer}`,
   tags: [SWAGGER_TAGS.public],
@@ -76,11 +77,12 @@ const manageSession = async (
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
+  opts.schema = schema;
+
   fastify.get(
     "/auth/session",
     opts,
     async (request: FastifyRequest, reply: FastifyReply) => {
-      opts.schema = schema;
       let uuid = "";
       let session: Session = {} as Session;
       try {

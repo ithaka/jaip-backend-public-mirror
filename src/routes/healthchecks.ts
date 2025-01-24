@@ -29,9 +29,9 @@ const polarisHealthcheck = async () => {
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
-  fastify.get("/healthz", opts, async () => {
-    opts.schema = schema;
+  opts.schema = schema;
 
+  fastify.get("/healthz", opts, async () => {
     const service_discovery = await polarisHealthcheck();
     return {
       up: true,
