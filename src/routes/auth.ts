@@ -9,7 +9,10 @@ import type { Session } from "../types/sessions";
 import { sessionQuery } from "./queries/session";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
 import { publicEndpointDisclaimer } from "../utils/messages";
-
+import type { PostgresDb } from "@fastify/postgres";
+import { QueryResult } from "pg";
+import { User } from "../types/users";
+import { json } from "stream/consumers";
 const session_manager = "session-service";
 
 const getSessionManagement = async (
@@ -89,6 +92,21 @@ const getEmailFromSession = (session: Session): string[] => {
 
   return emails;
 };
+
+const getEntity = (db: PostgresDb, arr: string[]): [QueryResult<any>, any] => {
+  const jstor_id_query =
+    "SELECT * FROM whole_entities WHERE jstor_id = ANY($1)";
+  let result = {} as QueryResult<any>;
+  let error: any;
+  db.query(jstor_id_query, [arr], (err, res) => {
+    console.log(err);
+    console.log(res);
+    result = res;
+    error = err;
+  });
+  return [result, error];
+};
+
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = {
     description: `Returns auth information based on ip address or email associated with UUID cookie. ${publicEndpointDisclaimer}`,
@@ -99,8 +117,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         properties: {
           uuid: { type: "string" },
           session: { type: "string" },
-          db_email: { type: "string" },
-          db_codes: { type: "string" },
+          user1: { type: "string" },
+          user2: { type: "string" },
         },
       },
     },
@@ -111,36 +129,25 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     opts,
     async (request: FastifyRequest, reply: FastifyReply) => {
       let uuid = "";
-      let session: Session = {} as Session;
-      let db_email = "";
-      let db_codes = "";
+      let session = {} as Session;
+      let user1 = {} as User;
+      let user2 = {} as User;
       const emails = getEmailFromSession(session);
       const codes = getCodeFromSession(session);
       emails.push("ryan.mccarthy@ithaka.org");
       codes.push("jstor.org");
       if (emails.length) {
-        fastify.pg.jaip_db.query(
-          "SELECT * FROM entities LEFT JOIN users ON users.id=entities.id  WHERE users.jstor_id = ANY($1)",
-          [emails],
-          (err, res) => {
-            console.log("EMAILS");
-            console.log(err);
-            console.log(res);
-            db_email = JSON.stringify(res);
-          },
-        );
+        const [result, error] = getEntity(fastify.pg.jaip_db, emails);
+        console.log(error);
+        console.log(result);
+        user1 = result.rows[0];
       }
       if (codes.length) {
-        fastify.pg.jaip_db.query(
-          "SELECT * FROM entities LEFT JOIN facilities ON facilities.id=entities.id WHERE facilities.jstor_id = ANY($1)",
-          [codes],
-          (err, res) => {
-            console.log("CODES");
-            console.log(err);
-            console.log(res);
-            db_codes = JSON.stringify(res);
-          },
-        );
+        const [result, error] = getEntity(fastify.pg.jaip_db, codes);
+        console.log(error);
+        console.log(result);
+
+        user2 = result.rows[0];
       }
       try {
         session = await manageSession(fastify, request);
@@ -154,8 +161,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       return {
         uuid,
         session: session,
-        db_email,
-        db_codes,
+        user1: JSON.stringify(user1),
+        user2: JSON.stringify(user2),
       };
     },
   );
