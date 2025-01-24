@@ -98,7 +98,7 @@ const getEmailFromSession = (session: Session): string[] => {
 const getEntity = async (
   db: PostgresDb,
   arr: string[],
-): [QueryResult<any>, any] => {
+): Promise<[QueryResult<any>, any]> => {
   const jstor_id_query =
     "SELECT * FROM whole_entities WHERE jstor_id = ANY($1) ORDER BY id DESC LIMIT 1";
   let result = {} as QueryResult<any>;
@@ -145,13 +145,13 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         emails.push("ryan.mccarthy@ithaka.org");
         codes.push("jstor.org");
         if (emails.length) {
-          const [result, error] = getEntity(fastify.pg.jaip_db, emails);
+          const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
           console.log(error);
           console.log(result);
           user1 = result;
         }
         if (codes.length) {
-          const [result, error] = getEntity(fastify.pg.jaip_db, codes);
+          const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
           console.log(error);
           console.log(result);
 
