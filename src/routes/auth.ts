@@ -7,8 +7,11 @@ import {
 import axios from "axios";
 import type { Session } from "../types/sessions";
 import { sessionQuery } from "./queries/session";
-
+import { SWAGGER_TAGS } from "../utils/swagger_tags";
+import { publicEndpointDisclaimer } from "../utils/messages";
 const schema = {
+  description: `Returns auth information based on ip address or email associated with UUID cookie. ${publicEndpointDisclaimer}`,
+  tags: [SWAGGER_TAGS.public],
   response: {
     200: {
       type: "object",
@@ -85,6 +88,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         uuid = session.uuid;
       } catch (err) {
         console.log(err);
+        return err;
       }
 
       return {
