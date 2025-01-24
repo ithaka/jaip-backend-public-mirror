@@ -95,12 +95,15 @@ const getEmailFromSession = (session: Session): string[] => {
   return emails;
 };
 
-const getEntity = (db: PostgresDb, arr: string[]): [QueryResult<any>, any] => {
+const getEntity = async (
+  db: PostgresDb,
+  arr: string[],
+): [QueryResult<any>, any] => {
   const jstor_id_query =
     "SELECT * FROM whole_entities WHERE jstor_id = ANY($1) ORDER BY id DESC LIMIT 1";
   let result = {} as QueryResult<any>;
   let error: any;
-  db.query(jstor_id_query, [arr], (err, res) => {
+  await db.query(jstor_id_query, [arr], (err, res) => {
     console.log(res);
     result = res;
     error = err;
