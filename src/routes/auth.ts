@@ -130,8 +130,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       let uuid = "";
       let session = {} as Session;
-      let user1 = {} as User;
-      let user2 = {} as User;
+      let user1 = [] as User[];
+      let user2 = [] as User[];
 
       try {
         session = await manageSession(fastify, request);
@@ -142,15 +142,15 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         if (emails.length) {
           const [result, error] = getEntity(fastify.pg.jaip_db, emails);
           console.log(error);
-          console.log(result.rows[0]);
-          user1 = result.rows[0];
+          console.log(result.rows);
+          user1 = result.rows;
         }
         if (codes.length) {
           const [result, error] = getEntity(fastify.pg.jaip_db, codes);
           console.log(error);
-          console.log(result.rows[0]);
+          console.log(result.rows);
 
-          user2 = result.rows[0];
+          user2 = result.rows;
         }
 
         uuid = session.uuid;
