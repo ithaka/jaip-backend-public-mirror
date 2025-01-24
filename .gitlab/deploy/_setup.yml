@@ -40,6 +40,7 @@ variables:
   JAIP_DB_PASSWORD: "/$API_TARGET/labs/jaip/jaip-backend/database/password"
   JAIP_DB_LOCATION: "/$API_TARGET/labs/jaip/jaip-backend/database/location"
   JAIP_DB_NAME: "/$API_TARGET/labs/jaip/jaip-backend/database/name"
+  JAIP_DB_PORT: "/$API_TARGET/labs/jaip/jaip-backend/database/port"
 
 # Child pipelines inherit parent pipeline workflows, but the parent pipeline
 # rules will never evaluate to true here. (The source is a trigger, not a merge

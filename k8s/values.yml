@@ -32,7 +32,11 @@ extraEnv:
       secretKeyRef:
         key: JAIP_DB_NAME
         name: jaip-database-creds
-
+  - name: JAIP_DB_PORT
+    valueFrom:
+      secretKeyRef:
+        key: JAIP_DB_PORT
+        name: jaip-database-creds
 
 autoscaling:
   enabled: true
