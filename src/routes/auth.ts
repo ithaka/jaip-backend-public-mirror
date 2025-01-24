@@ -104,11 +104,9 @@ const getEntity = async (
   let result = {} as QueryResult<any>;
   let error: any;
   await db.query(jstor_id_query, [arr], (err, res) => {
-    console.log(res);
     result = res;
     error = err;
   });
-  console.log(result, error);
   return [result, error];
 };
 
@@ -146,6 +144,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         codes.push("jstor.org");
         if (emails.length) {
           const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
+          console.log(result);
           user1 = JSON.stringify(result.rows);
         }
         if (codes.length) {
