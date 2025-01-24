@@ -62,6 +62,33 @@ const manageSession = async (
   return session;
 };
 
+const getCodeFromSession = (session: Session): string[] => {
+  let codes = [];
+  if (session.userAccount?.code) {
+    codes.push(session.userAccount.code);
+  }
+  session.authenticatedAccounts?.forEach((account) => {
+    if (account.code) {
+      codes.push(account.code);
+    }
+  });
+
+  return codes;
+};
+const getEmailFromSession = (session: Session): string[] => {
+  const emails = [];
+  if (session.userAccount?.contact?.email) {
+    emails.push(session.userAccount.contact.email);
+  }
+
+  session.authenticatedAccounts?.forEach((account) => {
+    if (account.contact.email) {
+      emails.push(account.contact.email);
+    }
+  });
+
+  return emails;
+};
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = {
     description: `Returns auth information based on ip address or email associated with UUID cookie. ${publicEndpointDisclaimer}`,
@@ -72,6 +99,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         properties: {
           uuid: { type: "string" },
           session: { type: "string" },
+          db_email: { type: "string" },
+          db_codes: { type: "string" },
         },
       },
     },
@@ -83,9 +112,38 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       let uuid = "";
       let session: Session = {} as Session;
+      let db_email = "";
+      let db_codes = "";
+      const emails = getEmailFromSession(session);
+      const codes = getCodeFromSession(session);
+      if (emails.length) {
+        fastify.pg.jaip_db.query(
+          "SELECT * FROM entities LEFT JOIN users WHERE users.jstor_id IN $1",
+          [emails],
+          (err, res) => {
+            console.log("EMAILS");
+            console.log(err);
+            console.log(res);
+            db_email = JSON.stringify(res);
+          },
+        );
+      }
+      if (codes.length) {
+        fastify.pg.jaip_db.query(
+          "SELECT * FROM entities LEFT JOIN facilities WHERE facilities.jstor_id IN $1",
+          [codes],
+          (err, res) => {
+            console.log("CODES");
+            console.log(err);
+            console.log(res);
+            db_codes = JSON.stringify(res);
+          },
+        );
+      }
       try {
         session = await manageSession(fastify, request);
         uuid = session.uuid;
+        const emails = session.userAccount?.contact?.email;
       } catch (err) {
         console.log(err);
         return err;
@@ -94,6 +152,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       return {
         uuid,
         session: JSON.stringify(session),
+        db_email,
+        db_codes,
       };
     },
   );
