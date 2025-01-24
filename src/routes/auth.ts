@@ -101,6 +101,7 @@ const getEntity = (db: PostgresDb, arr: string[]): [QueryResult<any>, any] => {
   let result = {} as QueryResult<any>;
   let error: any;
   db.query(jstor_id_query, [arr], (err, res) => {
+    console.log(res);
     result = res;
     error = err;
   });
