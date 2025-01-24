@@ -16,6 +16,7 @@ const polarisHealthcheck = async () => {
 
 const dbHealthcheck = async (fastify: FastifyInstance) => {
   try {
+    // A minimal query to check if the database is up and responding
     const result = await fastify.pg.jaip_db.query("SELECT 1");
     return result.rowCount === 1;
   } catch (err) {
@@ -31,7 +32,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       200: {
         type: "object",
         properties: {
-          up: { type: "boolean" },
+          server: { type: "boolean" },
           service_discovery: { type: "boolean" },
           db: { type: "boolean" },
         },
@@ -42,10 +43,11 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/healthz", opts, async () => {
     const service_discovery = await polarisHealthcheck();
     const db = await dbHealthcheck(fastify);
-    console.log("Service discovery:", service_discovery);
-    console.log("Database:", db);
+    fastify.log.info(`Service Discovery Status: ${service_discovery}`);
+    fastify.log.info(`Database Status: ${db}`);
+
     return {
-      up: true,
+      server: true,
       service_discovery,
       db,
     };
