@@ -34,7 +34,7 @@ fastify.register(fastifyPostgres, {
 fastify.register(fastifySwagger, {
   openapi: {
     info: {
-      title: `jaip-backend on ${process.env.ENVIROMENT}`,
+      title: `jaip-backend on ${process.env.ENVIRONMENT}`,
       description: "Swagger for jaip-backend",
       version: "2.0.0",
     },
@@ -56,7 +56,7 @@ fastify.register(fastifySwagger, {
 });
 
 fastify.register(fastifySwaggerUI, {
-  routePrefix: "/private/swagger",
+  routePrefix: "/docs",
   uiConfig: {
     docExpansion: "list",
     deepLinking: false,
