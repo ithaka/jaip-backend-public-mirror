@@ -65,6 +65,7 @@ export interface RegionAccount extends Account {
 }
 
 export interface AuthenticatedAccount extends Account {
+  code: string;
   authenticatedCredentials: AccountCredential[];
   providerDesignationStatement: string;
 }
