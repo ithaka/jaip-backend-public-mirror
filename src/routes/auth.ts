@@ -93,6 +93,20 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       };
     },
   );
+
+  fastify.get("/names", async (req, reply) => {
+    const client = await fastify.pg.jaip_db.connect();
+    try {
+      const { rows } = await client.query("SELECT id, name FROM entities");
+      return rows;
+    } catch (err) {
+      console.log(err);
+      return err;
+    } finally {
+      // Release the client immediately after query resolves, or upon error
+      client.release();
+    }
+  });
 }
 
 export default routes;
