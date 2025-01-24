@@ -116,6 +116,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       let db_codes = "";
       const emails = getEmailFromSession(session);
       const codes = getCodeFromSession(session);
+      emails.push("ryan.mccarthy@ithaka.org");
+      codes.push("jstor.org");
       if (emails.length) {
         fastify.pg.jaip_db.query(
           "SELECT * FROM entities LEFT JOIN users WHERE users.jstor_id IN $1",
@@ -151,7 +153,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
       return {
         uuid,
-        session: JSON.stringify(session),
+        session: session,
         db_email,
         db_codes,
       };
