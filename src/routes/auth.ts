@@ -10,20 +10,6 @@ import { sessionQuery } from "./queries/session";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
 import { publicEndpointDisclaimer } from "../utils/messages";
 
-const schema = {
-  description: `Returns auth information based on ip address or email associated with UUID cookie. ${publicEndpointDisclaimer}`,
-  tags: [SWAGGER_TAGS.public],
-  response: {
-    200: {
-      type: "object",
-      properties: {
-        uuid: { type: "string" },
-        session: { type: "string" },
-      },
-    },
-  },
-};
-
 const session_manager = "session-service";
 
 const getSessionManagement = async (
@@ -77,7 +63,19 @@ const manageSession = async (
 };
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
-  opts.schema = schema;
+  opts.schema = {
+    description: `Returns auth information based on ip address or email associated with UUID cookie. ${publicEndpointDisclaimer}`,
+    tags: [SWAGGER_TAGS.public],
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          uuid: { type: "string" },
+          session: { type: "string" },
+        },
+      },
+    },
+  };
 
   fastify.get(
     "/auth/session",
@@ -95,12 +93,26 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
       return {
         uuid,
-        session: session,
+        session: JSON.stringify(session),
       };
     },
   );
 
-  fastify.get("/names", async (req, reply) => {
+  opts.schema = {
+    description: `Returns subdomain validation. ${publicEndpointDisclaimer}`,
+    tags: [SWAGGER_TAGS.public],
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          uuid: { type: "string" },
+          session: { type: "string" },
+        },
+      },
+    },
+  };
+
+  fastify.get("/subdomains", async (req, reply) => {
     const client = await fastify.pg.jaip_db.connect();
     try {
       const { rows } = await client.query("SELECT id, name FROM entities");
