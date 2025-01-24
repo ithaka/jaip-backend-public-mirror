@@ -1,7 +1,10 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
 import axios from "axios";
+import { SWAGGER_TAGS } from "../utils/swagger_tags";
 
 const schema = {
+  description: `Returns health information for the service, including indicators for service discovery and database access.`,
+  tags: [SWAGGER_TAGS.healthcheck],
   response: {
     200: {
       type: "object",
