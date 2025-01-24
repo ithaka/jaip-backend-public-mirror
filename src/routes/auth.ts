@@ -120,7 +120,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       codes.push("jstor.org");
       if (emails.length) {
         fastify.pg.jaip_db.query(
-          "SELECT * FROM entities LEFT JOIN users ON users.id=entities.id  WHERE users.jstor_id IN $1",
+          "SELECT * FROM entities LEFT JOIN users ON users.id=entities.id  WHERE users.jstor_id = ANY($1)",
           [emails],
           (err, res) => {
             console.log("EMAILS");
@@ -132,7 +132,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       }
       if (codes.length) {
         fastify.pg.jaip_db.query(
-          "SELECT * FROM entities LEFT JOIN facilities ON facilities.id=entities.id WHERE facilities.jstor_id IN $1",
+          "SELECT * FROM entities LEFT JOIN facilities ON facilities.id=entities.id WHERE facilities.jstor_id = ANY($1)",
           [codes],
           (err, res) => {
             console.log("CODES");
