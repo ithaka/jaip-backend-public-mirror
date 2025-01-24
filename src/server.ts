@@ -46,8 +46,8 @@ fastify.register(fastifySwaggerUI, {
     docExpansion: "list",
     deepLinking: false,
   },
-  staticCSP: true,
-  transformStaticCSP: (header) => header,
+  staticCSP: false,
+  // transformStaticCSP: (header) => header,
 });
 
 fastify.register(fastifyCookie);
