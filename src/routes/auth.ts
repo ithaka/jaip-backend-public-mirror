@@ -5,14 +5,16 @@ import {
   RouteShorthandOptions,
 } from "fastify";
 import axios from "axios";
-import type { Session } from "../types/sessions";
+
 import { sessionQuery } from "./queries/session";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
 import { publicEndpointDisclaimer } from "../utils/messages";
+
+import type { Session } from "../types/sessions";
+import type { User } from "../types/users";
 import type { PostgresDb } from "@fastify/postgres";
-import { QueryResult } from "pg";
-import { User } from "../types/users";
-import { json } from "stream/consumers";
+import type { QueryResult } from "pg";
+
 const session_manager = "session-service";
 
 const getSessionManagement = async (
@@ -95,12 +97,10 @@ const getEmailFromSession = (session: Session): string[] => {
 
 const getEntity = (db: PostgresDb, arr: string[]): [QueryResult<any>, any] => {
   const jstor_id_query =
-    "SELECT * FROM whole_entities WHERE jstor_id = ANY($1)";
+    "SELECT * FROM whole_entities WHERE jstor_id = ANY($1) LIMIT 1 ORDER BY id DESC";
   let result = {} as QueryResult<any>;
   let error: any;
   db.query(jstor_id_query, [arr], (err, res) => {
-    console.log(err);
-    console.log(res);
     result = res;
     error = err;
   });
@@ -132,27 +132,28 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       let session = {} as Session;
       let user1 = {} as User;
       let user2 = {} as User;
-      const emails = getEmailFromSession(session);
-      const codes = getCodeFromSession(session);
-      emails.push("ryan.mccarthy@ithaka.org");
-      codes.push("jstor.org");
-      if (emails.length) {
-        const [result, error] = getEntity(fastify.pg.jaip_db, emails);
-        console.log(error);
-        console.log(result);
-        user1 = result.rows[0];
-      }
-      if (codes.length) {
-        const [result, error] = getEntity(fastify.pg.jaip_db, codes);
-        console.log(error);
-        console.log(result);
 
-        user2 = result.rows[0];
-      }
       try {
         session = await manageSession(fastify, request);
+        const emails = getEmailFromSession(session);
+        const codes = getCodeFromSession(session);
+        emails.push("ryan.mccarthy@ithaka.org");
+        codes.push("jstor.org");
+        if (emails.length) {
+          const [result, error] = getEntity(fastify.pg.jaip_db, emails);
+          console.log(error);
+          console.log(result.rows[0]);
+          user1 = result.rows[0];
+        }
+        if (codes.length) {
+          const [result, error] = getEntity(fastify.pg.jaip_db, codes);
+          console.log(error);
+          console.log(result.rows[0]);
+
+          user2 = result.rows[0];
+        }
+
         uuid = session.uuid;
-        const emails = session.userAccount?.contact?.email;
       } catch (err) {
         console.log(err);
         return err;
