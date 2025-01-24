@@ -33,6 +33,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         properties: {
           up: { type: "boolean" },
           service_discovery: { type: "boolean" },
+          db: { type: "boolean" },
         },
       },
     },
