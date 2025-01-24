@@ -104,6 +104,7 @@ const getEntity = (db: PostgresDb, arr: string[]): [QueryResult<any>, any] => {
     result = res;
     error = err;
   });
+  console.log(result, error);
   return [result, error];
 };
 
