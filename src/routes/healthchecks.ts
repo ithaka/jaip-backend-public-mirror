@@ -41,6 +41,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/healthz", opts, async () => {
     const service_discovery = await polarisHealthcheck();
     const db = await dbHealthcheck(fastify);
+    console.log("Service discovery:", service_discovery);
+    console.log("Database:", db);
     return {
       up: true,
       service_discovery,
