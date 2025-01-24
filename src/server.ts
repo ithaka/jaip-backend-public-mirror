@@ -15,21 +15,6 @@ const fastify: FastifyInstance = Fastify({
   logger: true,
   trustProxy: true,
 });
-fastify.register(fastifyCookie);
-
-for (const decorator in decorators) {
-  fastify.decorate(decorator, decorators[decorator]);
-}
-
-for (const route of routes) {
-  fastify.register(route, opts);
-}
-
-const db_url = `postgres://${process.env.JAIP_DB_USERNAME}:${process.env.JAIP_DB_PASSWORD}@${process.env.JAIP_DB_LOCATION}:${process.env.JAIP_DB_PORT}/${process.env.JAIP_DB_NAME}`;
-fastify.register(fastifyPostgres, {
-  connectionString: db_url,
-  name: "jaip_db",
-});
 
 fastify.register(fastifySwagger, {
   openapi: {
@@ -63,6 +48,22 @@ fastify.register(fastifySwaggerUI, {
   },
   staticCSP: true,
   transformStaticCSP: (header) => header,
+});
+
+fastify.register(fastifyCookie);
+
+for (const decorator in decorators) {
+  fastify.decorate(decorator, decorators[decorator]);
+}
+
+for (const route of routes) {
+  fastify.register(route, opts);
+}
+
+const db_url = `postgres://${process.env.JAIP_DB_USERNAME}:${process.env.JAIP_DB_PASSWORD}@${process.env.JAIP_DB_LOCATION}:${process.env.JAIP_DB_PORT}/${process.env.JAIP_DB_NAME}`;
+fastify.register(fastifyPostgres, {
+  connectionString: db_url,
+  name: "jaip_db",
 });
 
 const start = async () => {
