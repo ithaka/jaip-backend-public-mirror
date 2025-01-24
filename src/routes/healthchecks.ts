@@ -14,7 +14,7 @@ const polarisHealthcheck = async () => {
   return up;
 };
 
-const checkDBHealth = async (fastify: FastifyInstance) => {
+const dbHealthcheck = async (fastify: FastifyInstance) => {
   try {
     const result = await fastify.pg.jaip_db.query("SELECT 1");
     return result.rowCount === 1;
@@ -40,7 +40,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
   fastify.get("/healthz", opts, async () => {
     const service_discovery = await polarisHealthcheck();
-    const db = await checkDBHealth(fastify);
+    const db = await dbHealthcheck(fastify);
     return {
       up: true,
       service_discovery,
