@@ -13,7 +13,7 @@ import { publicEndpointDisclaimer } from "../utils/messages";
 import type { Session } from "../types/sessions";
 import type { User } from "../types/users";
 import type { PostgresDb } from "@fastify/postgres";
-import type { QueryResult } from "pg";
+import type { Query, QueryResult } from "pg";
 
 const session_manager = "session-service";
 
@@ -130,8 +130,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       let uuid = "";
       let session = {} as Session;
-      let user1 = [] as User[];
-      let user2 = [] as User[];
+      let user1 = {} as QueryResult<any>;
+      let user2 = {} as QueryResult<any>;
 
       try {
         session = await manageSession(fastify, request);
@@ -142,15 +142,15 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         if (emails.length) {
           const [result, error] = getEntity(fastify.pg.jaip_db, emails);
           console.log(error);
-          console.log(result.rows);
-          user1 = result.rows;
+          console.log(result);
+          user1 = result;
         }
         if (codes.length) {
           const [result, error] = getEntity(fastify.pg.jaip_db, codes);
           console.log(error);
-          console.log(result.rows);
+          console.log(result);
 
-          user2 = result.rows;
+          user2 = result;
         }
 
         uuid = session.uuid;
