@@ -37,11 +37,27 @@ export class CaptainsLogger implements EventLogger {
     });
   }
   pep_server_error(request: FastifyRequest, error: Error) {
-    this._log("pep_auth_start_test", {
+    this._log("pep_server_error", {
       log_made_by: "error-handler",
       event_description: "error",
       error_message: error.message,
       ...this._add_request_fields(request),
+    });
+  }
+  pep_healthcheck_error(type: string, error: Error) {
+    this._log("pep_healthcheck_error", {
+      log_made_by: "healthcheck",
+      event_description: "error",
+      type,
+      error_message: error.message,
+    });
+  }
+  pep_error(type: string, error: Error) {
+    this._log("pep_error", {
+      log_made_by: "error-handler",
+      event_description: "error",
+      type,
+      error_message: error.message,
     });
   }
 }

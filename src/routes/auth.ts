@@ -9,6 +9,8 @@ import axios from "axios";
 import { sessionQuery } from "./queries/session";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
 import { publicEndpointDisclaimer } from "../utils/messages";
+import { ensure_error } from "../utils/error_verification";
+
 import type { Session } from "../types/sessions";
 import type { PostgresDb } from "@fastify/postgres";
 import type { QueryResult } from "pg";
@@ -17,33 +19,33 @@ const session_manager = "session-service";
 
 const getSessionManagement = async (
   fastify: FastifyInstance,
-): Promise<string> => {
+): Promise<[string, Error | null]> => {
   try {
     const { route, error } = await fastify.discover(session_manager);
     if (error) throw error;
-    if (route === "") {
+    if (!route) {
       throw new Error(
-        `Service discovery failed: No route found for ${session_manager}`,
+        `service discovery failed: No route found for ${session_manager}`,
       );
     }
-    return route;
+    return [route, null];
   } catch (err) {
-    console.log(err);
-    return "";
+    const error = ensure_error(err);
+    return ["", error];
   }
 };
 
 const manageSession = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
-): Promise<Session> => {
+): Promise<[Session, Error | null]> => {
   let uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
     const sessionService = await getSessionManagement(fastify);
     if (!sessionService)
       throw new Error(
-        `Service discovery failed: No route found for ${session_manager}`,
+        `service discovery failed: No route found for ${session_manager}`,
       );
 
     const query = uuid
@@ -53,16 +55,20 @@ const manageSession = async (
       query,
     });
     if (response.status !== 200) {
-      throw new Error("Session management failed: Status code not 200");
+      throw new Error("session management failed: Status code not 200");
     }
     if (!response.data?.data?.session) {
-      throw new Error("Session management failed: No session returned");
+      throw new Error("session management failed: No session returned");
     }
     session = response.data?.data?.session;
+    if (!session.uuid) {
+      throw new Error("session management failed: session has no UUID");
+    }
+    return [session, null];
   } catch (err) {
-    console.log(err);
+    const error = ensure_error(err);
+    return [{} as Session, error];
   }
-  return session;
 };
 
 const getCodeFromSession = (session: Session): string[] => {
@@ -85,8 +91,8 @@ const getEmailFromSession = (session: Session): string[] => {
   }
 
   session.authenticatedAccounts?.forEach((account) => {
-    if (account.contact.email) {
-      emails.push(account.contact.email);
+    if (account?.contact?.email) {
+      emails.push(account?.contact?.email);
     }
   });
 
@@ -96,15 +102,15 @@ const getEmailFromSession = (session: Session): string[] => {
 const getEntity = async (
   db: PostgresDb,
   arr: string[],
-): Promise<[QueryResult<any>, any]> => {
+): Promise<[QueryResult<any>, Error | null]> => {
   const jstor_id_query =
     "SELECT * FROM whole_entities WHERE jstor_id = ANY($1) ORDER BY id DESC LIMIT 1";
   try {
     const result = await db.query(jstor_id_query, [arr]);
     return [result, null];
   } catch (err) {
-    console.log(err);
-    return [{} as QueryResult, err];
+    const error = ensure_error(err);
+    return [{} as QueryResult, error];
   }
 };
 
@@ -116,10 +122,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       200: {
         type: "object",
         properties: {
-          uuid: { type: "string" },
           session: { type: "string" },
-          user1: { type: "string" },
-          user2: { type: "string" },
         },
       },
     },
@@ -130,40 +133,42 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     opts,
     async (request: FastifyRequest, reply: FastifyReply) => {
       fastify.eventLogger.pep_auth_start(request);
-
-      let uuid = "";
       let session = {} as Session;
-      let user1 = "";
-      let user2 = "";
 
       try {
-        session = await manageSession(fastify, request);
+        const [returned_session, err] = await manageSession(fastify, request);
+        if (err) {
+          throw err;
+        }
+        session = returned_session;
+
         const emails = getEmailFromSession(session);
-        const codes = getCodeFromSession(session);
-        emails.push("ryan.mccarthy@ithaka.org");
-        codes.push("jstor.org");
         if (emails.length) {
           const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
+          if (error) {
+            throw error;
+          }
           console.log(result);
           console.log(result.rows);
-          user1 = JSON.stringify(result.rows);
-        }
-        if (codes.length) {
-          const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
-          user2 = JSON.stringify(result.rows);
         }
 
-        uuid = session.uuid;
+        const codes = getCodeFromSession(session);
+        if (codes.length) {
+          const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
+          console.log(result);
+          console.log(result.rows);
+          if (error) {
+            throw error;
+          }
+        }
       } catch (err) {
-        console.log(err);
+        const error = ensure_error(err);
+        fastify.eventLogger.pep_error("auth_session", error);
         return err;
       }
 
       return {
-        uuid,
-        session: session,
-        user1,
-        user2,
+        session,
       };
     },
   );

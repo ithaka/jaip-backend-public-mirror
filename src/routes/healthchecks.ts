@@ -1,17 +1,17 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
 import axios from "axios";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
-
-const polarisHealthcheck = async () => {
+import { ensure_error } from "../utils/error_verification";
+const polarisHealthcheck = async (fastify: FastifyInstance) => {
   const url = "http://localhost:8888/healthcheck";
-  let up = false;
   try {
     const { data, status } = await axios.get(url);
-    up = data === "ok" && status === 200;
+    return data === "ok" && status === 200;
   } catch (err) {
-    up = false;
+    const error = ensure_error(err);
+    fastify.eventLogger.pep_healthcheck_error("polaris", error);
+    return false;
   }
-  return up;
 };
 
 const dbHealthcheck = async (fastify: FastifyInstance) => {
@@ -20,6 +20,8 @@ const dbHealthcheck = async (fastify: FastifyInstance) => {
     const result = await fastify.pg.jaip_db.query("SELECT 1");
     return result.rowCount === 1;
   } catch (err) {
+    const error = ensure_error(err);
+    fastify.eventLogger.pep_healthcheck_error("database", error);
     return false;
   }
 };
@@ -41,10 +43,23 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   };
 
   fastify.get("/healthz", opts, async () => {
-    const service_discovery = await polarisHealthcheck();
+    const service_discovery = await polarisHealthcheck(fastify);
     const db = await dbHealthcheck(fastify);
     fastify.log.info(`Service Discovery Status: ${service_discovery}`);
     fastify.log.info(`Database Status: ${db}`);
+
+    if (!service_discovery) {
+      fastify.eventLogger.pep_healthcheck_error(
+        "service_discovery",
+        new Error("Service discovery failed without error"),
+      );
+    }
+    if (!db) {
+      fastify.eventLogger.pep_healthcheck_error(
+        "database",
+        new Error("Database test query failed without error"),
+      );
+    }
 
     return {
       server: true,
