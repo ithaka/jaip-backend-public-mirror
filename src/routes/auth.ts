@@ -148,14 +148,12 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
           if (error) {
             throw error;
           }
-          console.log(result);
           console.log(result.rows);
         }
 
         const codes = getCodeFromSession(session);
         if (codes.length) {
           const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
-          console.log(result);
           console.log(result.rows);
           if (error) {
             throw error;
