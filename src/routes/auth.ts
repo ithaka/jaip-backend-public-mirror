@@ -9,11 +9,9 @@ import axios from "axios";
 import { sessionQuery } from "./queries/session";
 import { SWAGGER_TAGS } from "../utils/swagger_tags";
 import { publicEndpointDisclaimer } from "../utils/messages";
-
 import type { Session } from "../types/sessions";
-import type { User } from "../types/users";
 import type { PostgresDb } from "@fastify/postgres";
-import type { Query, QueryResult } from "pg";
+import type { QueryResult } from "pg";
 
 const session_manager = "session-service";
 
@@ -131,6 +129,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     "/auth/session",
     opts,
     async (request: FastifyRequest, reply: FastifyReply) => {
+      fastify.eventLogger.pep_auth_start(request);
+
       let uuid = "";
       let session = {} as Session;
       let user1 = "";

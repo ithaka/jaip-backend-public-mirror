@@ -1,4 +1,9 @@
-import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import Fastify, {
+  FastifyInstance,
+  RouteShorthandOptions,
+  FastifyPluginAsync,
+  FastifyPluginOptions,
+} from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyPostgres from "@fastify/postgres";
 import fastifySwagger from "@fastify/swagger";
@@ -7,6 +12,8 @@ import fastifySwaggerUI from "@fastify/swagger-ui";
 import "dotenv/config";
 import routes from "./routes";
 import decorators from "./decorators";
+import plugins from "./plugins";
+
 import { swagger_opts } from "./utils/swagger_opts";
 
 const opts: RouteShorthandOptions = {};
@@ -32,6 +39,10 @@ fastify.register(fastifyCookie);
 
 for (const decorator in decorators) {
   fastify.decorate(decorator, decorators[decorator]);
+}
+
+for (const { plugin, options } of Object.values(plugins)) {
+  fastify.register(plugin, options);
 }
 
 for (const route of routes) {
