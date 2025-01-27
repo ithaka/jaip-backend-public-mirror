@@ -36,4 +36,12 @@ export class CaptainsLogger implements EventLogger {
       ...this._add_request_fields(request),
     });
   }
+  pep_server_error(request: FastifyRequest, error: Error) {
+    this._log("pep_auth_start_test", {
+      log_made_by: "error-handler",
+      event_description: "error",
+      error_message: error.message,
+      ...this._add_request_fields(request),
+    });
+  }
 }

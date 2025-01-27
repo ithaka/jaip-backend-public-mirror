@@ -1,4 +1,5 @@
 import logging from "./logging";
+import errorHandlerPlugin from "./error_handling";
 import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
 
 const plugins: {
@@ -8,6 +9,7 @@ const plugins: {
   };
 } = {
   logging,
+  errorHandlerPlugin,
 };
 
 export default plugins;
