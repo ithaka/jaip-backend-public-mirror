@@ -186,16 +186,19 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   };
 
   fastify.get("/subdomains", async (req, reply) => {
-    const client = await fastify.pg.jaip_db.connect();
+    const host = req.headers.host || "";
+    const subdomain = host.split(".").slice(0, -2).join(".");
+
     try {
-      const { rows } = await client.query("SELECT id, name FROM entities");
-      return rows;
+      const result = await fastify.pg.jaip_db.query(
+        "SELECT subdomain FROM subdomains WHERE is_active = true AND subdomain = $1",
+        [subdomain],
+      );
+      console.log(result.rows);
+      return result.rows;
     } catch (err) {
       console.log(err);
       return err;
-    } finally {
-      // Release the client immediately after query resolves, or upon error
-      client.release();
     }
   });
 }
