@@ -28,7 +28,7 @@ export class CaptainsLogger implements EventLogger {
   }
 
   pep_auth_start(request: FastifyRequest) {
-    this._log("pep_auth_start", {
+    this._log("pep_auth_start_test", {
       log_made_by: "auth-api",
       user: null,
       sessionid: "",
