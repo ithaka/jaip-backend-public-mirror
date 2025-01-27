@@ -1,6 +1,5 @@
 import { EventLogger } from "../event_logger";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "../../types/users";
 import { FastifyRequest } from "fastify";
 
 export class CaptainsLogger implements EventLogger {
