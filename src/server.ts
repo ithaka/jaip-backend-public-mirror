@@ -1,9 +1,4 @@
-import Fastify, {
-  FastifyInstance,
-  RouteShorthandOptions,
-  FastifyPluginAsync,
-  FastifyPluginOptions,
-} from "fastify";
+import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyPostgres from "@fastify/postgres";
 import fastifySwagger from "@fastify/swagger";

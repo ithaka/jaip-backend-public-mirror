@@ -27,15 +27,7 @@ export class CaptainsLogger implements EventLogger {
     };
   }
 
-  pep_auth_start(request: FastifyRequest) {
-    this._log("pep_auth_start_test", {
-      log_made_by: "auth-api",
-      user: null,
-      sessionid: "",
-      event_description: "attempting auth",
-      ...this._add_request_fields(request),
-    });
-  }
+  // ERRORS
   pep_server_error(request: FastifyRequest, error: Error) {
     this._log("pep_server_error", {
       log_made_by: "error-handler",
@@ -58,6 +50,22 @@ export class CaptainsLogger implements EventLogger {
       event_description: "error",
       type,
       error_message: error.message,
+    });
+  }
+
+  // AUTH
+  pep_auth_start(request: FastifyRequest) {
+    this._log("pep_auth_start_test", {
+      log_made_by: "auth-api",
+      event_description: "attempting auth",
+      ...this._add_request_fields(request),
+    });
+  }
+  pep_validate_subdomain_start(request: FastifyRequest, subdomain: string) {
+    this._log("pep_validate_subdomain_start", {
+      log_made_by: "auth-api",
+      event_description: `to get subdomain: ${subdomain}`,
+      ...this._add_request_fields(request),
     });
   }
 }
