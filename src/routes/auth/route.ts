@@ -42,9 +42,9 @@ const manageSession = async (
   let uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
-    const sessionService = await getSessionManagement(fastify);
-    console.log(sessionService);
-    if (!sessionService)
+    const [host, error] = await getSessionManagement(fastify);
+    if (error) throw error;
+    if (!host)
       throw new Error(
         `service discovery failed: No route found for ${session_manager}`,
       );
@@ -52,8 +52,7 @@ const manageSession = async (
     const query = uuid
       ? `mutation { session(uuid: "${uuid}") ${sessionQuery}}`
       : `mutation { session ${sessionQuery}}`;
-    const url = sessionService + "v1/graphql";
-    console.log(url);
+    const url = host + "v1/graphql";
     const response = await axios.post(url, {
       query,
     });
