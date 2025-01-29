@@ -5,7 +5,7 @@
     "build": "tsc",
     "dev": "LOG_LEVEL=info nodemon  --inspect src/server.ts",
     "test": "LOG_LEVEL=error jest src --maxWorkers=50%",
-    "test:ci": "LOG_LEVEL=error jest src --runInBand --coverage",
+    "test:ci": "LOG_LEVEL=error jest src --runInBand",
     "postinstall": "husky",
     "pre-commit": "lint-staged",
     "lint:ci": "eslint src",
