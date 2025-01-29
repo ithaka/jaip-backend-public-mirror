@@ -69,6 +69,12 @@ scan vulnerabilities:
     # replace / with - in branch name to be friendly w/ job
     - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
 
+test: 
+  stage: check
+  dependencies:
+    - build app image
+  script: yarn test:ci
+
 promote image:
   stage: promote
   extends: .promote-image

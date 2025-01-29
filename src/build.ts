@@ -1,8 +1,7 @@
-import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import Fastify from "fastify";
 import fastify_swagger from "@fastify/swagger";
 import fastify_swagger_ui from "@fastify/swagger-ui";
 import fastify_cookie from "@fastify/cookie";
-import fastify_postgres from "@fastify/postgres";
 
 import { swagger_opts } from "./utils/swagger_opts";
 
@@ -11,7 +10,9 @@ import plugins from "./plugins";
 import routes from "./routes";
 import "dotenv/config";
 
-function build(opts = {}) {
+import type { Services } from "./types/services";
+
+function build(opts = {}, services: Services) {
   const app = Fastify(opts);
 
   // Swagger
@@ -44,11 +45,7 @@ function build(opts = {}) {
   }
 
   // Database
-  const db_url = `postgres://${process.env.JAIP_DB_USERNAME}:${process.env.JAIP_DB_PASSWORD}@${process.env.JAIP_DB_LOCATION}:${process.env.JAIP_DB_PORT}/${process.env.JAIP_DB_NAME}`;
-  app.register(fastify_postgres, {
-    connectionString: db_url,
-    name: "jaip_db",
-  });
+  services.database.connect(app);
 
   return app;
 }

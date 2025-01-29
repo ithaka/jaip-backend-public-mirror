@@ -1,9 +1,18 @@
 import build from "./build";
+import { connect } from "./database/connection";
 
-const server = build({
-  logger: true,
-  trustProxy: true,
-});
+const services = {
+  database: {
+    connect,
+  },
+};
+const server = build(
+  {
+    logger: true,
+    trustProxy: true,
+  },
+  services,
+);
 
 const start = async () => {
   try {
