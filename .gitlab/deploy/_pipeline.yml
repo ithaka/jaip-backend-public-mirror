@@ -73,6 +73,9 @@ test:
   stage: check
   dependencies:
     - build app image
+  tags:
+    - test-runner
+  before_script: yarn install
   script: yarn test:ci
 
 promote image:
