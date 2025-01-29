@@ -33,6 +33,7 @@ spec:
     - api:session-service-gql
   dependsOn:
     - component:session-service
+    - component:search3
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
