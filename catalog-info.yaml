@@ -48,8 +48,8 @@ metadata:
 spec:
   type: openapi
   owner: group:labs
-  lifecycle: ga
+  lifecycle: production
   system: jaip-backend
   definition:
-    $text: https://jaip-backend.apps.prod.cirrostratus.org/docs/json
+    $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
 
