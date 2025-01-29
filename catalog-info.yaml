@@ -1,0 +1,55 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: jaip-backend
+  title: JAIP Backend
+  description: The backend for the JAIP online application
+spec:
+  type: system
+  owner: jaip
+  system: jaip-backend
+  lifecycle: preview
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: jaip-backend
+  description: The JAIP Online Application Backend
+  annotations:
+    gitlab.com/project-id: "66184988"
+  links:
+    - url: https://jaip-backend.apps.prod.cirrostratus.org/
+      title: Production Application
+    - url: https://jaip-backend.apps.test.cirrostratus.org/
+      title: Test Application
+spec:
+  type: service
+  owner: jaip
+  lifecycle: preview
+  system: jaip-backend
+  providesApis:
+    - jaip-backend-api
+  consumesApis:
+    - session-service-gql
+  dependsOn:
+    - Component:session-service
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: jaip-backend-api
+  title: JAIP Backend API
+  description: API for accessing JAIP services
+  links:
+    - url: https://jaip-backend.apps.prod.cirrostratus.org/docs
+      title: Production Swagger
+    - url: https://jaip-backend.apps.test.cirrostratus.org/docs
+      title: Test Swagger
+spec:
+  type: openapi
+  owner: group:labs
+  lifecycle: ga
+  system: jaip-backend
+  definition:
+    $text: https://jaip-backend.apps.prod.cirrostratus.org/docs/json
+
