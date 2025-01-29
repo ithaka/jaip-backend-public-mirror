@@ -28,11 +28,11 @@ spec:
   lifecycle: preview
   system: jaip-backend
   providesApis:
-    - jaip-backend-api
+    - api:jaip-backend-api
   consumesApis:
-    - session-service-gql
+    - api:session-service-gql
   dependsOn:
-    - Component:session-service
+    - component:session-service
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
