@@ -1,13 +1,13 @@
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: jaip-backend
-  title: JAIP Backend
-  description: The backend for the JAIP online application
+  name: jaip
+  title: JAIP
+  description: The system for the JAIP web application.
 spec:
   type: system
   owner: jaip
-  system: jaip-backend
+  system: jaip
   lifecycle: preview
 ---
 apiVersion: backstage.io/v1alpha1
@@ -51,5 +51,8 @@ spec:
   lifecycle: production
   system: jaip-backend
   definition:
+  # This is currently using the test URL. This should be updated to prod once it's actually in use,
+  # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
+  # See: https://github.com/backstage/backstage/issues/17736
     $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
 
