@@ -76,6 +76,8 @@ test:
   image: $IMAGE_TAG
   tags:
     - test-runner
+  before_script:
+    - yarn install
   script: yarn test:ci
 
 promote image:
