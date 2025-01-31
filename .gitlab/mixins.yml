@@ -17,6 +17,12 @@
       when: manual
     - if: $PIPELINE == 'deploy-prod'
 
+.cron:
+  # Run nightly.
+  # This is intended for nightly cron jobs.
+  rules:
+    - if: $PIPELINE == 'nightly_trivy'
+
 # ---- ENV ---------------------------------------------------------------------
 # Mixins which supply context-specific environment variables.
 .ephemeral-env:

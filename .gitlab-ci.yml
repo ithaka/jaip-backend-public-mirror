@@ -79,3 +79,11 @@ trigger undeploy staging:
     - if: $PIPELINE == 'undeploy-test'
   trigger:
     include: .gitlab/undeploy/persistent.yml
+
+# Nightly cron job that only runs the build and post-build stages in .gitlab/deploy/_pipeline.yml.
+nightly cron:
+  extends:
+    - .cron
+  trigger:
+    include: .gitlab/deploy/cron.yml
+

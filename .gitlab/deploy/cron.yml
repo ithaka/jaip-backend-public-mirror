@@ -1,0 +1,52 @@
+# This file describes jobs needed to check that our app image has no new vulnerabilities. It is an abridged version of .gitlab/deploy/pipeline.yml.
+
+include:
+  - project: capstan/pow/gitlab-templates
+    file: /build-image/template.yml
+    ref: build-image-v3
+  - project: capstan/pow/gitlab-templates
+    file: /vulnerability-scanner/template.yml
+    ref: vulnerability-scanner-v1
+
+stages:
+  - build
+  - post-build
+
+default:
+  tags:
+    - prod-runner
+
+# See Dockerfile. Note that the contents of the repository are _ignored by
+# default_ and only built into the app when explicitly exempted in the
+# .dockerignore. This is because the top-level repo contains lots of apparatus
+# for test, CI, etc. that we don't actually need to deploy. In other words, if
+# you have reached this comment because you're confused that your app builds
+# fine locally with npm run build but isn't deploying properly, check the
+# .dockerignore and consider whether you have recently added files or
+# directories that you need to build.
+build app image:
+  stage: build
+  extends: .build-image
+  variables:
+    CONTEXT: .
+    DOCKERFILE: Dockerfile
+    # We namespace the nightly scan image tag so that nightly rebuilds aren't overwriting the actual canonical tag that we use for deployment.
+    IMAGE_TAG: $DOCKER_VIRTUAL/$CI_PROJECT_PATH:$CI_COMMIT_SHA-nightly-scan
+    DOCKER_REPOSITORY: $CI_PROJECT_PATH
+
+
+
+scan vulnerabilities:
+  stage: post-build
+  extends: .vulnerability-scanner
+  dependencies:
+    - build app image
+  variables:
+    SEVERITY: critical high unknown
+    FAIL_ON_SEVERITY: critical high unknown
+    DOCKER_REPOSITORY: $CI_PROJECT_PATH
+    IMAGE_TAG: $DOCKER_VIRTUAL/$CI_PROJECT_PATH:$CI_COMMIT_SHA-nightly-scan
+  before_script:
+    # replace / with - in branch name to be friendly w/ job
+    - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
+
