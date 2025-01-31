@@ -9,8 +9,8 @@ include:
     ref: vulnerability-scanner-v1
 
 stages:
-  - build
-  - post-build
+  - prepare
+  - check
 
 default:
   tags:
@@ -25,7 +25,7 @@ default:
 # .dockerignore and consider whether you have recently added files or
 # directories that you need to build.
 build app image:
-  stage: build
+  stage: prepare
   extends: .build-image
   variables:
     CONTEXT: .
@@ -37,7 +37,7 @@ build app image:
 
 
 scan vulnerabilities:
-  stage: post-build
+  stage: check
   extends: .vulnerability-scanner
   dependencies:
     - build app image
