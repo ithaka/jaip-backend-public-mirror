@@ -34,6 +34,11 @@ spec:
   dependsOn:
     - component:session-service
     - component:search3
+  # The dependency on the ITHAKA CLI is a dev dependency. The Polaris sidecar
+  # is a production/test dependency.
+    - component:ithaka-cli
+    - component:polaris
+
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
