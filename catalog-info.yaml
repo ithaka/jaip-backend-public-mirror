@@ -2,11 +2,20 @@ apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: jaip
-  title: JAIP
+  title: JSTOR Access in Prisons (JAIP)
   description: The system for the JAIP web application.
+  tags:
+    - jaip
+    - online-pep
+    - node
+    - vue
+    - javascript
+    - typescript
+    - labs
+    - api
 spec:
   type: system
-  owner: jaip
+  owner: labs
   system: jaip
   lifecycle: preview
 ---
@@ -35,7 +44,8 @@ spec:
     - component:session-service
     - component:search3
   # The dependency on the ITHAKA CLI is a dev dependency. The Polaris sidecar
-  # is a production/test dependency.
+  # is a production/test dependency. Backstage isn't great at making environmental 
+  # distinctions.
     - component:ithaka-cli
     - component:polaris
 
@@ -61,4 +71,31 @@ spec:
   # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
   # See: https://github.com/backstage/backstage/issues/17736
     $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
-
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: jaip-test-db
+  description: Stores the data for the test environment of the JAIP application
+  environment: test
+  links:
+    - url: ./cloudformation/rds.test.yaml
+      title: RDS CloudFormation Template for the Test Database Cluster
+spec:
+  type: database
+  owner: labs
+  system: jaip
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: jaip-prod-db
+  description: Stores the data for the production environment of the JAIP application
+  environment: prod
+  links:
+    - url: ./cloudformation/rds.prod.yaml
+      title: RDS CloudFormation Template for the Production Database Cluster
+spec:
+  type: database
+  owner: labs
+  system: jaip
