@@ -20,6 +20,28 @@ spec:
   lifecycle: preview
 ---
 apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: jaip-backend-api
+  title: JAIP Backend API
+  description: API for accessing JAIP services
+  links:
+    - url: https://jaip-backend.apps.prod.cirrostratus.org/docs
+      title: Production Swagger
+    - url: https://jaip-backend.apps.test.cirrostratus.org/docs
+      title: Test Swagger
+spec:
+  type: openapi
+  owner: group:labs
+  lifecycle: production
+  system: jaip
+  definition:
+  # This is currently using the test URL. This should be updated to prod once it's actually in use,
+  # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
+  # See: https://github.com/backstage/backstage/issues/17736
+    $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
+---
+apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: jaip-backend
@@ -35,7 +57,7 @@ spec:
   type: service
   owner: jaip
   lifecycle: preview
-  system: jaip-backend
+  system: jaip
   providesApis:
     - api:jaip-backend-api
   consumesApis:
@@ -48,29 +70,6 @@ spec:
   # distinctions.
     - component:ithaka-cli
     - component:polaris
-
----
-apiVersion: backstage.io/v1alpha1
-kind: API
-metadata:
-  name: jaip-backend-api
-  title: JAIP Backend API
-  description: API for accessing JAIP services
-  links:
-    - url: https://jaip-backend.apps.prod.cirrostratus.org/docs
-      title: Production Swagger
-    - url: https://jaip-backend.apps.test.cirrostratus.org/docs
-      title: Test Swagger
-spec:
-  type: openapi
-  owner: group:labs
-  lifecycle: production
-  system: jaip-backend
-  definition:
-  # This is currently using the test URL. This should be updated to prod once it's actually in use,
-  # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
-  # See: https://github.com/backstage/backstage/issues/17736
-    $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource
