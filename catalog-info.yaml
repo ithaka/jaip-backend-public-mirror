@@ -39,7 +39,7 @@ spec:
   providesApis:
     - jaip-backend-api
   consumesApis:
-    - api:session-service-gql
+    - session-service-gql
   dependsOn:
     - component:session-service
     - component:search3
