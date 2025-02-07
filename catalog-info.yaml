@@ -37,7 +37,7 @@ spec:
   lifecycle: preview
   system: jaip
   providesApis:
-    - api:jaip-backend-api
+    - jaip-backend-api
   consumesApis:
     - api:session-service-gql
   dependsOn:
