@@ -37,9 +37,9 @@ spec:
   lifecycle: preview
   system: jaip
   providesApis:
-    - jaip-backend-api
+    - api:jaip-backend-api
   consumesApis:
-    - session-service-gql
+    - api:session-service-gql
   dependsOn:
     - component:session-service
     - component:search3
@@ -65,11 +65,69 @@ spec:
   owner: jaip
   lifecycle: production
   system: jaip
-  definition:
+  definition: |
+    openapi: 3.0.3
+    info:
+      title: jaip-backend on test
+      description: Swagger for jaip-backend
+      version: 2.0.0
+    components:
+      schemas: {}
+    paths:
+      "/auth/session":
+        get:
+          tags:
+          - public
+          description: 'Returns auth information based on ip address or email associated
+            with UUID cookie. <strong>NOTE: The response from this endpoint can depend
+            on certain cookies/headers that are provided with the request. This Swagger
+            UI is NOT capable of providing such cookies/headers.</strong>'
+          responses:
+            '200':
+              description: Default Response
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      session:
+                        type: string
+      "/subdomains":
+        get:
+          responses:
+            '200':
+              description: Default Response
+      "/healthz":
+        get:
+          tags:
+          - healthcheck
+          description: Returns health information for the service, including indicators
+            for service discovery and database access.
+          responses:
+            '200':
+              description: Default Response
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      server:
+                        type: boolean
+                      service_discovery:
+                        type: boolean
+                      db:
+                        type: boolean
+    tags:
+    - name: public
+      description: Endpoints exposed to the public
+    - name: private
+      description: Endpoints for internal use only
+    - name: healthcheck
+      description: Checks the health of service
   # This is currently using the test URL. This should be updated to prod once it's actually in use,
   # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
   # See: https://github.com/backstage/backstage/issues/17736
-    $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
+    # $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource
