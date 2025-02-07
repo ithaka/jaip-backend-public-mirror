@@ -69,7 +69,7 @@ spec:
   # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
   # See: https://github.com/backstage/backstage/issues/17736
   definition:
-    $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
+    $json: https://jaip-backend.apps.test.cirrostratus.org/docs/json
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource
