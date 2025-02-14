@@ -3,5 +3,20 @@
   "extends": [
     "github>ithaka/ithaka-renovate-presets//ithaka/base",
     "github>ithaka/ithaka-renovate-presets//ithaka/recommended"
+  ],
+  "packageRules": [
+    {
+      "groupName": "NodeJS dependencies",
+      "matchPackageNames": [
+        "node",
+        "docker-virtual.artifactory.acorn.cirrostratus.org/node"
+      ]
+    },
+    {
+      "matchDepNames": [
+        "node"
+      ],
+      "allowedVersions": "<23"
+    }
   ]
 }
