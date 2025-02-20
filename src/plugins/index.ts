@@ -4,12 +4,13 @@ import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
 
 const plugins: {
   [key: string]: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plugin: FastifyPluginAsync<any>;
     options: FastifyPluginOptions;
   };
 } = {
-  logging,
   errorHandlerPlugin,
+  logging,
 };
 
 export default plugins;

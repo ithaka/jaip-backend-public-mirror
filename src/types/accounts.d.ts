@@ -154,9 +154,6 @@ export interface AccountCredentialShibboleth extends AccountCredential {
   entity: string;
 }
 
-export interface AccountCredentialShibbolethIndividual
-  extends AccountCredential {}
-
 export interface AccountCredentialReferrer extends AccountCredential {
   referrer: string;
 }
@@ -186,8 +183,6 @@ export interface AccountCredentialOAuth extends AccountCredential {
   oAuthProvider: string;
 }
 
-export interface AccountCredentialOAuthProvisional extends AccountCredential {}
-
 export interface AccountCredentialJstorInstitutionIndividualPairing
   extends AccountCredential {
   individualId: string;
@@ -201,10 +196,6 @@ export interface AccountCredentialLti extends AccountCredential {
   deploymentId: string;
   appKey: string;
 }
-
-export interface AccountCredentialGeneric extends AccountCredential {}
-
-export interface AccountCredentialAccountId extends AccountCredential {}
 
 export interface AccountCredentialType {
   value: string;

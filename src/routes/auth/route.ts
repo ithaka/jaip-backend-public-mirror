@@ -1,6 +1,5 @@
 import {
   FastifyInstance,
-  FastifyReply,
   FastifyRequest,
   RouteShorthandOptions,
 } from "fastify";
@@ -104,6 +103,9 @@ const getEmailFromSession = (session: Session): string[] => {
 const getEntity = async (
   db: PostgresDb,
   arr: string[],
+  // This is a temporary query and will be replaed with the actual query
+  // In the meantime, we don't need to type this.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<[QueryResult<any>, Error | null]> => {
   const jstor_id_query =
     "SELECT * FROM whole_entities WHERE jstor_id = ANY($1) ORDER BY id DESC LIMIT 1";
@@ -130,48 +132,44 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     },
   };
 
-  fastify.get(
-    "/auth/session",
-    opts,
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      fastify.eventLogger.pep_auth_start(request);
-      let session = {} as Session;
+  fastify.get("/auth/session", opts, async (request: FastifyRequest) => {
+    fastify.eventLogger.pep_auth_start(request);
+    let session = {} as Session;
 
-      try {
-        const [returned_session, err] = await manageSession(fastify, request);
-        if (err) {
-          throw err;
-        }
-        session = returned_session;
+    try {
+      const [returned_session, err] = await manageSession(fastify, request);
+      if (err) {
+        throw err;
+      }
+      session = returned_session;
 
-        const emails = getEmailFromSession(session);
-        if (emails.length) {
-          const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
-          if (error) {
-            throw error;
-          }
-          console.log(result.rows);
+      const emails = getEmailFromSession(session);
+      if (emails.length) {
+        const [result, error] = await getEntity(fastify.pg.jaip_db, emails);
+        if (error) {
+          throw error;
         }
-
-        const codes = getCodeFromSession(session);
-        if (codes.length) {
-          const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
-          console.log(result.rows);
-          if (error) {
-            throw error;
-          }
-        }
-      } catch (err) {
-        const error = ensure_error(err);
-        fastify.eventLogger.pep_error("auth_session", error);
-        return err;
+        console.log(result.rows);
       }
 
-      return {
-        session,
-      };
-    },
-  );
+      const codes = getCodeFromSession(session);
+      if (codes.length) {
+        const [result, error] = await getEntity(fastify.pg.jaip_db, codes);
+        console.log(result.rows);
+        if (error) {
+          throw error;
+        }
+      }
+    } catch (err) {
+      const error = ensure_error(err);
+      fastify.eventLogger.pep_error("auth_session", error);
+      return err;
+    }
+
+    return {
+      session,
+    };
+  });
 
   opts.schema = {
     description: `Returns subdomain validation. ${publicEndpointDisclaimer}`,
@@ -187,7 +185,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
     },
   };
 
-  fastify.get("/subdomains", async (req, reply) => {
+  fastify.get("/subdomains", async (req) => {
     const host = req.headers.host || "";
     const subdomain = host.split(".").slice(0, -2).join(".");
 

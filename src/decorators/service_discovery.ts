@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ensure_error } from "../utils";
+import { JSTORInstance, JSTORInstanceError } from "../types/services";
 declare module "fastify" {
   interface FastifyInstance {
     discover(service: string): Promise<{
@@ -14,19 +15,23 @@ export default async function (
 ): Promise<{ route: string; error: Error | null }> {
   const url = `http://localhost:8888/v1/apps/${service}/instances`;
   try {
-    const { data, status } = await axios.get(url);
+    const {
+      data,
+      status,
+    }: { data: JSTORInstance[] | JSTORInstanceError; status: number } =
+      await axios.get(url);
     if (status !== 200) {
-      const msg = data.error
-        ? data.error
-        : "Service discovery failed: Status code not 200";
+      const msg =
+        "error" in data
+          ? data.error
+          : "Service discovery failed: Status code not 200";
       throw new Error(msg);
-    }
-    if (data.instances && !data.instances.length) {
-      throw new Error("Service discovery failed: No instances found");
     }
     if (Array.isArray(data)) {
       if (data.length) {
-        const homePageUrl = data.find((instance: any) => instance.homePageUrl);
+        const homePageUrl = data.find(
+          (instance: JSTORInstance) => instance.homePageUrl,
+        );
         if (homePageUrl) {
           return {
             route: homePageUrl.homePageUrl,

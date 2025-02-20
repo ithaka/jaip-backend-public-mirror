@@ -1,22 +1,8 @@
 import fastify_plugin from "fastify-plugin";
-import {
-  FastifyError,
-  FastifyInstance,
-  FastifyPluginAsync,
-  FastifyReply,
-  FastifyRequest,
-} from "fastify";
+import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type { ErrorHandlerPluginOptions } from "../types/plugins";
 
-interface ErrorHandlerOptions {
-  environment: string;
-  errorHandler?: (
-    err: FastifyError,
-    request: FastifyRequest,
-    reply: FastifyReply,
-  ) => void;
-}
-
-const errorHandlerPlugin: FastifyPluginAsync<ErrorHandlerOptions> =
+const errorHandlerPlugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
   fastify_plugin(async (fastify: FastifyInstance) => {
     fastify.setErrorHandler((err, request, reply) => {
       fastify.log.error(err);
