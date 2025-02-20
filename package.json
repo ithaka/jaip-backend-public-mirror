@@ -7,7 +7,7 @@
     "test": "LOG_LEVEL=error jest src --maxWorkers=50%",
     "test:ci": "LOG_LEVEL=error jest src --runInBand",
     "postinstall": "husky",
-    "pre-commit": "lint-staged format type-check",
+    "pre-commit": "lint-staged",
     "type-check": "tsc --noEmit",
     "lint:ci": "eslint src",
     "lint": "yarn lint:ci --fix",
