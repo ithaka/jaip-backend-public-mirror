@@ -2,14 +2,15 @@ import fastify_plugin from "fastify-plugin";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import type { ErrorHandlerPluginOptions } from "../types/plugins";
 
-const errorHandlerPlugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
-  fastify_plugin(async (fastify: FastifyInstance) => {
+const errorHandlerPlugin: FastifyPluginAsync<any> = fastify_plugin(
+  async (fastify: FastifyInstance) => {
     fastify.setErrorHandler((err, request, reply) => {
       fastify.log.error(err);
       fastify.eventLogger.pep_server_error(request, err);
       reply.status(err.statusCode || 500).send(err.message);
     });
-  });
+  },
+);
 
 const options = { environment: process.env.NODE_ENV || "dev" };
 const plugin = errorHandlerPlugin;
