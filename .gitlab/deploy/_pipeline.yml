@@ -69,15 +69,15 @@ scan vulnerabilities:
     # replace / with - in branch name to be friendly w/ job
     - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
 
-# Run eslint
-lint:
-  extends:
-    - .test
-  script: yarn lint:ci
-
 unit tests:
-  extends:
-    - .test
+  stage: check
+  dependencies:
+    - build app image
+  image: $IMAGE_TAG
+  tags:
+    - test-runner
+  before_script:
+    - yarn install
   script: yarn test:ci
 
 promote image:
