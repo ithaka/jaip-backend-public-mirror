@@ -13,9 +13,7 @@
       ]
     },
     {
-      "matchDepNames": [
-        "node"
-      ],
+      "matchDepNames": ["node"],
       "allowedVersions": "<23"
     }
   ]
