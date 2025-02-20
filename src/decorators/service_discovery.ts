@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { ensure_error } from "../utils";
 declare module "fastify" {
   interface FastifyInstance {
     discover(service: string): Promise<{
@@ -9,12 +9,20 @@ declare module "fastify" {
   }
 }
 
-export default async function (service: string) {
+export default async function (
+  service: string,
+): Promise<{ route: string; error: Error | null }> {
   const url = `http://localhost:8888/v1/apps/${service}/instances`;
   try {
     const { data, status } = await axios.get(url);
     if (status !== 200) {
-      throw new Error("Service discovery failed: Status code not 200");
+      const msg = data.error
+        ? data.error
+        : "Service discovery failed: Status code not 200";
+      throw new Error(msg);
+    }
+    if (data.instances && !data.instances.length) {
+      throw new Error("Service discovery failed: No instances found");
     }
     if (Array.isArray(data)) {
       if (data.length) {
@@ -36,10 +44,10 @@ export default async function (service: string) {
       throw new Error("Service discovery failed: Response is not an array");
     }
   } catch (err) {
-    console.log(err);
+    const error = ensure_error(err);
     return {
       route: "",
-      error: err,
+      error,
     };
   }
 }

@@ -39,7 +39,7 @@ const manageSession = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
 ): Promise<[Session, Error | null]> => {
-  let uuid = request.cookies.uuid || "";
+  const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
     const [host, error] = await getSessionManagement(fastify);
@@ -74,7 +74,7 @@ const manageSession = async (
 };
 
 const getCodeFromSession = (session: Session): string[] => {
-  let codes = [];
+  const codes = [];
   if (session.userAccount?.code) {
     codes.push(session.userAccount.code);
   }

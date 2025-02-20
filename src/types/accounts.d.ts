@@ -18,10 +18,10 @@ export interface Account {
 }
 
 export interface IndividualAccount extends Account {
-  emailVerified: Boolean;
+  emailVerified: boolean;
   tcAcceptDate: Date;
-  isAdminUser: Boolean;
-  sharedSignon: Boolean;
+  isAdminUser: boolean;
+  sharedSignon: boolean;
 }
 
 export interface GroupAccount extends Account {
@@ -71,10 +71,10 @@ export interface AuthenticatedAccount extends Account {
 }
 
 export interface AuthenticatedIndividualAccount extends AuthenticatedAccount {
-  emailVerified: Boolean;
+  emailVerified: boolean;
   tcAcceptDate: Date;
-  isAdminUser: Boolean;
-  sharedSignon: Boolean;
+  isAdminUser: boolean;
+  sharedSignon: boolean;
 }
 
 export interface AuthenticatedGroupAccount extends AuthenticatedAccount {
@@ -147,7 +147,7 @@ export interface AccountCredentialUserPass extends AccountCredential {
 
 export interface AccountCredentialIPRange extends AccountCredential {
   ipAddress: string;
-  allow: Boolean;
+  allow: boolean;
 }
 
 export interface AccountCredentialShibboleth extends AccountCredential {
@@ -162,7 +162,7 @@ export interface AccountCredentialReferrer extends AccountCredential {
 }
 
 export interface AccountCredentialPrebakedSession extends AccountCredential {
-  mom: Boolean;
+  mom: boolean;
 }
 
 export interface AccountCredentialWebCrawler extends AccountCredential {
@@ -218,7 +218,7 @@ export interface Entitlement {
 }
 
 export interface JPASS {
-  active: Boolean;
+  active: boolean;
   jpassDownloadCount: number;
 }
 
@@ -252,7 +252,7 @@ export interface License extends LicenseSubscription {
   subType: string;
   tags: string[];
   updateTime: Date;
-  allowPrivateContent: Boolean;
+  allowPrivateContent: boolean;
   priority: number;
 }
 
@@ -267,11 +267,11 @@ export interface LicenseEntitlement {
 }
 
 export interface LicenseTerm {
-  inheritable: Boolean;
+  inheritable: boolean;
   startDate: Date;
-  ignoreStart: Boolean;
+  ignoreStart: boolean;
   endDate: Date;
-  ignoreEnd: Boolean;
+  ignoreEnd: boolean;
   duration: number;
   gracePeriod: number;
   viewAccess: LicenseAccessLimitType;

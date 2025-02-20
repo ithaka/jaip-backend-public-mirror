@@ -13,13 +13,13 @@ export interface Session {
   requestId: string;
   ip: string;
   userAgentString: string;
-  termsConditionsAccepted: Boolean;
+  termsConditionsAccepted: boolean;
   lastAccessTime: Date;
   lastUpdatedTime: Date;
   startedTime: Date;
   validUntil: Date;
   lastEvaluation: Date;
-  authenticated: Boolean;
+  authenticated: boolean;
   jpass: JPASS;
   attributes: string;
   reasonsForAccessByIdentity: string;
