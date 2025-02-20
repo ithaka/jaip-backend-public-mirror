@@ -76,3 +76,15 @@
 
 # ---- CHECKS ------------------------------------------------------------------
 # Must stay synced with Dockerfile
+.test:
+  extends: 
+    - .test-rules
+    - .test-env
+  stage: check
+  image: $IMAGE_TAG
+  tags: 
+    - test-runner
+  dependencies:
+    - build app image
+  before_script:
+    - yarn install
