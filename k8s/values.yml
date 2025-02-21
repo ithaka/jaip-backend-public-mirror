@@ -37,6 +37,8 @@ extraEnv:
       secretKeyRef:
         key: JAIP_DB_PORT
         name: jaip-database-creds
+  - name: DATABASE_URL
+    value: postgres://$JAIP_DB_USERNAME:$JAIP_DB_PASSWORD@$JAIP_DB_LOCATION:$JAIP_DB_PORT/$JAIP_DB_NAME
 
 autoscaling:
   enabled: true
