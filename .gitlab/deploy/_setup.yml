@@ -12,7 +12,7 @@ variables:
   TAG: $CI_COMMIT_SHA
   IMAGE_TAG: $DOCKER_VIRTUAL/$CI_PROJECT_PATH:$CI_COMMIT_SHA
   MANIFEST_OUTPUT_DIRECTORY: $CI_PROJECT_DIR/manifests
-  DEFAULT_HELM_TEMPLATE_OPTIONS: "-f $CI_PROJECT_DIR/k8s/values.yml -f $CI_PROJECT_DIR/k8s/values-$TARGET_CLUSTER.yml --set extraEnv[0].valueFrom.secretKeyRef.name=$DATABASE_SECRET_NAME --set extraEnv[1].valueFrom.secretKeyRef.name=$DATABASE_SECRET_NAME --set extraEnv[2].valueFrom.secretKeyRef.name=$DATABASE_SECRET_NAME --set extraEnv[3].valueFrom.secretKeyRef.name=$DATABASE_SECRET_NAME"
+  DEFAULT_HELM_TEMPLATE_OPTIONS: "-f $CI_PROJECT_DIR/k8s/values.yml -f $CI_PROJECT_DIR/k8s/values-$TARGET_CLUSTER.yml"
 
   # Remaining variables
   APP_IMAGE: $IMAGE_TAG
