@@ -10,8 +10,6 @@ import plugins from "./plugins";
 import routes from "./routes";
 import "dotenv/config";
 
-import type { Services } from "./types/services";
-
 function build(opts = {}) {
   const app = Fastify(opts);
 

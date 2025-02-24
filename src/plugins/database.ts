@@ -16,7 +16,7 @@ declare module "fastify" {
 const plugin: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance, options: FastifyPluginOptions) => {
     const prisma = new PrismaClient();
-
+    console.log(options);
     await prisma.$connect();
 
     // Make Prisma Client available through the fastify server instance: server.prisma
