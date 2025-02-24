@@ -19,7 +19,7 @@ const plugin: FastifyPluginAsync = fp(
     console.log(options);
     await prisma.$connect();
 
-    // Make Prisma Client available through the fastify server instance: server.prisma
+    // Make Prisma Client available through the fastify server instance: fastify.prisma
     fastify.decorate("prisma", prisma);
     fastify.addHook("onClose", async (fastify) => {
       await fastify.prisma.$disconnect();

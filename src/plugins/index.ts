@@ -1,6 +1,7 @@
 import logging from "./logging";
 import errorHandlerPlugin from "./error_handling";
 import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
+import database from "./database";
 
 const plugins: {
   [key: string]: {
@@ -11,6 +12,7 @@ const plugins: {
 } = {
   errorHandlerPlugin,
   logging,
+  database,
 };
 
 export default plugins;
