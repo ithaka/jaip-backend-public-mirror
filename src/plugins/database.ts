@@ -17,6 +17,8 @@ const plugin: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance, options: FastifyPluginOptions) => {
     const prisma = new PrismaClient();
     console.log(options);
+    console.log(process.env.DATABASE_URL);
+    console.log(process.env);
     await prisma.$connect();
 
     // Make Prisma Client available through the fastify server instance: fastify.prisma
