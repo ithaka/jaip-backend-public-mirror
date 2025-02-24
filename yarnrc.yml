@@ -6,6 +6,8 @@ packageExtensions:
     dependencies:
       source-map-support: "*"
 
+nodeLinker: node-modules
+
 supportedArchitectures:
   os:
     - darwin
