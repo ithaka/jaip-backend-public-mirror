@@ -85,6 +85,8 @@ unit tests:
   dependencies:
     - build app image
   image: $IMAGE_TAG
+  variables:
+    DB_MOCK: true
   tags:
     - test-runner
   before_script:

@@ -19,12 +19,14 @@ const plugin: FastifyPluginAsync = fp(
     console.log(options);
     console.log(process.env.DATABASE_URL);
     console.log(process.env);
-    await prisma.$connect();
+    if (!process.env.DB_MOCK) {
+      await prisma.$connect();
+    }
 
     // Make Prisma Client available through the fastify server instance: fastify.prisma
     fastify.decorate("prisma", prisma);
     fastify.addHook("onClose", async (fastify) => {
-      await fastify.prisma.$disconnect();
+      if (!process.env.DB_MOCK) await fastify.prisma.$disconnect();
     });
   },
 );
