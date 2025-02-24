@@ -12,7 +12,7 @@ import "dotenv/config";
 
 import type { Services } from "./types/services";
 
-function build(opts = {}, services: Services) {
+function build(opts = {}) {
   const app = Fastify(opts);
 
   // Swagger
@@ -43,9 +43,6 @@ function build(opts = {}, services: Services) {
   for (const route of routes) {
     app.register(route, opts);
   }
-
-  // Database
-  services.database.connect(app);
 
   return app;
 }

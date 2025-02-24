@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,203 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model entities {
+  id                          Int                           @id @default(autoincrement())
+  entity_type                 entity_types?
+  name                        String                        @db.VarChar
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  facilities                  facilities?
+  groups_entities             groups_entities[]
+  statuses                    statuses[]
+  ungrouped_features_entities ungrouped_features_entities[]
+  users                       users?
+}
+
+model facilities {
+  jstor_id              String                  @unique(map: "facilities_jstor_id_uq") @db.VarChar
+  id                    Int                     @id(map: "pk_facilities")
+  updated_at            DateTime?               @default(now()) @db.Timestamp(6)
+  entities              entities                @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ip_bypass             ip_bypass[]
+  subdomains_facilities subdomains_facilities[]
+}
+
+model features {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique @db.VarChar
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+  display_name  String    @unique @db.VarChar
+  category      String?   @db.VarChar
+  description   String?
+  is_protected  Boolean
+  is_admin_only Boolean?
+  is_active     Boolean   @default(true)
+}
+
+model features_groups_entities {
+  group_id   Int
+  entity_id  Int
+  feature_id Int
+  enabled    Boolean?  @default(true)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@id([group_id, entity_id, feature_id])
+}
+
+model groups {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique(map: "groups_name_uq") @db.VarChar
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  is_active       Boolean           @default(true)
+  groups_entities groups_entities[]
+  statuses        statuses[]
+}
+
+model groups_entities {
+  id         Int         @id(map: "groups_entitites_pkey") @default(autoincrement())
+  group_id   Int?
+  entity_id  Int?
+  role       user_roles?
+  updated_at DateTime?   @default(now()) @db.Timestamp(6)
+  entities   entities?   @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "groups_entitites_entity_id_fkey")
+  groups     groups?     @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "groups_entitites_group_id_fkey")
+
+  @@index([id, group_id, entity_id], map: "groups_entitites_id_group_id_entity_id_idx")
+}
+
+model status_details {
+  id        Int       @id @default(autoincrement())
+  status_id Int?
+  type      String?   @db.VarChar
+  detail    String?
+  statuses  statuses? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model statuses {
+  id              Int              @id @default(autoincrement())
+  entity_id       Int?
+  jstor_item_id   String?          @db.VarChar
+  jstor_item_type jstor_types?
+  status          status_options?
+  group_id        Int?
+  created_at      DateTime?        @default(now()) @db.Timestamp(6)
+  status_details  status_details[]
+  entities        entities?        @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  groups          groups?          @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "statuses_group_fkey")
+
+  @@index([id, jstor_item_id, jstor_item_type, status, group_id], map: "statuses_id_jstor_item_id_jstor_item_type_status_group_idx")
+}
+
+model subdomains {
+  id                    Int                     @id @default(autoincrement())
+  subdomain             String                  @unique @db.VarChar
+  entity_type           entity_types?
+  is_active             Boolean?                @default(true)
+  created_at            DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at            DateTime?               @default(now()) @db.Timestamp(6)
+  subdomains_facilities subdomains_facilities[]
+}
+
+model subdomains_facilities {
+  subdomain   String     @db.VarChar
+  sitecode    String     @db.VarChar
+  facility_id Int
+  created_at  DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?  @default(now()) @db.Timestamp(6)
+  facilities  facilities @relation(fields: [facility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subdomains  subdomains @relation(fields: [subdomain], references: [subdomain], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([subdomain, sitecode])
+}
+
+model tokens {
+  id         Int       @id @default(autoincrement())
+  token      String    @db.VarChar
+  is_active  Boolean
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model ungrouped_features {
+  id                          Int                           @id @default(autoincrement())
+  name                        String                        @unique @db.VarChar
+  display_name                String                        @unique @db.VarChar
+  category                    String                        @db.VarChar
+  description                 String
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  is_active                   Boolean                       @default(true)
+  ungrouped_features_entities ungrouped_features_entities[]
+}
+
+model ungrouped_features_entities {
+  id                 Int                @default(autoincrement())
+  feature_id         Int
+  entity_id          Int
+  enabled            Boolean?           @default(true)
+  created_at         DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?          @default(now()) @db.Timestamp(6)
+  entities           entities           @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ungrouped_features ungrouped_features @relation(fields: [feature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([feature_id, entity_id])
+  @@index([id, feature_id, entity_id])
+}
+
+model users {
+  jstor_id   String    @unique(map: "users_jstor_id_uq") @db.VarChar
+  id         Int       @id(map: "pk_users")
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  entities   entities  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model alerts {
+  id         Int       @id @default(autoincrement())
+  text       String
+  status     String    @db.VarChar
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  expires_at DateTime? @default(dbgenerated("(CURRENT_DATE + '7 days'::interval)")) @db.Timestamp(6)
+}
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model fid {
+// }
+
+model ip_bypass {
+  id          Int         @id @default(autoincrement())
+  facility_id Int?
+  ip          String?     @db.VarChar
+  created_at  DateTime?   @default(now()) @db.Timestamp(6)
+  facilities  facilities? @relation(fields: [facility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum entity_types {
+  programs
+  users
+  facilities
+}
+
+enum jstor_types {
+  doi
+  headid
+  discipline
+}
+
+enum status_options {
+  Pending
+  Approved
+  Denied
+  Incomplete
+}
+
+enum user_roles {
+  admin
+  user
+  removed
 }
