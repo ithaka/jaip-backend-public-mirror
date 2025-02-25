@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { DBEntity } from "../../types/database";
 import { User } from "../../types/entities";
-import { UngroupedFeatureDetails } from "../../types/Features";
 import { Group } from "../../types/groups";
+import { UngroupedFeatureDetails } from "../../types/features";
 
 export const get_facility_query = (
   arr: string[],

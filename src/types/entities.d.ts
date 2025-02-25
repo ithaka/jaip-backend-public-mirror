@@ -1,5 +1,5 @@
 import type { Group } from "./groups";
-import type { UngroupedFeatureDetails } from "./Features";
+import type { UngroupedFeatureDetails } from "./features";
 
 export enum EntityType {
   users = "users",
