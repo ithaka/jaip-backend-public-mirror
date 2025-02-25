@@ -1,16 +1,15 @@
 ➤ YN0000: · Yarn 4.6.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + prisma@npm:6.4.1, @esbuild/aix-ppc64@npm:0.25.0, @esbuild/android-arm64@npm:0.25.0, @esbuild/android-arm@npm:0.25.0, @esbuild/android-x64@npm:0.25.0, and 118 more.
-➤ YN0000: └ Completed in 0s 718ms
+➤ YN0000: └ Completed in 1s 623ms
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ 99 packages were added to the project (+ 32.61 MiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0007: │ @prisma/engines@npm:6.4.1 must be built because it never has been before or the last one failed
 ➤ YN0007: │ esbuild@npm:0.25.0 must be built because it never has been before or the last one failed
 ➤ YN0007: │ prisma@npm:6.4.1 [dc3fc] must be built because it never has been before or the last one failed
-➤ YN0000: └ Completed in 1s 300ms
-➤ YN0000: · Done in 2s 119ms
+➤ YN0000: └ Completed in 1s 174ms
+➤ YN0000: · Done in 2s 874ms
 
 -- CreateEnum
 CREATE TYPE "entity_types" AS ENUM ('programs', 'users', 'facilities');
@@ -23,6 +22,17 @@ CREATE TYPE "status_options" AS ENUM ('Pending', 'Approved', 'Denied', 'Incomple
 
 -- CreateEnum
 CREATE TYPE "user_roles" AS ENUM ('admin', 'user', 'removed');
+
+-- CreateTable
+CREATE TABLE "alerts" (
+    "id" SERIAL NOT NULL,
+    "text" TEXT NOT NULL,
+    "status" VARCHAR NOT NULL,
+    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    "expires_at" TIMESTAMP(6) DEFAULT (CURRENT_DATE + '7 days'::interval),
+
+    CONSTRAINT "alerts_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "entities" (
@@ -91,7 +101,17 @@ CREATE TABLE "groups_entities" (
     "role" "user_roles",
     "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "groups_entitites_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "groups_entities_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ip_bypass" (
+    "id" SERIAL NOT NULL,
+    "facility_id" INTEGER,
+    "ip" VARCHAR,
+    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ip_bypass_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -186,27 +206,6 @@ CREATE TABLE "users" (
     CONSTRAINT "pk_users" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "alerts" (
-    "id" SERIAL NOT NULL,
-    "text" TEXT NOT NULL,
-    "status" VARCHAR NOT NULL,
-    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
-    "expires_at" TIMESTAMP(6) DEFAULT (CURRENT_DATE + '7 days'::interval),
-
-    CONSTRAINT "alerts_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "ip_bypass" (
-    "id" SERIAL NOT NULL,
-    "facility_id" INTEGER,
-    "ip" VARCHAR,
-    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "ip_bypass_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "facilities_jstor_id_uq" ON "facilities"("jstor_id");
 
@@ -218,6 +217,9 @@ CREATE UNIQUE INDEX "features_display_name_key" ON "features"("display_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "groups_name_uq" ON "groups"("name");
+
+-- CreateIndex
+CREATE INDEX "groups_entities_id_group_id_entity_id_idx" ON "groups_entities"("id", "group_id", "entity_id");
 
 -- CreateIndex
 CREATE INDEX "groups_entitites_id_group_id_entity_id_idx" ON "groups_entities"("id", "group_id", "entity_id");
@@ -244,10 +246,22 @@ CREATE UNIQUE INDEX "users_jstor_id_uq" ON "users"("jstor_id");
 ALTER TABLE "facilities" ADD CONSTRAINT "facilities_id_fkey" FOREIGN KEY ("id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entitites_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entitites_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_feature_id_fkey" FOREIGN KEY ("feature_id") REFERENCES "features"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entities_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "ip_bypass" ADD CONSTRAINT "ip_bypass_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "status_details" ADD CONSTRAINT "status_details_status_id_fkey" FOREIGN KEY ("status_id") REFERENCES "statuses"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -272,7 +286,4 @@ ALTER TABLE "ungrouped_features_entities" ADD CONSTRAINT "ungrouped_features_ent
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "ip_bypass" ADD CONSTRAINT "ip_bypass_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 

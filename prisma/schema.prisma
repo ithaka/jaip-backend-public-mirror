@@ -1,11 +1,19 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model alerts {
+  id         Int       @id @default(autoincrement())
+  text       String
+  status     String    @db.VarChar
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  expires_at DateTime? @default(dbgenerated("(CURRENT_DATE + '7 days'::interval)")) @db.Timestamp(6)
 }
 
 model entities {
@@ -15,6 +23,7 @@ model entities {
   created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
   updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
   facilities                  facilities?
+  features_groups_entities    features_groups_entities[]
   groups_entities             groups_entities[]
   statuses                    statuses[]
   ungrouped_features_entities ungrouped_features_entities[]
@@ -31,16 +40,17 @@ model facilities {
 }
 
 model features {
-  id            Int       @id @default(autoincrement())
-  name          String    @unique @db.VarChar
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
-  updated_at    DateTime? @default(now()) @db.Timestamp(6)
-  display_name  String    @unique @db.VarChar
-  category      String?   @db.VarChar
-  description   String?
-  is_protected  Boolean
-  is_admin_only Boolean?
-  is_active     Boolean   @default(true)
+  id                       Int                        @id @default(autoincrement())
+  name                     String                     @unique @db.VarChar
+  created_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  display_name             String                     @unique @db.VarChar
+  category                 String?                    @db.VarChar
+  description              String?
+  is_protected             Boolean
+  is_admin_only            Boolean?
+  is_active                Boolean                    @default(true)
+  features_groups_entities features_groups_entities[]
 }
 
 model features_groups_entities {
@@ -50,30 +60,47 @@ model features_groups_entities {
   enabled    Boolean?  @default(true)
   created_at DateTime? @default(now()) @db.Timestamp(6)
   updated_at DateTime? @default(now()) @db.Timestamp(6)
+  entities   entities  @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  features   features  @relation(fields: [feature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  groups     groups    @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([group_id, entity_id, feature_id])
 }
 
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model fid {
+// }
+
 model groups {
-  id              Int               @id @default(autoincrement())
-  name            String            @unique(map: "groups_name_uq") @db.VarChar
-  created_at      DateTime?         @default(now()) @db.Timestamp(6)
-  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
-  is_active       Boolean           @default(true)
-  groups_entities groups_entities[]
-  statuses        statuses[]
+  id                       Int                        @id @default(autoincrement())
+  name                     String                     @unique(map: "groups_name_uq") @db.VarChar
+  created_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  is_active                Boolean                    @default(true)
+  features_groups_entities features_groups_entities[]
+  groups_entities          groups_entities[]
+  statuses                 statuses[]
 }
 
 model groups_entities {
-  id         Int         @id(map: "groups_entitites_pkey") @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   group_id   Int?
   entity_id  Int?
   role       user_roles?
   updated_at DateTime?   @default(now()) @db.Timestamp(6)
-  entities   entities?   @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "groups_entitites_entity_id_fkey")
-  groups     groups?     @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "groups_entitites_group_id_fkey")
+  entities   entities?   @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  groups     groups?     @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@index([id, group_id, entity_id])
   @@index([id, group_id, entity_id], map: "groups_entitites_id_group_id_entity_id_idx")
+}
+
+model ip_bypass {
+  id          Int         @id @default(autoincrement())
+  facility_id Int?
+  ip          String?     @db.VarChar
+  created_at  DateTime?   @default(now()) @db.Timestamp(6)
+  facilities  facilities? @relation(fields: [facility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model status_details {
@@ -160,26 +187,6 @@ model users {
   id         Int       @id(map: "pk_users")
   updated_at DateTime? @default(now()) @db.Timestamp(6)
   entities   entities  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model alerts {
-  id         Int       @id @default(autoincrement())
-  text       String
-  status     String    @db.VarChar
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  expires_at DateTime? @default(dbgenerated("(CURRENT_DATE + '7 days'::interval)")) @db.Timestamp(6)
-}
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model fid {
-// }
-
-model ip_bypass {
-  id          Int         @id @default(autoincrement())
-  facility_id Int?
-  ip          String?     @db.VarChar
-  created_at  DateTime?   @default(now()) @db.Timestamp(6)
-  facilities  facilities? @relation(fields: [facility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum entity_types {
