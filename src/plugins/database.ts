@@ -1,9 +1,5 @@
 import fp from "fastify-plugin";
-import {
-  FastifyInstance,
-  FastifyPluginAsync,
-  FastifyPluginOptions,
-} from "fastify";
+import { FastifyPluginAsync } from "fastify";
 import { PrismaClient } from "@prisma/client";
 
 // Use TypeScript module augmentation to declare the type of server.prisma to be PrismaClient
@@ -13,23 +9,22 @@ declare module "fastify" {
   }
 }
 
-const plugin: FastifyPluginAsync = fp(
-  async (fastify: FastifyInstance, options: FastifyPluginOptions) => {
-    const prisma = new PrismaClient();
-    console.log(options);
-    if (!process.env.DB_MOCK) {
-      await prisma.$connect();
-    }
+const plugin: FastifyPluginAsync = fp(async (fastify, options) => {
+  const prisma = new PrismaClient(options);
+  if (!process.env.DB_MOCK) {
+    await prisma.$connect();
+  }
 
-    // Make Prisma Client available through the fastify server instance: fastify.prisma
-    fastify.decorate("prisma", prisma);
-    fastify.addHook("onClose", async (fastify) => {
-      if (!process.env.DB_MOCK) await fastify.prisma.$disconnect();
-    });
-  },
-);
+  // Make Prisma Client available through the fastify server instance: fastify.prisma
+  fastify.decorate("prisma", prisma);
+  fastify.addHook("onClose", async (fastify) => {
+    if (!process.env.DB_MOCK) await fastify.prisma.$disconnect();
+  });
+});
 
-const options = {};
+const options = {
+  log: ["query", "info", "warn", "error"],
+};
 
 export default {
   options,
