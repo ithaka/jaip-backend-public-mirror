@@ -73,42 +73,42 @@ include:
     project: capstan/pow/gitlab-templates
     ref: promote-image-v3
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "build app image"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "render local chart"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "render capstan chart"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "scan vulnerabilities"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "lint"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "unit tests"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "promote image"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-    file: template.yml
+    file: template.gitlab-ci.yml
     ref: "2"
     inputs:
       job_name: "wait for eureka"
