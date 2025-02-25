@@ -97,6 +97,8 @@ promote image:
   stage: promote
   extends: .promote-image
 
+# There shouldn't be a need for this to be in a separate stage, but it consistently failed
+# in the post-deploy stage and needed to be re-run.
 wait for eureka:
   extends: .check-healthy-deployment
   stage: verify
