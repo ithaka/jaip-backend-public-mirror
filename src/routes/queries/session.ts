@@ -1,6 +1,24 @@
 export const sessionQuery = `{
     ip
     uuid
+    userAccount {
+      code
+      contact {
+        email
+      }
+    }
+    authenticatedAccounts {
+      code
+      contact {
+        email
+      }
+    }
+}`;
+// This may not be necessary, but it's included for now because it was a pain to
+// put together the full query and it may be useful in the future.
+export const fullSessionQuery = `{
+    ip
+    uuid
     previousSessionId
     requestId
     userAgentString
