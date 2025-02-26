@@ -290,6 +290,10 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         reply.code(403);
       }
     }
+    fastify.eventLogger.pep_auth_complete(request, {
+      reply,
+      sessionid: session.uuid,
+    });
     return {
       currentUser,
     };

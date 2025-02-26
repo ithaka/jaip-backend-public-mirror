@@ -1,4 +1,5 @@
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { User } from "../types/entities";
 export interface CaptainsLog {
   origin: string;
   eventtype: string;
@@ -7,6 +8,13 @@ export interface CaptainsLog {
   eventid: string;
   tstamp_usec: Date;
   delivered_by: string;
+}
+
+export interface LogPayload {
+  request?: FastifyRequest;
+  reply?: FastifyReply;
+  user?: User;
+  sessionid?: string;
 }
 export interface EventLogger {
   // ERRORS
@@ -18,12 +26,15 @@ export interface EventLogger {
     type: string,
     error: Error,
   ) => void;
-  pep_unauthorized_error: (request: FastifyRequest, payload: object) => void;
-  pep_forbidden_error: (request: FastifyRequest, payload: object) => void;
+  pep_unauthorized_error: (
+    request: FastifyRequest,
+    payload: LogPayload,
+  ) => void;
+  pep_forbidden_error: (request: FastifyRequest, payload: LogPayload) => void;
 
   // AUTH
   pep_auth_start: (request: FastifyRequest) => void;
-  pep_auth_complete: (request: FastifyRequest, payload: object) => void;
+  pep_auth_complete: (request: FastifyRequest, payload: LogPayload) => void;
   pep_validate_subdomain_start: (
     request: FastifyRequest,
     subdomain: string,
