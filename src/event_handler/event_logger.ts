@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 export interface CaptainsLog {
   origin: string;
   eventtype: string;
