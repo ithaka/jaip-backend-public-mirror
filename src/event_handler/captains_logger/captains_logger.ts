@@ -36,7 +36,6 @@ export class CaptainsLogger implements EventLogger {
   }
 
   _add_reply_fields(reply: FastifyReply) {
-    console.log("XXXXXXXX");
     return {
       response_status: reply.statusCode,
       response_headers: reply.getHeaders(),
