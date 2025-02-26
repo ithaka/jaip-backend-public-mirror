@@ -36,6 +36,7 @@ export class CaptainsLogger implements EventLogger {
   }
 
   _add_reply_fields(reply: FastifyReply) {
+    console.log("XXXXXXXX");
     return {
       response_status: reply.statusCode,
       response_headers: reply.getHeaders(),
@@ -59,17 +60,26 @@ export class CaptainsLogger implements EventLogger {
       error_message: error.message,
     });
   }
-  pep_forbidden_error(request: FastifyRequest, payload: LogPayload) {
+  pep_forbidden_error(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) {
     this._log("pep_error", {
       log_made_by: "error-handler",
       event_description: "error",
       type: "pep_forbidden_error",
       ...this._add_request_fields(request),
+      ...this._add_reply_fields(reply),
       ...payload,
     });
   }
 
-  pep_unauthorized_error(request: FastifyRequest, payload: LogPayload) {
+  pep_unauthorized_error(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) {
     this._log("pep_error", {
       log_made_by: "error-handler",
       event_description: "error",
@@ -81,6 +91,7 @@ export class CaptainsLogger implements EventLogger {
 
   pep_error(
     request: FastifyRequest,
+    reply: FastifyReply,
     payload: object,
     type: string,
     error: Error,
@@ -103,12 +114,16 @@ export class CaptainsLogger implements EventLogger {
       ...this._add_request_fields(request),
     });
   }
-  pep_auth_complete(request: FastifyRequest, payload: LogPayload) {
+  pep_auth_complete(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) {
     this._log("pep_auth_complete", {
       log_made_by: "auth-api",
       event_description: "user authenticated and authorized",
       ...this._add_request_fields(request),
-      ...this._add_reply_fields(payload.reply!),
+      ...this._add_reply_fields(reply),
       ...payload,
     });
   }

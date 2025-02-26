@@ -11,8 +11,6 @@ export interface CaptainsLog {
 }
 
 export interface LogPayload {
-  request?: FastifyRequest;
-  reply?: FastifyReply;
   user?: User;
   sessionid?: string;
 }
@@ -22,19 +20,29 @@ export interface EventLogger {
   pep_healthcheck_error: (type: string, error: Error) => void;
   pep_error: (
     request: FastifyRequest,
+    reply: FastifyReply,
     payload: object,
     type: string,
     error: Error,
   ) => void;
   pep_unauthorized_error: (
     request: FastifyRequest,
+    reply: FastifyReply,
     payload: LogPayload,
   ) => void;
-  pep_forbidden_error: (request: FastifyRequest, payload: LogPayload) => void;
+  pep_forbidden_error: (
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) => void;
 
   // AUTH
   pep_auth_start: (request: FastifyRequest) => void;
-  pep_auth_complete: (request: FastifyRequest, payload: LogPayload) => void;
+  pep_auth_complete: (
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) => void;
   pep_validate_subdomain_start: (
     request: FastifyRequest,
     subdomain: string,

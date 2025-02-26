@@ -20,6 +20,7 @@ import {
   map_entities,
 } from "../queries/entities";
 import { ADMIN_SUBDOMAINS, ENTITY_TYPES } from "../../consts";
+import { LogPayload } from "../../event_handler";
 
 const session_manager = "session-service";
 
@@ -258,42 +259,36 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // Auth Session Route
   fastify.get("/auth/session", opts, async (request, reply) => {
     fastify.eventLogger.pep_auth_start(request);
+    const log_payload: LogPayload = {};
     const [session, err] = await manageSession(fastify, request);
     if (err) {
       throw err;
     }
-
+    log_payload.sessionid = session.uuid;
     const [currentUser, error] = await getCurrentUser(
       fastify,
       request,
       session,
     );
+    if (currentUser) {
+      log_payload.user = currentUser;
+    }
     if (error) {
       reply.code(500);
-      fastify.eventLogger.pep_error(request, { reply }, "auth", error);
+      fastify.eventLogger.pep_error(request, reply, log_payload, "auth", error);
       return error;
     } else if (!currentUser) {
-      fastify.eventLogger.pep_unauthorized_error(request, {
-        reply,
-        sessionid: session.uuid,
-      });
+      fastify.eventLogger.pep_unauthorized_error(request, reply, log_payload);
       reply.code(401);
     } else {
       const subdomain = get_subdomain(request.headers.host || "");
       const is_admin_subdomain = ADMIN_SUBDOMAINS.includes(subdomain);
       if (is_admin_subdomain && currentUser.type !== ENTITY_TYPES.users) {
-        fastify.eventLogger.pep_forbidden_error(request, {
-          reply,
-          user: currentUser,
-          sessionid: session.uuid,
-        });
+        fastify.eventLogger.pep_forbidden_error(request, reply, log_payload);
         reply.code(403);
       }
     }
-    fastify.eventLogger.pep_auth_complete(request, {
-      reply,
-      sessionid: session.uuid,
-    });
+    fastify.eventLogger.pep_auth_complete(request, reply, log_payload);
     return {
       currentUser,
     };
@@ -333,7 +328,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       return result;
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, { reply }, "subdomains", error);
+      fastify.eventLogger.pep_error(request, reply, {}, "subdomains", error);
       return err;
     }
   });

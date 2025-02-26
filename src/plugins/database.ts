@@ -23,7 +23,7 @@ const plugin: FastifyPluginAsync = fp(async (fastify, options) => {
 });
 
 const options = {
-  log: ["query", "info", "warn", "error"],
+  // log: ["query", "info", "warn", "error"],
 };
 
 export default {
