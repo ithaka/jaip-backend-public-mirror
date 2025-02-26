@@ -64,7 +64,7 @@ export class CaptainsLogger implements EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) {
-    this._log("pep_error", {
+    this._log("pep_forbidden_error", {
       log_made_by: "error-handler",
       event_description: "error",
       type: "pep_forbidden_error",
@@ -79,11 +79,12 @@ export class CaptainsLogger implements EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) {
-    this._log("pep_error", {
+    this._log("pep_unauthorized_error", {
       log_made_by: "error-handler",
       event_description: "error",
       type: "pep_unauthorized_error",
       ...this._add_request_fields(request),
+      ...this._add_reply_fields(reply),
       ...payload,
     });
   }
@@ -101,6 +102,7 @@ export class CaptainsLogger implements EventLogger {
       type,
       error_message: error.message,
       ...this._add_request_fields(request),
+      ...this._add_reply_fields(reply),
       ...payload,
     });
   }
