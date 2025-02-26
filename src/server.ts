@@ -1,8 +1,12 @@
 import build from "./build";
+import { v4 as uuidv4 } from "uuid";
 
 const server = build({
   logger: true,
   trustProxy: true,
+  genReqId: () => {
+    return uuidv4();
+  },
 });
 
 const start = async () => {
