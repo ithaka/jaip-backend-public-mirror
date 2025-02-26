@@ -39,6 +39,7 @@ export class CaptainsLogger implements EventLogger {
     return {
       response_status: reply.statusCode,
       response_headers: reply.getHeaders(),
+      response_sent: reply.sent,
     };
   }
 

@@ -274,24 +274,24 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       log_payload.user = currentUser;
     }
     if (error) {
-      reply.code(500);
+      reply.code(500).send();
       fastify.eventLogger.pep_error(request, reply, log_payload, "auth", error);
-      return error;
+      return;
     } else if (!currentUser) {
+      reply.code(401).send();
       fastify.eventLogger.pep_unauthorized_error(request, reply, log_payload);
-      reply.code(401);
+      return;
     } else {
       const subdomain = get_subdomain(request.headers.host || "");
       const is_admin_subdomain = ADMIN_SUBDOMAINS.includes(subdomain);
       if (is_admin_subdomain && currentUser.type !== ENTITY_TYPES.users) {
+        reply.code(403).send();
         fastify.eventLogger.pep_forbidden_error(request, reply, log_payload);
-        reply.code(403);
+        return;
       }
     }
     fastify.eventLogger.pep_auth_complete(request, reply, log_payload);
-    return {
-      currentUser,
-    };
+    reply.code(200).send({ currentUser });
   });
 
   // ************************************************************************************************
@@ -325,11 +325,11 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
           subdomain: true,
         },
       });
-      return result;
+      reply.code(200).send(result);
     } catch (err) {
       const error = ensure_error(err);
       fastify.eventLogger.pep_error(request, reply, {}, "subdomains", error);
-      return err;
+      reply.code(500).send();
     }
   });
 }
