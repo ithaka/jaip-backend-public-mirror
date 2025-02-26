@@ -1,18 +1,22 @@
 import { EventLogger } from "../event_logger";
 import { v4 as uuidv4 } from "uuid";
 import { FastifyRequest } from "fastify";
+import { get_subdomain } from "../../utils";
 
 export class CaptainsLogger implements EventLogger {
+  #base_log = {
+    origin: "jaip-backend",
+    dests: ["captains-log"],
+    requestid: uuidv4(),
+    eventid: uuidv4(),
+    delivered_by: "labs",
+  };
   _log(eventtype: string, payload: object) {
     console.log(
       JSON.stringify({
-        origin: "jaip-backend",
         eventtype: eventtype,
-        dests: ["captains-log"],
-        requestid: uuidv4(),
-        eventid: uuidv4(),
         tstamp_usec: Date.now() * 1000,
-        delivered_by: "labs",
+        ...this.#base_log,
         ...payload,
       }),
     );
@@ -21,9 +25,13 @@ export class CaptainsLogger implements EventLogger {
   _add_request_fields(request: FastifyRequest) {
     return {
       ip_address: request.ip,
+      requestid: request.id,
       user_agent: request.headers["user-agent"],
       uuid: request.cookies.uuid,
       host: request.host,
+      subdomain: get_subdomain(request.host),
+      request_headers: request.headers,
+      request_body: request.body,
     };
   }
 
@@ -44,12 +52,39 @@ export class CaptainsLogger implements EventLogger {
       error_message: error.message,
     });
   }
-  pep_error(type: string, error: Error) {
+  pep_forbidden_error(request: FastifyRequest, payload: object) {
+    this._log("pep_error", {
+      log_made_by: "error-handler",
+      event_description: "error",
+      type: "pep_forbidden_error",
+      ...this._add_request_fields(request),
+      ...payload,
+    });
+  }
+
+  pep_unauthorized_error(request: FastifyRequest, payload: object) {
+    this._log("pep_error", {
+      log_made_by: "error-handler",
+      event_description: "error",
+      type: "pep_unauthorized_error",
+      ...this._add_request_fields(request),
+      ...payload,
+    });
+  }
+
+  pep_error(
+    request: FastifyRequest,
+    payload: object,
+    type: string,
+    error: Error,
+  ) {
     this._log("pep_error", {
       log_made_by: "error-handler",
       event_description: "error",
       type,
       error_message: error.message,
+      ...this._add_request_fields(request),
+      ...payload,
     });
   }
 
@@ -59,6 +94,14 @@ export class CaptainsLogger implements EventLogger {
       log_made_by: "auth-api",
       event_description: "attempting auth",
       ...this._add_request_fields(request),
+    });
+  }
+  pep_auth_complete(request: FastifyRequest, payload: object) {
+    this._log("pep_auth_complete", {
+      log_made_by: "auth-api",
+      event_description: "user authenticated and authorized",
+      ...this._add_request_fields(request),
+      ...payload,
     });
   }
   pep_validate_subdomain_start(request: FastifyRequest, subdomain: string) {

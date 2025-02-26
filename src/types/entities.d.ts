@@ -20,7 +20,7 @@ export interface Entity {
   id?: number;
   name?: string;
   // This is the only necessary value when adding or editing
-  type: string;
+  type: EntityType;
   ungrouped_features?: UngroupedFeatureDetails;
   // This value is only used when adding or editing
   contact?: string;
