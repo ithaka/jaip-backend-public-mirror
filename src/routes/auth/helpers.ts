@@ -14,24 +14,6 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 
 const session_manager = "session-service";
 
-const get_session_management = async (
-  fastify: FastifyInstance,
-): Promise<[string, Error | null]> => {
-  try {
-    const { route, error } = await fastify.discover(session_manager);
-    if (error) throw error;
-    if (!route) {
-      throw new Error(
-        `service discovery failed: No route found for ${session_manager}`,
-      );
-    }
-    return [route, null];
-  } catch (err) {
-    const error = ensure_error(err);
-    return ["", error];
-  }
-};
-
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -39,12 +21,8 @@ export const manage_session = async (
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
-    const [host, error] = await get_session_management(fastify);
+    const [host, error] = await fastify.discover(session_manager);
     if (error) throw error;
-    if (!host)
-      throw new Error(
-        `service discovery failed: No route found for ${session_manager}`,
-      );
 
     const query = uuid
       ? `mutation { session(uuid: "${uuid}") ${sessionQuery}}`
