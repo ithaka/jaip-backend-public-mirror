@@ -1,9 +1,9 @@
 import { User } from "../../types/entities";
-import { SWAGGER_TAGS, public_endpoint_disclaimer } from "../../utils";
+import { SWAGGER_TAGS, MESSAGES } from "../../consts";
 
 export const route_schemas = {
   session: {
-    description: `Returns auth information based on ip address or email associated with UUID cookie. ${public_endpoint_disclaimer}`,
+    description: `Returns auth information based on ip address or email associated with UUID cookie. ${MESSAGES.public_endpoint_disclaimer}`,
     tags: [SWAGGER_TAGS.public],
     response: {
       200: {
@@ -15,7 +15,7 @@ export const route_schemas = {
     },
   },
   subdomain: {
-    description: `Returns subdomain validation. ${public_endpoint_disclaimer}`,
+    description: `Returns subdomain validation. ${MESSAGES.public_endpoint_disclaimer}`,
     tags: [SWAGGER_TAGS.public],
     response: {
       200: {

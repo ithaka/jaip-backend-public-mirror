@@ -3,7 +3,7 @@ import fastify_swagger from "@fastify/swagger";
 import fastify_swagger_ui from "@fastify/swagger-ui";
 import fastify_cookie from "@fastify/cookie";
 
-import { swagger_opts } from "./utils/swagger_opts";
+import { SWAGGER_OPTS } from "./consts";
 
 import decorators from "./decorators";
 import plugins from "./plugins";
@@ -14,7 +14,7 @@ function build(opts = {}) {
   const app = Fastify(opts);
 
   // Swagger
-  app.register(fastify_swagger, swagger_opts);
+  app.register(fastify_swagger, SWAGGER_OPTS);
   app.register(fastify_swagger_ui, {
     routePrefix: "/docs",
     uiConfig: {

@@ -2,7 +2,7 @@ import fastify_plugin from "fastify-plugin";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import type { ErrorHandlerPluginOptions } from "../types/plugins";
 
-const errorHandlerPlugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
+const error_handler_plugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
   fastify_plugin(async (fastify: FastifyInstance) => {
     fastify.setErrorHandler((err, request, reply) => {
       fastify.log.error(err);
@@ -12,7 +12,7 @@ const errorHandlerPlugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
   });
 
 const options = { environment: process.env.NODE_ENV || "dev" };
-const plugin = errorHandlerPlugin;
+const plugin = error_handler_plugin;
 
 export default {
   options,

@@ -1,10 +1,9 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
 import axios from "axios";
-import { SWAGGER_TAGS } from "../../utils/swagger_tags";
 import { ensure_error } from "../../utils/error_verification";
 import { route_schemas } from "./schemas";
 
-const polarisHealthcheck = async (fastify: FastifyInstance) => {
+const polaris_healthcheck = async (fastify: FastifyInstance) => {
   const url = "http://localhost:8888/healthcheck";
   try {
     const { data, status } = await axios.get(url);
@@ -16,7 +15,7 @@ const polarisHealthcheck = async (fastify: FastifyInstance) => {
   }
 };
 
-const dbHealthcheck = async (fastify: FastifyInstance) => {
+const db_healthcheck = async (fastify: FastifyInstance) => {
   try {
     // An arbitrary and minimal query to check if the database is up and responding
     const result = await fastify.prisma.groups.findFirst();
@@ -32,8 +31,8 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.healthcheck;
 
   fastify.get("/healthz", opts, async () => {
-    const service_discovery = await polarisHealthcheck(fastify);
-    const db = await dbHealthcheck(fastify);
+    const service_discovery = await polaris_healthcheck(fastify);
+    const db = await db_healthcheck(fastify);
     fastify.log.info(`Service Discovery Status: ${service_discovery}`);
     fastify.log.info(`Database Status: ${db}`);
 

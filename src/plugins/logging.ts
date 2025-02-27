@@ -1,4 +1,4 @@
-import fastifyPlugin from "fastify-plugin";
+import fastify_plugin from "fastify-plugin";
 import {
   FastifyInstance,
   FastifyPluginAsync,
@@ -13,8 +13,8 @@ declare module "fastify" {
   }
 }
 
-const eventLoggerPlugin: FastifyPluginAsync<EventLoggerPluginOptions> =
-  fastifyPlugin(
+const event_logger_plugin: FastifyPluginAsync<EventLoggerPluginOptions> =
+  fastify_plugin(
     async (server: FastifyInstance, options: FastifyPluginOptions) => {
       server.decorate("eventLogger", options.eventLogger);
     },
@@ -24,7 +24,7 @@ const options = {
   eventLogger: new CaptainsLogger(),
 };
 
-const plugin = eventLoggerPlugin;
+const plugin = event_logger_plugin;
 
 export default {
   options,

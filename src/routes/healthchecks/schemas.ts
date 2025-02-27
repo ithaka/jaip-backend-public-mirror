@@ -1,4 +1,4 @@
-import { SWAGGER_TAGS } from "../../utils";
+import { SWAGGER_TAGS } from "../../consts";
 
 export const route_schemas = {
   healthcheck: {

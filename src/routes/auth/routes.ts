@@ -22,7 +22,7 @@ import { LogPayload } from "../../event_handler";
 
 const session_manager = "session-service";
 
-const getSessionManagement = async (
+const get_session_management = async (
   fastify: FastifyInstance,
 ): Promise<[string, Error | null]> => {
   try {
@@ -40,14 +40,14 @@ const getSessionManagement = async (
   }
 };
 
-const manageSession = async (
+const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
 ): Promise<[Session, Error | null]> => {
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
-    const [host, error] = await getSessionManagement(fastify);
+    const [host, error] = await get_session_management(fastify);
     if (error) throw error;
     if (!host)
       throw new Error(
@@ -78,7 +78,7 @@ const manageSession = async (
   }
 };
 
-const getCodeFromSession = (session: Session): string[] => {
+const get_code_from_session = (session: Session): string[] => {
   const codes = [];
   if (session.userAccount?.code) {
     codes.push(session.userAccount.code);
@@ -91,7 +91,7 @@ const getCodeFromSession = (session: Session): string[] => {
 
   return codes;
 };
-const getEmailFromSession = (session: Session): string[] => {
+const get_email_from_session = (session: Session): string[] => {
   const emails = [];
   if (session.userAccount?.contact?.email) {
     emails.push(session.userAccount.contact.email);
@@ -106,7 +106,7 @@ const getEmailFromSession = (session: Session): string[] => {
   return emails;
 };
 
-const getUser = async (
+const get_user = async (
   db: PrismaClient,
   arr: string[],
 ): Promise<[User | null, Error | null]> => {
@@ -123,7 +123,7 @@ const getUser = async (
   }
 };
 
-const getFacility = async (
+const get_facility = async (
   db: PrismaClient,
   arr: string[],
 ): Promise<[User | null, Error | null]> => {
@@ -142,7 +142,7 @@ const getFacility = async (
   }
 };
 
-const getIPBypass = async (
+const get_ip_bypass = async (
   db: PrismaClient,
   ip: string,
 ): Promise<[User | null, Error | null]> => {
@@ -166,7 +166,7 @@ const getIPBypass = async (
       return [null, null];
     }
 
-    const [facility, error] = await getFacility(db, [
+    const [facility, error] = await get_facility(db, [
       result.facilities.jstor_id,
     ]);
     if (error) {
@@ -180,7 +180,7 @@ const getIPBypass = async (
 };
 
 // Accepts a request and a fastify instance and returns the current user, after retrieving session data
-const getCurrentUser = async (
+const get_current_user = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
   session: Session,
@@ -188,10 +188,10 @@ const getCurrentUser = async (
   let currentUser: User | null = null;
   try {
     // Extract the email from the session
-    const emails = getEmailFromSession(session);
+    const emails = get_email_from_session(session);
     // If there are emails, try to find a user with one of them
     if (emails.length) {
-      const [result, error] = await getUser(fastify.prisma, emails);
+      const [result, error] = await get_user(fastify.prisma, emails);
       currentUser = result;
       if (error) {
         throw error;
@@ -202,10 +202,10 @@ const getCurrentUser = async (
     }
 
     // Extract the codes from the session
-    const codes = getCodeFromSession(session);
+    const codes = get_code_from_session(session);
     if (codes.length) {
       // If there are codes, try to find a facility with one of them
-      const [result, error] = await getFacility(fastify.prisma, codes);
+      const [result, error] = await get_facility(fastify.prisma, codes);
       currentUser = result;
       if (error) {
         throw error;
@@ -219,7 +219,7 @@ const getCurrentUser = async (
     // Extract an array of possible IPs from the request
     const ips = ip_handler(request);
     for (const ip of ips) {
-      const [result, error] = await getIPBypass(fastify.prisma, ip);
+      const [result, error] = await get_ip_bypass(fastify.prisma, ip);
       if (error) {
         throw error;
       }
@@ -252,12 +252,12 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       ...log_payload,
       event_description: "attempting auth",
     });
-    const [session, err] = await manageSession(fastify, request);
+    const [session, err] = await manage_session(fastify, request);
     if (err) {
       throw err;
     }
     log_payload.sessionid = session.uuid;
-    const [currentUser, error] = await getCurrentUser(
+    const [currentUser, error] = await get_current_user(
       fastify,
       request,
       session,

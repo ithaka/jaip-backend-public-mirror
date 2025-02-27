@@ -1,4 +1,4 @@
-import fp from "fastify-plugin";
+import fastify_plugin from "fastify-plugin";
 import { FastifyPluginAsync } from "fastify";
 import { PrismaClient } from "@prisma/client";
 
@@ -9,7 +9,7 @@ declare module "fastify" {
   }
 }
 
-const plugin: FastifyPluginAsync = fp(async (fastify, options) => {
+const plugin: FastifyPluginAsync = fastify_plugin(async (fastify, options) => {
   const prisma = new PrismaClient(options);
   if (!process.env.DB_MOCK) {
     await prisma.$connect();
