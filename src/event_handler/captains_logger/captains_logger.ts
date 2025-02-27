@@ -1,4 +1,4 @@
-import { EventLogger, LogPayload } from "../event_logger";
+import { EventLogger, LogPayload } from "../../types/event_logger";
 import { v4 as uuidv4 } from "uuid";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { get_subdomain } from "../../utils";

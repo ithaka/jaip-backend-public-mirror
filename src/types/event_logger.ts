@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { User } from "../types/entities";
+import { User } from "./entities";
+
 export interface CaptainsLog {
   origin: string;
   eventtype: string;
