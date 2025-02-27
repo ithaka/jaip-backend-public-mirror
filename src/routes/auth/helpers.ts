@@ -11,7 +11,8 @@ import axios from "axios";
 import { sessionQuery } from "../queries/session";
 import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
-import { SERVICES } from "../../consts";
+import { SERVICES, SUBDOMAINS } from "../../consts";
+import { get_subdomain } from "../../utils";
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -147,6 +148,30 @@ const get_ip_bypass = async (
   }
 };
 
+const get_sitecode_by_subdomain = async (
+  db: PrismaClient,
+  subdomain: string,
+): Promise<[string | null, Error | null]> => {
+  try {
+    const result = await db.subdomains_facilities.findFirst({
+      where: {
+        subdomain,
+      },
+      select: {
+        sitecode: true,
+        facility_id: true,
+      },
+    });
+    if (!result || !result.sitecode) {
+      return [null, null];
+    }
+    return [result.sitecode, null];
+  } catch (err) {
+    const error = ensure_error(err);
+    return [null, error];
+  }
+};
+
 // Accepts a request and a fastify instance and returns the current user, after retrieving session data
 export const get_current_user = async (
   fastify: FastifyInstance,
@@ -172,6 +197,23 @@ export const get_current_user = async (
     // Extract the codes from the session
     const codes = get_code_from_session(session);
     if (codes.length) {
+      const subdomain = get_subdomain(request.host);
+      if (!SUBDOMAINS.student.includes(subdomain)) {
+        const [sitecode, error] = await get_sitecode_by_subdomain(
+          fastify.prisma,
+          subdomain,
+        );
+        if (error) {
+          throw error;
+        } else if (sitecode) {
+          codes.push(sitecode);
+        } else {
+          throw new Error(
+            "No sitecode found for nonstandard subdomain subdomain",
+          );
+        }
+      }
+
       // If there are codes, try to find a facility with one of them
       const [result, error] = await get_facility(fastify.prisma, codes);
       currentUser = result;

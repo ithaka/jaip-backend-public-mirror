@@ -1,6 +1,11 @@
 import type { EntityType } from "../types/entities";
 
 export const ADMIN_SUBDOMAINS = ["pep-admin", "admin.pep"];
+export const SUBDOMAINS = {
+  admin: ["pep-admin", "admin.pep"],
+  student: ["pep", "www.pep"],
+};
+
 export const ENTITY_TYPES: { [key: string]: EntityType } = {
   USERS: "users" as EntityType.users,
   FACILITIES: "facilities" as EntityType.facilities,
