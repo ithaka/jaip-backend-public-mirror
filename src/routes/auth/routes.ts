@@ -21,6 +21,7 @@ import {
 } from "../queries/entities";
 import { ADMIN_SUBDOMAINS, ENTITY_TYPES } from "../../consts";
 import { LogPayload } from "../../event_handler";
+import { log } from "console";
 
 const session_manager = "session-service";
 
@@ -258,8 +259,14 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
   // Auth Session Route
   fastify.get("/auth/session", opts, async (request, reply) => {
-    fastify.eventLogger.pep_auth_start(request);
-    const log_payload: LogPayload = {};
+    const log_payload: LogPayload = {
+      log_made_by: "auth-api",
+      event_description: "user authenticated and authorized",
+    };
+    fastify.eventLogger.pep_standard_log_start("pep_auth_start", request, {
+      ...log_payload,
+      event_description: "attempting auth",
+    });
     const [session, err] = await manageSession(fastify, request);
     if (err) {
       throw err;
@@ -290,7 +297,15 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         return;
       }
     }
-    fastify.eventLogger.pep_auth_complete(request, reply, log_payload);
+    fastify.eventLogger.pep_standard_log_complete(
+      "pep_auth_complete",
+      request,
+      reply,
+      {
+        ...log_payload,
+        event_description: "user authenticated and authorized",
+      },
+    );
     reply.code(200).send({ currentUser });
   });
 
@@ -313,7 +328,17 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
   // Subdomains Route
   fastify.get("/subdomains", async (request, reply) => {
-    fastify.eventLogger.pep_validate_subdomain_start(request);
+    const log_payload: LogPayload = {
+      log_made_by: "auth-api",
+    };
+    fastify.eventLogger.pep_standard_log_start(
+      "pep_validate_subdomain_start",
+      request,
+      {
+        ...log_payload,
+        event_description: "attempting to get subdomains",
+      },
+    );
     const host = request.headers.host || "";
     const subdomain = get_subdomain(host);
     try {
@@ -330,9 +355,16 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         throw new Error("Subdomain not found");
       }
       reply.code(200).send(result);
-      fastify.eventLogger.pep_validate_subdomain_complete(request, reply, {
-        db_subdomain: result.subdomain,
-      });
+      fastify.eventLogger.pep_standard_log_complete(
+        "pep_validate_subdomain_complete",
+        request,
+        reply,
+        {
+          db_subdomain: result.subdomain,
+          ...log_payload,
+          event_description: "returning subdomains from db",
+        },
+      );
     } catch (err) {
       const error = ensure_error(err);
       fastify.eventLogger.pep_error(request, reply, {}, "subdomains", error);

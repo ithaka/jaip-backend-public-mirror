@@ -57,18 +57,4 @@ export interface EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) => void;
-
-  // AUTH
-  pep_auth_start: (request: FastifyRequest) => void;
-  pep_auth_complete: (
-    request: FastifyRequest,
-    reply: FastifyReply,
-    payload: LogPayload,
-  ) => void;
-  pep_validate_subdomain_start: (request: FastifyRequest) => void;
-  pep_validate_subdomain_complete: (
-    request: FastifyRequest,
-    reply: FastifyReply,
-    payload: LogPayload,
-  ) => void;
 }
