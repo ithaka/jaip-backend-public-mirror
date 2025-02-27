@@ -313,6 +313,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
   // Subdomains Route
   fastify.get("/subdomains", async (request, reply) => {
+    fastify.eventLogger.pep_validate_subdomain_start(request);
     const host = request.headers.host || "";
     const subdomain = get_subdomain(host);
     try {
@@ -325,7 +326,13 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
           subdomain: true,
         },
       });
+      if (!result) {
+        throw new Error("Subdomain not found");
+      }
       reply.code(200).send(result);
+      fastify.eventLogger.pep_validate_subdomain_complete(request, reply, {
+        db_subdomain: result.subdomain,
+      });
     } catch (err) {
       const error = ensure_error(err);
       fastify.eventLogger.pep_error(request, reply, {}, "subdomains", error);

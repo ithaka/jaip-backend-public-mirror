@@ -65,9 +65,10 @@ export class CaptainsLogger implements EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) {
+    payload.log_made_by = "error-handler";
+    payload.event_description =
+      "user is not authorized to access this resource";
     this._log("pep_forbidden_error", {
-      log_made_by: "error-handler",
-      event_description: "error",
       type: "pep_forbidden_error",
       ...this._add_request_fields(request),
       ...this._add_reply_fields(reply),
@@ -82,7 +83,8 @@ export class CaptainsLogger implements EventLogger {
   ) {
     this._log("pep_unauthorized_error", {
       log_made_by: "error-handler",
-      event_description: "error",
+      event_description:
+        "user is not authenticated and must be to access this resource",
       type: "pep_unauthorized_error",
       ...this._add_request_fields(request),
       ...this._add_reply_fields(reply),
@@ -93,13 +95,13 @@ export class CaptainsLogger implements EventLogger {
   pep_error(
     request: FastifyRequest,
     reply: FastifyReply,
-    payload: object,
+    payload: LogPayload,
     type: string,
     error: Error,
   ) {
+    payload.log_made_by = "error-handler";
+    payload.event_description = "an error occurred";
     this._log("pep_error", {
-      log_made_by: "error-handler",
-      event_description: "error",
       type,
       error_message: error.message,
       ...this._add_request_fields(request),
@@ -108,12 +110,34 @@ export class CaptainsLogger implements EventLogger {
     });
   }
 
-  // AUTH
+  // GENERAL LOGGING
+  _pep_standard_log_start(
+    type: string,
+    request: FastifyRequest,
+    payload: LogPayload,
+  ) {
+    this._log(type, {
+      ...this._add_request_fields(request),
+      ...payload,
+    });
+  }
+  _pep_standard_log_complete(
+    type: string,
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) {
+    this._log(type, {
+      ...this._add_request_fields(request),
+      ...this._add_reply_fields(reply),
+      ...payload,
+    });
+  }
+  // AUTH SESSIONS
   pep_auth_start(request: FastifyRequest) {
-    this._log("pep_auth_start", {
+    this._pep_standard_log_start("pep_auth_start", request, {
       log_made_by: "auth-api",
       event_description: "attempting auth",
-      ...this._add_request_fields(request),
     });
   }
   pep_auth_complete(
@@ -121,19 +145,34 @@ export class CaptainsLogger implements EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) {
-    this._log("pep_auth_complete", {
+    this._pep_standard_log_complete("pep_auth_complete", request, reply, {
       log_made_by: "auth-api",
       event_description: "user authenticated and authorized",
-      ...this._add_request_fields(request),
-      ...this._add_reply_fields(reply),
       ...payload,
     });
   }
-  pep_validate_subdomain_start(request: FastifyRequest, subdomain: string) {
-    this._log("pep_validate_subdomain_start", {
+
+  // AUTH SUBDOMAINS
+  pep_validate_subdomain_start(request: FastifyRequest) {
+    this._pep_standard_log_start("pep_validate_subdomain_start", request, {
       log_made_by: "auth-api",
-      event_description: `to get subdomain: ${subdomain}`,
-      ...this._add_request_fields(request),
+      event_description: `attempting to get subdomains`,
     });
+  }
+  pep_validate_subdomain_complete(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) {
+    this._pep_standard_log_complete(
+      "pep_validate_subdomain_complete",
+      request,
+      reply,
+      {
+        log_made_by: "auth-api",
+        event_description: `returning subdomains from db`,
+        ...payload,
+      },
+    );
   }
 }

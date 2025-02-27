@@ -10,10 +10,19 @@ export interface CaptainsLog {
   delivered_by: string;
 }
 
-export interface LogPayload {
-  user?: User;
-  sessionid?: string;
+export interface CompleteLogPayload {
+  log_made_by: string;
+  event_description: string;
+  user: User;
+  sessionid: string;
+  subdomain: string;
+  db_subdomain: string;
 }
+// The log payload in use will probably always be incomplete. Rather than
+// specifying optional fields for everything or always specifying a Partial
+// type, we'll just use this type alias to simplify things.
+export type LogPayload = Partial<CompleteLogPayload>;
+
 export interface EventLogger {
   // ERRORS
   pep_server_error: (request: FastifyRequest, error: Error) => void;
@@ -36,6 +45,19 @@ export interface EventLogger {
     payload: LogPayload,
   ) => void;
 
+  // GENERAL LOGGING
+  _pep_standard_log_start: (
+    type: string,
+    request: FastifyRequest,
+    payload: LogPayload,
+  ) => void;
+  _pep_standard_log_complete: (
+    type: string,
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) => void;
+
   // AUTH
   pep_auth_start: (request: FastifyRequest) => void;
   pep_auth_complete: (
@@ -43,8 +65,10 @@ export interface EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) => void;
-  pep_validate_subdomain_start: (
+  pep_validate_subdomain_start: (request: FastifyRequest) => void;
+  pep_validate_subdomain_complete: (
     request: FastifyRequest,
-    subdomain: string,
+    reply: FastifyReply,
+    payload: LogPayload,
   ) => void;
 }
