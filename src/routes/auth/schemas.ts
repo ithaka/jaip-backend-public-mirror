@@ -12,17 +12,17 @@ export const route_schemas = {
           currentUser: {} as User,
         },
       },
-    },
-  },
-  subdomain: {
-    description: `Returns subdomain validation. ${MESSAGES.public_endpoint_disclaimer}`,
-    tags: [SWAGGER_TAGS.public],
-    response: {
-      200: {
+      500: {
         type: "object",
         properties: {
-          subdomain: { type: "string" },
+          message: { type: "string" },
         },
+      },
+      401: {
+        description: "Unauthorized",
+      },
+      403: {
+        description: "Forbidden",
       },
     },
   },
