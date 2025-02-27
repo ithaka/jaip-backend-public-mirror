@@ -38,3 +38,7 @@ export const SWAGGER_OPTS = {
     ],
   },
 };
+export const SERVICES = {
+  session_manager: "session-service",
+  search_service: "search-service",
+};

@@ -11,9 +11,7 @@ import axios from "axios";
 import { sessionQuery } from "../queries/session";
 import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
-
-const session_manager = "session-service";
-
+import { SERVICES } from "../../consts";
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -21,7 +19,7 @@ export const manage_session = async (
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
-    const [host, error] = await fastify.discover(session_manager);
+    const [host, error] = await fastify.discover(SERVICES.session_manager);
     if (error) throw error;
 
     const query = uuid
