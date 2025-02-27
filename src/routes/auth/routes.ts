@@ -6,10 +6,8 @@ import {
 import axios from "axios";
 
 import { sessionQuery } from "../queries/session";
-import { SWAGGER_TAGS } from "../../utils/swagger_tags";
-import { public_endpoint_disclaimer } from "../../utils/messages";
 import { ensure_error, ip_handler, get_subdomain } from "../../utils";
-
+import { route_schemas } from "./schemas";
 import type { Session } from "../../types/sessions";
 import { PrismaClient } from "@prisma/client";
 import type { User } from "../../types/entities";
@@ -21,7 +19,6 @@ import {
 } from "../queries/entities";
 import { ADMIN_SUBDOMAINS, ENTITY_TYPES } from "../../consts";
 import { LogPayload } from "../../event_handler";
-import { log } from "console";
 
 const session_manager = "session-service";
 
@@ -243,21 +240,9 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // ************************************************************************************************
   // AUTH SESSION
   // ************************************************************************************************
-  // Auth Session Schema
-  opts.schema = {
-    description: `Returns auth information based on ip address or email associated with UUID cookie. ${public_endpoint_disclaimer}`,
-    tags: [SWAGGER_TAGS.public],
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          currentUser: {} as User,
-        },
-      },
-    },
-  };
 
   // Auth Session Route
+  opts.schema = route_schemas.session;
   fastify.get("/auth/session", opts, async (request, reply) => {
     const log_payload: LogPayload = {
       log_made_by: "auth-api",
@@ -312,21 +297,9 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // ************************************************************************************************
   // SUBDOMAINS
   // ************************************************************************************************
-  // Subdomains Schema
-  opts.schema = {
-    description: `Returns subdomain validation. ${public_endpoint_disclaimer}`,
-    tags: [SWAGGER_TAGS.public],
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          subdomain: { type: "string" },
-        },
-      },
-    },
-  };
 
   // Subdomains Route
+  opts.schema = route_schemas.subdomain;
   fastify.get("/subdomains", async (request, reply) => {
     const log_payload: LogPayload = {
       log_made_by: "auth-api",
