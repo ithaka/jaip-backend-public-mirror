@@ -1,1 +1,2 @@
 yarn pre-commit
+yarn type-check
