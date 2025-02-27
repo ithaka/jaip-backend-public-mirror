@@ -46,12 +46,12 @@ export interface EventLogger {
   ) => void;
 
   // GENERAL LOGGING
-  _pep_standard_log_start: (
+  pep_standard_log_start: (
     type: string,
     request: FastifyRequest,
     payload: LogPayload,
   ) => void;
-  _pep_standard_log_complete: (
+  pep_standard_log_complete: (
     type: string,
     request: FastifyRequest,
     reply: FastifyReply,

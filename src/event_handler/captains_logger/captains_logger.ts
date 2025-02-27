@@ -111,7 +111,7 @@ export class CaptainsLogger implements EventLogger {
   }
 
   // GENERAL LOGGING
-  _pep_standard_log_start(
+  pep_standard_log_start(
     type: string,
     request: FastifyRequest,
     payload: LogPayload,
@@ -121,7 +121,7 @@ export class CaptainsLogger implements EventLogger {
       ...payload,
     });
   }
-  _pep_standard_log_complete(
+  pep_standard_log_complete(
     type: string,
     request: FastifyRequest,
     reply: FastifyReply,
@@ -135,7 +135,7 @@ export class CaptainsLogger implements EventLogger {
   }
   // AUTH SESSIONS
   pep_auth_start(request: FastifyRequest) {
-    this._pep_standard_log_start("pep_auth_start", request, {
+    this.pep_standard_log_start("pep_auth_start", request, {
       log_made_by: "auth-api",
       event_description: "attempting auth",
     });
@@ -145,7 +145,7 @@ export class CaptainsLogger implements EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) {
-    this._pep_standard_log_complete("pep_auth_complete", request, reply, {
+    this.pep_standard_log_complete("pep_auth_complete", request, reply, {
       log_made_by: "auth-api",
       event_description: "user authenticated and authorized",
       ...payload,
@@ -154,7 +154,7 @@ export class CaptainsLogger implements EventLogger {
 
   // AUTH SUBDOMAINS
   pep_validate_subdomain_start(request: FastifyRequest) {
-    this._pep_standard_log_start("pep_validate_subdomain_start", request, {
+    this.pep_standard_log_start("pep_validate_subdomain_start", request, {
       log_made_by: "auth-api",
       event_description: `attempting to get subdomains`,
     });
@@ -164,7 +164,7 @@ export class CaptainsLogger implements EventLogger {
     reply: FastifyReply,
     payload: LogPayload,
   ) {
-    this._pep_standard_log_complete(
+    this.pep_standard_log_complete(
       "pep_validate_subdomain_complete",
       request,
       reply,
