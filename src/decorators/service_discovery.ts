@@ -3,16 +3,13 @@ import { ensure_error } from "../utils";
 import { JSTORInstance, JSTORInstanceError } from "../types/services";
 declare module "fastify" {
   interface FastifyInstance {
-    discover(service: string): Promise<{
-      route: string;
-      error: Error;
-    }>;
+    discover(service: string): Promise<[string, Error | null]>;
   }
 }
 
 export default async function (
   service: string,
-): Promise<{ route: string; error: Error | null }> {
+): Promise<[string, Error | null]> {
   const url = `http://localhost:8888/v1/apps/${service}/instances`;
   try {
     const {
@@ -33,10 +30,7 @@ export default async function (
           (instance: JSTORInstance) => instance.homePageUrl,
         );
         if (homePageUrl) {
-          return {
-            route: homePageUrl.homePageUrl,
-            error: null,
-          };
+          return [homePageUrl.homePageUrl, null];
         } else {
           throw new Error(
             "Service discovery failed: No homepage URLs found in instances",
@@ -50,9 +44,6 @@ export default async function (
     }
   } catch (err) {
     const error = ensure_error(err);
-    return {
-      route: "",
-      error,
-    };
+    return ["", error];
   }
 }
