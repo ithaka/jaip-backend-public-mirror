@@ -30,7 +30,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       log_payload.user = currentUser;
     }
     if (error) {
-      reply.code(500).send();
+      reply.code(500).send(error);
       fastify.eventLogger.pep_error(request, reply, log_payload, "auth", error);
       return;
     } else if (!currentUser) {
