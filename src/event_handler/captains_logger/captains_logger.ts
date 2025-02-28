@@ -32,6 +32,8 @@ export class CaptainsLogger implements EventLogger {
       subdomain: get_subdomain(request.host),
       request_headers: request.headers,
       request_body: request.body,
+      user: request.user,
+      sessionid: request.session?.uuid,
     };
   }
 

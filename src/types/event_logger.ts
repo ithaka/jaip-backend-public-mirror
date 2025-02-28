@@ -18,6 +18,8 @@ export interface CompleteLogPayload {
   sessionid: string;
   subdomain: string;
   db_subdomain: string;
+  alert_text: string;
+  alert_status: string;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

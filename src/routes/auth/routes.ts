@@ -30,7 +30,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
       log_payload.user = currentUser;
     }
     if (error) {
-      reply.code(500).send(error);
+      reply.code(500).send(error.message);
       fastify.eventLogger.pep_error(request, reply, log_payload, "auth", error);
       return;
     } else if (!currentUser) {
@@ -55,7 +55,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
         event_description: "user authenticated and authorized",
       },
     );
-    reply.code(200).send({ currentUser });
+    reply.code(200).send(currentUser);
   });
 }
 
