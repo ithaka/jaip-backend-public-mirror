@@ -1,7 +1,7 @@
 import { SWAGGER_TAGS, MESSAGES } from "../../consts";
 
 export const route_schemas = {
-  subdomain: {
+  alerts: {
     name: "alerts",
     description: `Returns alerts. ${MESSAGES.public_endpoint_disclaimer}`,
     tags: [SWAGGER_TAGS.public],
