@@ -1,9 +1,9 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest, RequirementsSchema } from "fastify";
 import { manage_session, get_current_user } from "../auth/helpers";
 import { ensure_error } from "../../utils";
 import { User } from "../../types/entities";
 import { Session } from "../../types/sessions";
-
+import { user_has_feature } from "../../utils/features";
 declare module "fastify" {
   interface FastifyRequest {
     user: User;
@@ -46,5 +46,34 @@ export const route_guard = async (
   } catch (err) {
     const error = ensure_error(err);
     reply.code(500).send(error.message);
+  }
+};
+
+export const requirements_guard = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+  // requires: { any?: string[]; all?: string[] },
+) => {
+  const schema = request.routeOptions.schema as RequirementsSchema;
+
+  if (schema?.requires?.any && schema?.requires?.any.length) {
+    const any = schema.requires.any;
+    let has_feature = false;
+    console.log(request.user);
+
+    for (const feature of any) {
+      console.log(feature, user_has_feature(request.user, feature));
+
+      if (user_has_feature(request.user, feature)) {
+        has_feature = true;
+        break;
+      }
+    }
+    if (!has_feature) {
+      reply.code(403).send();
+      return;
+    } else {
+      return;
+    }
   }
 };
