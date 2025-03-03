@@ -46,3 +46,28 @@ export const SERVICES = {
   session_manager: "session-service",
   search_service: "search-service",
 };
+
+// This should be updated whenever a new feature is added to the database.
+export const FEATURES = {
+  add_or_edit_users: "add_or_edit_users",
+  approve_requests: "approve_requests",
+  bulk_approve: "bulk_approve",
+  deny_requests: "deny_requests",
+  download_pdf: "download_pdf",
+  edit_facilities: "edit_facilities",
+  get_facilities: "get_facilities",
+  get_users: "get_users",
+  is_hidden_user: "is_hidden_user",
+  manage_facilities: "manage_facilities",
+  print_pdf: "print_pdf",
+  remove_users: "remove_users",
+  submit_requests: "submit_requests",
+  undo_bulk_approve: "undo_bulk_approve",
+  use_protected_features: "use_protected_features",
+  view_abstract: "view_abstract",
+  view_book_description: "view_book_description",
+  view_document: "view_document",
+  view_hidden_users: "view_hidden_users",
+  view_pdf: "view_pdf",
+  view_snippet: "view_snippet",
+};
