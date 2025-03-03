@@ -6,7 +6,7 @@ import { Alert } from "../../types/alerts";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.alerts;
-  fastify.get("/alerts", async (request, reply) => {
+  fastify.get("/alerts", opts, async (request, reply) => {
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };

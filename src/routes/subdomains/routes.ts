@@ -5,7 +5,7 @@ import { LogPayload } from "../../event_handler";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.subdomain;
-  fastify.get("/subdomains/validate", async (request, reply) => {
+  fastify.get("/subdomains/validate", opts, async (request, reply) => {
     const log_payload: LogPayload = {
       log_made_by: "subdomains-api",
     };
