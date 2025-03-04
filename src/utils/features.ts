@@ -11,6 +11,18 @@ export const user_has_feature = (user: User, feature: string): boolean => {
   return false;
 };
 
+export const user_has_feature_in_all_groups = (
+  user: User,
+  feature: string,
+): boolean => {
+  for (const group of user.groups) {
+    if (!group.features[feature]) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export const user_has_ungrouped_feature = (
   user: User,
   feature: string,

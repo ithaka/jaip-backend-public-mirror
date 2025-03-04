@@ -1,5 +1,6 @@
 import { User } from "../../types/entities";
 import { SWAGGER_TAGS, MESSAGES } from "../../consts";
+import { standard_errors } from "../../utils";
 
 export const route_schemas = {
   session: {
@@ -13,18 +14,7 @@ export const route_schemas = {
           currentUser: {} as User,
         },
       },
-      500: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-      },
-      401: {
-        description: "Unauthorized",
-      },
-      403: {
-        description: "Forbidden",
-      },
+      ...standard_errors,
     },
   },
 };

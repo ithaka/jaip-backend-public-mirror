@@ -1,4 +1,5 @@
 import { SWAGGER_TAGS, MESSAGES } from "../../consts";
+import { server_error } from "../../utils";
 
 export const route_schemas = {
   alerts: {
@@ -16,12 +17,7 @@ export const route_schemas = {
       204: {
         description: "No alerts",
       },
-      500: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-      },
+      ...server_error,
     },
   },
 };

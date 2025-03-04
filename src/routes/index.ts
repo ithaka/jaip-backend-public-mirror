@@ -3,4 +3,14 @@ import subdomains from "./subdomains/routes";
 import disciplines from "./disciplines/routes";
 import healthcheck from "./healthchecks/routes";
 import alerts from "./alerts/routes";
-export default [auth, healthcheck, subdomains, disciplines, alerts];
+import media_review from "./media_review/routes";
+import search from "./search/routes";
+export default [
+  auth,
+  healthcheck,
+  subdomains,
+  disciplines,
+  alerts,
+  media_review,
+  search,
+];

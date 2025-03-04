@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import axios from "axios";
-import { ensure_error } from "../../utils/error_verification";
+import { ensure_error } from "../../utils";
 
 export const polaris_healthcheck = async (fastify: FastifyInstance) => {
   const url = "http://localhost:8888/healthcheck";

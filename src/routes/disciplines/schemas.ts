@@ -1,5 +1,6 @@
 import { SWAGGER_TAGS } from "../../consts";
 import { Discipline, Journal } from "../../types/disciplines";
+import { standard_errors } from "../../utils";
 
 export const route_schemas = {
   disciplines: {
@@ -11,12 +12,7 @@ export const route_schemas = {
         type: "array",
         items: {} as Discipline,
       },
-      500: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-      },
+      ...standard_errors,
     },
   },
   journals: {
@@ -36,12 +32,7 @@ export const route_schemas = {
         type: "array",
         items: {} as Journal,
       },
-      500: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-      },
+      ...standard_errors,
     },
   },
 };

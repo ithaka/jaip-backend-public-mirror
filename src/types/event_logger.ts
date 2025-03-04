@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { User } from "./entities";
+import { Group } from "./groups";
 
 export interface CaptainsLog {
   origin: string;
@@ -20,6 +21,17 @@ export interface CompleteLogPayload {
   db_subdomain: string;
   alert_text: string;
   alert_status: string;
+  doi: string;
+  dois: string[];
+  comments: string;
+  reason: string;
+  groups: number[];
+  full_groups: Group[];
+  group: Group;
+  group_id: number;
+  group_ids: number[];
+  disciplines: string[];
+  journals: string[];
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial
@@ -43,6 +55,11 @@ export interface EventLogger {
     payload: LogPayload,
   ) => void;
   pep_forbidden_error: (
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) => void;
+  pep_bad_request_error: (
     request: FastifyRequest,
     reply: FastifyReply,
     payload: LogPayload,

@@ -3,20 +3,26 @@ import fastify_swagger from "@fastify/swagger";
 import fastify_swagger_ui from "@fastify/swagger-ui";
 import fastify_cookie from "@fastify/cookie";
 
-import { SWAGGER_OPTS } from "./consts";
+import { SWAGGER_OPTS, VALIDATED_METHODS } from "./consts";
 
 import decorators from "./decorators";
 import plugins from "./plugins";
 import routes from "./routes";
 import "dotenv/config";
-import { requirements_guard, route_guard } from "./routes/handlers";
+import { requirements_guard, route_guard, validate } from "./routes/hooks";
 import { SWAGGER_TAGS } from "./consts";
 
 // This modification allows us to extend the fastify schema with an
 declare module "fastify" {
   interface RequirementsSchema extends FastifySchema {
     requires?: {
-      any?: string[];
+      any?: {
+        grouped?: {
+          all?: string[];
+          any?: string[];
+        };
+        ungrouped?: string[];
+      };
     };
   }
 }
@@ -41,9 +47,20 @@ function build(opts = {}) {
     // NOTE: This handler takes advantage of the user object added in the route_guard,
     // and must therefore be added after the route guard.
     const schema = routeOptions.schema as RequirementsSchema;
-    const requirements = schema.requires?.any;
+    const requirements =
+      schema.requires?.any?.grouped?.any ||
+      schema.requires?.any?.grouped?.all ||
+      schema.requires?.any?.ungrouped;
     if (requirements && requirements.length) {
       routeOptions.preHandler.push(requirements_guard);
+    }
+    const methods = Array.isArray(routeOptions.method)
+      ? routeOptions.method
+      : [routeOptions.method];
+    for (const method of methods) {
+      if (VALIDATED_METHODS.includes(method)) {
+        routeOptions.preValidation = [validate];
+      }
     }
   });
 

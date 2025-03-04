@@ -33,6 +33,7 @@ export class CaptainsLogger implements EventLogger {
       request_headers: request.headers,
       request_body: request.body,
       user: request.user,
+      group_ids: request.user?.groups.map((group) => group.id),
       sessionid: request.session?.uuid,
     };
   }
@@ -88,6 +89,22 @@ export class CaptainsLogger implements EventLogger {
       event_description:
         "user is not authenticated and must be to access this resource",
       type: "pep_unauthorized_error",
+      ...this._add_request_fields(request),
+      ...this._add_reply_fields(reply),
+      ...payload,
+    });
+  }
+
+  pep_bad_request_error(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    payload: LogPayload,
+  ) {
+    this._log("pep_bad_request_error", {
+      log_made_by: "error-handler",
+      event_description:
+        "the request schema is not valid and cannot be processed",
+      type: "pep_bad_request_error",
       ...this._add_request_fields(request),
       ...this._add_reply_fields(reply),
       ...payload,
