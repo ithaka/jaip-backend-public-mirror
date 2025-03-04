@@ -7,7 +7,7 @@ test('requests the "/request" route', async () => {
     method: "POST",
     url: "/request",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/approve" route', async () => {
@@ -15,7 +15,7 @@ test('requests the "/approve" route', async () => {
     method: "POST",
     url: "/approve",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/deny" route', async () => {
@@ -23,7 +23,7 @@ test('requests the "/deny" route', async () => {
     method: "POST",
     url: "/deny",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/incomplete" route', async () => {
@@ -31,21 +31,21 @@ test('requests the "/incomplete" route', async () => {
     method: "POST",
     url: "/incomplete",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/bulk" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/incomplete",
+    url: "/bulk",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/bulk-undo" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/incomplete",
+    url: "/bulk-undo",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
