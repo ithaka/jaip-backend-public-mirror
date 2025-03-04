@@ -113,7 +113,16 @@ export const denial_and_incomplete_handler = (
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "request", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: `failed to submit ${action}`,
+        },
+        status === status_options.Denied ? "deny" : "incomplete",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };
@@ -181,7 +190,16 @@ export const approval_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "request", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to submit approval",
+        },
+        "approve",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };
@@ -273,7 +291,16 @@ export const request_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "request", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to submit request",
+        },
+        "request",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };
@@ -398,7 +425,16 @@ export const bulk_approval_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "request", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to submit bulk approve",
+        },
+        "bulk",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };
@@ -494,7 +530,16 @@ export const bulk_undo_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "request", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to undo bulk approval",
+        },
+        "bulk-undo",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };

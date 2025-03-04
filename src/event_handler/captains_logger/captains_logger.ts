@@ -119,7 +119,9 @@ export class CaptainsLogger implements EventLogger {
     error: Error,
   ) {
     payload.log_made_by = "error-handler";
-    payload.event_description = "an error occurred";
+    if (!payload.event_description) {
+      payload.event_description = "an error occurred";
+    }
     this._log("pep_error", {
       type,
       error_message: error.message,
