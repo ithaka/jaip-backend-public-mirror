@@ -31,8 +31,7 @@ function build(opts = {}) {
 
   app.addHook("onRoute", (routeOptions) => {
     routeOptions.preHandler = [];
-    console.log("REGISTERING ROUTE");
-    console.log(routeOptions.path);
+
     // Check the schema for public swagger tags
     const is_public = routeOptions.schema?.tags?.includes(SWAGGER_TAGS.public);
 
