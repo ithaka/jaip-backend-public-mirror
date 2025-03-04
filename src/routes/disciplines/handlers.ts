@@ -70,6 +70,15 @@ export const disciplines_handler =
     } catch (err) {
       const error = ensure_error(err);
       reply.code(500).send(error.message);
-      fastify.eventLogger.pep_error(request, reply, {}, "auth", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: `failed to retrieve ${is_discipline_search ? "disciplines" : "journals"}`,
+        },
+        "auth",
+        error,
+      );
     }
   };

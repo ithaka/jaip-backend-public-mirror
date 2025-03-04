@@ -30,7 +30,16 @@ export const auth_session_handler =
     }
     if (error) {
       reply.code(500).send(error.message);
-      fastify.eventLogger.pep_error(request, reply, log_payload, "auth", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to authenticate user",
+        },
+        "auth",
+        error,
+      );
       return;
     } else if (!currentUser) {
       reply.code(401).send();

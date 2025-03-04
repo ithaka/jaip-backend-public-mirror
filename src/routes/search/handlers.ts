@@ -16,7 +16,16 @@ export const search_handler =
       console.log("This is where some code goes");
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "search", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to complete search",
+        },
+        "search",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };

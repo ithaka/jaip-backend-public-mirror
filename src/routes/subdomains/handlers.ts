@@ -44,7 +44,16 @@ export const subdomain_validation_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "subdomains", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to validate subdomain",
+        },
+        "subdomains",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };

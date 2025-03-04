@@ -49,7 +49,16 @@ export const alerts_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(request, reply, {}, "alerts", error);
+      fastify.eventLogger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to retrieve alerts",
+        },
+        "alerts",
+        error,
+      );
       reply.code(500).send(error.message);
     }
   };
