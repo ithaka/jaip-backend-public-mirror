@@ -14,7 +14,7 @@ export const route_guard = async (
     if (session_error) {
       throw session_error;
     }
-    const [currentUser, user_error] = await get_current_user(
+    const [current_user, user_error] = await get_current_user(
       request.server,
       request,
       session,
@@ -25,14 +25,14 @@ export const route_guard = async (
 
     // This handler is only used on private routes which require authentication,
     // so if no user is returned we should return a 401
-    if (!currentUser) {
+    if (!current_user) {
       reply.code(401).send();
       return;
     }
 
     request.session = session;
-    if (currentUser) {
-      request.user = currentUser;
+    if (current_user) {
+      request.user = current_user;
     }
   } catch (err) {
     const error = ensure_error(err);

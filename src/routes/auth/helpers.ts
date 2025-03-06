@@ -178,19 +178,19 @@ export const get_current_user = async (
   request: FastifyRequest,
   session: Session,
 ): Promise<[User | null, Error | null]> => {
-  let currentUser: User | null = null;
+  let current_user: User | null = null;
   try {
     // Extract the email from the session
     const emails = get_email_from_session(session);
     // If there are emails, try to find a user with one of them
     if (emails.length) {
       const [result, error] = await get_user(fastify.prisma, emails);
-      currentUser = result;
+      current_user = result;
       if (error) {
         throw error;
         // If a user is found, we don't need to look for anything else
-      } else if (currentUser) {
-        return [currentUser, null];
+      } else if (current_user) {
+        return [current_user, null];
       }
     }
 
@@ -216,12 +216,12 @@ export const get_current_user = async (
 
       // If there are codes, try to find a facility with one of them
       const [result, error] = await get_facility(fastify.prisma, codes);
-      currentUser = result;
+      current_user = result;
       if (error) {
         throw error;
         // If a facility is found, we don't need to look for anything else
-      } else if (currentUser) {
-        return [currentUser, null];
+      } else if (current_user) {
+        return [current_user, null];
       }
     }
 
@@ -235,8 +235,8 @@ export const get_current_user = async (
       }
       // If we find a facility, we don't need to look for anything else
       if (result) {
-        currentUser = result;
-        return [currentUser, null];
+        current_user = result;
+        return [current_user, null];
       }
     }
     return [null, null];

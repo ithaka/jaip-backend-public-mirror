@@ -19,13 +19,13 @@ export const auth_session_handler =
       throw err;
     }
     log_payload.sessionid = session.uuid;
-    const [currentUser, error] = await get_current_user(
+    const [current_user, error] = await get_current_user(
       fastify,
       request,
       session,
     );
-    if (currentUser) {
-      log_payload.user = currentUser;
+    if (current_user) {
+      log_payload.user = current_user;
     }
     if (error) {
       reply.code(500).send(error.message);
@@ -40,19 +40,19 @@ export const auth_session_handler =
         error,
       );
       return;
-    } else if (!currentUser) {
+    } else if (!current_user) {
       reply.code(401).send();
       fastify.eventLogger.pep_unauthorized_error(request, reply, log_payload);
       return;
     } else {
       const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
-      if (is_admin_subdomain && currentUser.type !== ENTITY_TYPES.users) {
+      if (is_admin_subdomain && current_user.type !== ENTITY_TYPES.users) {
         reply.code(403).send();
         fastify.eventLogger.pep_forbidden_error(request, reply, log_payload);
         return;
       }
     }
-    reply.code(200).send(currentUser);
+    reply.code(200).send(current_user);
     fastify.eventLogger.pep_standard_log_complete(
       "pep_auth_complete",
       request,
