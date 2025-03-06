@@ -48,6 +48,7 @@ export const SWAGGER_OPTS = {
 export const SERVICES = {
   session_manager: "session-service",
   search_service: "search-service",
+  search3: "search3",
 };
 
 // This should be updated whenever a new feature is added to the database.
@@ -73,4 +74,37 @@ export const FEATURES = {
   view_hidden_users: "view_hidden_users",
   view_pdf: "view_pdf",
   view_snippet: "view_snippet",
+};
+
+export const SEARCH3 = {
+  defaults: {
+    additional_fields: [
+      "headid",
+      "disc_str",
+      "book_publisher",
+      "book_description",
+      "fpage",
+      "lpage",
+      "tb",
+      "year",
+      "ab",
+      "cty",
+      "cty_str",
+    ],
+    filter_queries: [
+      '-ti:("Front Matter" OR "Back Matter" OR EDITORIAL OR "Volume Information" OR "INDEX TO ADVERTISERS")',
+    ],
+    content_set_flags: [
+      "search_article",
+      "search_chapter",
+      "pamphlet",
+      "review",
+      "research_report",
+      "mp_research_report_part",
+    ],
+  },
+  maps: {
+    contentType: "cty_str",
+    disciplines: "disc_str",
+  } as { [key: string]: string },
 };
