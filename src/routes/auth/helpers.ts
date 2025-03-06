@@ -12,7 +12,7 @@ import { sessionQuery } from "../queries/session";
 import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { SERVICES, SUBDOMAINS } from "../../consts";
-import { get_subdomain } from "../../utils";
+
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -197,7 +197,7 @@ export const get_current_user = async (
     // Extract the codes from the session
     const codes = get_code_from_session(session);
     if (codes.length) {
-      const subdomain = get_subdomain(request.host);
+      const subdomain = request.subdomain;
       if (!SUBDOMAINS.student.includes(subdomain)) {
         const [sitecode, error] = await get_sitecode_by_subdomain(
           fastify.prisma,

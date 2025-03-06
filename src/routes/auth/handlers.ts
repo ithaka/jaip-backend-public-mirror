@@ -2,7 +2,6 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SUBDOMAINS, ENTITY_TYPES } from "../../consts";
 import { LogPayload } from "../../event_handler";
 import { manage_session, get_current_user } from "./helpers";
-import { get_subdomain } from "../../utils";
 
 export const auth_session_handler =
   (fastify: FastifyInstance) =>
@@ -46,8 +45,7 @@ export const auth_session_handler =
       fastify.eventLogger.pep_unauthorized_error(request, reply, log_payload);
       return;
     } else {
-      const subdomain = get_subdomain(request.headers.host || "");
-      const is_admin_subdomain = SUBDOMAINS.admin.includes(subdomain);
+      const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
       if (is_admin_subdomain && currentUser.type !== ENTITY_TYPES.users) {
         reply.code(403).send();
         fastify.eventLogger.pep_forbidden_error(request, reply, log_payload);

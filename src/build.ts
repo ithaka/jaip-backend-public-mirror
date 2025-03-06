@@ -11,6 +11,7 @@ import routes from "./routes";
 import "dotenv/config";
 import { requirements_guard, route_guard, validate } from "./routes/hooks";
 import { SWAGGER_TAGS } from "./consts";
+import { add_subdomain } from "./routes/hooks/add_subdomain";
 
 // This modification allows us to extend the fastify schema with an
 declare module "fastify" {
@@ -30,7 +31,8 @@ function build(opts = {}) {
   const app = Fastify(opts);
 
   app.addHook("onRoute", (routeOptions) => {
-    routeOptions.preHandler = [];
+    // Add the subdomain to the request for all routes
+    routeOptions.preHandler = [add_subdomain];
 
     // Check the schema for public swagger tags
     const is_public = routeOptions.schema?.tags?.includes(SWAGGER_TAGS.public);

@@ -1,7 +1,6 @@
 import { EventLogger, LogPayload } from "../../types/event_logger";
 import { v4 as uuidv4 } from "uuid";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { get_subdomain } from "../../utils";
 
 export class CaptainsLogger implements EventLogger {
   #base_log = {
@@ -29,7 +28,7 @@ export class CaptainsLogger implements EventLogger {
       user_agent: request.headers["user-agent"],
       uuid: request.cookies.uuid,
       host: request.host,
-      subdomain: get_subdomain(request.host),
+      subdomain: request.subdomain,
       request_headers: request.headers,
       request_body: request.body,
       user: request.user,

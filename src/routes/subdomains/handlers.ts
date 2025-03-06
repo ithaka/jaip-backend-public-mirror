@@ -1,4 +1,4 @@
-import { ensure_error, get_subdomain } from "../../utils";
+import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
@@ -16,8 +16,7 @@ export const subdomain_validation_handler =
         event_description: "attempting to get subdomains",
       },
     );
-    const host = request.headers.host || "";
-    const subdomain = get_subdomain(host);
+    const subdomain = request.subdomain;
     try {
       const result = await fastify.prisma.subdomains.findFirst({
         where: {
