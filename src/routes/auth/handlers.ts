@@ -54,7 +54,7 @@ export const auth_session_handler =
         return;
       }
     }
-    reply.code(200).send({ currentUser });
+    reply.code(200).send(currentUser);
     fastify.eventLogger.pep_standard_log_complete(
       "pep_auth_complete",
       request,

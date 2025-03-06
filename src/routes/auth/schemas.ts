@@ -10,9 +10,7 @@ export const route_schemas = {
     response: {
       200: {
         type: "object",
-        properties: {
-          currentUser: {} as User,
-        },
+        additionalProperties: {} as User,
       },
       ...standard_errors,
     },
