@@ -5,6 +5,7 @@ declare module "fastify" {
   interface FastifyRequest {
     user: User;
     session: Session;
+    subdomain: string;
   }
 }
 
