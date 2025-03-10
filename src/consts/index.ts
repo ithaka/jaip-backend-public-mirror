@@ -49,6 +49,7 @@ export const SERVICES = {
   session_manager: "session-service",
   search_service: "search-service",
   search3: "search3",
+  search_snippet_service: "search-snippet-service",
 };
 
 // This should be updated whenever a new feature is added to the database.
@@ -102,6 +103,7 @@ export const SEARCH3 = {
       "research_report",
       "mp_research_report_part",
     ],
+    tokens: [],
   },
   maps: {
     contentType: "cty_str",
