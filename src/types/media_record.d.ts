@@ -1,7 +1,7 @@
 export interface MediaRecord {
   _id: string;
-  _score: number;
-  abstract: string;
+  score: number;
+  abstract: string | string[];
   authors: string[];
   book_description: string;
   book_publisher: string;
@@ -11,46 +11,32 @@ export interface MediaRecord {
   cty_str: string;
   doi: string;
   ocr?: string;
-  semanticTerms: string[];
   fpage: string;
-  history: History[] | null;
+  history?: History[] | null;
   iid: string;
-  log_history: History[];
-  log_media_review_statuses: { [key: string]: History };
-  log_national_history: History[];
   lpage: string;
-  mediaReviewStatuses: { [key: string]: History };
-  national_history: History[] | null;
-  snippets: Snippet[];
+  mediaReviewStatuses?: { [key: string]: History };
+  national_history?: History[] | null;
+  snippets?: Snippet[];
   subtitle: string[] | string;
   tb: string;
   title: string;
-  year: number;
+  year: string | number;
 }
 
 export interface History {
   status: Status;
   statusLabel: string;
-  statusCreatedAt: Date;
-  createdAt?: Date;
+  statusCreatedAt: Date | null;
+  createdAt?: Date | null;
   entityName?: string;
-  groupName: string;
-  groupID: number;
+  groupName?: string;
+  groupID?: number;
   statusDetails?: StatusDetails;
   entityID?: number;
 }
 
-export interface BulkHistory {
-  status: Status;
-  createdAt: Date;
-  entityName?: string;
-  groupName: string;
-  groupID: number;
-  statusDetails?: StatusDetails;
-  entityID?: number;
-}
-
-export enum Status {
+export enum StatusOptions {
   Approved = "Approved",
   ApprovedByDiscipline = "Approved by Discipline",
   ApprovedByJournal = "Approved by Journal",

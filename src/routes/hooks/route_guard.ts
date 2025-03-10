@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { manage_session, get_current_user } from "../auth/helpers";
 import { ensure_error } from "../../utils";
+import { SUBDOMAINS } from "../../consts";
 
 export const route_guard = async (
   request: FastifyRequest,
@@ -33,6 +34,12 @@ export const route_guard = async (
     request.session = session;
     if (current_user) {
       request.user = current_user;
+      request.is_authenticated_admin =
+        SUBDOMAINS.admin.includes(request.subdomain) &&
+        request.user.type === "users";
+      request.is_authenticated_student =
+        SUBDOMAINS.student.includes(request.subdomain) &&
+        request.user.type === "facilities";
     }
   } catch (err) {
     const error = ensure_error(err);

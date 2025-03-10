@@ -6,6 +6,8 @@ declare module "fastify" {
     user: User;
     session: Session;
     subdomain: string;
+    is_authenticated_admin: boolean;
+    is_authenticated_student: boolean;
   }
 }
 

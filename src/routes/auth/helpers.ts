@@ -8,7 +8,7 @@ import {
   map_entities,
 } from "../queries/entities";
 import axios from "axios";
-import { sessionQuery } from "../queries/session";
+import { session_query } from "../queries/session";
 import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { SERVICES, SUBDOMAINS } from "../../consts";
@@ -22,10 +22,10 @@ export const manage_session = async (
   try {
     const [host, error] = await fastify.discover(SERVICES.session_manager);
     if (error) throw error;
-
     const query = uuid
-      ? `mutation { session(uuid: "${uuid}") ${sessionQuery}}`
-      : `mutation { session ${sessionQuery}}`;
+      ? `mutation { session(uuid: "${uuid}") ${session_query}}`
+      : `mutation { session ${session_query}}`;
+
     const url = host + "v1/graphql";
     const response = await axios.post(url, {
       query,
@@ -61,7 +61,7 @@ const get_code_from_session = (session: Session): string[] => {
   return codes;
 };
 const get_email_from_session = (session: Session): string[] => {
-  const emails = [];
+  const emails = ["ryan.mccarthy+1@ithaka.org"];
   if (session.userAccount?.contact?.email) {
     emails.push(session.userAccount.contact.email);
   }

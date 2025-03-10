@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { User } from "./entities";
 import { Group } from "./groups";
+import { Search3Request, SearchRequest } from "./search";
 
 export interface CaptainsLog {
   origin: string;
@@ -32,6 +33,15 @@ export interface CompleteLogPayload {
   group_ids: number[];
   disciplines: string[];
   journals: string[];
+  query: string;
+  pageNo: number;
+  limit: number;
+  sort: string;
+  filters: string[];
+  facets: string[];
+  fields: string[];
+  search_request: SearchRequest;
+  search3_request: Search3Request;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

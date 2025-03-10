@@ -1,3 +1,5 @@
+import { StatusOptions } from "./media_record";
+
 export interface DBEntity {
   jstor_id: string;
   entities: Entities;
@@ -54,4 +56,25 @@ export interface UngroupedFeatures {
   created_at: string;
   updated_at: string;
   is_active: boolean;
+}
+
+export interface Status {
+  jstor_item_id: string | null;
+  jstor_item_type: jstor_types | null;
+  status: status_options | StatusOptions | null;
+  created_at: Date | null;
+  entities: {
+    id: number;
+    name: string;
+  } | null;
+  groups: {
+    id: number;
+    name: string;
+  } | null;
+  status_details?:
+    | {
+        type: string | null;
+        detail: string | null;
+      }[]
+    | null;
 }

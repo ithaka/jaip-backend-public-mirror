@@ -1,7 +1,12 @@
 import { RouteGenericInterface } from "fastify";
+import { SearchRequest } from "./search";
 
 export interface DiscParams {
   code: string;
+}
+
+export interface StatusParams {
+  status: string;
 }
 
 export interface MediaReviewRequest extends RouteGenericInterface {
@@ -41,4 +46,8 @@ export interface MediaReviewBulUndo extends RouteGenericInterface {
     groups: number[];
     code: string;
   };
+}
+
+export interface SearchRequestBody extends RouteGenericInterface {
+  Body: SearchRequest;
 }

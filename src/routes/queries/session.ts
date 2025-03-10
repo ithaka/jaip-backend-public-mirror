@@ -1,6 +1,12 @@
-export const sessionQuery = `{
+export const session_query = `{
     ip
     uuid
+    licenses {
+      id
+      entitlement {
+        id
+      }
+    }
     userAccount {
       code
       contact {
@@ -16,7 +22,7 @@ export const sessionQuery = `{
 }`;
 // This may not be necessary, but it's included for now because it was a pain to
 // put together the full query and it may be useful in the future.
-export const fullSessionQuery = `{
+export const full_session_query = `{
     ip
     uuid
     previousSessionId
