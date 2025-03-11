@@ -23,6 +23,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: jaip-backend
+  title: JAIP Backend
   description: The JAIP Online Application Backend
   annotations:
     gitlab.com/project-id: "66184988"
@@ -77,6 +78,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
   name: jaip-test-db
+  title: JAIP Test Database
   description: Stores the data for the test environment of the JAIP application
   environment: test
   links:
@@ -91,6 +93,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
   name: jaip-prod-db
+  title: JAIP Production Database
   description: Stores the data for the production environment of the JAIP application
   environment: prod
   links:
