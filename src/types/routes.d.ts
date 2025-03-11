@@ -9,6 +9,10 @@ export interface StatusParams {
   status: string;
 }
 
+export interface PagesParams {
+  iid: string;
+}
+
 export interface MediaReviewRequest extends RouteGenericInterface {
   Body: {
     dois: string[];
@@ -50,4 +54,12 @@ export interface MediaReviewBulUndo extends RouteGenericInterface {
 
 export interface SearchRequestBody extends RouteGenericInterface {
   Body: SearchRequest;
+}
+
+export interface CedarMetadataReturn {
+  itemType: string;
+  contentType: string;
+  isRightToLeft: boolean;
+  pageCount: number;
+  status: number;
 }

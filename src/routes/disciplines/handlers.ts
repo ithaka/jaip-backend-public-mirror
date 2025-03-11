@@ -1,11 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SERVICES } from "../../consts";
 import axios from "axios";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { attach_bulk_approval } from "./helpers";
 import { jstor_types } from "@prisma/client";
 import { DiscParams } from "../../types/routes";
+import { SEARCH_SERVICE } from "../../consts";
 
 export const disciplines_handler =
   (fastify: FastifyInstance) =>
@@ -26,14 +26,14 @@ export const disciplines_handler =
       },
     );
     try {
-      const [host, search_error] = await fastify.discover(
-        SERVICES.search_service,
-      );
+      const [host, search_error] = await fastify.discover(SEARCH_SERVICE.name);
       if (search_error) {
         throw search_error;
       }
 
-      const url = code ? `${host}disciplines/${code}` : `${host}disciplines/`;
+      const url = code
+        ? `${host}${SEARCH_SERVICE.path}${code}`
+        : `${host}disciplines/`;
       const response = await axios.get(url);
       if (response.status !== 200) {
         throw new Error(

@@ -11,7 +11,7 @@ import axios from "axios";
 import { session_query } from "../queries/session";
 import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
-import { SERVICES, SUBDOMAINS } from "../../consts";
+import { SESSION_MANAGER, SUBDOMAINS } from "../../consts";
 
 export const manage_session = async (
   fastify: FastifyInstance,
@@ -20,13 +20,13 @@ export const manage_session = async (
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
-    const [host, error] = await fastify.discover(SERVICES.session_manager);
+    const [host, error] = await fastify.discover(SESSION_MANAGER.name);
     if (error) throw error;
     const query = uuid
       ? `mutation { session(uuid: "${uuid}") ${session_query}}`
       : `mutation { session ${session_query}}`;
 
-    const url = host + "v1/graphql";
+    const url = host + SESSION_MANAGER.path;
     const response = await axios.post(url, {
       query,
     });
