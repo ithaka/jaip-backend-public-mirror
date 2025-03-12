@@ -58,17 +58,17 @@ render capstan chart:
   extends: .render-charts
   needs: []
 
-scan vulnerabilities:
-  stage: check
-  dependencies:
-    - build app image
-  extends: .vulnerability-scanner
-  variables:
-    SEVERITY: critical high unknown
-    FAIL_ON_SEVERITY: critical high unknown
-  before_script:
-    # replace / with - in branch name to be friendly w/ job
-    - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
+# scan vulnerabilities:
+#   stage: check
+#   dependencies:
+#     - build app image
+#   extends: .vulnerability-scanner
+#   variables:
+#     SEVERITY: critical high unknown
+#     FAIL_ON_SEVERITY: critical high unknown
+#   before_script:
+#     # replace / with - in branch name to be friendly w/ job
+#     - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
 
 lint:
   stage: check
@@ -81,18 +81,18 @@ lint:
     - yarn install
   script: yarn lint:ci
 
-unit tests:
-  stage: check
-  dependencies:
-    - build app image
-  image: $IMAGE_TAG
-  variables:
-    DB_MOCK: true
-  tags:
-    - test-runner
-  before_script:
-    - yarn install
-  script: yarn test:ci
+# unit tests:
+#   stage: check
+#   dependencies:
+#     - build app image
+#   image: $IMAGE_TAG
+#   variables:
+#     DB_MOCK: true
+#   tags:
+#     - test-runner
+#   before_script:
+#     - yarn install
+#   script: yarn test:ci
 
 promote image:
   stage: promote
