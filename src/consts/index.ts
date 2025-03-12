@@ -72,7 +72,7 @@ export const FEATURES = {
 };
 
 export const SESSION_MANAGER = {
-  name: "session-manager",
+  name: "session-service",
   path: "v1/graphql",
 };
 
