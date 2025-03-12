@@ -4,7 +4,7 @@ import disciplines from "./disciplines/routes";
 import healthcheck from "./healthchecks/routes";
 import alerts from "./alerts/routes";
 import media_review from "./media_review/routes";
-// import search from "./search/routes";
+import search from "./search/routes";
 export default [
   auth,
   healthcheck,
@@ -12,5 +12,5 @@ export default [
   disciplines,
   alerts,
   media_review,
-  // search,
+  search,
 ];
