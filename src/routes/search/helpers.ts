@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Status } from "../../types/database";
 import { FastifyInstance, FastifyRequest } from "fastify";
-import { SERVICES } from "../../consts";
 import axios, { AxiosResponse } from "axios";
 import {
   Search3Document,
@@ -9,6 +8,7 @@ import {
   SnippetResult,
 } from "../../types/search";
 import { ensure_error } from "../../utils";
+import { SEARCH_SNIPPET_SERVICE } from "../../consts/services";
 
 const facility_select = {
   jstor_item_id: true,
@@ -146,7 +146,7 @@ export const get_snippets = async (
     }
 
     const [host, search_error] = await fastify.discover(
-      SERVICES.search_snippet_service,
+      SEARCH_SNIPPET_SERVICE.name,
     );
     if (search_error) {
       throw search_error;

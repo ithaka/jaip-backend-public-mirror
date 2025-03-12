@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SERVICES } from "../../consts";
+import { SEARCH_SERVICE } from "../../consts/services";
 import axios from "axios";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
@@ -26,9 +26,7 @@ export const disciplines_handler =
       },
     );
     try {
-      const [host, search_error] = await fastify.discover(
-        SERVICES.search_service,
-      );
+      const [host, search_error] = await fastify.discover(SEARCH_SERVICE.name);
       if (search_error) {
         throw search_error;
       }
