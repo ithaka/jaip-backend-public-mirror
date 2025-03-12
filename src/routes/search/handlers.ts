@@ -2,7 +2,7 @@ import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SearchRequestBody, StatusParams } from "../../types/routes";
-import { SEARCH3 } from "../../consts/services";
+import { SEARCH3 } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, Prisma, status_options } from "@prisma/client";
 import { Status } from "../../types/database";

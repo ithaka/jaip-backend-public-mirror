@@ -8,7 +8,7 @@ import {
   SnippetResult,
 } from "../../types/search";
 import { ensure_error } from "../../utils";
-import { SEARCH_SNIPPET_SERVICE } from "../../consts/services";
+import { SEARCH_SNIPPET_SERVICE } from "../../consts";
 
 const facility_select = {
   jstor_item_id: true,

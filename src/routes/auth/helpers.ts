@@ -12,7 +12,7 @@ import { session_query } from "../queries/session";
 import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { SUBDOMAINS } from "../../consts";
-import { SESSION_MANAGER } from "../../consts/services";
+import { SESSION_MANAGER } from "../../consts";
 
 export const manage_session = async (
   fastify: FastifyInstance,

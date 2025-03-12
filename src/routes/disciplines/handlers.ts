@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SEARCH_SERVICE } from "../../consts/services";
+import { SEARCH_SERVICE } from "../../consts";
 import axios from "axios";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
