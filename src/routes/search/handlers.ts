@@ -2,7 +2,7 @@ import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SearchRequestBody, StatusParams } from "../../types/routes";
-import { SEARCH3 } from "../../consts";
+import { SEARCH3, SERVICES } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, Prisma, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
@@ -194,12 +194,12 @@ export const search_handler =
         limit,
         sort,
         page_mark,
-        ...SEARCH3.queries.defaults,
+        ...SEARCH3.defaults,
       };
 
       search3_request.filter_queries = [...search3_request.filter_queries];
       for (const [i, filter] of filters.entries()) {
-        for (const [key, value] of Object.entries(SEARCH3.queries.maps)) {
+        for (const [key, value] of Object.entries(SEARCH3.maps)) {
           if (filter.startsWith(key)) {
             filters[i] = `${value}:${filter.split(":")[1]}`;
           }
@@ -210,7 +210,7 @@ export const search_handler =
       if (facets.length) {
         search3_request.ms_facet_fields = facets.map((facet) => {
           return {
-            field: SEARCH3.queries.maps[facet],
+            field: SEARCH3.maps[facet],
             minCount: 1,
             limit: 10,
           };
@@ -225,7 +225,7 @@ export const search_handler =
 
       log_payload.search3_request = search3_request;
 
-      const [host, search_error] = await fastify.discover(SEARCH3.name);
+      const [host, search_error] = await fastify.discover(SERVICES.search3);
       if (search_error) {
         throw search_error;
       }
@@ -239,6 +239,7 @@ export const search_handler =
         throw error;
       }
 
+      console.log(search_result);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
       );
