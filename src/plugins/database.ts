@@ -15,15 +15,15 @@ const plugin: FastifyPluginAsync = fastify_plugin(async (fastify, options) => {
     await prisma.$connect();
   }
 
-  prisma.$on(
-    // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
-    "query",
-    (e: { query: string; params: string; duration: number }) => {
-      console.log("Query: " + e.query);
-      console.log("Params: " + e.params);
-      console.log("Duration: " + e.duration + "ms");
-    },
-  );
+  // prisma.$on(
+  //   // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
+  //   "query",
+  //   (e: { query: string; params: string; duration: number }) => {
+  //     console.log("Query: " + e.query);
+  //     console.log("Params: " + e.params);
+  //     console.log("Duration: " + e.duration + "ms");
+  //   },
+  // );
 
   // Make Prisma Client available through the fastify server instance: fastify.prisma
   fastify.decorate("prisma", prisma);

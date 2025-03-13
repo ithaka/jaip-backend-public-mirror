@@ -19,8 +19,8 @@ export const route_schemas = {
     name: "journals",
     description: `Returns an array of journal objects in a provided discipline.`,
     tags: [SWAGGER_TAGS.private],
-    params: {
-      type: "object",
+    path: {
+      type: "string",
       properties: {
         code: {
           type: "string",

@@ -5,6 +5,8 @@ import healthcheck from "./healthchecks/routes";
 import alerts from "./alerts/routes";
 import media_review from "./media_review/routes";
 import search from "./search/routes";
+import pages from "./pages/routes";
+
 export default [
   auth,
   healthcheck,
@@ -13,4 +15,5 @@ export default [
   alerts,
   media_review,
   search,
+  pages,
 ];

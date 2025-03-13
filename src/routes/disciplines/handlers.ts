@@ -57,9 +57,10 @@ export const disciplines_handler =
 
       reply.send(items);
 
-      fastify.eventLogger.pep_standard_log_start(
+      fastify.eventLogger.pep_standard_log_complete(
         `${is_discipline_search ? "pep_disciplines_complete" : "pep_journals_complete"}`,
         request,
+        reply,
         {
           ...log_payload,
           event_description: `successfully retrieved ${is_discipline_search ? "disciplines" : "journals"} and bulk approval statuses`,

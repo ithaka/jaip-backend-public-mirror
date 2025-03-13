@@ -46,6 +46,7 @@ spec:
     - component:search3
     - component:search-service
     - component:search-snippet-service
+    - resource:ale-query-service
   # The dependency on the ITHAKA CLI is a dev dependency. The Polaris sidecar
   # is a production/test dependency. Backstage isn't great at making environmental 
   # distinctions.

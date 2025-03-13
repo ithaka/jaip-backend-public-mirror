@@ -33,15 +33,6 @@ export const status_search_handler =
       },
     );
     try {
-      fastify.eventLogger.pep_standard_log_complete(
-        "pep_status_search_complete",
-        request,
-        reply,
-        {
-          ...log_payload,
-          event_description: "search for documents by status complete",
-        },
-      );
       const params = request.params as StatusParams;
       const status = params.status;
       const start_date = request.body.statusStartDate;
@@ -150,6 +141,16 @@ export const status_search_handler =
       // use a query.
       request.body.query = "";
       await search_handler(fastify, count)(request, reply);
+
+      fastify.eventLogger.pep_standard_log_complete(
+        "pep_status_search_complete",
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "search for documents by status complete",
+        },
+      );
     } catch (err) {
       const error = ensure_error(err);
       fastify.eventLogger.pep_error(
@@ -174,17 +175,10 @@ export const search_handler =
     };
     fastify.eventLogger.pep_standard_log_start("pep_search_start", request, {
       ...log_payload,
-      event_description: "attempting to search",
+      full_groups: request.user.groups,
+      event_description: "attempting to search by query",
     });
     try {
-      const log_payload: LogPayload = {
-        log_made_by: "search-api",
-      };
-      fastify.eventLogger.pep_standard_log_start("pep_search_start", request, {
-        ...log_payload,
-        full_groups: request.user.groups,
-        event_description: "attempting to search by query",
-      });
       const { query, limit, pageNo, sort, facets, filters } = request.body;
       log_payload.search_request = request.body;
 

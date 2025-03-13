@@ -8,7 +8,7 @@ import {
   SnippetResult,
 } from "../../types/search";
 import { ensure_error } from "../../utils";
-import { SEARCH_SNIPPET_SERVICE } from "../../consts";
+import { SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
 
 const facility_select = {
   jstor_item_id: true,
@@ -216,7 +216,7 @@ export const do_search3 = async (
   uuid: string,
 ): Promise<[AxiosResponse | null, Error | null]> => {
   try {
-    const url = host + "v3.0/jstor/basic";
+    const url = host + SEARCH3.path;
     const search_result = await axios({
       url,
       method: "POST",
@@ -225,6 +225,9 @@ export const do_search3 = async (
         Cookie: `UUID=${uuid}`,
       },
     });
+    if (search_result.status !== 200) {
+      throw new Error("Search request failed: Status code not 200");
+    }
     return [search_result, null];
   } catch (err) {
     const error = ensure_error(err);

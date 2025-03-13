@@ -87,11 +87,11 @@ include:
     ref: "2"
     inputs:
       job_name: "render capstan chart"
-  # - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
-  #   file: template.gitlab-ci.yml
-  #   ref: "2"
-  #   inputs:
-  #     job_name: "scan vulnerabilities"
+  - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
+    file: template.gitlab-ci.yml
+    ref: "2"
+    inputs:
+      job_name: "scan vulnerabilities"
   - project: capstan/platform-apps/blueprint/glab-ci-update-github-commit-status
     file: template.gitlab-ci.yml
     ref: "2"

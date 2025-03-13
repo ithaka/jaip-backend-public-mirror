@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { User } from "./entities";
 import { Group } from "./groups";
 import { Search3Request, SearchRequest } from "./search";
+import { CedarIdentityBlock, CedarItemView, EntitlementMap } from "./routes";
 
 export interface CaptainsLog {
   origin: string;
@@ -23,6 +24,7 @@ export interface CompleteLogPayload {
   alert_text: string;
   alert_status: string;
   doi: string;
+  item_doi: string;
   dois: string[];
   comments: string;
   reason: string;
@@ -42,6 +44,16 @@ export interface CompleteLogPayload {
   fields: string[];
   search_request: SearchRequest;
   search3_request: Search3Request;
+  entitlement_mapping: EntitlementMap;
+  iid: string;
+  item_id: string;
+  cedar_identity_block: CedarIdentityBlock;
+  cedar_item_view: CedarItemView[];
+  stable_url: string;
+  page: string;
+  page_index: number;
+  referer: string;
+  page_path: string;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

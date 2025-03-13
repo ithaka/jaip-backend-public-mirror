@@ -81,6 +81,20 @@ export const SEARCH_SERVICE = {
   path: "disciplines/",
 };
 
+export const CEDAR_DELIVERY_SERVICE = {
+  name: "cedar-delivery-service",
+  path: "v3/content",
+  queries: {
+    params: {
+      item_view: {
+        format: "ITEM_VIEW_1",
+      },
+      identity_block: {
+        format: "IDENTITY_BLOCK",
+      },
+    },
+  },
+};
 export const SEARCH3 = {
   name: "search3",
   path: "v3.0/jstor/basic",
@@ -122,4 +136,9 @@ export const SEARCH3 = {
 export const SEARCH_SNIPPET_SERVICE = {
   name: "search-snippet-service",
   path: "v2/snippets",
+};
+
+export const ALE_QUERY_SERVICE = {
+  name: "ale-query-service",
+  path: "v3/authz/bySessionAndContents",
 };
