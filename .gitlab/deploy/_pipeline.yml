@@ -81,18 +81,18 @@ lint:
     - yarn install
   script: yarn lint:ci
 
-# unit tests:
-#   stage: check
-#   dependencies:
-#     - build app image
-#   image: $IMAGE_TAG
-#   variables:
-#     DB_MOCK: true
-#   tags:
-#     - test-runner
-#   before_script:
-#     - yarn install
-#   script: yarn test:ci
+unit tests:
+  stage: check
+  dependencies:
+    - build app image
+  image: $IMAGE_TAG
+  variables:
+    DB_MOCK: true
+  tags:
+    - test-runner
+  before_script:
+    - yarn install
+  script: yarn test:ci
 
 promote image:
   stage: promote
