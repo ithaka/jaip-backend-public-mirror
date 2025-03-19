@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -67,10 +67,6 @@ model features_groups_entities {
   @@id([group_id, entity_id, feature_id])
 }
 
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model fid {
-// }
-
 model groups {
   id                       Int                        @id @default(autoincrement())
   name                     String                     @unique(map: "groups_name_uq") @db.VarChar
@@ -83,14 +79,15 @@ model groups {
 }
 
 model groups_entities {
-  id         Int         @id @default(autoincrement())
-  group_id   Int?
-  entity_id  Int?
+  id         Int         @default(autoincrement())
+  group_id   Int
+  entity_id  Int
   role       user_roles?
   updated_at DateTime?   @default(now()) @db.Timestamp(6)
-  entities   entities?   @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  groups     groups?     @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities   entities    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  groups     groups      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@id([group_id, entity_id])
   @@index([id, group_id, entity_id])
   @@index([id, group_id, entity_id], map: "groups_entitites_id_group_id_entity_id_idx")
 }

@@ -31,6 +31,8 @@ function build(opts = {}) {
   const app = Fastify(opts);
 
   app.addHook("onRoute", (routeOptions) => {
+    app.log.info(`Adding route: ${routeOptions.url}`);
+
     // Add the subdomain to the request for all routes
     routeOptions.preHandler = [add_subdomain];
 
@@ -43,6 +45,7 @@ function build(opts = {}) {
     // to have the same auth requirements as the regular private routes, we check
     // for an explicitly false value, rather than just a falsy one.
     if (is_public === false) {
+      app.log.info(`Adding route guard to ${routeOptions.url}`);
       routeOptions.preHandler.push(route_guard);
     }
 
@@ -54,13 +57,16 @@ function build(opts = {}) {
       schema.requires?.any?.grouped?.all ||
       schema.requires?.any?.ungrouped;
     if (requirements && requirements.length) {
+      app.log.info(`Adding requirements guard to ${routeOptions}`);
       routeOptions.preHandler.push(requirements_guard);
     }
+
     const methods = Array.isArray(routeOptions.method)
       ? routeOptions.method
       : [routeOptions.method];
     for (const method of methods) {
       if (VALIDATED_METHODS.includes(method)) {
+        app.log.info(`Adding validation to ${routeOptions.url}`);
         routeOptions.preValidation = [validate];
       }
     }

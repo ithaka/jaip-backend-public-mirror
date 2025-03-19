@@ -1,6 +1,8 @@
 import { RouteGenericInterface } from "fastify";
 import { SearchRequest } from "./search";
 import { Entitlement } from "./accounts";
+import { entity_types } from "@prisma/client";
+import { Group } from "./groups";
 
 export interface DiscParams {
   code: string;
@@ -13,6 +15,10 @@ export interface StatusParams {
 export interface PagesParams {
   iid: string;
   page?: string;
+}
+
+export interface EntityParams {
+  type: entity_types;
 }
 
 export interface MediaReviewRequest extends RouteGenericInterface {
@@ -56,6 +62,37 @@ export interface MediaReviewBulUndo extends RouteGenericInterface {
 
 export interface SearchRequestBody extends RouteGenericInterface {
   Body: SearchRequest;
+}
+
+export interface GetEntitiesBody extends RouteGenericInterface {
+  Body: GetEntitiesRequest;
+}
+
+export interface RemoveEntitiesBody extends RouteGenericInterface {
+  Body: RemoveEntitiesRequest;
+}
+
+export interface AddEntitiesBody extends RouteGenericInterface {
+  Body: AddEntitiesRequest;
+}
+
+export interface AddEntitiesRequest {
+  id: number;
+  contact: string;
+  name: string;
+  groups: Group[];
+}
+
+export interface GetEntitiesRequest {
+  query: string;
+  page: number;
+  groups: number[];
+  limit: number;
+}
+
+export interface RemoveEntitiesRequest {
+  id: number;
+  groups: Group[];
 }
 
 export interface CedarMetadataReturn {

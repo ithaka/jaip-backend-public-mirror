@@ -54,6 +54,12 @@ export interface CompleteLogPayload {
   page_index: number;
   referer: string;
   page_path: string;
+  entity_type: string;
+  entity_role: string;
+  total: number;
+  entities: User[];
+  user_ids: number[];
+  altered_user: Partial<User>;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

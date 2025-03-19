@@ -23,6 +23,7 @@ export interface Entities {
     features: { id: number; name: string; is_active: boolean };
   }[];
   ungrouped_features_entities?: {
+    enabled: boolean;
     ungrouped_features: {
       description: string;
       id: number;

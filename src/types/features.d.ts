@@ -20,6 +20,7 @@ export interface FeatureBoolean {
 
 export interface FeatureDetails {
   [key: string]: {
+    id: number;
     enabled: boolean;
     groups: number[];
     disabled_groups: number[];

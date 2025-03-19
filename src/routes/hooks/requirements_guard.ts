@@ -54,6 +54,7 @@ export const requirements_guard = async (
   } else {
     has_required_ungrouped_features = true;
   }
+
   if (
     has_required_grouped_features_any &&
     has_required_grouped_features_all &&

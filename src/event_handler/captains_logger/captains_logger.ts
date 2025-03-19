@@ -1,7 +1,6 @@
 import { EventLogger, LogPayload } from "../../types/event_logger";
 import { v4 as uuidv4 } from "uuid";
 import { FastifyReply, FastifyRequest } from "fastify";
-
 export class CaptainsLogger implements EventLogger {
   #base_log = {
     origin: "jaip-backend",

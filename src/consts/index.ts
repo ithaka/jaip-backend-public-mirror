@@ -71,6 +71,22 @@ export const FEATURES = {
   view_snippet: "view_snippet",
 };
 
+export const UNGROUPED_FEATURES = {
+  delete_group: "delete_group",
+  clear_history: "clear_history",
+  manage_superusers: "manage_superusers",
+  create_group_admins: "create_group_admins",
+  add_subdomain: "add_subdomain",
+  edit_subdomain: "edit_subdomain",
+  delete_subdomain: "delete_subdomain",
+  add_ungrouped_feature: "add_ungrouped_feature",
+  edit_ungrouped_feature: "edit_ungrouped_feature",
+  delete_ungrouped_feature: "delete_ungrouped_feature",
+  edit_feature: "edit_feature",
+  delete_feature: "delete_feature",
+  add_feature: "add_feature",
+};
+
 export const SESSION_MANAGER = {
   name: "session-service",
   path: "v1/graphql",

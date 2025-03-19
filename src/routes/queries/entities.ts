@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, user_roles } from "@prisma/client";
 import { DBEntity } from "../../types/database";
 import { User } from "../../types/entities";
 import { Group } from "../../types/groups";
@@ -12,9 +12,7 @@ export const get_facility_query = (
       in: arr,
     },
   },
-  select: get_entity_select_clause(
-    "user" as unknown as Prisma.FieldRef<"groups_entities", "user_roles">,
-  ),
+  select: get_entity_select_clause(user_roles.user),
 });
 
 export const get_user_query = (arr: string[]): Prisma.usersFindFirstArgs => ({
@@ -23,13 +21,11 @@ export const get_user_query = (arr: string[]): Prisma.usersFindFirstArgs => ({
       in: arr,
     },
   },
-  select: get_entity_select_clause(
-    "admin" as unknown as Prisma.FieldRef<"groups_entities", "user_roles">,
-  ),
+  select: get_entity_select_clause(user_roles.admin),
 });
 
 export const get_entity_select_clause = (
-  role: Prisma.FieldRef<"groups_entities", "user_roles">,
+  role: user_roles,
 ): Prisma.usersSelect => ({
   jstor_id: true,
   entities: {
@@ -72,10 +68,80 @@ export const get_entity_select_clause = (
       },
       ungrouped_features_entities: {
         select: {
+          enabled: true,
           ungrouped_features: true,
         },
         where: {
           enabled: true,
+          ungrouped_features: {
+            is_active: true,
+          },
+        },
+      },
+    },
+  },
+});
+
+export const get_many_entities_select_clause = (
+  role: user_roles,
+  groups: number[],
+): Prisma.usersSelect => ({
+  jstor_id: true,
+  entities: {
+    select: {
+      name: true,
+      id: true,
+      entity_type: true,
+      groups_entities: {
+        select: {
+          groups: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          role: true,
+        },
+        where: {
+          role: {
+            equals: role,
+          },
+          group_id: {
+            in: groups,
+          },
+        },
+      },
+      features_groups_entities: {
+        select: {
+          enabled: true,
+          features: {
+            select: {
+              id: true,
+              name: true,
+              is_active: true,
+            },
+          },
+          groups: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        where: {
+          group_id: {
+            in: groups,
+          },
+        },
+      },
+      ungrouped_features_entities: {
+        select: {
+          enabled: true,
+          ungrouped_features: true,
+        },
+        where: {
+          ungrouped_features: {
+            is_active: true,
+          },
         },
       },
     },
@@ -86,12 +152,15 @@ export const map_entities = (user: DBEntity): User => {
   return {
     id: user.entities.id,
     name: user.entities.name,
-    email: user.jstor_id,
+    contact: user.jstor_id,
     type: user.entities.entity_type,
     ungrouped_features:
       user.entities.ungrouped_features_entities?.reduce((acc, curr) => {
-        if (curr.ungrouped_features.is_active) {
-          acc[curr.ungrouped_features.name] = curr.ungrouped_features;
+        if (curr.enabled && curr.ungrouped_features.is_active) {
+          acc[curr.ungrouped_features.name] = {
+            ...curr.ungrouped_features,
+            enabled: curr.enabled,
+          };
         }
         return acc;
       }, {} as UngroupedFeatureDetails) || ({} as UngroupedFeatureDetails),

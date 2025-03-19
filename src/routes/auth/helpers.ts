@@ -44,6 +44,7 @@ export const manage_session = async (
     return [session, null];
   } catch (err) {
     const error = ensure_error(err);
+
     return [{} as Session, error];
   }
 };
@@ -62,7 +63,7 @@ const get_code_from_session = (session: Session): string[] => {
   return codes;
 };
 const get_email_from_session = (session: Session): string[] => {
-  const emails = ["ryan.mccarthy+1@ithaka.org"];
+  const emails = ["ryan.mccarthy@ithaka.org"];
   if (session.userAccount?.contact?.email) {
     emails.push(session.userAccount.contact.email);
   }

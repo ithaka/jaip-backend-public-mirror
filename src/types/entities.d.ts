@@ -12,7 +12,7 @@ export interface User {
   type: string | null;
   ungrouped_features: UngroupedFeatureDetails;
   // This value is only used when adding or editing users
-  email?: string;
+  contact?: string;
   groups: Array<Group>;
 }
 

@@ -86,7 +86,7 @@ export const status_search_handler =
           {
             jstor_item_id: {
               contains: query_string,
-              mode: "insensitive",
+              mode: Prisma.QueryMode.insensitive,
             },
           },
           {
@@ -94,7 +94,7 @@ export const status_search_handler =
               some: {
                 detail: {
                   contains: query_string,
-                  mode: "insensitive",
+                  mode: Prisma.QueryMode.insensitive,
                 },
               },
             },
@@ -103,7 +103,7 @@ export const status_search_handler =
             entities: {
               name: {
                 contains: query_string,
-                mode: "insensitive",
+                mode: Prisma.QueryMode.insensitive,
               },
             },
           },
@@ -112,7 +112,7 @@ export const status_search_handler =
               users: {
                 jstor_id: {
                   contains: query_string,
-                  mode: "insensitive",
+                  mode: Prisma.QueryMode.insensitive,
                 },
               },
             },
@@ -233,7 +233,6 @@ export const search_handler =
         throw error;
       }
 
-      console.log(search_result);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
       );

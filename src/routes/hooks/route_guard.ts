@@ -43,6 +43,7 @@ export const route_guard = async (
     }
   } catch (err) {
     const error = ensure_error(err);
+    request.server.eventLogger.pep_server_error(request, error);
     reply.code(500).send(error.message);
   }
 };
