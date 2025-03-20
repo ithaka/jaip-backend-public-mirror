@@ -50,8 +50,8 @@ export const route_schemas = {
       },
     },
   },
-  add_subdomains: {
-    name: "add_subdomains",
+  add_subdomain: {
+    name: "add_subdomain",
     description: `Adds a subdomain.`,
     tags: [SWAGGER_TAGS.private],
     method: "POST",
@@ -79,8 +79,8 @@ export const route_schemas = {
       },
     },
   },
-  delete_subdomains: {
-    name: "delete_subdomains",
+  delete_subdomain: {
+    name: "delete_subdomain",
     description: `Deletes a subdomain by setting is_active to false and removing linked facilities.`,
     tags: [SWAGGER_TAGS.private],
     method: "DELETE",
@@ -106,8 +106,8 @@ export const route_schemas = {
       },
     },
   },
-  reactivate_subdomains: {
-    name: "reactivate_subdomains",
+  reactivate_subdomain: {
+    name: "reactivate_subdomain",
     description: `Reactivates a deleted subdomain by setting is_active to true.`,
     tags: [SWAGGER_TAGS.private],
     method: "PATCH",
@@ -134,8 +134,8 @@ export const route_schemas = {
       },
     },
   },
-  edit_subdomains: {
-    name: "edit_subdomains",
+  edit_subdomain: {
+    name: "edit_subdomain",
     description: `Edits an existing subdomain.`,
     tags: [SWAGGER_TAGS.private],
     method: "PATCH",
