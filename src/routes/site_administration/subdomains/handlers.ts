@@ -1,12 +1,12 @@
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../../utils";
+import { LogPayload } from "../../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
   AddSubdomainBody,
   DeleteSubdomainBody,
   EditSubdomainBody,
   GetSubdomainsBody,
-} from "../../types/routes";
+} from "../../../types/routes";
 import { entity_types, Prisma } from "@prisma/client";
 
 export const get_subdomains_handler =

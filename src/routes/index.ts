@@ -1,3 +1,4 @@
+// Import individual routes
 import auth from "./auth/routes";
 import subdomains from "./subdomains/routes";
 import disciplines from "./disciplines/routes";
@@ -7,7 +8,9 @@ import media_review from "./media_review/routes";
 import search from "./search/routes";
 import pages from "./pages/routes";
 import account_management from "./account_management/routes";
-import site_administration from "./site_administration/routes";
+
+// Import route groups
+import site_administration from "./site_administration";
 
 export default [
   auth,
@@ -19,5 +22,6 @@ export default [
   search,
   pages,
   account_management,
-  site_administration,
+  // Note that each route group is its own array of routes, and needs to be spread
+  ...site_administration,
 ];
