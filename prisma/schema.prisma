@@ -126,10 +126,10 @@ model statuses {
 model subdomains {
   id                    Int                     @id @default(autoincrement())
   subdomain             String                  @unique @db.VarChar
-  entity_type           entity_types?
-  is_active             Boolean?                @default(true)
-  created_at            DateTime?               @default(now()) @db.Timestamp(6)
-  updated_at            DateTime?               @default(now()) @db.Timestamp(6)
+  entity_type           entity_types
+  is_active             Boolean                 @default(true)
+  created_at            DateTime                @default(now()) @db.Timestamp(6)
+  updated_at            DateTime                @default(now()) @db.Timestamp(6)
   subdomains_facilities subdomains_facilities[]
 }
 
