@@ -153,21 +153,33 @@ const get_ip_bypass = async (
 const get_sitecode_by_subdomain = async (
   db: PrismaClient,
   subdomain: string,
+  codes: string[],
 ): Promise<[string | null, Error | null]> => {
   try {
     const result = await db.subdomains_facilities.findFirst({
       where: {
         subdomain,
+        sitecode: {
+          in: codes,
+        },
       },
       select: {
         sitecode: true,
         facility_id: true,
+        facilities: {
+          select: {
+            jstor_id: true,
+          },
+        },
+      },
+      orderBy: {
+        facility_id: "desc",
       },
     });
-    if (!result || !result.sitecode) {
+    if (!result || !result.facilities?.jstor_id) {
       return [null, null];
     }
-    return [result.sitecode, null];
+    return [result.facilities?.jstor_id, null];
   } catch (err) {
     const error = ensure_error(err);
     return [null, error];
@@ -204,6 +216,7 @@ export const get_current_user = async (
         const [sitecode, error] = await get_sitecode_by_subdomain(
           fastify.prisma,
           subdomain,
+          codes,
         );
         if (error) {
           throw error;
@@ -211,7 +224,7 @@ export const get_current_user = async (
           codes.push(sitecode);
         } else {
           throw new Error(
-            "No sitecode found for nonstandard subdomain subdomain",
+            `No sitecode found for nonstandard subdomain ${subdomain}`,
           );
         }
       }
