@@ -34,7 +34,7 @@ export const route_schemas = {
               },
             },
           },
-          count: { type: "number" },
+          total: { type: "number" },
         },
       },
       ...standard_post_errors,
