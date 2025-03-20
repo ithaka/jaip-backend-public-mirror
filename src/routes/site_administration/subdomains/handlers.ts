@@ -5,15 +5,15 @@ import {
   AddSubdomainBody,
   DeleteSubdomainBody,
   EditSubdomainBody,
-  GetSubdomainsBody,
+  GetPaginatedBody,
 } from "../../../types/routes";
 import { entity_types, Prisma } from "@prisma/client";
 
 export const get_subdomains_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<GetSubdomainsBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<GetPaginatedBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "subdomains-api",
+      log_made_by: "site-administration-api",
     };
     fastify.event_logger.pep_standard_log_start(
       "pep_get_subdomain_start",
@@ -23,7 +23,11 @@ export const get_subdomains_handler =
         event_description: "attempting to get subdomains",
       },
     );
-    const { name, page, limit, is_active } = request.body;
+
+    const name = request.body.name!;
+    const page = request.body.page!;
+    const limit = request.body.limit!;
+    const is_active = request.body.is_active!;
 
     try {
       const where_clause: Prisma.subdomainsFindManyArgs = {
@@ -94,7 +98,7 @@ export const add_subdomain_handler =
   (fastify: FastifyInstance) =>
   async (request: FastifyRequest<AddSubdomainBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "subdomains-api",
+      log_made_by: "site-administration-api",
     };
     fastify.event_logger.pep_standard_log_start(
       "pep_add_subdomain_start",
@@ -168,7 +172,7 @@ export const delete_subdomain_handler =
   (fastify: FastifyInstance) =>
   async (request: FastifyRequest<DeleteSubdomainBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "subdomains-api",
+      log_made_by: "site-administration-api",
     };
     fastify.event_logger.pep_standard_log_start(
       "pep_delete_subdomain_start",
@@ -231,7 +235,7 @@ export const reactivate_subdomain_handler =
   (fastify: FastifyInstance) =>
   async (request: FastifyRequest<DeleteSubdomainBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "subdomains-api",
+      log_made_by: "site-administration-api",
     };
     fastify.event_logger.pep_standard_log_start(
       "pep_reactivate_subdomain_start",
@@ -284,7 +288,7 @@ export const edit_subdomain_handler =
   (fastify: FastifyInstance) =>
   async (request: FastifyRequest<EditSubdomainBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "subdomains-api",
+      log_made_by: "site-administration-api",
     };
     fastify.event_logger.pep_standard_log_start(
       "pep_edit_subdomain_start",
