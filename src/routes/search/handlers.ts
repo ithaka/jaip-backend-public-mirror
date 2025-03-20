@@ -24,7 +24,7 @@ export const status_search_handler =
     const log_payload: LogPayload = {
       log_made_by: "search-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_status_search_start",
       request,
       {
@@ -47,7 +47,7 @@ export const status_search_handler =
           status_options[capitalized as keyof typeof status_options];
         if (!option) {
           reply.code(400).send("Invalid status parameter");
-          fastify.eventLogger.pep_bad_request_error(request, reply, {
+          fastify.event_logger.pep_bad_request_error(request, reply, {
             ...log_payload,
             event_description: "failed to complete search for statuses",
           });
@@ -142,7 +142,7 @@ export const status_search_handler =
       request.body.query = "";
       await search_handler(fastify, count)(request, reply);
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_status_search_complete",
         request,
         reply,
@@ -153,7 +153,7 @@ export const status_search_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -173,7 +173,7 @@ export const search_handler =
     const log_payload: LogPayload = {
       log_made_by: "search-api",
     };
-    fastify.eventLogger.pep_standard_log_start("pep_search_start", request, {
+    fastify.event_logger.pep_standard_log_start("pep_search_start", request, {
       ...log_payload,
       full_groups: request.user.groups,
       event_description: "attempting to search by query",
@@ -365,7 +365,7 @@ export const search_handler =
         docs,
         total: updated_total,
       });
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_search_complete",
         request,
         reply,
@@ -376,7 +376,7 @@ export const search_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {

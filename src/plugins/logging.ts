@@ -9,19 +9,19 @@ import { CaptainsLogger } from "../event_handler/captains_logger";
 import { EventLoggerPluginOptions } from "../types/plugins";
 declare module "fastify" {
   interface FastifyInstance {
-    eventLogger: EventLogger;
+    event_logger: EventLogger;
   }
 }
 
 const event_logger_plugin: FastifyPluginAsync<EventLoggerPluginOptions> =
   fastify_plugin(
     async (server: FastifyInstance, options: FastifyPluginOptions) => {
-      server.decorate("eventLogger", options.eventLogger);
+      server.decorate("event_logger", options.event_logger);
     },
   );
 
 const options = {
-  eventLogger: new CaptainsLogger(),
+  event_logger: new CaptainsLogger(),
 };
 
 const plugin = event_logger_plugin;

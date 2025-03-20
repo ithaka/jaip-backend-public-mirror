@@ -8,7 +8,7 @@ export const subdomain_validation_handler =
     const log_payload: LogPayload = {
       log_made_by: "subdomains-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_validate_subdomain_start",
       request,
       {
@@ -31,7 +31,7 @@ export const subdomain_validation_handler =
         throw new Error("Subdomain not found");
       }
       reply.send(result);
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_validate_subdomain_complete",
         request,
         reply,
@@ -43,7 +43,7 @@ export const subdomain_validation_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {

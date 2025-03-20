@@ -8,13 +8,13 @@ export const healthchecks_handler = (fastify: FastifyInstance) => async () => {
   fastify.log.info(`Database Status: ${db}`);
 
   if (!service_discovery) {
-    fastify.eventLogger.pep_healthcheck_error(
+    fastify.event_logger.pep_healthcheck_error(
       "service_discovery",
       new Error("Service discovery failed without error"),
     );
   }
   if (!db) {
-    fastify.eventLogger.pep_healthcheck_error(
+    fastify.event_logger.pep_healthcheck_error(
       "database",
       new Error("Database test query failed without error"),
     );

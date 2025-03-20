@@ -6,7 +6,7 @@ const error_handler_plugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
   fastify_plugin(async (fastify: FastifyInstance) => {
     fastify.setErrorHandler((err, request, reply) => {
       fastify.log.error(err);
-      fastify.eventLogger.pep_server_error(request, err);
+      fastify.event_logger.pep_server_error(request, err);
       reply.status(err.statusCode || 500).send(err.message);
     });
   });

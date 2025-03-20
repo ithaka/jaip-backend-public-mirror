@@ -26,7 +26,7 @@ export const page_handler =
       iid,
       page,
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `pep_get_metadata_start`,
       request,
       {
@@ -59,7 +59,7 @@ export const page_handler =
 
       if (is_forbidden) {
         reply.code(403);
-        fastify.eventLogger.pep_forbidden_error(request, reply, {
+        fastify.event_logger.pep_forbidden_error(request, reply, {
           ...log_payload,
           event_description: `access to ${iid} is forbidden for group ${request.user.groups[0].id}`,
         });
@@ -86,7 +86,7 @@ export const page_handler =
       log_payload.entitlement_mapping = entitlement_map;
       log_payload.referer = request.headers.referer;
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `pep_get_page_complete`,
         request,
         reply,
@@ -100,7 +100,7 @@ export const page_handler =
     } catch (err) {
       const error = ensure_error(err);
       reply.code(500).send(error.message);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -126,7 +126,7 @@ export const metadata_handler =
       event_description: `attempting to retrieve metadata for ${iid}`,
       iid,
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `pep_get_metadata_start`,
       request,
       {
@@ -168,7 +168,7 @@ export const metadata_handler =
       if (is_forbidden) {
         reply.code(403);
         return_metadata.status = 403;
-        fastify.eventLogger.pep_forbidden_error(request, reply, {
+        fastify.event_logger.pep_forbidden_error(request, reply, {
           ...log_payload,
           event_description: `access to ${iid} is forbidden for group ${request.user.groups[0].id}`,
         });
@@ -184,7 +184,7 @@ export const metadata_handler =
 
       reply.send(return_metadata);
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `pep_get_metadata_complete`,
         request,
         reply,
@@ -196,7 +196,7 @@ export const metadata_handler =
     } catch (err) {
       const error = ensure_error(err);
       reply.code(500).send(error.message);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {

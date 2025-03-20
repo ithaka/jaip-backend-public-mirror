@@ -9,7 +9,7 @@ export const alerts_handler =
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_get_alerts_start",
       request,
       {
@@ -41,7 +41,7 @@ export const alerts_handler =
         log_payload.event_description = "returning latest alert from db";
       }
       reply.send(result);
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_get_alerts_complete",
         request,
         reply,
@@ -49,7 +49,7 @@ export const alerts_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {

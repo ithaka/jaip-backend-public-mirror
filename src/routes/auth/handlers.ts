@@ -10,7 +10,7 @@ export const auth_session_handler =
       log_made_by: "auth-api",
       event_description: "user authenticated and authorized",
     };
-    fastify.eventLogger.pep_standard_log_start("pep_auth_start", request, {
+    fastify.event_logger.pep_standard_log_start("pep_auth_start", request, {
       ...log_payload,
       event_description: "attempting auth",
     });
@@ -29,7 +29,7 @@ export const auth_session_handler =
     }
     if (error) {
       reply.code(500).send(error.message);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -42,18 +42,18 @@ export const auth_session_handler =
       return;
     } else if (!current_user) {
       reply.code(401).send();
-      fastify.eventLogger.pep_unauthorized_error(request, reply, log_payload);
+      fastify.event_logger.pep_unauthorized_error(request, reply, log_payload);
       return;
     } else {
       const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
       if (is_admin_subdomain && current_user.type !== ENTITY_TYPES.users) {
         reply.code(403).send();
-        fastify.eventLogger.pep_forbidden_error(request, reply, log_payload);
+        fastify.event_logger.pep_forbidden_error(request, reply, log_payload);
         return;
       }
     }
     reply.code(200).send(current_user);
-    fastify.eventLogger.pep_standard_log_complete(
+    fastify.event_logger.pep_standard_log_complete(
       "pep_auth_complete",
       request,
       reply,

@@ -7,7 +7,7 @@ export const validate = async (
   const bodyValidationFunction = request.getValidationFunction("body");
   const is_valid = bodyValidationFunction(request.body);
   if (!is_valid) {
-    request.server.eventLogger.pep_bad_request_error(request, reply, {
+    request.server.event_logger.pep_bad_request_error(request, reply, {
       event_description: "invalid request: body did not pass validation",
     });
   }

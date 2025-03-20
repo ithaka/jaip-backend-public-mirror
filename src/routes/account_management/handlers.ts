@@ -24,7 +24,7 @@ export const get_entities_handler =
       log_made_by: "account-management-api",
       entity_type: type,
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `pep_get_${type}_start`,
       request,
       {
@@ -66,7 +66,7 @@ export const get_entities_handler =
       reply
         .code(403)
         .send("You do not have permission to access all requested groups");
-      fastify.eventLogger.pep_forbidden_error(request, reply, {
+      fastify.event_logger.pep_forbidden_error(request, reply, {
         ...log_payload,
         event_description: `failed to get ${type}`,
       });
@@ -115,7 +115,7 @@ export const get_entities_handler =
         });
       }
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `pep_get_${type}_complete`,
         request,
         reply,
@@ -126,7 +126,7 @@ export const get_entities_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -147,7 +147,7 @@ export const remove_entities_handler =
       log_made_by: "account-management-api",
       entity_type: type,
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `pep_remove_${type}_start`,
       request,
       {
@@ -177,7 +177,7 @@ export const remove_entities_handler =
       reply
         .code(403)
         .send("You do not have permission to access all requested groups");
-      fastify.eventLogger.pep_forbidden_error(request, reply, {
+      fastify.event_logger.pep_forbidden_error(request, reply, {
         ...log_payload,
         event_description: `failed to get ${type}`,
       });
@@ -200,7 +200,7 @@ export const remove_entities_handler =
         if (facility_remove_error) throw facility_remove_error;
       }
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `pep_remove_${type}_complete`,
         request,
         reply,
@@ -211,7 +211,7 @@ export const remove_entities_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -232,7 +232,7 @@ export const add_or_edit_entities_handler =
       log_made_by: "account-management-api",
       entity_type: type,
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `pep_add_${type}_start`,
       request,
       {
@@ -275,7 +275,7 @@ export const add_or_edit_entities_handler =
       reply
         .code(403)
         .send("You do not have permission to access all requested groups");
-      fastify.eventLogger.pep_forbidden_error(request, reply, {
+      fastify.event_logger.pep_forbidden_error(request, reply, {
         ...log_payload,
         event_description: `failed to get ${type}`,
       });
@@ -299,14 +299,14 @@ export const add_or_edit_entities_handler =
           reply
             .code(400)
             .send("Facilities can only be added to one group at a time");
-          fastify.eventLogger.pep_bad_request_error(request, reply, {
+          fastify.event_logger.pep_bad_request_error(request, reply, {
             ...log_payload,
             event_description: `attempted to add ${type} without exactly one group: ${groups}`,
           });
         }
       }
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `pep_add_${type}_complete`,
         request,
         reply,
@@ -317,7 +317,7 @@ export const add_or_edit_entities_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {

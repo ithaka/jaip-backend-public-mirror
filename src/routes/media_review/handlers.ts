@@ -22,7 +22,7 @@ export const denial_and_incomplete_handler = (
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `pep_media_${action}_start`,
       request,
       {
@@ -91,7 +91,7 @@ export const denial_and_incomplete_handler = (
       // a success, we'll log each request individually to keep our logs consistent.
       groups.forEach((group) => {
         log_payload.group = request.user.groups.find((g) => g.id === group);
-        fastify.eventLogger.pep_standard_log_complete(
+        fastify.event_logger.pep_standard_log_complete(
           `pep_media_${action}_successful`,
           request,
           reply,
@@ -101,7 +101,7 @@ export const denial_and_incomplete_handler = (
           },
         );
       });
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `pep_media_${action}_complete`,
         request,
         reply,
@@ -113,7 +113,7 @@ export const denial_and_incomplete_handler = (
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -134,7 +134,7 @@ export const approval_handler =
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_media_approval_start",
       request,
       {
@@ -168,7 +168,7 @@ export const approval_handler =
       // a success, we'll log each request individually to keep our logs consistent.
       groups.forEach((group) => {
         log_payload.group = request.user.groups.find((g) => g.id === group);
-        fastify.eventLogger.pep_standard_log_complete(
+        fastify.event_logger.pep_standard_log_complete(
           "pep_media_approval_successful",
           request,
           reply,
@@ -178,7 +178,7 @@ export const approval_handler =
           },
         );
       });
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_media_request_complete",
         request,
         reply,
@@ -190,7 +190,7 @@ export const approval_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -210,7 +210,7 @@ export const request_handler =
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_media_request_start",
       request,
       {
@@ -269,7 +269,7 @@ export const request_handler =
       // a success, we'll log each request individually to keep our logs consistent.
       db_object.forEach((obj) => {
         log_payload.doi = obj.jstor_item_id;
-        fastify.eventLogger.pep_standard_log_complete(
+        fastify.event_logger.pep_standard_log_complete(
           "pep_media_request_successful",
           request,
           reply,
@@ -279,7 +279,7 @@ export const request_handler =
           },
         );
       });
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_media_request_complete",
         request,
         reply,
@@ -291,7 +291,7 @@ export const request_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -311,7 +311,7 @@ export const bulk_approval_handler =
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_media_bulk_start",
       request,
       {
@@ -336,7 +336,7 @@ export const bulk_approval_handler =
         const message =
           "bad request: documents, journals, or disciplines provided";
         reply.code(400).send(message);
-        fastify.eventLogger.pep_bad_request_error(request, reply, {
+        fastify.event_logger.pep_bad_request_error(request, reply, {
           ...log_payload,
           event_description: message,
         });
@@ -403,7 +403,7 @@ export const bulk_approval_handler =
         log_payload.group = request.user.groups.find(
           (g) => g.id === insert.group_id,
         );
-        fastify.eventLogger.pep_standard_log_complete(
+        fastify.event_logger.pep_standard_log_complete(
           "pep_media_approval_successful",
           request,
           reply,
@@ -413,7 +413,7 @@ export const bulk_approval_handler =
           },
         );
       });
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_media_bulk_complete",
         request,
         reply,
@@ -425,7 +425,7 @@ export const bulk_approval_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
@@ -445,7 +445,7 @@ export const bulk_undo_handler =
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       "pep_media_bulk_start",
       request,
       {
@@ -508,7 +508,7 @@ export const bulk_undo_handler =
         log_payload.group = request.user.groups.find(
           (g) => g.id === insert.group_id,
         );
-        fastify.eventLogger.pep_standard_log_complete(
+        fastify.event_logger.pep_standard_log_complete(
           "pep_media_bulk_undo_successful",
           request,
           reply,
@@ -518,7 +518,7 @@ export const bulk_undo_handler =
           },
         );
       });
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         "pep_media_bulk_undo_complete",
         request,
         reply,
@@ -530,7 +530,7 @@ export const bulk_undo_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {

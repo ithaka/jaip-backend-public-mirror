@@ -18,7 +18,7 @@ export const disciplines_handler =
       log_made_by: "disciplines-api",
       event_description: `attempting to retrive ${is_discipline_search ? "disciplines" : "journals"}`,
     };
-    fastify.eventLogger.pep_standard_log_start(
+    fastify.event_logger.pep_standard_log_start(
       `${is_discipline_search ? "pep_disciplines_start" : "pep_journals_start"}`,
       request,
       {
@@ -57,7 +57,7 @@ export const disciplines_handler =
 
       reply.send(items);
 
-      fastify.eventLogger.pep_standard_log_complete(
+      fastify.event_logger.pep_standard_log_complete(
         `${is_discipline_search ? "pep_disciplines_complete" : "pep_journals_complete"}`,
         request,
         reply,
@@ -69,7 +69,7 @@ export const disciplines_handler =
     } catch (err) {
       const error = ensure_error(err);
       reply.code(500).send(error.message);
-      fastify.eventLogger.pep_error(
+      fastify.event_logger.pep_error(
         request,
         reply,
         {
