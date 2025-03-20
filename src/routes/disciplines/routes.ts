@@ -10,4 +10,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/disciplines/:code", opts, disciplines_handler(fastify));
 }
 
-export default routes;
+export default { routes, options: {} };

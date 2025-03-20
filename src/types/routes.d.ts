@@ -76,6 +76,40 @@ export interface AddEntitiesBody extends RouteGenericInterface {
   Body: AddEntitiesRequest;
 }
 
+export interface GetSubdomainsBody extends RouteGenericInterface {
+  Body: GetSubdomainsRequest;
+}
+
+export interface AddSubdomainBody extends RouteGenericInterface {
+  Body: AddSubdomainRequest;
+}
+
+export interface DeleteSubdomainBody extends RouteGenericInterface {
+  Body: DeleteSubdomainRequest;
+}
+
+export interface EditSubdomainBody extends RouteGenericInterface {
+  Body: EditSubdomainRequest;
+}
+export interface DeleteSubdomainRequest {
+  id: number;
+}
+
+export interface AddSubdomainRequest {
+  name: string;
+}
+export interface EditSubdomainRequest {
+  name: string;
+  id: number;
+}
+
+export interface GetSubdomainsRequest {
+  name: string;
+  page: number;
+  limit: number;
+  is_active: boolean;
+}
+
 export interface AddEntitiesRequest {
   id: number;
   contact: string;
@@ -147,4 +181,14 @@ export interface DDAThreshold {
 }
 export interface EntitlementMap {
   [key: string]: PDFDownloadLicense[];
+}
+
+export interface Subdomain {
+  subdomain: string;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+  // The duplicate property is only returned when a user attempts to create a duplicate
+  // of an existing subdomain.
+  duplicate?: boolean;
 }

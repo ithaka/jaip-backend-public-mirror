@@ -33,6 +33,7 @@ export class CaptainsLogger implements EventLogger {
       user: request.user,
       group_ids: request.user?.groups.map((group) => group.id),
       sessionid: request.session?.uuid,
+      path: request.routeOptions.url,
     };
   }
 

@@ -2,7 +2,12 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { User } from "./entities";
 import { Group } from "./groups";
 import { Search3Request, SearchRequest } from "./search";
-import { CedarIdentityBlock, CedarItemView, EntitlementMap } from "./routes";
+import {
+  CedarIdentityBlock,
+  CedarItemView,
+  EntitlementMap,
+  Subdomain,
+} from "./routes";
 
 export interface CaptainsLog {
   origin: string;
@@ -21,6 +26,8 @@ export interface CompleteLogPayload {
   sessionid: string;
   subdomain: string;
   db_subdomain: string;
+  db_subdomain_id: number;
+  db_subdomains: Subdomain[];
   alert_text: string;
   alert_status: string;
   doi: string;
@@ -60,6 +67,7 @@ export interface CompleteLogPayload {
   entities: User[];
   user_ids: number[];
   altered_user: Partial<User>;
+  is_duplicate: boolean;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

@@ -7,7 +7,7 @@ import { SWAGGER_OPTS, VALIDATED_METHODS } from "./consts";
 
 import decorators from "./decorators";
 import plugins from "./plugins";
-import routes from "./routes";
+import route_settings from "./routes";
 import "dotenv/config";
 import { requirements_guard, route_guard, validate } from "./routes/hooks";
 import { SWAGGER_TAGS } from "./consts";
@@ -57,7 +57,7 @@ function build(opts = {}) {
       schema.requires?.any?.grouped?.all ||
       schema.requires?.any?.ungrouped;
     if (requirements && requirements.length) {
-      app.log.info(`Adding requirements guard to ${routeOptions}`);
+      app.log.info(`Adding requirements guard to ${routeOptions.url}`);
       routeOptions.preHandler.push(requirements_guard);
     }
 
@@ -97,8 +97,11 @@ function build(opts = {}) {
   }
 
   // Routes
-  for (const route of routes) {
-    app.register(route, opts);
+  for (const { routes, options } of route_settings) {
+    app.register(routes, {
+      ...opts,
+      ...options,
+    });
   }
 
   return app;

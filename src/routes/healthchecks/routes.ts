@@ -7,4 +7,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/healthz", opts, healthchecks_handler(fastify));
 }
 
-export default routes;
+export default { routes, options: {} };

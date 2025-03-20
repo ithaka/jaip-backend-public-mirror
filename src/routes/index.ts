@@ -7,6 +7,7 @@ import media_review from "./media_review/routes";
 import search from "./search/routes";
 import pages from "./pages/routes";
 import account_management from "./account_management/routes";
+import site_administration from "./site_administration/routes";
 
 export default [
   auth,
@@ -18,4 +19,5 @@ export default [
   search,
   pages,
   account_management,
+  site_administration,
 ];

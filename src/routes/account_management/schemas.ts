@@ -58,7 +58,7 @@ const remove_entities_body = {
             },
             features: {
               type: "object",
-              properties: {} as { [key: string]: boolean },
+              additionalProperties: {} as { [key: string]: boolean },
             },
           },
         },
@@ -90,7 +90,7 @@ const add_users_body = {
             },
             features: {
               type: "object",
-              properties: {} as { [key: string]: boolean },
+              additionalProperties: {} as { [key: string]: boolean },
             },
           },
         },

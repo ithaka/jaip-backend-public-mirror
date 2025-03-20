@@ -7,4 +7,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/alerts", opts, alerts_handler(fastify));
 }
 
-export default routes;
+export default { routes, options: {} };

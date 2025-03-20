@@ -13,4 +13,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/page/:iid", opts, page_handler(fastify));
 }
 
-export default routes;
+export default { routes, options: {} };

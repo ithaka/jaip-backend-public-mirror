@@ -13,7 +13,7 @@ export const subdomain_validation_handler =
       request,
       {
         ...log_payload,
-        event_description: "attempting to get subdomains",
+        event_description: "attempting to validate subdomains",
       },
     );
     const subdomain = request.subdomain;

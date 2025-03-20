@@ -18,7 +18,7 @@ export const route_schemas = {
     response: {
       200: {
         type: "object",
-        properties: {} as CedarMetadataReturn,
+        additionalProperties: {} as CedarMetadataReturn,
       },
       ...standard_errors,
     },

@@ -67,4 +67,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   );
 }
 
-export default routes;
+export default { routes, options: {} };

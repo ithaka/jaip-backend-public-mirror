@@ -7,4 +7,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get("/auth/session", opts, auth_session_handler(fastify));
 }
 
-export default routes;
+export default { routes, options: {} };

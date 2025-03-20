@@ -38,4 +38,4 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.post("/bulk-undo", opts, bulk_undo_handler(fastify));
 }
 
-export default routes;
+export default { routes, options: {} };
