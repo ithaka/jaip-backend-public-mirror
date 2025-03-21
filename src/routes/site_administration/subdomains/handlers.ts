@@ -2,10 +2,10 @@ import { ensure_error } from "../../../utils";
 import { LogPayload } from "../../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
-  AddSubdomainBody,
-  DeleteSubdomainBody,
-  EditSubdomainBody,
   GetPaginatedBody,
+  IdOnlyBody,
+  NameAndIdBody,
+  NameOnlyBody,
 } from "../../../types/routes";
 import { entity_types, Prisma } from "@prisma/client";
 
@@ -96,7 +96,7 @@ export const get_subdomains_handler =
 
 export const add_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<AddSubdomainBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<NameOnlyBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -117,6 +117,7 @@ export const add_subdomain_handler =
           subdomain: name,
           entity_type: entity_types.facilities,
           is_active: true,
+          updated_at: new Date(),
         },
       });
 
@@ -170,7 +171,7 @@ export const add_subdomain_handler =
 
 export const delete_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<DeleteSubdomainBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -202,6 +203,7 @@ export const delete_subdomain_handler =
           },
           data: {
             is_active: false,
+            updated_at: new Date(),
           },
         }),
       ]);
@@ -233,7 +235,7 @@ export const delete_subdomain_handler =
 
 export const reactivate_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<DeleteSubdomainBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -255,6 +257,7 @@ export const reactivate_subdomain_handler =
         },
         data: {
           is_active: true,
+          updated_at: new Date(),
         },
       });
 
@@ -286,7 +289,7 @@ export const reactivate_subdomain_handler =
 
 export const edit_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<EditSubdomainBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<NameAndIdBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -318,6 +321,7 @@ export const edit_subdomain_handler =
         },
         data: {
           subdomain: new_name,
+          updated_at: new Date(),
         },
       });
 
