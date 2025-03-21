@@ -76,37 +76,56 @@ export interface AddEntitiesBody extends RouteGenericInterface {
   Body: AddEntitiesRequest;
 }
 
-export interface GetSubdomainsBody extends RouteGenericInterface {
-  Body: GetSubdomainsRequest;
+export interface GetPaginatedBody extends RouteGenericInterface {
+  Body: GetPaginatedRequest;
 }
 
-export interface AddSubdomainBody extends RouteGenericInterface {
-  Body: AddSubdomainRequest;
+export interface AddFeatureBody extends RouteGenericInterface {
+  Body: AddFeatureRequest;
 }
 
-export interface DeleteSubdomainBody extends RouteGenericInterface {
-  Body: DeleteSubdomainRequest;
+export interface EditFeatureBody extends RouteGenericInterface {
+  Body: EditFeatureRequest;
+}
+export interface NameOnlyBody extends RouteGenericInterface {
+  Body: NameOnlyRequest;
 }
 
-export interface EditSubdomainBody extends RouteGenericInterface {
-  Body: EditSubdomainRequest;
+export interface IdOnlyBody extends RouteGenericInterface {
+  Body: IdOnlyRequest;
 }
-export interface DeleteSubdomainRequest {
+
+export interface NameAndIdBody extends RouteGenericInterface {
+  Body: NameAndIdRequest;
+}
+export interface IdOnlyRequest {
   id: number;
 }
 
-export interface AddSubdomainRequest {
+export interface NameOnlyRequest {
   name: string;
 }
-export interface EditSubdomainRequest {
+export interface NameAndIdRequest {
   name: string;
   id: number;
 }
 
-export interface GetSubdomainsRequest {
+export interface AddFeatureRequest {
   name: string;
-  page: number;
-  limit: number;
+  display_name: string;
+  category: string;
+  description: string;
+  is_admin_only: boolean;
+  is_protected: boolean;
+}
+
+export interface EditFeatureRequest extends AddFeatureRequest {
+  id: number;
+}
+export interface GetPaginatedRequest {
+  name?: string;
+  page?: number;
+  limit?: number;
   is_active: boolean;
 }
 
