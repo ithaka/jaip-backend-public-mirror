@@ -1,3 +1,7 @@
+// Import individual routes
 import subdomains from "./subdomains/routes";
 
-export default [subdomains];
+// Import route groups
+import features from "./features";
+
+export default [subdomains, ...features];
