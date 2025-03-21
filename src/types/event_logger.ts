@@ -8,6 +8,7 @@ import {
   EntitlementMap,
   Subdomain,
 } from "./routes";
+import { Feature } from "./features";
 
 export interface CaptainsLog {
   origin: string;
@@ -28,6 +29,9 @@ export interface CompleteLogPayload {
   db_subdomain: string;
   db_subdomain_id: number;
   db_subdomains: Subdomain[];
+  feature_id: number;
+  feature: Feature;
+  features: Feature[];
   alert_text: string;
   alert_status: string;
   doi: string;
