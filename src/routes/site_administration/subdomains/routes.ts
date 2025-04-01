@@ -8,7 +8,7 @@ import {
   reactivate_subdomain_handler,
 } from "./handlers";
 import { subdomains_prefix } from "./options";
-import { get_route } from "../../../utils/get_route";
+import { get_route } from "../../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_subdomains;

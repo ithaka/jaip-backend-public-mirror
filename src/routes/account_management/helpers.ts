@@ -1,5 +1,5 @@
 import { entity_types, Prisma, PrismaClient, user_roles } from "@prisma/client";
-import { get_db_pagination } from "../../utils/database";
+import { get_db_pagination } from "../../utils";
 import {
   get_many_entities_select_clause,
   map_entities,

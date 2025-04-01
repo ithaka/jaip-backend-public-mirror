@@ -7,7 +7,7 @@ import {
 } from "./handlers";
 import { entity_types } from "@prisma/client";
 import { route_prefix } from "./options";
-import { get_route } from "../../utils/get_route";
+import { get_route } from "../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // USERS

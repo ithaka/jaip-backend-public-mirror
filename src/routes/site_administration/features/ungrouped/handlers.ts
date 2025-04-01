@@ -8,7 +8,7 @@ import {
   IdOnlyBody,
 } from "../../../../types/routes";
 import { Prisma } from "@prisma/client";
-import { check_trimmed_strings } from "../../../../utils/validation";
+import { check_trimmed_strings } from "../../../../utils";
 
 export const get_ungrouped_features_handler =
   (fastify: FastifyInstance) =>

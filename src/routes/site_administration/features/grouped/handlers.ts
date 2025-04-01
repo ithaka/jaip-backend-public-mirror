@@ -10,7 +10,7 @@ import {
 } from "../../../../types/routes";
 import { Prisma } from "@prisma/client";
 import { FEATURES, UNGROUPED_FEATURES } from "../../../../consts";
-import { check_trimmed_strings } from "../../../../utils/validation";
+import { check_trimmed_strings } from "../../../../utils";
 
 export const get_group_features_handler =
   (fastify: FastifyInstance) =>

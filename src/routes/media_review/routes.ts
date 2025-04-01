@@ -9,7 +9,7 @@ import {
   request_handler,
 } from "./handlers";
 import { media_review_prefix } from "./options";
-import { get_route } from "../../utils/get_route";
+import { get_route } from "../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.request;

@@ -8,7 +8,7 @@ import {
   reactivate_ungrouped_feature_handler,
 } from "./handlers";
 import { ungrouped_features_prefix } from "./options";
-import { get_route } from "../../../../utils/get_route";
+import { get_route } from "../../../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_ungrouped_features;
