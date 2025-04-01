@@ -159,8 +159,8 @@ model ungrouped_features {
   display_name                String                        @unique @db.VarChar
   category                    String                        @db.VarChar
   description                 String
-  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  created_at                  DateTime                      @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime                      @default(now()) @db.Timestamp(6)
   is_active                   Boolean                       @default(true)
   ungrouped_features_entities ungrouped_features_entities[]
 }
