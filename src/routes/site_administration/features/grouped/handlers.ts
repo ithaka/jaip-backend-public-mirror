@@ -2,8 +2,8 @@ import { ensure_error } from "../../../../utils";
 import { LogPayload } from "../../../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
-  AddFeatureBody,
-  EditFeatureBody,
+  AddGroupFeatureBody,
+  EditGroupFeatureBody,
   GetPaginatedBody,
   GetPaginatedRequest,
   IdOnlyBody,
@@ -154,7 +154,7 @@ export const get_group_features_handler =
 
 export const add_group_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<AddFeatureBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<AddGroupFeatureBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -384,7 +384,10 @@ export const reactivate_group_feature_handler =
 
 export const edit_group_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<EditFeatureBody>, reply: FastifyReply) => {
+  async (
+    request: FastifyRequest<EditGroupFeatureBody>,
+    reply: FastifyReply,
+  ) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration",
     };

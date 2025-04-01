@@ -80,13 +80,22 @@ export interface GetPaginatedBody extends RouteGenericInterface {
   Body: GetPaginatedRequest;
 }
 
-export interface AddFeatureBody extends RouteGenericInterface {
-  Body: AddFeatureRequest;
+export interface AddGroupFeatureBody extends RouteGenericInterface {
+  Body: AddGroupFeatureRequest;
 }
 
-export interface EditFeatureBody extends RouteGenericInterface {
-  Body: EditFeatureRequest;
+export interface EditGroupFeatureBody extends RouteGenericInterface {
+  Body: EditGroupFeatureRequest;
 }
+
+export interface AddUngroupedFeatureBody extends RouteGenericInterface {
+  Body: AddUngroupedFeatureRequest;
+}
+
+export interface EditUngroupedFeatureBody extends RouteGenericInterface {
+  Body: EditUngroupedFeatureRequest;
+}
+
 export interface NameOnlyBody extends RouteGenericInterface {
   Body: NameOnlyRequest;
 }
@@ -110,22 +119,28 @@ export interface NameAndIdRequest {
   id: number;
 }
 
-export interface AddFeatureRequest {
+export interface AddGroupFeatureRequest extends AddUngroupedFeatureRequest {
+  is_admin_only: boolean;
+  is_protected: boolean;
+}
+export interface EditGroupFeatureRequest extends AddGroupFeatureRequest {
+  id: number;
+}
+
+export interface EditUngroupedFeatureRequest
+  extends AddUngroupedFeatureRequest {
+  id: number;
+}
+export interface AddUngroupedFeatureRequest {
   name: string;
   display_name: string;
   category: string;
   description: string;
-  is_admin_only: boolean;
-  is_protected: boolean;
-}
-
-export interface EditFeatureRequest extends AddFeatureRequest {
-  id: number;
 }
 export interface GetPaginatedRequest {
-  name?: string;
-  page?: number;
-  limit?: number;
+  name: string;
+  page: number;
+  limit: number;
   is_active: boolean;
 }
 
