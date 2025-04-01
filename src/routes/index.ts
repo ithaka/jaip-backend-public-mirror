@@ -8,10 +8,13 @@ import media_review from "./media_review/routes";
 import search from "./search/routes";
 import pages from "./pages/routes";
 import account_management from "./account_management/routes";
-
-// Import route groups
 import site_administration from "./site_administration";
 
+// Some of these routes are grouped, so we need to flatten the array
+// to avoid nested arrays in the final export. While the realistic depth
+// of the array won't likely exceed 3, we use 10 to be safe. Infinity seems like
+// overkill and could lead to performance issues. It's not a huge concern as it
+// is a one-time operation at startup.
 export default [
   auth,
   healthcheck,
@@ -22,6 +25,5 @@ export default [
   search,
   pages,
   account_management,
-  // Note that each route group is its own array of routes, and needs to be spread
-  ...site_administration,
-];
+  site_administration,
+].flat(10);
