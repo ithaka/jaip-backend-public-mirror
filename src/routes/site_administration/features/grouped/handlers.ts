@@ -87,6 +87,8 @@ export const get_group_features_handler =
         where_clause.where!.is_protected = { equals: false };
       }
 
+      // We need to add the is_active field only if it's true. If it's not, we want to
+      // return all features, including inactive ones.
       if (is_active) {
         where_clause.where!.is_active = is_active;
       }
