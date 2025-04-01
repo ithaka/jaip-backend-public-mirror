@@ -63,9 +63,15 @@ export const get_group_features_handler =
         },
       };
 
+      // In order to get the correct features, we need to know if the user can access protected
+      // features. This is allowed if either the user is able to access protected features in
+      // some group or if the user has any feature management privileges. First we check for
+      // use_protected_features.
       const user_has_group_feature = request.user.groups.some(
         (group) => group.features[FEATURES.use_protected_features],
       );
+      // Then we check for ungrouped features. If the user has any of these, they can access
+      // protected features.
       const user_has_ungrouped_feature =
         request.user.ungrouped_features[UNGROUPED_FEATURES.add_feature]
           ?.enabled ||
@@ -74,6 +80,8 @@ export const get_group_features_handler =
         request.user.ungrouped_features[UNGROUPED_FEATURES.delete_feature]
           ?.enabled;
 
+      // If neither of these are true, we need to set the is_protected field to false.
+      // Otherwise, it will be undefined, which will return all features.
       if (!user_has_group_feature && !user_has_ungrouped_feature) {
         // This is defined above, so we know it's there.
         where_clause.where!.is_protected = { equals: false };
