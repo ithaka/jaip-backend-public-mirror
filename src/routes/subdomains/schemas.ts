@@ -4,6 +4,7 @@ import { server_error } from "../../utils";
 export const route_schemas = {
   subdomain: {
     name: "validate_subdomain",
+    route: "/validate",
     description: `Returns subdomain validation. ${MESSAGES.public_endpoint_disclaimer}`,
     tags: [SWAGGER_TAGS.public],
     response: {

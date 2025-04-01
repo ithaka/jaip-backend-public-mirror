@@ -48,6 +48,7 @@ export const route_schemas = {
     name: "status_search",
     description: `Returns search results based on status.`,
     tags: [SWAGGER_TAGS.private],
+    route: "/:status",
     path: {
       type: "string",
       properties: {

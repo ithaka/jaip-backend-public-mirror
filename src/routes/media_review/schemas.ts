@@ -4,6 +4,7 @@ import { standard_post_errors } from "../../utils";
 export const route_schemas = {
   request: {
     name: "request",
+    route: "/request",
     description: `Submits a request for media review.`,
     tags: [SWAGGER_TAGS.private],
     requires: {
@@ -38,6 +39,7 @@ export const route_schemas = {
   },
   approve: {
     name: "approve",
+    route: "/approve",
     description: `Submits an approval for a given doi`,
     tags: [SWAGGER_TAGS.private],
     requires: {
@@ -72,6 +74,7 @@ export const route_schemas = {
   },
   deny: {
     name: "deny",
+    route: "/deny",
     description: `Submits a denial for a given doi`,
     tags: [SWAGGER_TAGS.private],
     requires: {
@@ -114,6 +117,7 @@ export const route_schemas = {
   },
   incomplete: {
     name: "incomplete",
+    route: "/incomplete",
     description: `Submits an incomplete status for a given doi`,
     tags: [SWAGGER_TAGS.private],
     requires: {
@@ -156,6 +160,7 @@ export const route_schemas = {
   },
   bulk: {
     name: "bulk",
+    route: "/bulk",
     description: `Submits an bulk approval statuses for given disciplines and journals, as well as overturning denials`,
     tags: [SWAGGER_TAGS.private],
     requires: {
@@ -205,6 +210,7 @@ export const route_schemas = {
   },
   bulk_undo: {
     name: "bulk_undo",
+    route: "/bulk-undo",
     description: `Reverses an existing bulk approval status for a given discipline code or journal headid`,
     tags: [SWAGGER_TAGS.private],
     requires: {

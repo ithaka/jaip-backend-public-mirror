@@ -10,6 +10,7 @@ export const route_schemas = {
   get_group_features: {
     name: "get_group_features",
     description: `Returns all group features.`,
+    route: "/get",
     tags: [SWAGGER_TAGS.private],
     method: "POST",
     response: {
@@ -127,6 +128,7 @@ export const route_schemas = {
   reactivate_group_feature: {
     name: "reactivate_group_feature",
     description: `Reactivates a deleted group feature by setting is_active to true.`,
+    route: "/reactivate",
     tags: [SWAGGER_TAGS.private],
     method: "PATCH",
     requires: {

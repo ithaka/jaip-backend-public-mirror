@@ -18,6 +18,7 @@ export const route_schemas = {
   journals: {
     name: "journals",
     description: `Returns an array of journal objects in a provided discipline.`,
+    route: ":code",
     tags: [SWAGGER_TAGS.private],
     path: {
       type: "string",

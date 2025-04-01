@@ -6,6 +6,7 @@ export const route_schemas = {
   get_subdomains: {
     name: "get_subdomains",
     description: `Returns all subdomains.`,
+    route: "/get",
     tags: [SWAGGER_TAGS.private],
     method: "POST",
     requires: {
@@ -109,6 +110,7 @@ export const route_schemas = {
   reactivate_subdomain: {
     name: "reactivate_subdomain",
     description: `Reactivates a deleted subdomain by setting is_active to true.`,
+    route: "/reactivate",
     tags: [SWAGGER_TAGS.private],
     method: "PATCH",
     requires: {

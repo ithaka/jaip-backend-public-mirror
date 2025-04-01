@@ -6,6 +6,7 @@ export const route_schemas = {
   get_ungrouped_features: {
     name: "get_ungrouped_features",
     description: `Returns all ungrouped features.`,
+    route: "/get",
     tags: [SWAGGER_TAGS.private],
     method: "POST",
     requires: {
@@ -119,6 +120,7 @@ export const route_schemas = {
   reactivate_ungrouped_feature: {
     name: "reactivate_ungrouped_feature",
     description: `Reactivates a deleted ungrouped feature by setting is_active to true.`,
+    route: "/reactivate",
     tags: [SWAGGER_TAGS.private],
     method: "PATCH",
     requires: {

@@ -7,31 +7,49 @@ import {
   get_group_features_handler,
   reactivate_group_feature_handler,
 } from "./handlers";
+import { grouped_features_prefix } from "./options";
+import { get_route } from "../../../../utils/get_route";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_group_features;
-  fastify.post("/grouped/get", opts, get_group_features_handler(fastify));
+  fastify.post(
+    get_route(route_schemas.get_group_features),
+    opts,
+    get_group_features_handler(fastify),
+  );
 
   opts.schema = route_schemas.add_group_feature;
-  fastify.post("/grouped", opts, add_group_feature_handler(fastify));
+  fastify.post(
+    get_route(route_schemas.add_group_feature),
+    opts,
+    add_group_feature_handler(fastify),
+  );
 
   opts.schema = route_schemas.delete_group_feature;
-  fastify.delete("/grouped", opts, delete_group_feature_handler(fastify));
+  fastify.delete(
+    get_route(route_schemas.delete_group_feature),
+    opts,
+    delete_group_feature_handler(fastify),
+  );
 
   opts.schema = route_schemas.reactivate_group_feature;
   fastify.patch(
-    "/grouped/reactivate",
+    route_schemas.reactivate_group_feature.route,
     opts,
     reactivate_group_feature_handler(fastify),
   );
 
   opts.schema = route_schemas.edit_group_feature;
-  fastify.patch("/grouped", opts, edit_group_feature_handler(fastify));
+  fastify.patch(
+    get_route(route_schemas.edit_group_feature),
+    opts,
+    edit_group_feature_handler(fastify),
+  );
 }
 
 export default {
   routes,
   options: {
-    prefix: "/site_administration/features",
+    prefix: grouped_features_prefix,
   },
 };

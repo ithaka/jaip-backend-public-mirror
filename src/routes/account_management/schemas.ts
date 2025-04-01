@@ -1,3 +1,4 @@
+import { entity_types } from "@prisma/client";
 import { SWAGGER_TAGS, FEATURES, UNGROUPED_FEATURES } from "../../consts";
 import { User } from "../../types/entities";
 import { server_error, standard_errors } from "../../utils";
@@ -119,6 +120,7 @@ export const route_schemas = {
   // Get entities
   get_users: {
     name: "get_users",
+    route: `/${entity_types.users}/get`,
     description: `Returns an array of users`,
     method: "POST",
     tags: [SWAGGER_TAGS.private],
@@ -139,6 +141,7 @@ export const route_schemas = {
   },
   get_facilities: {
     name: "get_facilities",
+    route: `/${entity_types.facilities}/get`,
     description: `Returns an array of facilities`,
     method: "POST",
     tags: [SWAGGER_TAGS.private],
@@ -157,6 +160,7 @@ export const route_schemas = {
   // Remove entities
   remove_users: {
     name: "remove_users",
+    route: `/${entity_types.users}`,
     description: `Removes users by changing type to 'removed' and deactivating group features`,
     method: "DELETE",
     tags: [SWAGGER_TAGS.private],
@@ -173,6 +177,7 @@ export const route_schemas = {
   },
   remove_facilities: {
     name: "remove_facilities",
+    route: `/${entity_types.facilities}`,
     description: `Removes facilities by changing type type to 'removed' and deactivating group features`,
     method: "DELETE",
     tags: [SWAGGER_TAGS.private],
@@ -191,6 +196,7 @@ export const route_schemas = {
   // Add entities
   add_users: {
     name: "add_users",
+    route: `/${entity_types.users}`,
     description: `Adds users`,
     method: "POST",
     tags: [SWAGGER_TAGS.private],
@@ -211,6 +217,7 @@ export const route_schemas = {
   },
   add_facilities: {
     name: "add_facilities",
+    route: `/${entity_types.facilities}`,
     description: `Adds facilities`,
     method: "POST",
     tags: [SWAGGER_TAGS.private],
@@ -229,6 +236,7 @@ export const route_schemas = {
   // Edit entities
   edit_users: {
     name: "edit_users",
+    route: `/${entity_types.users}`,
     description: `Edits existing users`,
     method: "PATCH",
     tags: [SWAGGER_TAGS.private],
@@ -249,6 +257,7 @@ export const route_schemas = {
   },
   edit_facilities: {
     name: "edit_facilities",
+    route: `/${entity_types.facilities}`,
     description: `Edits existing facilities`,
     method: "PATCH",
     tags: [SWAGGER_TAGS.private],

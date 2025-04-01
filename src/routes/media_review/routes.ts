@@ -8,34 +8,56 @@ import {
   denial_and_incomplete_handler,
   request_handler,
 } from "./handlers";
+import { media_review_prefix } from "./options";
+import { get_route } from "../../utils/get_route";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.request;
-
-  fastify.post("/request", opts, request_handler(fastify));
+  fastify.post(
+    get_route(route_schemas.request),
+    opts,
+    request_handler(fastify),
+  );
 
   opts.schema = route_schemas.approve;
-  fastify.post("/approve", opts, approval_handler(fastify));
+  fastify.post(
+    get_route(route_schemas.approve),
+    opts,
+    approval_handler(fastify),
+  );
 
   opts.schema = route_schemas.deny;
   fastify.post(
-    "/deny",
+    get_route(route_schemas.deny),
     opts,
     denial_and_incomplete_handler(fastify, status_options.Denied),
   );
 
   opts.schema = route_schemas.incomplete;
   fastify.post(
-    "/incomplete",
+    get_route(route_schemas.incomplete),
     opts,
     denial_and_incomplete_handler(fastify, status_options.Incomplete),
   );
 
   opts.schema = route_schemas.bulk;
-  fastify.post("/bulk", opts, bulk_approval_handler(fastify));
+  fastify.post(
+    get_route(route_schemas.bulk),
+    opts,
+    bulk_approval_handler(fastify),
+  );
 
   opts.schema = route_schemas.bulk_undo;
-  fastify.post("/bulk-undo", opts, bulk_undo_handler(fastify));
+  fastify.post(
+    get_route(route_schemas.bulk_undo),
+    opts,
+    bulk_undo_handler(fastify),
+  );
 }
 
-export default { routes, options: {} };
+export default {
+  routes,
+  options: {
+    prefix: media_review_prefix,
+  },
+};
