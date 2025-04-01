@@ -26,7 +26,7 @@ export const get_group_features_handler =
         event_description: "attempting to get group features",
       },
     );
-    // Because ungrouped features are also fetched without pagination,
+    // Because group features are also fetched without pagination,
     // we can't assume all the features are there. Instead, we need to
     // cast it as a Partial and handle cases where pagination properties
     // are missing.
