@@ -53,10 +53,7 @@ export const route_schemas = {
     response: {
       200: {
         type: "object",
-        additionalProperties: {
-          features: {} as Feature,
-          total: { type: "number" },
-        },
+        additionalProperties: {} as Feature,
       },
       ...standard_post_errors,
     },
