@@ -105,7 +105,7 @@ export const get_group_features_handler =
       const [features, count] = await fastify.prisma.$transaction([
         fastify.prisma.features.findMany({
           orderBy: {
-            display_name: "desc",
+            display_name: "asc",
           },
           ...query,
         }),
