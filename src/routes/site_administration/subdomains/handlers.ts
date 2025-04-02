@@ -48,7 +48,7 @@ export const get_subdomains_handler =
           skip: (page - 1) * limit,
           take: limit,
           orderBy: {
-            subdomain: "desc",
+            subdomain: "asc",
           },
         }),
         // Because we're not using a select, we can just recast the type
