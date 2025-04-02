@@ -68,7 +68,7 @@ export const get_subdomains_handler =
         total: count,
       });
       fastify.event_logger.pep_standard_log_complete(
-        "pep_add_subdomain_complete",
+        "pep_get_subdomains_complete",
         request,
         reply,
         {
@@ -214,7 +214,7 @@ export const delete_subdomain_handler =
         reply,
         {
           ...log_payload,
-          event_description: "returning subdomains from db",
+          event_description: `successfully deleted subdomain from db: ${id}`,
         },
       );
     } catch (err) {
