@@ -72,6 +72,8 @@ export const FEATURES = {
 };
 
 export const UNGROUPED_FEATURES = {
+  add_group: "add_group",
+  edit_group: "edit_group",
   delete_group: "delete_group",
   clear_history: "clear_history",
   manage_superusers: "manage_superusers",
