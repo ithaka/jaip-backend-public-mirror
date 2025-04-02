@@ -9,6 +9,7 @@ import {
   Subdomain,
 } from "./routes";
 import { Feature } from "./features";
+import { DBGroup } from "./database";
 
 export interface CaptainsLog {
   origin: string;
@@ -26,6 +27,7 @@ export interface CompleteLogPayload {
   user: User;
   sessionid: string;
   subdomain: string;
+  db_groups: DBGroup[];
   db_subdomain: string;
   db_subdomain_id: number;
   db_subdomains: Subdomain[];

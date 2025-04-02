@@ -4,6 +4,14 @@ export interface DBEntity {
   jstor_id: string;
   entities: Entities;
 }
+export interface DBGroup {
+  name: string;
+  is_active: boolean;
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export enum UserRole {
   admin = "admin",
   user = "user",
