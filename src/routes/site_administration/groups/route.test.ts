@@ -7,7 +7,7 @@ test('requests the "/groups/get" route', async () => {
     method: "POST",
     url: "/site-administration/groups/get",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/groups/reactivate" route', async () => {
@@ -15,7 +15,7 @@ test('requests the "/groups/reactivate" route', async () => {
     method: "PATCH",
     url: "/site-administration/groups/reactivate",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/groups" add route', async () => {
@@ -23,7 +23,7 @@ test('requests the "/groups" add route', async () => {
     method: "POST",
     url: "/site-administration/groups",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/groups" edit route', async () => {
@@ -31,7 +31,7 @@ test('requests the "/groups" edit route', async () => {
     method: "PATCH",
     url: "/site-administration/groups",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/groups" delete route', async () => {
@@ -39,5 +39,5 @@ test('requests the "/groups" delete route', async () => {
     method: "DELETE",
     url: "/site-administration/groups",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });

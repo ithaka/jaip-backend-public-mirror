@@ -5,7 +5,7 @@ const app = build_test_server();
 test('requests the "/request" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/request",
+    url: "/media-review/request",
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -13,7 +13,7 @@ test('requests the "/request" route', async () => {
 test('requests the "/approve" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/approve",
+    url: "/media-review/approve",
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -21,7 +21,7 @@ test('requests the "/approve" route', async () => {
 test('requests the "/deny" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/deny",
+    url: "/media-review/deny",
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -29,7 +29,7 @@ test('requests the "/deny" route', async () => {
 test('requests the "/incomplete" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/incomplete",
+    url: "/media-review/incomplete",
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -37,7 +37,7 @@ test('requests the "/incomplete" route', async () => {
 test('requests the "/bulk" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/bulk",
+    url: "/media-review/bulk",
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -45,7 +45,7 @@ test('requests the "/bulk" route', async () => {
 test('requests the "/bulk-undo" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/bulk-undo",
+    url: "/media-review/bulk-undo",
   });
   expect(res.statusCode).toEqual(400);
 });

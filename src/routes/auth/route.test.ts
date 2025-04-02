@@ -7,5 +7,5 @@ test('requests the "/auth" route', async () => {
     method: "GET",
     url: "/auth",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(200);
 });

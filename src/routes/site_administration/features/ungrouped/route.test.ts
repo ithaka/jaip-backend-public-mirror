@@ -7,7 +7,7 @@ test('requests the "/ungrouped/get" route', async () => {
     method: "POST",
     url: "/site-administration/features/ungrouped/get",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/ungrouped/reactivate" route', async () => {
@@ -15,7 +15,7 @@ test('requests the "/ungrouped/reactivate" route', async () => {
     method: "PATCH",
     url: "/site-administration/features/ungrouped/reactivate",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/ungrouped" add route', async () => {
@@ -23,7 +23,7 @@ test('requests the "/ungrouped" add route', async () => {
     method: "POST",
     url: "/site-administration/features/ungrouped",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/ungrouped" edit route', async () => {
@@ -31,7 +31,7 @@ test('requests the "/ungrouped" edit route', async () => {
     method: "PATCH",
     url: "/site-administration/features/ungrouped",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/ungrouped" delete route', async () => {
@@ -39,5 +39,5 @@ test('requests the "/ungrouped" delete route', async () => {
     method: "DELETE",
     url: "/site-administration/features/ungrouped",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });

@@ -7,7 +7,7 @@ test('requests the "/grouped/get" route', async () => {
     method: "POST",
     url: "/site-administration/features/grouped/get",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/grouped/reactivate" route', async () => {
@@ -15,7 +15,7 @@ test('requests the "/grouped/reactivate" route', async () => {
     method: "PATCH",
     url: "/site-administration/features/grouped/reactivate",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/grouped" add route', async () => {
@@ -23,7 +23,7 @@ test('requests the "/grouped" add route', async () => {
     method: "POST",
     url: "/site-administration/features/grouped",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/grouped" edit route', async () => {
@@ -31,7 +31,7 @@ test('requests the "/grouped" edit route', async () => {
     method: "PATCH",
     url: "/site-administration/features/grouped",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/grouped" delete route', async () => {
@@ -39,5 +39,5 @@ test('requests the "/grouped" delete route', async () => {
     method: "DELETE",
     url: "/site-administration/features/grouped",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });

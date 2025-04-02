@@ -7,7 +7,7 @@ test('requests the "/subdomains/get" route', async () => {
     method: "POST",
     url: "/site-administration/subdomains/get",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/subdomains/reactivate" route', async () => {
@@ -15,7 +15,7 @@ test('requests the "/subdomains/reactivate" route', async () => {
     method: "PATCH",
     url: "/site-administration/subdomains/reactivate",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/subdomains" add route', async () => {
@@ -23,7 +23,7 @@ test('requests the "/subdomains" add route', async () => {
     method: "POST",
     url: "/site-administration/subdomains",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/subdomains" edit route', async () => {
@@ -31,7 +31,7 @@ test('requests the "/subdomains" edit route', async () => {
     method: "PATCH",
     url: "/site-administration/subdomains",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
 
 test('requests the "/subdomains" delete route', async () => {
@@ -39,5 +39,5 @@ test('requests the "/subdomains" delete route', async () => {
     method: "DELETE",
     url: "/site-administration/subdomains",
   });
-  expect(res.statusCode).toEqual(500);
+  expect(res.statusCode).toEqual(400);
 });
