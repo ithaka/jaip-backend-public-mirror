@@ -5,7 +5,7 @@ const app = build_test_server();
 test('requests the "/subdomains/get" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/subdomains/get",
+    url: "/site-administration/subdomains/get",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -13,7 +13,7 @@ test('requests the "/subdomains/get" route', async () => {
 test('requests the "/subdomains/reactivate" route', async () => {
   const res = await app.inject({
     method: "PATCH",
-    url: "/subdomains/reactivate",
+    url: "/site-administration/subdomains/reactivate",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -21,7 +21,7 @@ test('requests the "/subdomains/reactivate" route', async () => {
 test('requests the "/subdomains" add route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/subdomains",
+    url: "/site-administration/subdomains",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -29,7 +29,7 @@ test('requests the "/subdomains" add route', async () => {
 test('requests the "/subdomains" edit route', async () => {
   const res = await app.inject({
     method: "PATCH",
-    url: "/subdomains",
+    url: "/site-administration/subdomains",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -37,7 +37,7 @@ test('requests the "/subdomains" edit route', async () => {
 test('requests the "/subdomains" delete route', async () => {
   const res = await app.inject({
     method: "DELETE",
-    url: "/subdomains",
+    url: "/site-administration/subdomains",
   });
   expect(res.statusCode).toEqual(500);
 });

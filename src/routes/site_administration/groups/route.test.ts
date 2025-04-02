@@ -5,7 +5,7 @@ const app = build_test_server();
 test('requests the "/groups/get" route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/groups/get",
+    url: "/site-administration/groups/get",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -13,7 +13,7 @@ test('requests the "/groups/get" route', async () => {
 test('requests the "/groups/reactivate" route', async () => {
   const res = await app.inject({
     method: "PATCH",
-    url: "/groups/reactivate",
+    url: "/site-administration/groups/reactivate",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -21,7 +21,7 @@ test('requests the "/groups/reactivate" route', async () => {
 test('requests the "/groups" add route', async () => {
   const res = await app.inject({
     method: "POST",
-    url: "/groups",
+    url: "/site-administration/groups",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -29,7 +29,7 @@ test('requests the "/groups" add route', async () => {
 test('requests the "/groups" edit route', async () => {
   const res = await app.inject({
     method: "PATCH",
-    url: "/groups",
+    url: "/site-administration/groups",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -37,7 +37,7 @@ test('requests the "/groups" edit route', async () => {
 test('requests the "/groups" delete route', async () => {
   const res = await app.inject({
     method: "DELETE",
-    url: "/groups",
+    url: "/site-administration/groups",
   });
   expect(res.statusCode).toEqual(500);
 });

@@ -111,7 +111,6 @@ export const route_schemas = {
       properties: {
         id: {
           type: "number",
-          minLength: 1,
         },
       },
     },
@@ -141,7 +140,6 @@ export const route_schemas = {
       properties: {
         id: {
           type: "number",
-          minLength: 1,
         },
       },
     },
@@ -170,7 +168,6 @@ export const route_schemas = {
       properties: {
         id: {
           type: "number",
-          minLength: 1,
         },
         name: {
           type: "string",
