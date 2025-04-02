@@ -70,8 +70,8 @@ model features_groups_entities {
 model groups {
   id                       Int                        @id @default(autoincrement())
   name                     String                     @unique(map: "groups_name_uq") @db.VarChar
-  created_at               DateTime?                  @default(now()) @db.Timestamp(6)
-  updated_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  created_at               DateTime                   @default(now()) @db.Timestamp(6)
+  updated_at               DateTime                   @default(now()) @db.Timestamp(6)
   is_active                Boolean                    @default(true)
   features_groups_entities features_groups_entities[]
   groups_entities          groups_entities[]
