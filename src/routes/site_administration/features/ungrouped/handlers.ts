@@ -232,7 +232,8 @@ export const delete_ungrouped_feature_handler =
 
     try {
       await fastify.prisma.$transaction([
-        // We need to delete the records where this subdomain is used in the subdomains_facilities table
+        // We need to updated the records where this features is involved so that they
+        // are no longer enabled.
         fastify.prisma.ungrouped_features_entities.updateMany({
           where: {
             feature_id: {
@@ -244,7 +245,7 @@ export const delete_ungrouped_feature_handler =
             updated_at: new Date(),
           },
         }),
-        // Then we can set the subdomain to inactive
+        // Then we can set the feature to inactive
         fastify.prisma.ungrouped_features.update({
           where: {
             id,

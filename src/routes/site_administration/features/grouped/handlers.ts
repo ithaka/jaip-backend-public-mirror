@@ -279,7 +279,8 @@ export const delete_group_feature_handler =
 
     try {
       await fastify.prisma.$transaction([
-        // We need to delete the records where this subdomain is used in the subdomains_facilities table
+        // We need to set the records where feature is used so that they
+        // are not enabled.
         fastify.prisma.features_groups_entities.updateMany({
           where: {
             feature_id: {
@@ -291,7 +292,7 @@ export const delete_group_feature_handler =
             updated_at: new Date(),
           },
         }),
-        // Then we can set the subdomain to inactive
+        // Then we can set the feature to inactive
         fastify.prisma.features.update({
           where: {
             id,
