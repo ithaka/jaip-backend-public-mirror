@@ -34,7 +34,7 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
   opts.schema = route_schemas.reactivate_subdomain;
   fastify.patch(
-    route_schemas.reactivate_subdomain.route,
+    get_route(route_schemas.reactivate_subdomain),
     opts,
     reactivate_subdomain_handler(fastify),
   );
