@@ -74,6 +74,7 @@ export interface CompleteLogPayload {
   user_ids: number[];
   altered_user: Partial<User>;
   is_duplicate: boolean;
+  group_name: string;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial
