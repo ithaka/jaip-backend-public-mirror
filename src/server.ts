@@ -1,14 +1,18 @@
 import build from "./build";
 import { v4 as uuidv4 } from "uuid";
+import route_settings from "./routes";
 
-const server = build({
-  logger: true,
-  trustProxy: true,
-  ignoreTrailingSlash: true,
-  genReqId: () => {
-    return uuidv4();
+const server = build(
+  {
+    logger: true,
+    trustProxy: true,
+    ignoreTrailingSlash: true,
+    genReqId: () => {
+      return uuidv4();
+    },
   },
-});
+  route_settings,
+);
 
 const start = async () => {
   try {

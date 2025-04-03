@@ -4,6 +4,14 @@ import { Entitlement } from "./accounts";
 import { entity_types } from "@prisma/client";
 import { Group } from "./groups";
 
+export interface RouteSettings {
+  routes: (
+    fastify: FastifyInstance,
+    opts: RouteShorthandOptions,
+  ) => Promise<void>;
+  options: { prefix?: string };
+}
+
 export interface DiscParams {
   code: string;
 }

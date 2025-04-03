@@ -7,11 +7,11 @@ import { SWAGGER_OPTS, VALIDATED_METHODS } from "./consts";
 
 import decorators from "./decorators";
 import plugins from "./plugins";
-import route_settings from "./routes";
 import "dotenv/config";
 import { requirements_guard, route_guard, validate } from "./routes/hooks";
 import { SWAGGER_TAGS } from "./consts";
 import { add_subdomain } from "./routes/hooks/add_subdomain";
+import { RouteSettings } from "./types/routes";
 
 // This modification allows us to extend the fastify schema with an
 declare module "fastify" {
@@ -27,7 +27,8 @@ declare module "fastify" {
     };
   }
 }
-function build(opts = {}) {
+
+function build(opts = {}, route_settings: RouteSettings[]) {
   const app = Fastify(opts);
 
   app.addHook("onRoute", (routeOptions) => {
