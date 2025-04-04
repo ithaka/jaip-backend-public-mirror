@@ -1,0 +1,26 @@
+kind: Upstream
+apiVersion: gloo.solo.io/v1
+metadata:
+  name: jaip-backend
+  namespace: sequoia
+spec:
+  kube:
+    serviceName: jaip-backend
+    serviceNamespace: sequoia
+    servicePort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaip-backend
+  labels:
+    app: jaip-backend
+spec:
+  selector:
+    app: jaip-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+

@@ -1,0 +1,19 @@
+kind: RouteTable
+apiVersion: gateway.solo.io/v1
+metadata:
+  labels:
+    apiGroup: pep.jstor.org
+  name: jaip-backend-route
+  namespace: sequoia
+spec:
+  routes:
+    - matchers:
+        - prefix: /api/v2
+      routeAction:
+        single:
+          upstream:
+            name: jaip-backend
+            namespace: sequoia
+      options:
+        timeout: "30s"
+  weight: 0
