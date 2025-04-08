@@ -49,6 +49,7 @@ render local chart:
     # but we cannot freely set our own and expect that to work.
     EXTRA_HELM_TEMPLATE_OPTIONS: $DEFAULT_HELM_TEMPLATE_OPTIONS --set-string ssmParameter.JAIP_DB_URL=$JAIP_DB_URL
   after_script:
+    - ls -lah $MANIFEST_OUTPUT_DIRECTORY
     - mv $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml $MANIFEST_OUTPUT_DIRECTORY/app-manifest-extras.yml
 
 # Default chart, configured via any `EXTRA_HELM_TEMPLATE_OPTIONS` referenced
