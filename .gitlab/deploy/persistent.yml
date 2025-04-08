@@ -6,7 +6,7 @@ include:
     ref: run-argo-deployer-v3
 
 render gloo chart:
-  stage: build
+  stage: prepare
   script:
     - echo "$CI_PROJECT_DIR/gloo/gloo_$ENVIRONMENT.yml"
     - echo "$CI_PROJECT_DIR/gloo/gloo_shared.yml"
