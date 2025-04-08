@@ -16,4 +16,5 @@ deploy:
     MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY
   environment:
     name: $TARGET_CLUSTER-$API_TARGET
-    url: https://$EUREKA_SERVICE_NAME.apps.$ENVIRONMENT.cirrostratus.org
+    url: $DEPLOYED_URL
+

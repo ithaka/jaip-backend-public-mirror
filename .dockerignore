@@ -1,0 +1,10 @@
+.gitlab-ci.yml
+.gitlab
+.github
+.husky
+.vscode
+gloo
+k8s
+docker
+README.md
+example.env
