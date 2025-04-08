@@ -10,6 +10,7 @@
 image: ${DOCKER_VIRTUAL}/node:22.13.0-alpine
 
 stages:
+  - build
   - test
   - deploy
   - undeploy
