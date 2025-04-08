@@ -8,12 +8,13 @@ include:
 render gloo chart:
   stage: prepare
   script:
-    - echo "$CI_PROJECT_DIR/gloo/gloo_$ENVIRONMENT.yml"
     - echo "$CI_PROJECT_DIR/gloo/gloo_shared.yml"
+    - cp "$CI_PROJECT_DIR/gloo/gloo_shared.yml" $MANIFEST_OUTPUT_DIRECTORY
+    - echo "$CI_PROJECT_DIR/gloo/gloo_$ENVIRONMENT.yml"
+    - cp "$CI_PROJECT_DIR/gloo/gloo_$ENVIRONMENT.yml" $MANIFEST_OUTPUT_DIRECTORY
+  
     - export MANIFEST_OUTPUT_DIRECTORY="${MANIFEST_OUTPUT_DIRECTORY:=${MANIFEST_OUTPUT_DIRECTORY}}"
     - mkdir $MANIFEST_OUTPUT_DIRECTORY
-    - cp "$CI_PROJECT_DIR/gloo/gloo_$ENVIRONMENT.yml" $MANIFEST_OUTPUT_DIRECTORY
-    - cp "$CI_PROJECT_DIR/gloo/gloo_shared.yml" $MANIFEST_OUTPUT_DIRECTORY
   artifacts:
     paths:
       - $MANIFEST_OUTPUT_DIRECTORY
