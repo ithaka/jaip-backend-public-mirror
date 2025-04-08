@@ -123,7 +123,7 @@ resource "aws_route53_record" "test_provider_subdomains" {
   }
 }
 
-# These are the production dubdomains. They include the provider subdomain
+# These are the production subdomains. They include the provider subdomain
 # prefixed to the production subdomain, e.g., prod-subdomain-example.jstor.org.
 resource "aws_route53_record" "prod_provider_subdomains" {
   for_each = toset(local.prod_provider_subdomains)
