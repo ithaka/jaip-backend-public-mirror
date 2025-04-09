@@ -39,6 +39,7 @@ const discovery_handler = async function (
           (instance: JSTORInstance) => instance.homePageUrl,
         );
         if (homePageUrl) {
+          console.log("SERVICE DISCOVERY COMPLETED");
           return [homePageUrl.homePageUrl, null];
         } else {
           throw new Error(
@@ -51,9 +52,10 @@ const discovery_handler = async function (
     } else {
       throw new Error("Service discovery failed: Response is not an array");
     }
-    console.log("SERVICE DISCOVERY COMPLETED");
   } catch (err) {
     const error = ensure_error(err);
+    console.log("SERVICE DISCOVERY ERROR", error.message);
+
     return ["", error];
   }
 };

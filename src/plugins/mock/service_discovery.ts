@@ -1,14 +1,13 @@
 import service_discovery from "../real/service_discovery";
 
-// const options = {
-//   discover: jest.fn(
-//     ()=>{
-//       console.log("Mock Service Discovery Plugin Called")
-//     }
-//   ),
-// }
+const options = {
+  discover: jest.fn(() => {
+    console.log("Mock discover function called");
+    return "service_discovery";
+  }),
+};
 
 export default {
-  options: service_discovery.options,
+  options,
   plugin: service_discovery.plugin,
 };
