@@ -8,6 +8,7 @@ export function build_test_server(route_settings: RouteSettings[]) {
       trustProxy: true,
     },
     route_settings,
+    true,
   );
 
   beforeAll(async () => {

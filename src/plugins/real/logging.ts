@@ -4,9 +4,9 @@ import {
   FastifyPluginAsync,
   FastifyPluginOptions,
 } from "fastify";
-import { EventLogger } from "../event_handler";
-import { CaptainsLogger } from "../event_handler/captains_logger";
-import { EventLoggerPluginOptions } from "../types/plugins";
+import { EventLogger } from "../../event_handler";
+import { CaptainsLogger } from "../../event_handler/captains_logger";
+import { EventLoggerPluginOptions } from "../../types/plugins";
 declare module "fastify" {
   interface FastifyInstance {
     event_logger: EventLogger;
