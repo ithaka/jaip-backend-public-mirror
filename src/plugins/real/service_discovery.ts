@@ -20,7 +20,6 @@ const discovery_handler = async function (
 ): Promise<[string, Error | null]> {
   const url = `http://localhost:8888/v1/apps/${service}/instances`;
   try {
-    console.log("ATTEMPTING SERVICE DISCOVERY");
     const {
       data,
       status,
@@ -39,7 +38,6 @@ const discovery_handler = async function (
           (instance: JSTORInstance) => instance.homePageUrl,
         );
         if (homePageUrl) {
-          console.log("SERVICE DISCOVERY COMPLETED");
           return [homePageUrl.homePageUrl, null];
         } else {
           throw new Error(
@@ -54,8 +52,6 @@ const discovery_handler = async function (
     }
   } catch (err) {
     const error = ensure_error(err);
-    console.log("SERVICE DISCOVERY ERROR", error.message);
-
     return ["", error];
   }
 };
