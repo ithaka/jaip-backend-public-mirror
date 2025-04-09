@@ -5,8 +5,7 @@ import fastify_cookie from "@fastify/cookie";
 
 import { SWAGGER_OPTS, VALIDATED_METHODS } from "./consts";
 
-import real_plugins from "./plugins/real";
-import mock_plugins from "./plugins/mock";
+import plugins from "./plugins";
 
 import "dotenv/config";
 import { requirements_guard, route_guard, validate } from "./routes/hooks";
@@ -29,11 +28,7 @@ declare module "fastify" {
   }
 }
 
-function build(
-  opts = {},
-  route_settings: RouteSettings[],
-  use_mock_plugins = false,
-) {
+function build(opts = {}, route_settings: RouteSettings[]) {
   const app = Fastify(opts);
 
   app.addHook("onRoute", (routeOptions) => {
@@ -94,7 +89,6 @@ function build(
 
   // Plugins
   // If mock_plugins is true, use the mock plugins instead of the real ones
-  const plugins = use_mock_plugins ? mock_plugins : real_plugins;
   for (const { plugin, options } of Object.values(plugins)) {
     app.register(plugin, options);
   }

@@ -31,6 +31,7 @@ export const manage_session = async (
     const response = await axios.post(url, {
       query,
     });
+
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
