@@ -2,7 +2,7 @@ kind: RouteTable
 apiVersion: gateway.solo.io/v1
 metadata:
   labels:
-    apiGroup: test.pep.jstor.org
+    apiGroup: test-pep.jstor.org
   name: jaip-backend-route
   namespace: sequoia
 spec:
