@@ -19,6 +19,9 @@ locals {
   zone_id = "Z2FDTNDATAQYW2" # This is hardcoded because the hosted zone id for CloudFront is a constant
   cloudfront_dns = "d6u2bqjxuux94.cloudfront.net."
 
+  # Fastly
+  fastly = "jstor.map.fastly.net."
+
   # Environments
   test_environment = "test"
   prod_environment = "prod" 
@@ -145,12 +148,11 @@ resource "aws_route53_record" "prod_subdomains" {
   for_each = toset(local.prod_subdomains)
   zone_id = aws_route53_zone.zone.zone_id
   name    = each.key
-  type    = "A"
-  alias {
-    name                   = local.cloudfront_dns
-    zone_id                = local.zone_id 
-    evaluate_target_health = true
-  }
+  type    = "CNAME"
+  ttl   = 60
+  records = [
+    local.fastly
+  ]
   lifecycle {
     prevent_destroy = true
   }
@@ -176,22 +178,22 @@ resource "aws_route53_zone" "test_zone" {
 
 
 # This is the main record for the test domain.
-resource "aws_route53_record" "test_record" {
+resource "aws_route53_record" "test_record_wildcard" {
   zone_id = aws_route53_zone.test_zone.zone_id
-  name    = "${local.test_domain}"
-  type    = "A"
-  alias {
-    name                   = local.cloudfront_dns
-    zone_id                = local.zone_id 
-    evaluate_target_health = true
-  }
+  name    = join(local.separator, ["*", local.test_domain])
+  type    = "CNAME"
+  ttl   = 60
+  records = [
+    local.fastly
+  ]
   # In general, we don't need to worry about destroying this record, but to 
   # keep things consistent with prod and to avoid accidents, we'll prevent
   # destroying it.
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
+
 
 # These are the test provider subdomains. They include the provider subdomain 
 # prefixed to the test subdomain, e.g., subdomain-example.test-pep.jstor.org.
@@ -199,15 +201,14 @@ resource "aws_route53_record" "test_subdomains" {
   for_each = toset(local.test_subdomains)
   zone_id = aws_route53_zone.test_zone.zone_id
   name    = each.key
-  type    = "A"
-  alias {
-    name                   = local.cloudfront_dns
-    zone_id                = local.zone_id 
-    evaluate_target_health = true
-  }
-  lifecycle {
-    prevent_destroy = true
-  }
+  type    = "CNAME"
+  ttl   = 60
+  records = [
+    local.fastly
+  ]
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 # VALIDATIONS
