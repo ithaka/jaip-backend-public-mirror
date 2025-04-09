@@ -11,3 +11,7 @@ export interface ErrorHandlerPluginOptions extends FastifyPluginOptions {
     reply: FastifyReply,
   ) => void;
 }
+
+export interface ServiceDiscoveryPluginOptions extends FastifyPluginOptions {
+  discover(service: string): Promise<[string, Error | null]>;
+}

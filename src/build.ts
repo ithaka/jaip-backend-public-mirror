@@ -5,7 +5,6 @@ import fastify_cookie from "@fastify/cookie";
 
 import { SWAGGER_OPTS, VALIDATED_METHODS } from "./consts";
 
-import decorators from "./decorators";
 import plugins from "./plugins";
 import "dotenv/config";
 import { requirements_guard, route_guard, validate } from "./routes/hooks";
@@ -86,11 +85,6 @@ function build(opts = {}, route_settings: RouteSettings[]) {
 
   // Fastify cookie movies cookies to their own section of the Response object
   app.register(fastify_cookie);
-
-  // Decorators
-  for (const decorator in decorators) {
-    app.decorate(decorator, decorators[decorator]);
-  }
 
   // Plugins
   for (const { plugin, options } of Object.values(plugins)) {
