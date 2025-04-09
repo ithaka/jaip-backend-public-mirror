@@ -1,20 +1,35 @@
 locals {
   app_name = "jaip-backend"
+
+  # Domains
   domain = "pep.jstor.org"
+  test_domain = "test-pep.jstor.org"
   temporary_admin_domain = "pep-admin.jstor.org"
 
-  test_domain = "test-pep.jstor.org"
-  zone_id = "Z2FDTNDATAQYW2" # This is hardcoded because the hosted zone id for CloudFront is a constant
-  cloudfront_dns = "d6u2bqjxuux94.cloudfront.net."
+  # Subdomain building
   separator = "."
   admin_prefix = "admin"
+
+  # Validation
+  validation_prefix = "_acme-challenge"
+  validation_target = "27hx4qgrptn0xjgkgn.fastly-validations.com"
+  test_validation_target = "ezr3a4rvljjwz92g40.fastly-validations.com"
+
+  # Cloudfront
+  zone_id = "Z2FDTNDATAQYW2" # This is hardcoded because the hosted zone id for CloudFront is a constant
+  cloudfront_dns = "d6u2bqjxuux94.cloudfront.net."
+
+  # Environments
   test_environment = "test"
   prod_environment = "prod" 
 }
 
-locals {
+locals {  
+  # Domains
   admin_domain = join(local.separator, [local.admin_prefix, local.domain])
   test_admin_domain = join(local.separator, [local.admin_prefix, local.test_domain])
+  
+  # Subdomain Building
   test_provider_prefixes = [
     "subdomain-example",
   ]
@@ -24,9 +39,15 @@ locals {
   prod_provider_prefixes = [
     "prod-subdomain-example",
   ]
+
+  # Validation
+  validation_domain = join(local.separator, [local.validation_prefix, local.domain])
+  test_validation_domain = join(local.separator, [local.validation_prefix, local.test_domain])
+
 }
 
 locals {
+  # Built subdomains
   test_provider_subdomains = [
     for provider_prefix in local.test_provider_prefixes : join(local.separator, [
       provider_prefix, local.test_domain
@@ -40,6 +61,7 @@ locals {
 }
 
 locals {
+  # Combined subdomains
   test_subdomains = concat(
     local.test_provider_subdomains,
     [local.test_admin_domain],
@@ -183,6 +205,33 @@ resource "aws_route53_record" "test_subdomains" {
     zone_id                = local.zone_id 
     evaluate_target_health = true
   }
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# VALIDATIONS
+resource "aws_route53_record" "validation" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = local.validation_domain
+  type    = "CNAME"
+  ttl    = 60
+  records = [
+    local.validation_target
+  ]
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_route53_record" "test_validation" {
+  zone_id = aws_route53_zone.test_zone.zone_id
+  name    = local.test_validation_domain
+  type    = "CNAME"
+  ttl   = 60
+  records = [
+    local.test_validation_target
+  ]
   lifecycle {
     prevent_destroy = true
   }
