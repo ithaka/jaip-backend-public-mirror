@@ -176,15 +176,16 @@ resource "aws_route53_zone" "test_zone" {
   }
 }
 
-
-# This is the main record for the test domain.
-resource "aws_route53_record" "test_record_wildcard" {
+resource "aws_route53_record" "test_record" {
   zone_id = aws_route53_zone.test_zone.zone_id
-  name    = join(local.separator, ["*", local.test_domain])
-  type    = "CNAME"
+  name    = local.test_domain
+  type    = "A"
   ttl   = 60
   records = [
-    local.fastly
+    "151.101.0.152",
+    "151.101.64.152",
+    "151.101.128.152",
+    "151.101.192.152",
   ]
   # In general, we don't need to worry about destroying this record, but to 
   # keep things consistent with prod and to avoid accidents, we'll prevent
@@ -193,7 +194,6 @@ resource "aws_route53_record" "test_record_wildcard" {
   #   prevent_destroy = true
   # }
 }
-
 
 # These are the test provider subdomains. They include the provider subdomain 
 # prefixed to the test subdomain, e.g., subdomain-example.test-pep.jstor.org.
