@@ -1,7 +1,10 @@
 import axios from "axios";
-import { build_test_server, dbMock } from "../../tests/helper";
+import { build_test_server, dbMock } from "../../tests/helpers";
 import route_settings from "./routes";
-import { get_sitecode_by_subdomain_resolved_value } from "../../tests/fixtures/auth/fixtures";
+import {
+  get_first_facility_resolved_value,
+  get_sitecode_by_subdomain_resolved_value,
+} from "../../tests/fixtures/auth/fixtures";
 
 const app = build_test_server([route_settings]);
 
@@ -21,7 +24,9 @@ test('requests the "/auth" route', async () => {
     get_sitecode_by_subdomain_resolved_value,
   );
 
-  dbMock.get_first_facility.mockResolvedValue();
+  dbMock.get_first_facility.mockResolvedValue(
+    get_first_facility_resolved_value,
+  );
 
   dbMock.get_ip_bypass.mockResolvedValue({
     facilities: {
