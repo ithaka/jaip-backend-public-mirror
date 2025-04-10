@@ -3,13 +3,15 @@ import { RouteSettings } from "../types/routes";
 import { JAIPDatabase } from "../database";
 
 export const db_mock = {
-  get_ip_bypass: jest.fn(),
-  get_first_facility: jest.fn(),
-  get_first_user: jest.fn(),
-  get_sitecode_by_subdomain: jest.fn(),
+  get_ip_bypass: jest.fn().mockName("get_ip_bypass"),
+  get_first_facility: jest.fn().mockName("get_first_facility"),
+  get_first_user: jest.fn().mockName("get_first_user"),
+  get_sitecode_by_subdomain: jest.fn().mockName("get_sitecode_by_subdomain"),
 } as jest.Mocked<JAIPDatabase>;
 
-export const discover_mock = jest.fn() as jest.MockedFunction<
+export const discover_mock = jest
+  .fn()
+  .mockName("discover") as jest.MockedFunction<
   (service: string) => Promise<[string, Error | null]>
 >;
 export function build_test_server(route_settings: RouteSettings[]) {

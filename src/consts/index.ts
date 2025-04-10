@@ -5,7 +5,7 @@ export const VALIDATED_METHODS = ["POST", "PUT", "DELETE"] as HTTPMethods[];
 
 export const SUBDOMAINS = {
   admin: ["pep-admin", "admin.pep"],
-  student: ["pep", "www.pep"],
+  student: ["pep", "www.pep", "test-pep", "www.test-pep"],
 };
 
 export const ENTITY_TYPES: { [key: string]: EntityType } = {
