@@ -1,5 +1,6 @@
 export function ensure_error(value: unknown): Error {
   if (value instanceof Error) return value;
+  console.log("Error Thrown: ", value);
   let stringified = "[Unable to stringify the thrown value]";
   try {
     stringified = JSON.stringify(value);
