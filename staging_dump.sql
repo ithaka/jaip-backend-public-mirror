@@ -2260,10 +2260,10 @@ CREATE VIEW public.group_members_view AS
 ALTER TABLE public.group_members_view OWNER TO postgres;
 
 --
--- Name: groups_entitites_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: groups_entities_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.groups_entitites_id_seq
+CREATE SEQUENCE public.groups_entities_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -2272,13 +2272,13 @@ CREATE SEQUENCE public.groups_entitites_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.groups_entitites_id_seq OWNER TO postgres;
+ALTER TABLE public.groups_entities_id_seq OWNER TO masterpostgresuser;
 
 --
--- Name: groups_entitites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: groups_entities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.groups_entitites_id_seq OWNED BY public.groups_entities.id;
+ALTER SEQUENCE public.groups_entities_id_seq OWNED BY public.groups_entities.id;
 
 
 --
@@ -2614,7 +2614,7 @@ ALTER TABLE ONLY public.groups ALTER COLUMN id SET DEFAULT nextval('public.group
 -- Name: groups_entities id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.groups_entities ALTER COLUMN id SET DEFAULT nextval('public.groups_entitites_id_seq'::regclass);
+ALTER TABLE ONLY public.groups_entities ALTER COLUMN id SET DEFAULT nextval('public.groups_entities_id_seq'::regclass);
 
 
 --
@@ -3739,10 +3739,10 @@ SELECT pg_catalog.setval('public.features_id_seq', 264, true);
 
 
 --
--- Name: groups_entitites_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: groups_entities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.groups_entitites_id_seq', 429, true);
+SELECT pg_catalog.setval('public.groups_entities_id_seq', 429, true);
 
 
 --
@@ -3866,11 +3866,11 @@ ALTER TABLE ONLY public.features
 
 
 --
--- Name: groups_entities groups_entitites_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: groups_entities groups_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.groups_entities
-    ADD CONSTRAINT groups_entitites_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT groups_entities_pkey PRIMARY KEY (id);
 
 
 --
@@ -4002,10 +4002,10 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: groups_entitites_id_group_id_entity_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: groups_entities_id_group_id_entity_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX groups_entitites_id_group_id_entity_id_idx ON public.groups_entities USING btree (id, group_id, entity_id);
+CREATE INDEX groups_entities_id_group_id_entity_id_idx ON public.groups_entities USING btree (id, group_id, entity_id);
 
 
 --
@@ -4031,19 +4031,19 @@ ALTER TABLE ONLY public.facilities
 
 
 --
--- Name: groups_entities groups_entitites_entity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: groups_entities groups_entities_entity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.groups_entities
-    ADD CONSTRAINT groups_entitites_entity_id_fkey FOREIGN KEY (entity_id) REFERENCES public.entities(id);
+    ADD CONSTRAINT groups_entities_entity_id_fkey FOREIGN KEY (entity_id) REFERENCES public.entities(id);
 
 
 --
--- Name: groups_entities groups_entitites_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: groups_entities groups_entities_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.groups_entities
-    ADD CONSTRAINT groups_entitites_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id);
+    ADD CONSTRAINT groups_entities_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id);
 
 
 --
@@ -4259,11 +4259,11 @@ GRANT SELECT ON TABLE public.group_members_view TO jaip_reader;
 
 
 --
--- Name: SEQUENCE groups_entitites_id_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: SEQUENCE groups_entities_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-GRANT SELECT,USAGE ON SEQUENCE public.groups_entitites_id_seq TO jaip_reader;
-GRANT SELECT,USAGE ON SEQUENCE public.groups_entitites_id_seq TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.groups_entities_id_seq TO jaip_reader;
+GRANT SELECT,USAGE ON SEQUENCE public.groups_entities_id_seq TO jaip_writer;
 
 
 --

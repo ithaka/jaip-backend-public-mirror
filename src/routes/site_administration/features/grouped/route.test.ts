@@ -1,4 +1,4 @@
-import { build_test_server } from "../../../../test/helpers";
+import { build_test_server } from "../../../../tests/helpers";
 import route_settings from "./routes";
 
 const app = build_test_server([route_settings]);
