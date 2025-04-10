@@ -43,6 +43,7 @@ export const route_guard = async (
     }
   } catch (err) {
     const error = ensure_error(err);
+    console.log("Route guard error triggered", err);
     request.server.event_logger.pep_server_error(request, error);
     reply.code(500).send(error.message);
   }
