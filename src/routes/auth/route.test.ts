@@ -22,7 +22,7 @@ test('requests the "/auth" route with no service discovery', async () => {
   discover_mock.mockResolvedValueOnce(["", new Error("error")]);
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -33,7 +33,7 @@ test('requests the "/auth" route with no session data', async () => {
 
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -49,7 +49,7 @@ test('requests the "/auth" route with ip bypass', async () => {
 
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
@@ -69,7 +69,7 @@ test('requests the "/auth" route with valid sitecode and invalid subdomain', asy
 
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
     headers: {
       host: fake_subdomain,
     },
@@ -93,7 +93,7 @@ test('requests the "/auth" route with valid sitecode and valid subdomain', async
 
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
     headers: {
       host: valid_provider_subdomain,
     },
@@ -116,7 +116,7 @@ test('requests the "/auth" route with valid sitecode and standard subdomain', as
 
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
     headers: {
       host: "test-pep.jstor.org",
     },
@@ -136,7 +136,7 @@ test('requests the "/auth" route with invalid email', async () => {
 
   const res = await app.inject({
     method: "GET",
-    url: "/auth",
+    url: "/api/v2/auth",
     headers: {
       host: fake_subdomain,
     },
