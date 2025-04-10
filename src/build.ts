@@ -88,7 +88,6 @@ function build(opts = {}, route_settings: RouteSettings[]) {
   app.register(fastify_cookie);
 
   // Plugins
-  // If mock_plugins is true, use the mock plugins instead of the real ones
   for (const { plugin, options } of Object.values(plugins)) {
     app.register(plugin, options);
   }

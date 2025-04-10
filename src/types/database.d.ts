@@ -1,5 +1,11 @@
 import { StatusOptions } from "./media_record";
 
+export interface IPBypassResult {
+  facilities: {
+    jstor_id: string;
+  };
+}
+
 export interface DBEntity {
   jstor_id: string;
   entities: Entities;

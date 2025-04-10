@@ -1,11 +1,7 @@
 import axios from "axios";
-import { build_test_server } from "../../test/helpers";
+import { build_test_server, dbMock } from "../../tests/helper";
 import route_settings from "./routes";
-
-// beforeEach(() => {
-//   mockCtx = createMockContext()
-//   ctx = mockCtx as unknown as Context
-// })
+import { get_sitecode_by_subdomain_resolved_value } from "../../tests/fixtures/auth/fixtures";
 
 const app = build_test_server([route_settings]);
 
@@ -21,14 +17,17 @@ test('requests the "/auth" route', async () => {
     status: 200,
   });
 
-  // db.facilities.findFirst = jest.fn().mockResolvedValue({
-  //   id: "1234",
-  //   name: "Test Facility",
-  //   code: "TEST",
-  //   type: "library",
-  //   createdAt: new Date(),
-  //   updatedAt: new Date(),
-  // });
+  dbMock.get_sitecode_by_subdomain.mockResolvedValue(
+    get_sitecode_by_subdomain_resolved_value,
+  );
+
+  dbMock.get_first_facility.mockResolvedValue();
+
+  dbMock.get_ip_bypass.mockResolvedValue({
+    facilities: {
+      jstor_id: "jstor.org",
+    },
+  });
 
   const res = await app.inject({
     method: "GET",

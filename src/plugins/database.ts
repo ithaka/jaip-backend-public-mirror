@@ -11,6 +11,7 @@ declare module "fastify" {
 
 const plugin: FastifyPluginAsync = fastify_plugin(async (fastify, options) => {
   const prisma = new PrismaClient(options);
+
   if (!process.env.DB_MOCK) {
     await prisma.$connect();
   }

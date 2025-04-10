@@ -1,5 +1,4 @@
 import type { Session } from "../../types/sessions";
-import { PrismaClient } from "@prisma/client";
 import type { User } from "../../types/entities";
 import { DBEntity } from "../../types/database";
 import {
@@ -13,6 +12,7 @@ import { ensure_error, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
+import { JAIPDatabase } from "../../database";
 
 export const manage_session = async (
   fastify: FastifyInstance,
@@ -64,7 +64,7 @@ const get_code_from_session = (session: Session): string[] => {
   return codes;
 };
 const get_email_from_session = (session: Session): string[] => {
-  const emails = ["ryan.mccarthy@ithaka.org"];
+  const emails = [];
   if (session.userAccount?.contact?.email) {
     emails.push(session.userAccount.contact.email);
   }
@@ -79,29 +79,30 @@ const get_email_from_session = (session: Session): string[] => {
 };
 
 const get_user = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   arr: string[],
 ): Promise<[User | null, Error | null]> => {
   try {
     // @ts-expect-error Prisma isn't able to parse the query correctly in assigning a type to the result.
-    const result: DBEntity = await db.users.findFirst(get_user_query(arr));
+    const result: DBEntity = await db.get_first_user(get_user_query(arr));
     if (result === null) {
       throw new Error("No user found with the provided emails");
     }
     return [map_entities(result), null];
   } catch (err) {
     const error = ensure_error(err);
+
     return [null, error];
   }
 };
 
 const get_facility = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   arr: string[],
 ): Promise<[User | null, Error | null]> => {
   try {
     // @ts-expect-error Prisma isn't able to parse the query correctly in assigning a type to the result.
-    const result: DBEntity = await db.facilities.findFirst(
+    const result: DBEntity = await db.get_first_facility(
       get_facility_query(arr),
     );
     if (result === null) {
@@ -115,11 +116,11 @@ const get_facility = async (
 };
 
 const get_ip_bypass = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   ip: string,
 ): Promise<[User | null, Error | null]> => {
   try {
-    const result = await db.ip_bypass.findFirst({
+    const result = await db.get_ip_bypass({
       where: {
         ip,
       },
@@ -131,7 +132,6 @@ const get_ip_bypass = async (
         },
       },
     });
-
     // Because this function is called in a loop, not finding a bypass isn't really
     // a reason to throw an error, it's just a reason to try again.
     if (!result || !result?.facilities?.jstor_id) {
@@ -152,12 +152,12 @@ const get_ip_bypass = async (
 };
 
 const get_sitecode_by_subdomain = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   subdomain: string,
   codes: string[],
 ): Promise<[string | null, Error | null]> => {
   try {
-    const result = await db.subdomains_facilities.findFirst({
+    const result = await db.get_sitecode_by_subdomain({
       where: {
         subdomain,
         sitecode: {
@@ -199,7 +199,7 @@ export const get_current_user = async (
     const emails = get_email_from_session(session);
     // If there are emails, try to find a user with one of them
     if (emails.length) {
-      const [result, error] = await get_user(fastify.prisma, emails);
+      const [result, error] = await get_user(fastify.db, emails);
       current_user = result;
       if (error) {
         throw error;
@@ -215,7 +215,7 @@ export const get_current_user = async (
       const subdomain = request.subdomain;
       if (!SUBDOMAINS.student.includes(subdomain)) {
         const [sitecode, error] = await get_sitecode_by_subdomain(
-          fastify.prisma,
+          fastify.db,
           subdomain,
           codes,
         );
@@ -231,7 +231,7 @@ export const get_current_user = async (
       }
 
       // If there are codes, try to find a facility with one of them
-      const [result, error] = await get_facility(fastify.prisma, codes);
+      const [result, error] = await get_facility(fastify.db, codes);
       current_user = result;
       if (error) {
         throw error;
@@ -245,7 +245,7 @@ export const get_current_user = async (
     // Extract an array of possible IPs from the request
     const ips = ip_handler(request);
     for (const ip of ips) {
-      const [result, error] = await get_ip_bypass(fastify.prisma, ip);
+      const [result, error] = await get_ip_bypass(fastify.db, ip);
       if (error) {
         throw error;
       }

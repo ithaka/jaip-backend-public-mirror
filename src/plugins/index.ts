@@ -3,6 +3,7 @@ import errorHandlerPlugin from "./error_handling";
 import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
 import database from "./database";
 import service_discovery from "./service_discovery";
+import db from "./db";
 
 const plugins: {
   [key: string]: {
@@ -15,6 +16,7 @@ const plugins: {
   logging,
   database,
   service_discovery,
+  db,
 };
 
 export default plugins;

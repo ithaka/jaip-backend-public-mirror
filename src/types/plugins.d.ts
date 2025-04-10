@@ -1,4 +1,5 @@
 import { FastifyPluginOptions } from "fastify";
+import { JAIPDatabase } from "../database";
 export interface EventLoggerPluginOptions extends FastifyPluginOptions {
   event_logger: EventLogger;
 }
@@ -14,4 +15,8 @@ export interface ErrorHandlerPluginOptions extends FastifyPluginOptions {
 
 export interface ServiceDiscoveryPluginOptions extends FastifyPluginOptions {
   discover(service: string): Promise<[string, Error | null]>;
+}
+
+export interface JAIPDatabasePluginOptions extends FastifyPluginOptions {
+  db: JAIPDatabase;
 }
