@@ -94,6 +94,7 @@ function build(opts = {}, route_settings: RouteSettings[]) {
 
   // Routes
   for (const { routes, options } of route_settings) {
+    options.prefix = `/api/v2${options.prefix || ""}`;
     app.register(routes, {
       ...opts,
       ...options,
