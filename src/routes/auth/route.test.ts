@@ -150,7 +150,7 @@ test('requests the "/auth" route with invalid email', async () => {
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
   expect(axios.post).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_sitecode_by_subdomain).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_sitecode_by_subdomain).toHaveBeenCalledTimes(0);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(0);
   expect(db_mock.get_ip_bypass).toHaveBeenCalledTimes(0);
   expect(res.statusCode).toEqual(500);
