@@ -3,6 +3,7 @@ import route_settings from "./routes";
 import {
   axios_session_data_no_email_or_code,
   axios_session_data_with_code,
+  axios_session_data_with_email,
   fake_subdomain,
   get_first_facility_resolved_value,
   get_ip_bypass_resolved_value,
@@ -131,24 +132,24 @@ test('requests the "/auth" route with valid sitecode and standard subdomain', as
   expect(res.statusCode).toEqual(200);
 });
 
-// test('requests the "/auth" route with invalid email', async () => {
-//   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-//   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
-//   db_mock.get_first_user.mockResolvedValueOnce(null);
+test('requests the "/auth" route with invalid email', async () => {
+  discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(null);
 
-//   const res = await app.inject({
-//     method: "GET",
-//     url: "/api/v2/auth",
-//     headers: {
-//       host: fake_subdomain,
-//     },
-//   });
+  const res = await app.inject({
+    method: "GET",
+    url: "/api/v2/auth",
+    headers: {
+      host: fake_subdomain,
+    },
+  });
 
-//   expect(discover_mock).toHaveBeenCalledTimes(1);
-//   expect(axios.post).toHaveBeenCalledTimes(1);
-//   expect(db_mock.get_sitecode_by_subdomain).toHaveBeenCalledTimes(1);
-//   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(0);
-//   expect(db_mock.get_ip_bypass).toHaveBeenCalledTimes(0);
-//   expect(res.statusCode).toEqual(500);
-//   console.log(res.payload);
-// });
+  expect(discover_mock).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_sitecode_by_subdomain).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_first_facility).toHaveBeenCalledTimes(0);
+  expect(db_mock.get_ip_bypass).toHaveBeenCalledTimes(0);
+  expect(res.statusCode).toEqual(500);
+  console.log(res.payload);
+});
