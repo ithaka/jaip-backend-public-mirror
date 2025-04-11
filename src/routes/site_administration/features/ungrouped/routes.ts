@@ -13,35 +13,35 @@ import { get_route } from "../../../../utils";
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_ungrouped_features;
   fastify.post(
-    get_route(route_schemas.get_ungrouped_features),
+    get_route(opts.schema),
     opts,
     get_ungrouped_features_handler(fastify),
   );
 
   opts.schema = route_schemas.add_ungrouped_feature;
   fastify.post(
-    get_route(route_schemas.add_ungrouped_feature),
+    get_route(opts.schema),
     opts,
     add_ungrouped_feature_handler(fastify),
   );
 
   opts.schema = route_schemas.delete_ungrouped_feature;
   fastify.delete(
-    get_route(route_schemas.delete_ungrouped_feature),
+    get_route(opts.schema),
     opts,
     delete_ungrouped_feature_handler(fastify),
   );
 
   opts.schema = route_schemas.reactivate_ungrouped_feature;
   fastify.patch(
-    get_route(route_schemas.reactivate_ungrouped_feature),
+    get_route(opts.schema),
     opts,
     reactivate_ungrouped_feature_handler(fastify),
   );
 
   opts.schema = route_schemas.edit_ungrouped_feature;
   fastify.patch(
-    get_route(route_schemas.edit_ungrouped_feature),
+    get_route(opts.schema),
     opts,
     edit_ungrouped_feature_handler(fastify),
   );

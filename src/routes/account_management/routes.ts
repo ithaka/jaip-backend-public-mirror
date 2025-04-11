@@ -13,28 +13,28 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // USERS
   opts.schema = route_schemas.get_users;
   fastify.post(
-    get_route(route_schemas.get_users),
+    get_route(opts.schema),
     opts,
     get_entities_handler(fastify, entity_types.users),
   );
 
   opts.schema = route_schemas.remove_users;
   fastify.delete(
-    get_route(route_schemas.remove_users),
+    get_route(opts.schema),
     opts,
     remove_entities_handler(fastify, entity_types.users),
   );
 
   opts.schema = route_schemas.add_users;
   fastify.post(
-    get_route(route_schemas.add_users),
+    get_route(opts.schema),
     opts,
     add_or_edit_entities_handler(fastify, entity_types.users),
   );
 
   opts.schema = route_schemas.edit_users;
   fastify.patch(
-    get_route(route_schemas.edit_users),
+    get_route(opts.schema),
     opts,
     add_or_edit_entities_handler(fastify, entity_types.users),
   );
@@ -42,28 +42,28 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // FACILITIES
   opts.schema = route_schemas.get_facilities;
   fastify.post(
-    get_route(route_schemas.get_facilities),
+    get_route(opts.schema),
     opts,
     get_entities_handler(fastify, entity_types.facilities),
   );
 
   opts.schema = route_schemas.remove_facilities;
   fastify.delete(
-    get_route(route_schemas.remove_facilities),
+    get_route(opts.schema),
     opts,
     remove_entities_handler(fastify, entity_types.facilities),
   );
 
   opts.schema = route_schemas.add_facilities;
   fastify.post(
-    get_route(route_schemas.add_facilities),
+    get_route(opts.schema),
     opts,
     add_or_edit_entities_handler(fastify, entity_types.facilities),
   );
 
   opts.schema = route_schemas.edit_facilities;
   fastify.patch(
-    get_route(route_schemas.edit_facilities),
+    get_route(opts.schema),
     opts,
     add_or_edit_entities_handler(fastify, entity_types.facilities),
   );

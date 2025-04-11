@@ -6,7 +6,7 @@ import { get_route } from "../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.alerts;
-  fastify.get(get_route(route_schemas.alerts), opts, alerts_handler(fastify));
+  fastify.get(get_route(opts.schema), opts, alerts_handler(fastify));
 }
 
 export default {

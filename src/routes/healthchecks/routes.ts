@@ -6,11 +6,7 @@ import { healthcheck_prefix } from "./options";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.healthcheck;
-  fastify.get(
-    get_route(route_schemas.healthcheck),
-    opts,
-    healthchecks_handler(fastify),
-  );
+  fastify.get(get_route(opts.schema), opts, healthchecks_handler(fastify));
 }
 
 export default {

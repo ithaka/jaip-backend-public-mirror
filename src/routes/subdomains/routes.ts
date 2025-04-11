@@ -7,7 +7,7 @@ import { get_route } from "../../utils";
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.subdomain;
   fastify.get(
-    get_route(route_schemas.subdomain),
+    get_route(opts.schema),
     opts,
     subdomain_validation_handler(fastify),
   );

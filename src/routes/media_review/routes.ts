@@ -13,46 +13,30 @@ import { get_route } from "../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.request;
-  fastify.post(
-    get_route(route_schemas.request),
-    opts,
-    request_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, request_handler(fastify));
 
   opts.schema = route_schemas.approve;
-  fastify.post(
-    get_route(route_schemas.approve),
-    opts,
-    approval_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, approval_handler(fastify));
 
   opts.schema = route_schemas.deny;
   fastify.post(
-    get_route(route_schemas.deny),
+    get_route(opts.schema),
     opts,
     denial_and_incomplete_handler(fastify, status_options.Denied),
   );
 
   opts.schema = route_schemas.incomplete;
   fastify.post(
-    get_route(route_schemas.incomplete),
+    get_route(opts.schema),
     opts,
     denial_and_incomplete_handler(fastify, status_options.Incomplete),
   );
 
   opts.schema = route_schemas.bulk;
-  fastify.post(
-    get_route(route_schemas.bulk),
-    opts,
-    bulk_approval_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, bulk_approval_handler(fastify));
 
   opts.schema = route_schemas.bulk_undo;
-  fastify.post(
-    get_route(route_schemas.bulk_undo),
-    opts,
-    bulk_undo_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, bulk_undo_handler(fastify));
 }
 
 export default {

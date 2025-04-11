@@ -14,50 +14,30 @@ import { get_route } from "../../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_groups;
-  fastify.post(
-    get_route(route_schemas.get_groups),
-    opts,
-    get_groups_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, get_groups_handler(fastify));
 
   opts.schema = route_schemas.add_group;
-  fastify.post(
-    get_route(route_schemas.add_group),
-    opts,
-    add_group_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, add_group_handler(fastify));
 
   opts.schema = route_schemas.delete_group;
-  fastify.delete(
-    get_route(route_schemas.delete_group),
-    opts,
-    delete_group_handler(fastify),
-  );
+  fastify.delete(get_route(opts.schema), opts, delete_group_handler(fastify));
 
   opts.schema = route_schemas.reactivate_group;
   fastify.patch(
-    get_route(route_schemas.reactivate_group),
+    get_route(opts.schema),
     opts,
     reactivate_group_handler(fastify),
   );
 
   opts.schema = route_schemas.edit_group;
-  fastify.patch(
-    get_route(route_schemas.edit_group),
-    opts,
-    edit_group_handler(fastify),
-  );
+  fastify.patch(get_route(opts.schema), opts, edit_group_handler(fastify));
 
   opts.schema = route_schemas.clear_history;
-  fastify.delete(
-    get_route(route_schemas.clear_history),
-    opts,
-    clear_history_handler(fastify),
-  );
+  fastify.delete(get_route(opts.schema), opts, clear_history_handler(fastify));
 
   opts.schema = route_schemas.create_group_admin;
   fastify.post(
-    get_route(route_schemas.create_group_admin),
+    get_route(opts.schema),
     opts,
     create_group_admin_handler(fastify),
   );

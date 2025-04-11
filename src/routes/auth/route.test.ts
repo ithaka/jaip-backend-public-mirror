@@ -1,5 +1,6 @@
 import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
 import route_settings from "./routes";
+import { route_schemas } from "./schemas";
 import {
   axios_session_data_no_email_or_code,
   axios_session_data_with_code,
@@ -11,9 +12,11 @@ import {
   valid_provider_subdomain,
 } from "../../tests/fixtures/auth/fixtures";
 import axios from "axios";
+import { get_route } from "../../utils";
 
 const app = build_test_server([route_settings]);
 
+const route = `${route_settings.options.prefix}${get_route(route_schemas.auth)}`;
 afterEach(() => {
   jest.clearAllMocks();
 });
@@ -22,7 +25,7 @@ test('requests the "/auth" route with no service discovery', async () => {
   discover_mock.mockResolvedValueOnce(["", new Error("error")]);
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -33,7 +36,7 @@ test('requests the "/auth" route with no session data', async () => {
 
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
   });
   expect(res.statusCode).toEqual(500);
 });
@@ -49,7 +52,7 @@ test('requests the "/auth" route with ip bypass', async () => {
 
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
     headers: {
       "fastly-client-ip": "this is a fake ip address",
     },
@@ -72,7 +75,7 @@ test('requests the "/auth" route with valid sitecode and invalid subdomain', asy
 
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
     headers: {
       host: fake_subdomain,
     },
@@ -96,7 +99,7 @@ test('requests the "/auth" route with valid sitecode and valid subdomain', async
 
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
     headers: {
       host: valid_provider_subdomain,
     },
@@ -119,7 +122,7 @@ test('requests the "/auth" route with valid sitecode and standard subdomain', as
 
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
     headers: {
       host: "test-pep.jstor.org",
     },
@@ -139,7 +142,7 @@ test('requests the "/auth" route with invalid email', async () => {
 
   const res = await app.inject({
     method: "GET",
-    url: "/api/v2/auth",
+    url: route,
     headers: {
       host: fake_subdomain,
     },

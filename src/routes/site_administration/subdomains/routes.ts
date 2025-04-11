@@ -12,39 +12,27 @@ import { get_route } from "../../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_subdomains;
-  fastify.post(
-    get_route(route_schemas.get_subdomains),
-    opts,
-    get_subdomains_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, get_subdomains_handler(fastify));
 
   opts.schema = route_schemas.add_subdomain;
-  fastify.post(
-    get_route(route_schemas.add_subdomain),
-    opts,
-    add_subdomain_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, add_subdomain_handler(fastify));
 
   opts.schema = route_schemas.delete_subdomain;
   fastify.delete(
-    get_route(route_schemas.delete_subdomain),
+    get_route(opts.schema),
     opts,
     delete_subdomain_handler(fastify),
   );
 
   opts.schema = route_schemas.reactivate_subdomain;
   fastify.patch(
-    get_route(route_schemas.reactivate_subdomain),
+    get_route(opts.schema),
     opts,
     reactivate_subdomain_handler(fastify),
   );
 
   opts.schema = route_schemas.edit_subdomain;
-  fastify.patch(
-    get_route(route_schemas.edit_subdomain),
-    opts,
-    edit_subdomain_handler(fastify),
-  );
+  fastify.patch(get_route(opts.schema), opts, edit_subdomain_handler(fastify));
 }
 
 export default {

@@ -6,18 +6,10 @@ import { get_route } from "../../utils";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.search;
-  fastify.post(
-    get_route(route_schemas.search),
-    opts,
-    search_handler(fastify, 0),
-  );
+  fastify.post(get_route(opts.schema), opts, search_handler(fastify, 0));
 
   opts.schema = route_schemas.status_search;
-  fastify.post(
-    get_route(route_schemas.status_search),
-    opts,
-    status_search_handler(fastify),
-  );
+  fastify.post(get_route(opts.schema), opts, status_search_handler(fastify));
 }
 
 export default {
