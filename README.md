@@ -26,7 +26,7 @@ ithaka sidecar polaris
 ```
 yarn dev
 ```
-1. Verify the server is running at `localhost:8080/healthz`. This should confirm that the server, Polaris service discovery, and the database connection are all running. Expected response:
+1. Verify the server is running at `localhost:8080/api/v2/healthz`. This should confirm that the server, Polaris service discovery, and the database connection are all running. Expected response:
 ```json
 {
     "server":true,
