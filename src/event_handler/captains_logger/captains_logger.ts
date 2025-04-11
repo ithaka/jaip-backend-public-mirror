@@ -22,7 +22,9 @@ export class CaptainsLogger implements EventLogger {
 
   _add_request_fields(request: FastifyRequest) {
     return {
-      ip_address: request.ip,
+      ip_address: request.headers["fastly-client-ip"]
+        ? request.headers["fastly-client-ip"]
+        : request.ip,
       requestid: request.id,
       user_agent: request.headers["user-agent"],
       uuid: request.cookies.uuid,

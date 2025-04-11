@@ -19,7 +19,9 @@ export const get_route = (schema: FastifySchema): string => {
 export const ip_handler = (req: FastifyRequest): string[] => {
   const ips = req.headers["fastly-client-ip"]
     ? [req.headers["fastly-client-ip"] as string]
-    : [];
+    : req.ip
+      ? [req.ip]
+      : [];
   return ips;
 };
 
