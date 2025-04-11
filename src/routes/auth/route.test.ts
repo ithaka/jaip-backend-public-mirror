@@ -49,6 +49,9 @@ test('requests the "/auth" route with ip bypass', async () => {
   const res = await app.inject({
     method: "GET",
     url: "/api/v2/auth",
+    headers: {
+      "fastly-client-ip": "this is a fake ip address",
+    },
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
