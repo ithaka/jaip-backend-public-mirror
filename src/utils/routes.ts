@@ -18,6 +18,8 @@ export const get_route = (schema: FastifySchema): string => {
 
 // TODO: Figure out how fastify is handling multiple IPs and update this accordingly
 export const ip_handler = (req: FastifyRequest): string[] => {
+  console.log("REQUEST IN IP HANDLER");
+  console.log(req);
   const ips = req.ips || [req.ip];
   return ips;
 };
