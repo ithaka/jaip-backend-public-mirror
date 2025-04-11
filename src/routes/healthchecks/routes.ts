@@ -4,7 +4,7 @@ import { healthchecks_handler } from "./handlers";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.healthcheck;
-  fastify.get("/healthz", opts, healthchecks_handler(fastify));
+  fastify.get("/healthcheck", opts, healthchecks_handler(fastify));
 }
 
 export default { routes, options: {} };
