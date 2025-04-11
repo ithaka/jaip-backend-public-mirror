@@ -8,6 +8,10 @@ export const SUBDOMAINS = {
   student: ["pep", "www.pep", "test-pep", "www.test-pep"],
 };
 
+export const GLOBAL_ROUTE_PREFIX = "/api";
+export const GLOBAL_VERSION = "v2";
+export const GLOBAL_ROUTE_PREFIX_VERSIONED = `${GLOBAL_ROUTE_PREFIX}/${GLOBAL_VERSION}`;
+
 export const ENTITY_TYPES: { [key: string]: EntityType } = {
   USERS: "users" as EntityType.users,
   FACILITIES: "facilities" as EntityType.facilities,
