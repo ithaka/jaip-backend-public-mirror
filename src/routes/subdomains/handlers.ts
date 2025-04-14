@@ -1,6 +1,7 @@
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { SUBDOMAINS } from "../../consts";
 
 export const subdomain_validation_handler =
   (fastify: FastifyInstance) =>
@@ -17,6 +18,22 @@ export const subdomain_validation_handler =
       },
     );
     const subdomain = request.subdomain;
+    if (
+      SUBDOMAINS.student.includes(subdomain) ||
+      SUBDOMAINS.admin.includes(subdomain)
+    ) {
+      reply.send({ subdomain });
+      fastify.event_logger.pep_standard_log_complete(
+        "pep_validate_subdomain_complete",
+        request,
+        reply,
+        {
+          db_subdomain: subdomain,
+          ...log_payload,
+          event_description: "returning subdomain in valid list",
+        },
+      );
+    }
     try {
       const result = await fastify.prisma.subdomains.findFirst({
         where: {
