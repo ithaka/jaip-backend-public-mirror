@@ -2,6 +2,8 @@ import { MediaRecord } from "../../types/media_record";
 import { Search3Document } from "../../types/search";
 
 export const map_document = (document: Search3Document): MediaRecord => {
+  console.log("DOCUMENT TITLE:");
+  console.log(document.title);
   return {
     _id: document.doi,
     doi: document.doi,
@@ -9,7 +11,11 @@ export const map_document = (document: Search3Document): MediaRecord => {
     authors: document.authors || [],
     score: document.score,
     contentType: document.human_readable_type || "",
-    title: (document.title || [])[0] || "",
+    title: Array.isArray(document.title)
+      ? document.title[0]
+      : document.title
+        ? document.title
+        : "",
     subtitle: document.subtitle || "",
     citation_line: document.citation_line || "",
     book_publisher: document.additional_fields.book_publisher || "",
