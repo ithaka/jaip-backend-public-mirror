@@ -347,7 +347,7 @@ export const search_handler =
         }
 
         // Attach the snippets, which are keyed by the id
-        new_doc.snippets = snippets[doc.id].snippets;
+        new_doc.snippets = snippets[doc.id]?.snippets;
 
         return_docs.push(new_doc);
       });
