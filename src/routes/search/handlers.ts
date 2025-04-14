@@ -362,7 +362,7 @@ export const search_handler =
       }
 
       reply.code(200).send({
-        docs,
+        return_docs,
         total: updated_total,
       });
       fastify.event_logger.pep_standard_log_complete(
