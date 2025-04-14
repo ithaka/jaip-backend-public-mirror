@@ -347,7 +347,7 @@ export const search_handler =
         }
 
         // Attach the snippets, which are keyed by the id
-        new_doc.snippets = snippets[doc.id]?.snippets;
+        new_doc.snippets = snippets[doc.id];
 
         return_docs.push(new_doc);
       });
@@ -362,7 +362,7 @@ export const search_handler =
       }
 
       reply.code(200).send({
-        return_docs,
+        docs: return_docs,
         total: updated_total,
       });
       fastify.event_logger.pep_standard_log_complete(

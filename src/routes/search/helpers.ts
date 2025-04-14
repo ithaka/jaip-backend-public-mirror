@@ -2,11 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Status } from "../../types/database";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import axios, { AxiosResponse } from "axios";
-import {
-  Search3Document,
-  Search3Request,
-  SnippetResult,
-} from "../../types/search";
+import { Search3Document, Search3Request, Snippet } from "../../types/search";
 import { ensure_error } from "../../utils";
 import { SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
 
@@ -138,7 +134,7 @@ export const get_snippets = async (
   ids: string[],
   query: string,
   uuid: string,
-): Promise<[{ [key: string]: SnippetResult }, Error | null]> => {
+): Promise<[{ [key: string]: Snippet[] }, Error | null]> => {
   try {
     // If there is no query string, we don't need (and can't get) snippets.
     if (!query) {
@@ -171,7 +167,7 @@ export const get_snippets = async (
       },
     });
 
-    const snippets: { [key: string]: SnippetResult } = {};
+    const snippets: { [key: string]: Snippet[] } = {};
     for (const result of search_result.data.results) {
       snippets[result.id] = result.snippets;
     }
