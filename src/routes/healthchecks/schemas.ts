@@ -4,7 +4,6 @@ export const route_schemas = {
   healthcheck: {
     description: `Returns health information for the service, including indicators for service discovery and database access.`,
     tags: [SWAGGER_TAGS.healthcheck],
-    route: "/healthcheck",
     response: {
       200: {
         type: "object",
