@@ -2,14 +2,6 @@ import { MediaRecord } from "../../types/media_record";
 import { Search3Document } from "../../types/search";
 
 export const map_document = (document: Search3Document): MediaRecord => {
-  console.log("DOCUMENT TITLE:");
-  const title = Array.isArray(document.title)
-    ? document.title[0]
-    : document.title
-      ? document.title
-      : "";
-  console.log(document.title);
-  console.log(title);
   return {
     _id: document.doi,
     doi: document.doi,
