@@ -10,6 +10,10 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     this.client = client;
   }
 
+  async get_first_feature() {
+    return await this.client.features.findFirst();
+  }
+
   async get_ip_bypass(
     query: Prisma.ip_bypassFindFirstArgs,
   ): Promise<IPBypassResult | null> {

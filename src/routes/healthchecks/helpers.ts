@@ -17,7 +17,7 @@ export const polaris_healthcheck = async (fastify: FastifyInstance) => {
 export const db_healthcheck = async (fastify: FastifyInstance) => {
   try {
     // An arbitrary and minimal query to check if the database is up and responding
-    const result = await fastify.prisma.groups.findFirst();
+    const result = await fastify.db.get_first_feature();
     return result && !!result.id;
   } catch (err) {
     const error = ensure_error(err);

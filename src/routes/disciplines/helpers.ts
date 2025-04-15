@@ -1,5 +1,8 @@
 import { Discipline, Journal } from "../../types/disciplines";
-import { bulk_approval_query } from "../queries/bulk_approval";
+import {
+  bulk_approval_query,
+  map_bulk_approval_status,
+} from "../queries/bulk_approval";
 import { FastifyInstance } from "fastify";
 import { ensure_error } from "../../utils";
 import { jstor_types } from "@prisma/client";
@@ -34,6 +37,8 @@ export const attach_bulk_approval = async (
       bulk_approval_query(type, codes, groups),
     );
 
+    console.log("DISCIPLINES BULK APPROVAL");
+    console.log(response);
     if (response && response.length) {
       // Cycle through every discipline
       items.forEach((item) => {
@@ -48,7 +53,9 @@ export const attach_bulk_approval = async (
 
         // If there are statuses for this discipline, add them to the discipline object
         if (statuses.length) {
-          item.bulk_approval = statuses;
+          item.bulk_approval = statuses.map((status) =>
+            map_bulk_approval_status(status),
+          );
         }
       });
     }

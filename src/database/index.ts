@@ -2,8 +2,12 @@ import { entity_types, Prisma } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { Alert } from "../types/alerts";
+import { Feature } from "../types/features";
 
 export interface JAIPDatabase {
+  // HEALTHCHECK
+  get_first_feature: () => Promise<Feature | null>;
+
   // AUTH
   get_ip_bypass: (
     query: Prisma.ip_bypassFindFirstArgs,

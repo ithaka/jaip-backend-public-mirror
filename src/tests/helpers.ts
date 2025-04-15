@@ -3,6 +3,7 @@ import { RouteSettings } from "../types/routes";
 import { JAIPDatabase } from "../database";
 
 export const db_mock = {
+  get_first_feature: jest.fn().mockName("get_first_feature"),
   get_ip_bypass: jest.fn().mockName("get_ip_bypass"),
   get_first_facility: jest.fn().mockName("get_first_facility"),
   get_first_user: jest.fn().mockName("get_first_user"),
