@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit",
     "lint:ci": "eslint src",
     "lint": "yarn lint:ci --fix",
-    "format:ci": "prettier --check **/*.{js,ts,json}",
+    "format:ci": "prettier --check ./src",
     "format": "yarn format:ci --write"
   },
   "dependencies": {
