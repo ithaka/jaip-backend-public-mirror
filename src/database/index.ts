@@ -1,6 +1,7 @@
 import { entity_types, Prisma } from "@prisma/client";
 import { DBEntity, IPBypassResult } from "../types/database";
 import { User } from "../types/entities";
+import { Alert } from "../types/alerts";
 
 export interface JAIPDatabase {
   // AUTH
@@ -42,4 +43,7 @@ export interface JAIPDatabase {
     entity: User,
     is_manager: boolean,
   ) => void;
+
+  // ALERTS
+  get_alerts: (query: Prisma.alertsFindFirstArgs) => Promise<Alert | null>;
 }

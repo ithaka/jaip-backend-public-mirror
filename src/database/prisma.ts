@@ -86,4 +86,8 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     await this.client
       .$queryRaw`CALL ${action}_${type}(${entity}::json,${is_manager})`;
   }
+
+  async get_alerts(query: Prisma.alertsFindFirstArgs) {
+    return await this.client.alerts.findFirst(query);
+  }
 }

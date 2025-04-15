@@ -18,7 +18,7 @@ export const alerts_handler =
       },
     );
     try {
-      const result: Alert | null = await fastify.prisma.alerts.findFirst({
+      const result: Alert | null = await fastify.db.get_alerts({
         where: {
           created_at: {
             lte: new Date(),
