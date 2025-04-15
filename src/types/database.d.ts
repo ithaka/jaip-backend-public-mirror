@@ -7,6 +7,7 @@ export interface IPBypassResult {
 }
 
 export interface DBEntity {
+  id?: number;
   jstor_id: string;
   entities: Entities;
 }

@@ -1,4 +1,4 @@
-import { entity_types, Prisma, PrismaClient, user_roles } from "@prisma/client";
+import { entity_types, Prisma, user_roles } from "@prisma/client";
 import { get_db_pagination } from "../../utils";
 import {
   get_many_entities_select_clause,
@@ -7,6 +7,7 @@ import {
 import { User } from "../../types/entities";
 import { ensure_error } from "../../utils";
 import { Group } from "../../types/groups";
+import { JAIPDatabase } from "../../database";
 
 const get_entities_where_clause = (
   groups: number[],
@@ -46,32 +47,37 @@ const get_entities_where_clause = (
 };
 
 export const get_users = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   query: string,
   page: number,
   groups: number[],
   limit: number,
 ): Promise<[{ total: number; entities: User[] } | null, Error | null]> => {
   try {
-    const [count, users] = await db.$transaction([
-      db.users.count(
-        get_entities_where_clause(groups, user_roles.admin, query),
-      ),
-      db.users.findMany({
-        ...get_db_pagination(page, limit),
-        orderBy: {
-          entities: {
-            name: "asc",
-          },
+    const count_query = get_entities_where_clause(
+      groups,
+      user_roles.admin,
+      query,
+    );
+    const users_query = {
+      ...get_db_pagination(page, limit),
+      orderBy: {
+        entities: {
+          name: "asc",
         },
-        ...get_entities_where_clause(groups, user_roles.admin, query),
-        select: get_many_entities_select_clause(user_roles.admin, groups),
-      }),
-    ]);
+      },
+      ...get_entities_where_clause(groups, user_roles.admin, query),
+      select: get_many_entities_select_clause(user_roles.admin, groups),
+    } as Prisma.usersFindManyArgs;
+    const [count, users] = await db.get_users_and_count(
+      count_query,
+      users_query,
+    );
+    const filtered_users = users.filter((user) => user);
     return [
       {
         total: count,
-        entities: users.map((user) => map_entities(user)),
+        entities: filtered_users.map((user) => map_entities(user)),
       },
       null,
     ];
@@ -82,32 +88,37 @@ export const get_users = async (
 };
 
 export const get_facilities = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   query: string,
   page: number,
   groups: number[],
   limit: number,
 ): Promise<[{ total: number; entities: User[] } | null, Error | null]> => {
   try {
-    const [count, facilities] = await db.$transaction([
-      db.facilities.count(
-        get_entities_where_clause(groups, user_roles.user, query),
-      ),
-      db.facilities.findMany({
-        ...get_db_pagination(page, limit),
-        orderBy: {
-          entities: {
-            name: "asc",
-          },
+    const count_query = get_entities_where_clause(
+      groups,
+      user_roles.user,
+      query,
+    );
+    const facilities_query = {
+      ...get_db_pagination(page, limit),
+      orderBy: {
+        entities: {
+          name: "asc",
         },
-        ...get_entities_where_clause(groups, user_roles.user, query),
-        select: get_many_entities_select_clause(user_roles.user, groups),
-      }),
-    ]);
+      },
+      ...get_entities_where_clause(groups, user_roles.user, query),
+      select: get_many_entities_select_clause(user_roles.user, groups),
+    } as Prisma.facilitiesFindManyArgs;
+    const [count, facilities] = await db.get_facilities_and_count(
+      count_query,
+      facilities_query,
+    );
+    const filtered_facilities = facilities.filter((facility) => facility);
     return [
       {
         total: count,
-        entities: facilities.map((facility) => map_entities(facility)),
+        entities: filtered_facilities.map((facility) => map_entities(facility)),
       },
       null,
     ];
@@ -158,12 +169,12 @@ const get_remove_entity_query = (id: number, groups: Group[]) => ({
 });
 
 export const remove_user = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   id: number,
   groups: Group[],
 ): Promise<Error | null> => {
   try {
-    db.users.update(get_remove_entity_query(id, groups));
+    db.remove_user(get_remove_entity_query(id, groups));
     return null;
   } catch (err) {
     const error = ensure_error(err);
@@ -172,12 +183,12 @@ export const remove_user = async (
 };
 
 export const remove_facility = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   id: number,
   groups: Group[],
 ): Promise<Error | null> => {
   try {
-    db.facilities.update(get_remove_entity_query(id, groups));
+    db.remove_facility(get_remove_entity_query(id, groups));
     return null;
   } catch (err) {
     const error = ensure_error(err);
@@ -192,7 +203,7 @@ const trim_entity = (entity: User): User => {
 };
 
 export const add_or_edit_entity = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   entity: User,
   type: entity_types,
   is_manager: boolean,
@@ -205,7 +216,7 @@ export const add_or_edit_entity = async (
     // to see that the entity they're adding already exists in another group. So first we check for that possibility.
     let existing_entity = {} as { id: number } | null;
     if (type === entity_types.users) {
-      existing_entity = await db.users.findUnique({
+      existing_entity = await db.get_user_id({
         where: {
           jstor_id: entity.contact,
         },
@@ -214,7 +225,7 @@ export const add_or_edit_entity = async (
         },
       });
     } else {
-      existing_entity = await db.facilities.findUnique({
+      existing_entity = await db.get_facility_id({
         where: {
           jstor_id: entity.contact,
         },
@@ -229,13 +240,8 @@ export const add_or_edit_entity = async (
     // a reasonable amount of time (e.g., adding a user with four groups, each of which has 15 features). A transaction will
     // time out, and there's no good way to roll back individual changes outside of a transaction.
     // TODO: We could simplify the data structure considerably, which might make it more effective to use Prisma.
-    if (existing_entity?.id) {
-      entity.id = existing_entity.id;
-      await db.$queryRaw`CALL edit_${type}(${entity}::json,${is_manager})`;
-    } else {
-      await db.$queryRaw`CALL add_${type}(${entity}::json,${is_manager})`;
-    }
-
+    const action = existing_entity?.id ? "edit" : "add";
+    await db.manage_entity(action, type, entity, is_manager);
     return null;
   } catch (err) {
     const error = ensure_error(err);

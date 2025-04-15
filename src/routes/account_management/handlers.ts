@@ -79,7 +79,7 @@ export const get_entities_handler =
     try {
       if (type === entity_types.users) {
         const [response, user_query_error] = await get_users(
-          fastify.prisma,
+          fastify.db,
           query,
           page,
           groups,
@@ -97,7 +97,7 @@ export const get_entities_handler =
         });
       } else {
         const [response, facility_query_error] = await get_facilities(
-          fastify.prisma,
+          fastify.db,
           query,
           page,
           groups,
@@ -186,14 +186,14 @@ export const remove_entities_handler =
     try {
       if (type === entity_types.users) {
         const user_remove_error = await remove_user(
-          fastify.prisma,
+          fastify.db,
           altered_user.id,
           altered_user.groups,
         );
         if (user_remove_error) throw user_remove_error;
       } else {
         const facility_remove_error = await remove_facility(
-          fastify.prisma,
+          fastify.db,
           altered_user.id,
           altered_user.groups,
         );
@@ -288,7 +288,7 @@ export const add_or_edit_entities_handler =
             UNGROUPED_FEATURES.manage_superusers
           ].enabled;
         const add_user_error = await add_or_edit_entity(
-          fastify.prisma,
+          fastify.db,
           new_user,
           type,
           is_manager,

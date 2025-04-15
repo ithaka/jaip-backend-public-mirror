@@ -16,6 +16,10 @@ export const ENTITY_TYPES: { [key: string]: EntityType } = {
   USERS: "users" as EntityType.users,
   FACILITIES: "facilities" as EntityType.facilities,
 };
+export const ENTITY_ACTIONS = {
+  ADD: "add",
+  EDIT: "edit",
+};
 export const SWAGGER_TAGS = {
   public: "public",
   publicOverrides: "public overrides",
