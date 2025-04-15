@@ -1,7 +1,11 @@
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SearchRequestBody, StatusParams } from "../../types/routes";
+import {
+  SearchRequestBody,
+  StatusParams,
+  StatusSearchRequestBody,
+} from "../../types/routes";
 import { SEARCH3 } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, Prisma, status_options } from "@prisma/client";
@@ -20,7 +24,10 @@ import { History, MediaRecord } from "../../types/media_record";
 
 export const status_search_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<SearchRequestBody>, reply: FastifyReply) => {
+  async (
+    request: FastifyRequest<StatusSearchRequestBody>,
+    reply: FastifyReply,
+  ) => {
     const log_payload: LogPayload = {
       log_made_by: "search-api",
     };
@@ -80,7 +87,7 @@ export const status_search_handler =
 
       // If the a search query is included and the user is an admin, we'll
       // search the status details and entities as well.
-      const query_string = request.body.query;
+      const query_string = request.body.statusQuery;
       if (query_string && request.is_authenticated_admin) {
         query.where!.OR = [
           {
@@ -169,7 +176,10 @@ export const status_search_handler =
 
 export const search_handler =
   (fastify: FastifyInstance, count: number) =>
-  async (request: FastifyRequest<SearchRequestBody>, reply: FastifyReply) => {
+  async (
+    request: FastifyRequest<SearchRequestBody | StatusSearchRequestBody>,
+    reply: FastifyReply,
+  ) => {
     const log_payload: LogPayload = {
       log_made_by: "search-api",
     };
@@ -179,12 +189,13 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
-      const { query, limit, pageNo, sort, facets, filters } = request.body;
+      const { query, limit, pageNo, sort, facets, filters, statusQuery } =
+        request.body;
       log_payload.search_request = request.body;
-
+      const query_string = query || statusQuery || "";
       const page_mark = btoa(`pageMark=${pageNo}`);
       const search3_request: Search3Request = {
-        query,
+        query: query_string,
         limit,
         sort,
         page_mark,
@@ -254,7 +265,7 @@ export const search_handler =
       const snippets_promise = get_snippets(
         fastify,
         ids,
-        query,
+        query || "",
         request.session.uuid,
       );
 

@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { User } from "./entities";
 import { Group } from "./groups";
-import { Search3Request, SearchRequest } from "./search";
+import { Search3Request, SearchRequest, StatusSearchRequest } from "./search";
 import {
   CedarIdentityBlock,
   CedarItemView,
@@ -55,7 +55,7 @@ export interface CompleteLogPayload {
   filters: string[];
   facets: string[];
   fields: string[];
-  search_request: SearchRequest;
+  search_request: SearchRequest | StatusSearchRequest;
   search3_request: Search3Request;
   entitlement_mapping: EntitlementMap;
   iid: string;

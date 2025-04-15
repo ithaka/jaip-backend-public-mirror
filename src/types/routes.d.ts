@@ -1,5 +1,5 @@
 import { RouteGenericInterface } from "fastify";
-import { SearchRequest } from "./search";
+import { SearchRequest, StatusSearchRequest } from "./search";
 import { Entitlement } from "./accounts";
 import { entity_types } from "@prisma/client";
 import { Group } from "./groups";
@@ -70,6 +70,9 @@ export interface MediaReviewBulUndo extends RouteGenericInterface {
 
 export interface SearchRequestBody extends RouteGenericInterface {
   Body: SearchRequest;
+}
+export interface StatusSearchRequestBody extends RouteGenericInterface {
+  Body: StatusSearchRequest;
 }
 
 export interface GetEntitiesBody extends RouteGenericInterface {

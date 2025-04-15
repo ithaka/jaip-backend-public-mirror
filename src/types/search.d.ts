@@ -1,5 +1,6 @@
 export interface SearchRequest {
   query: string;
+  statusQuery: string;
   pageNo: number;
   limit: number;
   sort: string;
@@ -8,6 +9,13 @@ export interface SearchRequest {
   groups?: number[];
   statusStartDate?: Date;
   statusEndDate?: Date;
+}
+
+export interface StatusSearchRequest extends SearchRequest {
+  query?: string;
+  statusQuery: string;
+  statusStartDate: Date;
+  statusEndDate: Date;
 }
 export interface Search3Request {
   query: string;

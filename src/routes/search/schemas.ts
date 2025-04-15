@@ -60,7 +60,7 @@ export const route_schemas = {
     body: {
       type: "object",
       required: [
-        "query",
+        "statusQuery",
         "pageNo",
         "limit",
         "sort",
