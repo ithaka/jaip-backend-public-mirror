@@ -46,7 +46,7 @@ export const status_search_handler =
       const end_date = request.body.statusEndDate;
 
       const query_statuses: status_options[] = [];
-      if (status === "complete") {
+      if (status === "completed") {
         query_statuses.push(status_options.Approved, status_options.Denied);
       } else {
         const capitalized = status.charAt(0).toUpperCase() + status.slice(1);
