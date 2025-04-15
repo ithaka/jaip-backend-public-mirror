@@ -23,7 +23,15 @@ export const map_document = (document: Search3Document): MediaRecord => {
     lpage: document.additional_fields.lpage || "",
     tb: document.additional_fields.tb || "",
     year: document.additional_fields.year || "",
-    abstract: document.additional_fields.ab || "",
-    book_description: document.additional_fields.book_description || "",
+    abstract: Array.isArray(document.additional_fields.ab)
+      ? document.additional_fields.ab[0]
+      : document.additional_fields.ab
+        ? document.additional_fields.ab
+        : "",
+    book_description: Array.isArray(document.additional_fields.book_description)
+      ? document.additional_fields.book_description[0]
+      : document.additional_fields.book_description
+        ? document.additional_fields.book_description
+        : "",
   };
 };
