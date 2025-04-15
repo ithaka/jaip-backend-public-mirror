@@ -30,26 +30,29 @@ export const attach_bulk_approval = async (
     });
 
   try {
-    const response = await fastify.prisma.statuses.findMany(
+    const response = await fastify.db.get_statuses(
       bulk_approval_query(type, codes, groups),
     );
 
-    // Cycle through every discipline
-    items.forEach((item) => {
-      // Get an array of all statuses for this discipline
-      const statuses = response.filter((status) => {
-        if (type === jstor_types.discipline && "code" in item) {
-          return status.jstor_item_id === item.code;
-        } else if (type === jstor_types.headid && "headid" in item) {
-          return status.jstor_item_id === item.headid;
+    if (response && response.length) {
+      // Cycle through every discipline
+      items.forEach((item) => {
+        // Get an array of all statuses for this discipline
+        const statuses = response.filter((status) => {
+          if (type === jstor_types.discipline && "code" in item) {
+            return status.jstor_item_id === item.code;
+          } else if (type === jstor_types.headid && "headid" in item) {
+            return status.jstor_item_id === item.headid;
+          }
+        });
+
+        // If there are statuses for this discipline, add them to the discipline object
+        if (statuses.length) {
+          item.bulk_approval = statuses;
         }
       });
+    }
 
-      // If there are statuses for this discipline, add them to the discipline object
-      if (statuses.length) {
-        item.bulk_approval = statuses;
-      }
-    });
     return [items, null];
   } catch (err) {
     const error = ensure_error(err);

@@ -1,5 +1,5 @@
 import { entity_types, Prisma } from "@prisma/client";
-import { DBEntity, IPBypassResult } from "../types/database";
+import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { Alert } from "../types/alerts";
 
@@ -46,4 +46,9 @@ export interface JAIPDatabase {
 
   // ALERTS
   get_alerts: (query: Prisma.alertsFindFirstArgs) => Promise<Alert | null>;
+
+  // STATUSES
+  get_statuses: (
+    query: Prisma.statusesFindManyArgs,
+  ) => Promise<Status[] | null>;
 }

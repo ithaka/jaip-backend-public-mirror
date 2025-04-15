@@ -15,6 +15,7 @@ export const db_mock = {
   get_facility_id: jest.fn().mockName("get_facility_id"),
   manage_entity: jest.fn().mockName("manage_entity"),
   get_alerts: jest.fn().mockName("get_alerts"),
+  get_statuses: jest.fn().mockName("get_statuses"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest

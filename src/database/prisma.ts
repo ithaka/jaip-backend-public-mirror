@@ -1,6 +1,6 @@
 import { entity_types, Prisma, PrismaClient } from "@prisma/client";
 import { JAIPDatabase } from ".";
-import { DBEntity, IPBypassResult } from "../types/database";
+import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 
 export class PrismaJAIPDatabase implements JAIPDatabase {
@@ -89,5 +89,9 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
 
   async get_alerts(query: Prisma.alertsFindFirstArgs) {
     return await this.client.alerts.findFirst(query);
+  }
+
+  async get_statuses(query: Prisma.statusesFindManyArgs) {
+    return (await this.client.statuses.findMany(query)) as unknown as Status[];
   }
 }
