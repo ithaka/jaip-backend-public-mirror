@@ -52,38 +52,12 @@ export const denial_and_incomplete_handler = (
         group_id: group_id,
       }));
 
-      // NOTE: Prisma is limited in its ability to handle bulk inserts. The createMany methods
-      // don't allow simultaneously creating related records. This means that we can't create
-      // a status and a status_detail in the same function call. We'll have to use a transaction
-      // to ensure that all records are created or none are.
-      await fastify.prisma.$transaction(async (tx) => {
-        const statuses = await tx.statuses.createManyAndReturn({
-          data: db_object,
-        });
-        if (statuses.length) {
-          const details = [
-            ...statuses.map((status) => {
-              return {
-                status_id: status.id,
-                detail: comments,
-                type: "comments",
-              };
-            }),
-            ...statuses.map((status) => {
-              return {
-                status_id: status.id,
-                detail: reason,
-                type: "reason",
-              };
-            }),
-          ];
-          await tx.status_details.createMany({
-            data: details,
-          });
-        } else {
-          throw new Error("Failed to create statuses");
-        }
-      });
+      const error = await fastify.db.create_statuses(
+        db_object,
+        comments,
+        reason,
+      );
+      if (error) throw error;
 
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,
@@ -144,23 +118,20 @@ export const approval_handler =
     );
     try {
       const doi = request.body.doi;
-      const groups = request.body.groups;
-      log_payload.doi = doi;
-      log_payload.full_groups = request.user.groups.filter((group) =>
-        groups.includes(group.id),
+      const full_groups = request.user.groups.filter((group) =>
+        request.body.groups.includes(group.id),
       );
+      const groups = full_groups.map((group) => group.id);
+      log_payload.doi = doi;
+      log_payload.full_groups = full_groups;
+      log_payload.groups = groups;
 
-      await fastify.prisma.statuses.createManyAndReturn({
-        data: groups.map((group_id) => {
-          return {
-            jstor_item_type: jstor_types.doi,
-            jstor_item_id: doi,
-            status: status_options.Approved,
-            entity_id: request.user.id!,
-            group_id: group_id,
-          };
-        }),
-      });
+      const error = await fastify.db.create_approvals(
+        doi,
+        groups,
+        request.user.id!,
+      );
+      if (error) throw error;
 
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,
@@ -238,31 +209,8 @@ export const request_handler =
         return obj;
       });
 
-      // NOTE: Prisma is limited in its ability to handle bulk inserts. The createMany methods
-      // don't allow simultaneously creating related records. This means that we can't create
-      // a status and a status_detail in the same function call. We'll have to use a transaction
-      // to ensure that all records are created or none are.
-      await fastify.prisma.$transaction(async (tx) => {
-        const statuses = await tx.statuses.createManyAndReturn({
-          data: db_object,
-        });
-        if (statuses.length) {
-          if (comments !== "") {
-            await tx.status_details.createMany({
-              data: statuses.map((status) => {
-                return {
-                  status_id: status.id,
-                  detail: comments,
-                  type: "comments",
-                };
-              }),
-            });
-          }
-        } else {
-          throw new Error("Failed to create statuses");
-        }
-      });
-
+      const error = await fastify.db.create_statuses(db_object, comments);
+      if (error) throw error;
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,
       // we'll either have a success or a failure for the entire request. So once we know it's
@@ -391,9 +339,7 @@ export const bulk_approval_handler =
 
       const db_inserts = [...db_docs, ...db_disciplines, ...db_journals];
 
-      await fastify.prisma.statuses.createManyAndReturn({
-        data: db_inserts,
-      });
+      await fastify.db.create_bulk_statuses(db_inserts);
 
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,
@@ -460,45 +406,20 @@ export const bulk_undo_handler =
       const code = request.body.code;
 
       log_payload.full_groups = full_groups;
-
+      log_payload.code = code;
       const groups = full_groups.map((group) => group.id);
 
-      const db_inserts: Prisma.statusesCreateManyInput[] = [];
-      await fastify.prisma.$transaction(async (tx) => {
-        // It would be possible to do this in a single query by passing the existing item type in the
-        // request. This approach places minimal trust in the request
-        const existing_statuses = await tx.statuses.findMany({
-          where: {
-            jstor_item_id: code,
-            group_id: {
-              in: groups,
-            },
-          },
-          select: {
-            jstor_item_id: true,
-            group_id: true,
-            jstor_item_type: true,
-            status: true,
-          },
-        });
-        if (!existing_statuses.length) {
-          throw new Error(
-            "undo error: no existing statuses found for provided code in the provided groups",
-          );
-        }
-        existing_statuses.forEach((status) => {
-          db_inserts.push({
-            jstor_item_type: status.jstor_item_type,
-            jstor_item_id: code,
-            status: status_options.Approved,
-            entity_id: request.user.id!,
-            group_id: status.group_id,
-          });
-        });
-        await tx.statuses.createMany({
-          data: db_inserts,
-        });
-      });
+      const [db_inserts, error] = await fastify.db.remove_bulk_approval(
+        code,
+        groups,
+        request.user.id!,
+      );
+      if (error) throw error;
+      if (!db_inserts) {
+        throw new Error(
+          "undo error: no existing statuses found for provided code in the provided groups",
+        );
+      }
 
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,

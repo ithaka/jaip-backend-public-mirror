@@ -55,4 +55,22 @@ export interface JAIPDatabase {
   get_statuses: (
     query: Prisma.statusesFindManyArgs,
   ) => Promise<Status[] | null>;
+  create_statuses: (
+    query: Prisma.statusesCreateManyInput[],
+    comments: string,
+    reason?: string,
+  ) => Promise<Error | null>;
+  create_bulk_statuses: (
+    query: Prisma.statusesCreateManyInput[],
+  ) => Promise<Error | null>;
+  remove_bulk_approval: (
+    code: string,
+    groups: number[],
+    user_id: number,
+  ) => Promise<[Prisma.statusesCreateManyInput[] | null, Error | null]>;
+  create_approvals: (
+    doi: string,
+    groups: number[],
+    user_id: number,
+  ) => Promise<Error | null>;
 }

@@ -41,6 +41,7 @@ export interface CompleteLogPayload {
   dois: string[];
   comments: string;
   reason: string;
+  code: string;
   groups: number[];
   full_groups: Group[];
   group: Group;
