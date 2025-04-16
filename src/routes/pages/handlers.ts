@@ -49,7 +49,7 @@ export const page_handler =
       const { doi, journal_iids, disc_codes, cedar_item_view_data } = extracts;
 
       const is_forbidden = await get_is_forbidden(
-        fastify.prisma,
+        fastify.db,
         request.is_authenticated_student,
         doi,
         journal_iids,
@@ -157,7 +157,7 @@ export const metadata_handler =
       });
 
       const is_forbidden = await get_is_forbidden(
-        fastify.prisma,
+        fastify.db,
         request.is_authenticated_student,
         doi,
         journal_iids,

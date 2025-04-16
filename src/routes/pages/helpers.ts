@@ -9,11 +9,12 @@ import {
 } from "../../types/routes";
 import { ALE_QUERY_SERVICE, CEDAR_DELIVERY_SERVICE } from "../../consts";
 import axios, { AxiosResponse } from "axios";
-import { jstor_types, PrismaClient, status_options } from "@prisma/client";
+import { jstor_types, status_options } from "@prisma/client";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { JAIPDatabase } from "../../database";
 
 export const get_s3_object = async (
   str: string,
@@ -179,7 +180,7 @@ export const get_cedar_metadata = async (
 };
 
 export const get_is_forbidden = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   is_authenticated_student: boolean,
   doi: string,
   journal_iids: string[],
@@ -192,7 +193,7 @@ export const get_is_forbidden = async (
 
   let is_forbidden = true;
   // Check if the item is approved individually
-  const item_status = await db.statuses.findFirst({
+  const [item_status, error] = await db.get_item_status({
     where: {
       jstor_item_id: doi,
       group_id: {
@@ -203,13 +204,16 @@ export const get_is_forbidden = async (
       created_at: "desc",
     },
   });
+  if (error) {
+    throw error;
+  }
   // If the item is approved, we can allow access
   if (item_status?.status === status_options.Approved) {
     is_forbidden = false;
   } else if (item_status?.status !== status_options.Denied) {
     // If the item is not denied, we need to check the journal and discipline statuses
     // If it is denied, we can jump directly to denying access
-    const journal_status = await db.statuses.findFirst({
+    const [journal_status, error] = await db.get_item_status({
       where: {
         jstor_item_type: jstor_types.headid,
         jstor_item_id: {
@@ -223,11 +227,14 @@ export const get_is_forbidden = async (
         created_at: "desc",
       },
     });
+    if (error) {
+      throw error;
+    }
     // If it's approved by journal, we don't need to check the discipline
     if (journal_status?.status === status_options.Approved) {
       is_forbidden = false;
     } else {
-      const discipline_status = await db.statuses.findFirst({
+      const [discipline_status, error] = await db.get_item_status({
         where: {
           jstor_item_type: jstor_types.discipline,
           jstor_item_id: {
@@ -241,6 +248,9 @@ export const get_is_forbidden = async (
           created_at: "desc",
         },
       });
+      if (error) {
+        throw error;
+      }
       if (discipline_status?.status === status_options.Approved) {
         is_forbidden = false;
       }

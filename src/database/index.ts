@@ -55,6 +55,9 @@ export interface JAIPDatabase {
   get_statuses: (
     query: Prisma.statusesFindManyArgs,
   ) => Promise<Status[] | null>;
+  get_item_status: (
+    query: Prisma.statusesFindFirstArgs,
+  ) => Promise<[Status | null, Error | null]>;
   create_statuses: (
     query: Prisma.statusesCreateManyInput[],
     comments: string,

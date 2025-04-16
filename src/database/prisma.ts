@@ -238,4 +238,18 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       return error;
     }
   }
+  async get_item_status(
+    query: Prisma.statusesFindFirstArgs,
+  ): Promise<[Status | null, Error | null]> {
+    try {
+      const status = await this.client.statuses.findFirst(query);
+      if (!status) {
+        throw new Error("No status found");
+      }
+      return [status as unknown as Status, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [null, error];
+    }
+  }
 }
