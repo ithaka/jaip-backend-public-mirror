@@ -35,7 +35,7 @@ export const subdomain_validation_handler =
       );
     }
     try {
-      const result = await fastify.prisma.subdomains.findFirst({
+      const [result, error] = await fastify.db.get_valid_subdomain({
         where: {
           subdomain,
           is_active: true,
@@ -44,6 +44,9 @@ export const subdomain_validation_handler =
           subdomain: true,
         },
       });
+      if (error) {
+        throw error;
+      }
       if (!result) {
         throw new Error("Subdomain not found");
       }

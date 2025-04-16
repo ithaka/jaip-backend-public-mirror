@@ -23,6 +23,9 @@ export interface JAIPDatabase {
   get_sitecode_by_subdomain: (
     query: Prisma.subdomains_facilitiesFindFirstArgs,
   ) => Promise<IPBypassResult | null>;
+  get_valid_subdomain: (
+    query: Prisma.subdomainsFindFirstArgs,
+  ) => Promise<[{ subdomain: string } | null, Error | null]>;
 
   // ACCOUNT MANAGEMENT
   get_users_and_count: (
