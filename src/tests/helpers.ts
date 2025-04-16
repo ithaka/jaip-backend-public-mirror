@@ -22,6 +22,8 @@ export const db_mock = {
   remove_bulk_approval: jest.fn().mockName("remove_bulk_approval"),
   create_bulk_statuses: jest.fn().mockName("create_bulk_statuses"),
   create_approvals: jest.fn().mockName("create_approvals"),
+  get_all_tokens: jest.fn().mockName("get_all_tokens"),
+  get_search_statuses: jest.fn().mockName("get_search_statuses"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest

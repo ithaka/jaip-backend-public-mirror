@@ -102,8 +102,18 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return await this.client.alerts.findFirst(query);
   }
 
-  async get_statuses(query: Prisma.statusesFindManyArgs) {
-    return (await this.client.statuses.findMany(query)) as unknown as Status[];
+  async get_statuses(
+    query: Prisma.statusesFindManyArgs,
+  ): Promise<[Status[], Error | null]> {
+    try {
+      const statuses = (await this.client.statuses.findMany(
+        query,
+      )) as unknown as Status[];
+      return [statuses, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
+    }
   }
 
   // NOTE: Prisma is limited in its ability to handle bulk inserts. The createMany methods
@@ -250,6 +260,36 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return [null, error];
+    }
+  }
+  async get_search_statuses(
+    query: Prisma.statusesFindManyArgs,
+  ): Promise<[Status[] | null, number | null, Error | null]> {
+    try {
+      const [statuses, count] = await this.client.$transaction(async (tx) => {
+        const count = await tx.statuses.count({
+          where: query.where,
+        });
+        const statuses = (await tx.statuses.findMany(query)) || [];
+        return [statuses, count];
+      });
+      return [statuses as unknown as Status[], count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [null, null, error];
+    }
+  }
+  async get_all_tokens(): Promise<[string[], Error | null]> {
+    try {
+      const tokens = await this.client.tokens.findMany({
+        select: {
+          token: true,
+        },
+      });
+      return [tokens.map((token) => token.token), null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
     }
   }
 }

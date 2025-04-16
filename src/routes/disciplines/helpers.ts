@@ -33,12 +33,13 @@ export const attach_bulk_approval = async (
     });
 
   try {
-    const response = await fastify.db.get_statuses(
+    const [response, error] = await fastify.db.get_statuses(
       bulk_approval_query(type, codes, groups),
     );
+    if (error) {
+      throw error;
+    }
 
-    console.log("DISCIPLINES BULK APPROVAL");
-    console.log(response);
     if (response && response.length) {
       // Cycle through every discipline
       items.forEach((item) => {

@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 import { Status } from "../../types/database";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import axios, { AxiosResponse } from "axios";
 import { Search3Document, Search3Request, Snippet } from "../../types/search";
 import { ensure_error } from "../../utils";
 import { SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
+import { JAIPDatabase } from "../../database";
 
 const facility_select = {
   jstor_item_id: true,
@@ -51,12 +51,12 @@ export const key_statuses = (
   return keyed_statuses;
 };
 export const get_facility_statuses = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   dois: string[],
   groups: number[],
 ): Promise<[{ [key: string]: Status[] }, Error | null]> => {
   try {
-    const results = await db.statuses.findMany({
+    const [results, error] = await db.get_statuses({
       where: {
         jstor_item_id: {
           in: dois,
@@ -71,6 +71,9 @@ export const get_facility_statuses = async (
       take: 1,
       select: facility_select,
     });
+    if (error) {
+      throw error;
+    }
     return [key_statuses(results), null];
   } catch (err) {
     const error = ensure_error(err);
@@ -79,11 +82,11 @@ export const get_facility_statuses = async (
 };
 
 export const get_user_statuses = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   dois: string[],
 ): Promise<[{ [key: string]: Status[] }, Error | null]> => {
   try {
-    const results = await db.statuses.findMany({
+    const [results, error] = await db.get_statuses({
       where: {
         jstor_item_id: {
           in: dois,
@@ -94,6 +97,9 @@ export const get_user_statuses = async (
       },
       select: user_select,
     });
+    if (error) {
+      throw error;
+    }
     return [key_statuses(results), null];
   } catch (err) {
     const error = ensure_error(err);
@@ -102,12 +108,12 @@ export const get_user_statuses = async (
 };
 
 export const get_bulk_statuses = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   arr: string[],
   groups: number[],
 ): Promise<[Status[], Error | null]> => {
   try {
-    const results = await db.statuses.findMany({
+    const [results, error] = await db.get_statuses({
       where: {
         jstor_item_id: {
           in: arr,
@@ -123,6 +129,9 @@ export const get_bulk_statuses = async (
       // There are no status details on a bulk approval, so we can use the facility select here.
       select: facility_select,
     });
+    if (error) {
+      throw error;
+    }
     return [results, null];
   } catch (err) {
     const error = ensure_error(err);
@@ -180,19 +189,18 @@ export const get_snippets = async (
 };
 
 export const get_tokens = async (
-  db: PrismaClient,
+  db: JAIPDatabase,
   request: FastifyRequest,
 ): Promise<[string[], Error | null]> => {
   const tokens: string[] = [];
   try {
     if (request.is_authenticated_admin) {
-      const db_tokens = await db.tokens.findMany({
-        select: {
-          token: true,
-        },
-      });
+      const [db_tokens, error] = await db.get_all_tokens();
+      if (error) {
+        throw error;
+      }
       db_tokens.forEach((t) => {
-        tokens.push(t.token);
+        tokens.push(t);
       });
     } else {
       for (const license of request.session.licenses) {

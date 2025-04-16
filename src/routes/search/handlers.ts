@@ -127,12 +127,13 @@ export const status_search_handler =
         ];
       }
 
-      const [statuses, count] = await fastify.prisma.$transaction([
-        fastify.prisma.statuses.findMany(query),
-        fastify.prisma.statuses.count({ where: query.where }),
-      ]);
-
+      const [status_results, count, error] =
+        await fastify.db.get_search_statuses(query);
+      if (error) {
+        throw error;
+      }
       let doi_filter = "(";
+      const statuses = (status_results as Status[]) || [];
       for (const [index, status] of statuses.entries()) {
         doi_filter += `doi:${status.jstor_item_id}`;
         if (index < statuses.length - 1) {
@@ -147,7 +148,7 @@ export const status_search_handler =
       // database. The request will now be used to build a request for Search3 that won't
       // use a query.
       request.body.query = "";
-      await search_handler(fastify, count)(request, reply);
+      await search_handler(fastify, count || 0)(request, reply);
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_status_search_complete",
@@ -222,7 +223,7 @@ export const search_handler =
         });
       }
 
-      const [tokens, token_error] = await get_tokens(fastify.prisma, request);
+      const [tokens, token_error] = await get_tokens(fastify.db, request);
       if (token_error) {
         throw token_error;
       }
@@ -251,14 +252,14 @@ export const search_handler =
       // Get the discipline/journal statuses and then the individual statuses, then snippets
       // We do not wait for these requests individually, because they can be done in parallel.
       const bulk_approval_promise = get_bulk_statuses(
-        fastify.prisma,
+        fastify.db,
         disc_and_journal_ids,
         request.user.groups.map((group) => group.id),
       );
       const document_statuses_promise = request.is_authenticated_admin
-        ? get_user_statuses(fastify.prisma, dois)
+        ? get_user_statuses(fastify.db, dois)
         : get_facility_statuses(
-            fastify.prisma,
+            fastify.db,
             dois,
             request.user.groups.map((group) => group.id),
           );

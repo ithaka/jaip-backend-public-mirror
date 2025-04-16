@@ -54,7 +54,7 @@ export interface JAIPDatabase {
   // STATUSES
   get_statuses: (
     query: Prisma.statusesFindManyArgs,
-  ) => Promise<Status[] | null>;
+  ) => Promise<[Status[], Error | null]>;
   get_item_status: (
     query: Prisma.statusesFindFirstArgs,
   ) => Promise<[Status | null, Error | null]>;
@@ -76,4 +76,10 @@ export interface JAIPDatabase {
     groups: number[],
     user_id: number,
   ) => Promise<Error | null>;
+  get_search_statuses: (
+    query: Prisma.statusesFindManyArgs,
+  ) => Promise<[Status[] | null, number | null, Error | null]>;
+
+  // TOKENS
+  get_all_tokens: () => Promise<[string[], Error | null]>;
 }
