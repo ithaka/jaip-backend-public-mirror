@@ -102,23 +102,13 @@ export const get_group_features_handler =
         query.take = limit;
       }
 
-      const [features, count] = await fastify.prisma.$transaction([
-        fastify.prisma.features.findMany({
-          orderBy: {
-            display_name: "asc",
-          },
-          ...query,
-        }),
-        // Because we're not using a select, we can just recast the type
-        fastify.prisma.features.count({
-          ...(where_clause as Prisma.featuresCountArgs),
-        }),
-      ]);
-      if (!features) {
-        throw new Error("Features not found");
-      }
-      if (!count) {
-        throw new Error("Count not found");
+      const [features, count, error] =
+        await fastify.db.get_grouped_features_and_count(
+          where_clause as Prisma.featuresCountArgs,
+          query,
+        );
+      if (error) {
+        throw error;
       }
 
       reply.send({
@@ -206,11 +196,12 @@ export const add_group_feature_handler =
     log_payload.feature = new_feature;
 
     try {
-      const feature = await fastify.prisma.features.create({
-        data: {
-          ...new_feature,
-        },
+      const [feature, error] = await fastify.db.create_grouped_feature({
+        data: new_feature,
       });
+      if (error) {
+        throw error;
+      }
 
       reply.send(feature);
 
@@ -278,31 +269,10 @@ export const delete_group_feature_handler =
     log_payload.feature_id = id;
 
     try {
-      await fastify.prisma.$transaction([
-        // We need to set the records where feature is used so that they
-        // are not enabled.
-        fastify.prisma.features_groups_entities.updateMany({
-          where: {
-            feature_id: {
-              equals: id,
-            },
-          },
-          data: {
-            enabled: false,
-            updated_at: new Date(),
-          },
-        }),
-        // Then we can set the feature to inactive
-        fastify.prisma.features.update({
-          where: {
-            id,
-          },
-          data: {
-            is_active: false,
-            updated_at: new Date(),
-          },
-        }),
-      ]);
+      const error = await fastify.db.remove_grouped_feature(id);
+      if (error) {
+        throw error;
+      }
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_delete_group_feature_complete",
@@ -347,7 +317,7 @@ export const reactivate_group_feature_handler =
     log_payload.feature_id = id;
 
     try {
-      const feature = await fastify.prisma.features.update({
+      const [feature, error] = await fastify.db.update_grouped_feature({
         where: {
           id: id,
         },
@@ -356,6 +326,9 @@ export const reactivate_group_feature_handler =
           updated_at: new Date(),
         },
       });
+      if (error) {
+        throw error;
+      }
 
       reply.send(feature);
       fastify.event_logger.pep_standard_log_complete(
@@ -441,7 +414,7 @@ export const edit_group_feature_handler =
     log_payload.feature = new_feature;
 
     try {
-      const feature = await fastify.prisma.features.update({
+      const [feature, error] = await fastify.db.update_grouped_feature({
         where: {
           id: id,
         },
@@ -450,7 +423,9 @@ export const edit_group_feature_handler =
           updated_at: new Date(),
         },
       });
-
+      if (error) {
+        throw error;
+      }
       log_payload.feature = feature;
       reply.send(feature);
       fastify.event_logger.pep_standard_log_complete(

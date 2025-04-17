@@ -7,6 +7,8 @@ import {
   status_options,
   subdomains,
   user_roles,
+  features,
+  ungrouped_features,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -472,6 +474,169 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return error;
+    }
+  }
+
+  async get_grouped_features_and_count(
+    count_query: Prisma.featuresCountArgs,
+    query: Prisma.featuresFindManyArgs,
+  ): Promise<[features[], number, Error | null]> {
+    try {
+      const [features, count] = await this.client.$transaction(async (tx) => {
+        const features = await tx.features.findMany({
+          orderBy: {
+            display_name: "asc",
+          },
+          ...query,
+        });
+        const count = await tx.features.count(count_query);
+        return [features, count];
+      });
+      if (!features) {
+        throw new Error("Features not found");
+      }
+      if (!count) {
+        throw new Error("Count not found");
+      }
+
+      return [features, count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], 0, error];
+    }
+  }
+  async create_grouped_feature(
+    query: Prisma.featuresCreateArgs,
+  ): Promise<[features, Error | null]> {
+    try {
+      const feature = await this.client.features.create(query);
+      return [feature, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as features, error];
+    }
+  }
+  async remove_grouped_feature(id: number): Promise<Error | null> {
+    try {
+      await this.client.$transaction(async (tx) => {
+        await tx.features_groups_entities.updateMany({
+          where: {
+            feature_id: {
+              equals: id,
+            },
+          },
+          data: {
+            enabled: false,
+            updated_at: new Date(),
+          },
+        });
+        await tx.features.update({
+          where: {
+            id,
+          },
+          data: {
+            is_active: false,
+            updated_at: new Date(),
+          },
+        });
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+  }
+  async update_grouped_feature(
+    query: Prisma.featuresUpdateArgs,
+  ): Promise<[features, Error | null]> {
+    try {
+      const feature = await this.client.features.update(query);
+      return [feature, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as features, error];
+    }
+  }
+  async get_ungrouped_features_and_count(
+    count_query: Prisma.ungrouped_featuresCountArgs,
+    query: Prisma.ungrouped_featuresFindManyArgs,
+  ): Promise<[ungrouped_features[], number, Error | null]> {
+    try {
+      const [features, count] = await this.client.$transaction(async (tx) => {
+        const features = await tx.ungrouped_features.findMany({
+          orderBy: {
+            display_name: "asc",
+          },
+          ...query,
+        });
+        const count = await tx.ungrouped_features.count(count_query);
+        return [features, count];
+      });
+      if (!features) {
+        throw new Error("Features not found");
+      }
+      if (!count) {
+        throw new Error("Count not found");
+      }
+
+      return [features, count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], 0, error];
+    }
+  }
+
+  async create_ungrouped_feature(
+    query: Prisma.ungrouped_featuresCreateArgs,
+  ): Promise<[ungrouped_features, Error | null]> {
+    try {
+      const feature = await this.client.ungrouped_features.create(query);
+      return [feature, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as features, error];
+    }
+  }
+  async remove_ungrouped_feature(id: number): Promise<Error | null> {
+    try {
+      await this.client.$transaction(async (tx) => {
+        await tx.ungrouped_features_entities.updateMany({
+          where: {
+            feature_id: {
+              equals: id,
+            },
+          },
+          data: {
+            enabled: false,
+            updated_at: new Date(),
+          },
+        });
+        await tx.ungrouped_features.update({
+          where: {
+            id,
+          },
+          data: {
+            is_active: false,
+            updated_at: new Date(),
+          },
+        });
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+  }
+
+  async update_ungrouped_feature(
+    query: Prisma.ungrouped_featuresUpdateArgs,
+  ): Promise<[ungrouped_features, Error | null]> {
+    try {
+      const feature = await this.client.ungrouped_features.update(query);
+      return [feature, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as ungrouped_features, error];
     }
   }
 }

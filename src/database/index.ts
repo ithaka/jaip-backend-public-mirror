@@ -1,4 +1,11 @@
-import { entity_types, groups, Prisma, subdomains } from "@prisma/client";
+import {
+  entity_types,
+  features,
+  groups,
+  Prisma,
+  subdomains,
+  ungrouped_features,
+} from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { Alert } from "../types/alerts";
@@ -121,4 +128,30 @@ export interface JAIPDatabase {
 
   // GROUP ADMIN
   create_group_admin(user_id: number): Promise<Error | null>;
+
+  // GROUPED FEATURES
+  get_grouped_features_and_count: (
+    count_query: Prisma.featuresCountArgs,
+    query: Prisma.featuresFindManyArgs,
+  ) => Promise<[features[], number, Error | null]>;
+  create_grouped_feature: (
+    query: Prisma.featuresCreateArgs,
+  ) => Promise<[features, Error | null]>;
+  remove_grouped_feature: (id: number) => Promise<Error | null>;
+  update_grouped_feature: (
+    query: Prisma.featuresUpdateArgs,
+  ) => Promise<[features, Error | null]>;
+
+  // UNGROUPED FEATURES
+  get_ungrouped_features_and_count: (
+    count_query: Prisma.ungrouped_featuresCountArgs,
+    query: Prisma.ungrouped_featuresFindManyArgs,
+  ) => Promise<[ungrouped_features[], number, Error | null]>;
+  create_ungrouped_feature: (
+    query: Prisma.ungrouped_featuresCreateArgs,
+  ) => Promise<[ungrouped_features, Error | null]>;
+  remove_ungrouped_feature: (id: number) => Promise<Error | null>;
+  update_ungrouped_feature: (
+    subdomains_query: Prisma.ungrouped_featuresUpdateArgs,
+  ) => Promise<[ungrouped_features, Error | null]>;
 }

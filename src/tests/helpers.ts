@@ -35,6 +35,18 @@ export const db_mock = {
   update_group: jest.fn().mockName("update_group"),
   clear_history: jest.fn().mockName("clear_history"),
   create_group_admin: jest.fn().mockName("create_group_admin"),
+  get_grouped_features_and_count: jest
+    .fn()
+    .mockName("get_grouped_features_and_count"),
+  create_grouped_feature: jest.fn().mockName("create_grouped_feature"),
+  remove_grouped_feature: jest.fn().mockName("remove_grouped_feature"),
+  update_grouped_feature: jest.fn().mockName("update_grouped_feature"),
+  get_ungrouped_features_and_count: jest
+    .fn()
+    .mockName("get_ungrouped_features_and_count"),
+  create_ungrouped_feature: jest.fn().mockName("create_ungrouped_feature"),
+  remove_ungrouped_feature: jest.fn().mockName("remove_ungrouped_feature"),
+  update_ungrouped_feature: jest.fn().mockName("update_ungrouped_feature"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest
