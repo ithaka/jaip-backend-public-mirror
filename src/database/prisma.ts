@@ -4,6 +4,7 @@ import {
   Prisma,
   PrismaClient,
   status_options,
+  subdomains,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -301,6 +302,67 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return [[], error];
+    }
+  }
+
+  async get_subdomains_and_count(
+    count_query: Prisma.subdomainsCountArgs,
+    query: Prisma.subdomainsFindManyArgs,
+  ): Promise<[subdomains[], number, Error | null]> {
+    try {
+      const [count, subdomains] = await this.client.$transaction(async (tx) => {
+        const count = await tx.subdomains.count(count_query);
+        const subdomains = (await tx.subdomains.findMany(query)) || [];
+        return [count, subdomains];
+      });
+      if (!subdomains) {
+        throw new Error("Subdomains not found");
+      }
+      if (!count) {
+        throw new Error("Count not found");
+      }
+
+      return [subdomains, count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], 0, error];
+    }
+  }
+  async create_subdomain(
+    query: Prisma.subdomainsCreateArgs,
+  ): Promise<[subdomains, Error | null]> {
+    try {
+      const subdomain = await this.client.subdomains.create(query);
+      return [subdomain, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as subdomains, error];
+    }
+  }
+  async remove_subdomain(
+    subdomains_facilities_query: Prisma.subdomains_facilitiesDeleteManyArgs,
+    query: Prisma.subdomainsUpdateArgs,
+  ): Promise<Error | null> {
+    try {
+      await this.client.$transaction(async (tx) => {
+        await tx.subdomains_facilities.deleteMany(subdomains_facilities_query);
+        await tx.subdomains.update(query);
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+  }
+  async reactivate_subdomain(
+    query: Prisma.subdomainsUpdateArgs,
+  ): Promise<[subdomains, Error | null]> {
+    try {
+      const subdomain = await this.client.subdomains.update(query);
+      return [subdomain, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as subdomains, error];
     }
   }
 }

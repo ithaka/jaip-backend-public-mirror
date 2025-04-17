@@ -25,6 +25,10 @@ export const db_mock = {
   get_all_tokens: jest.fn().mockName("get_all_tokens"),
   get_search_statuses: jest.fn().mockName("get_search_statuses"),
   get_valid_subdomain: jest.fn().mockName("get_subdomain"),
+  get_subdomains_and_count: jest.fn().mockName("get_subdomains_and_count"),
+  create_subdomain: jest.fn().mockName("create_subdomain"),
+  remove_subdomain: jest.fn().mockName("remove_subdomain"),
+  update_subdomain: jest.fn().mockName("update_subdomain"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest

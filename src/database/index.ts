@@ -1,4 +1,4 @@
-import { entity_types, Prisma } from "@prisma/client";
+import { entity_types, Prisma, subdomains } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { Alert } from "../types/alerts";
@@ -85,4 +85,21 @@ export interface JAIPDatabase {
 
   // TOKENS
   get_all_tokens: () => Promise<[string[], Error | null]>;
+
+  // SITE ADMINISTRATION
+  // SUBDOMAINS
+  get_subdomains_and_count: (
+    count_query: Prisma.subdomainsCountArgs,
+    query: Prisma.subdomainsFindManyArgs,
+  ) => Promise<[subdomains[], number, Error | null]>;
+  create_subdomain: (
+    query: Prisma.subdomainsCreateArgs,
+  ) => Promise<[subdomains, Error | null]>;
+  remove_subdomain: (
+    subdomains_facilities_query: Prisma.subdomains_facilitiesDeleteManyArgs,
+    subdomains_query: Prisma.subdomainsUpdateArgs,
+  ) => Promise<Error | null>;
+  update_subdomain: (
+    subdomains_query: Prisma.subdomainsUpdateArgs,
+  ) => Promise<[subdomains, Error | null]>;
 }

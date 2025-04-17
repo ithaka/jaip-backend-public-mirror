@@ -42,25 +42,22 @@ export const get_subdomains_handler =
         where_clause!.where!.is_active = is_active;
       }
 
-      const [subdomains, count] = await fastify.prisma.$transaction([
-        fastify.prisma.subdomains.findMany({
-          ...where_clause,
-          skip: (page - 1) * limit,
-          take: limit,
-          orderBy: {
-            subdomain: "asc",
+      const [subdomains, count, error] =
+        await fastify.db.get_subdomains_and_count(
+          {
+            ...(where_clause as Prisma.subdomainsCountArgs),
           },
-        }),
-        // Because we're not using a select, we can just recast the type
-        fastify.prisma.subdomains.count({
-          ...(where_clause as Prisma.subdomainsCountArgs),
-        }),
-      ]);
-      if (!subdomains) {
-        throw new Error("Subdomains not found");
-      }
-      if (!count) {
-        throw new Error("Count not found");
+          {
+            ...where_clause,
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: {
+              subdomain: "asc",
+            },
+          },
+        );
+      if (error) {
+        throw error;
       }
 
       reply.send({
@@ -112,7 +109,7 @@ export const add_subdomain_handler =
     log_payload.db_subdomain = name;
 
     try {
-      const subdomain = await fastify.prisma.subdomains.create({
+      const [subdomain, error] = await fastify.db.create_subdomain({
         data: {
           subdomain: name,
           entity_type: entity_types.facilities,
@@ -120,6 +117,9 @@ export const add_subdomain_handler =
           updated_at: new Date(),
         },
       });
+      if (error) {
+        throw error;
+      }
 
       reply.send(subdomain);
 
@@ -187,17 +187,15 @@ export const delete_subdomain_handler =
     log_payload.db_subdomain_id = id;
 
     try {
-      await fastify.prisma.$transaction([
-        // We need to delete the records where this subdomain is used in the subdomains_facilities table
-        fastify.prisma.subdomains_facilities.deleteMany({
+      const error = await fastify.db.remove_subdomain(
+        {
           where: {
             subdomains: {
               id: id,
             },
           },
-        }),
-        // Then we can set the subdomain to inactive
-        fastify.prisma.subdomains.update({
+        },
+        {
           where: {
             id,
           },
@@ -205,9 +203,11 @@ export const delete_subdomain_handler =
             is_active: false,
             updated_at: new Date(),
           },
-        }),
-      ]);
-
+        },
+      );
+      if (error) {
+        throw error;
+      }
       fastify.event_logger.pep_standard_log_complete(
         "pep_delete_subdomain_complete",
         request,
@@ -251,7 +251,7 @@ export const reactivate_subdomain_handler =
     log_payload.db_subdomain_id = id;
 
     try {
-      const subdomain = await fastify.prisma.subdomains.update({
+      const [subdomain, error] = await fastify.db.update_subdomain({
         where: {
           id: id,
         },
@@ -260,6 +260,10 @@ export const reactivate_subdomain_handler =
           updated_at: new Date(),
         },
       });
+
+      if (error) {
+        throw error;
+      }
 
       reply.send(subdomain);
       fastify.event_logger.pep_standard_log_complete(
@@ -315,7 +319,7 @@ export const edit_subdomain_handler =
     log_payload.db_subdomain = name;
 
     try {
-      const subdomain = await fastify.prisma.subdomains.update({
+      const [subdomain, error] = await fastify.db.update_subdomain({
         where: {
           id: id,
         },
@@ -324,6 +328,9 @@ export const edit_subdomain_handler =
           updated_at: new Date(),
         },
       });
+      if (error) {
+        throw error;
+      }
 
       reply.send(subdomain);
       fastify.event_logger.pep_standard_log_complete(
