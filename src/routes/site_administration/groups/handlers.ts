@@ -7,7 +7,7 @@ import {
   NameAndIdBody,
   NameOnlyBody,
 } from "../../../types/routes";
-import { Prisma, user_roles } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const get_groups_handler =
   (fastify: FastifyInstance) =>
@@ -39,25 +39,22 @@ export const get_groups_handler =
         where_clause!.where!.is_active = is_active;
       }
 
-      const [groups, count] = await fastify.prisma.$transaction([
-        fastify.prisma.groups.findMany({
+      const [groups, count, error] = await fastify.db.get_groups_and_count(
+        {
+          ...(where_clause as Prisma.groupsCountArgs),
+        },
+        {
           ...where_clause,
           skip: (page - 1) * limit,
           take: limit,
           orderBy: {
             name: "asc",
           },
-        }),
-        // Because we're not using a select, we can just recast the type
-        fastify.prisma.groups.count({
-          ...(where_clause as Prisma.groupsCountArgs),
-        }),
-      ]);
-      if (!groups) {
-        throw new Error("Groups not found");
-      }
-      if (!count) {
-        throw new Error("Count not found");
+        },
+      );
+
+      if (error) {
+        throw error;
       }
 
       reply.send({
@@ -109,11 +106,14 @@ export const add_group_handler =
     log_payload.group_name = name;
 
     try {
-      const group = await fastify.prisma.groups.create({
+      const [group, error] = await fastify.db.create_group({
         data: {
           name: name,
         },
       });
+      if (error) {
+        throw error;
+      }
 
       reply.send(group);
 
@@ -181,38 +181,7 @@ export const delete_group_handler =
     log_payload.group_id = id;
 
     try {
-      await fastify.prisma.$transaction([
-        // We need to set the role to removed for any facilities or users associated with the group.
-        fastify.prisma.groups_entities.updateMany({
-          where: {
-            group_id: id,
-          },
-          data: {
-            role: user_roles.removed,
-            updated_at: new Date(),
-          },
-        }),
-        // Then we can set enabled to false for all the features_groups_entities associated with the group.
-        fastify.prisma.features_groups_entities.updateMany({
-          where: {
-            group_id: id,
-          },
-          data: {
-            enabled: false,
-            updated_at: new Date(),
-          },
-        }),
-        // Finally, we can set the group to inactive.
-        fastify.prisma.groups.update({
-          where: {
-            id: id,
-          },
-          data: {
-            is_active: false,
-            updated_at: new Date(),
-          },
-        }),
-      ]);
+      await fastify.db.remove_group(id);
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_delete_group_complete",
@@ -257,7 +226,7 @@ export const reactivate_group_handler =
     log_payload.group_id = id;
 
     try {
-      const group = await fastify.prisma.groups.update({
+      const [group, error] = await fastify.db.update_group({
         where: {
           id: id,
         },
@@ -266,6 +235,9 @@ export const reactivate_group_handler =
           updated_at: new Date(),
         },
       });
+      if (error) {
+        throw error;
+      }
 
       reply.send(group);
       fastify.event_logger.pep_standard_log_complete(
@@ -321,7 +293,7 @@ export const edit_group_handler =
     log_payload.group_name = new_name;
 
     try {
-      const group = await fastify.prisma.groups.update({
+      const [group, error] = await fastify.db.update_group({
         where: {
           id: id,
         },
@@ -330,6 +302,10 @@ export const edit_group_handler =
           updated_at: new Date(),
         },
       });
+
+      if (error) {
+        throw error;
+      }
 
       reply.send(group);
       fastify.event_logger.pep_standard_log_complete(
@@ -375,11 +351,10 @@ export const clear_history_handler =
     log_payload.group_id = id;
 
     try {
-      await fastify.prisma.statuses.deleteMany({
-        where: {
-          group_id: id,
-        },
-      });
+      const error = await fastify.db.clear_history(id);
+      if (error) {
+        throw error;
+      }
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_clear_history_complete",
@@ -424,10 +399,10 @@ export const create_group_admin_handler =
     log_payload.user_ids = [id];
 
     try {
-      await fastify.prisma.$transaction(async (tx) => {
-        await tx.$queryRaw`CALL add_admin_to_active_groups(${id}::INT)`;
-      });
-
+      const error = await fastify.db.create_group_admin(id);
+      if (error) {
+        throw error;
+      }
       fastify.event_logger.pep_standard_log_complete(
         "pep_create_group_admin_complete",
         request,

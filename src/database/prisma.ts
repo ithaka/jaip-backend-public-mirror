@@ -1,10 +1,12 @@
 import {
   entity_types,
+  groups,
   jstor_types,
   Prisma,
   PrismaClient,
   status_options,
   subdomains,
+  user_roles,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -363,6 +365,113 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return [{} as subdomains, error];
+    }
+  }
+  async get_groups_and_count(
+    count_query: Prisma.groupsCountArgs,
+    query: Prisma.groupsFindManyArgs,
+  ): Promise<[groups[], number, Error | null]> {
+    try {
+      const [count, groups] = await this.client.$transaction(async (tx) => {
+        const count = await tx.groups.count(count_query);
+        const groups = (await tx.groups.findMany(query)) || [];
+        return [count, groups];
+      });
+      if (!groups) {
+        throw new Error("Groups not found");
+      }
+      if (!count) {
+        throw new Error("Count not found");
+      }
+
+      return [groups, count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], 0, error];
+    }
+  }
+  async create_group(
+    query: Prisma.groupsCreateArgs,
+  ): Promise<[groups, Error | null]> {
+    try {
+      const group = await this.client.groups.create(query);
+      return [group, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as groups, error];
+    }
+  }
+  async remove_group(id: number): Promise<Error | null> {
+    try {
+      await this.client.$transaction(async (tx) => {
+        await tx.groups_entities.updateMany({
+          where: {
+            group_id: id,
+          },
+          data: {
+            role: user_roles.removed,
+            updated_at: new Date(),
+          },
+        });
+        await tx.features_groups_entities.updateMany({
+          where: {
+            group_id: id,
+          },
+          data: {
+            enabled: false,
+            updated_at: new Date(),
+          },
+        });
+        await tx.groups.update({
+          where: {
+            id: id,
+          },
+          data: {
+            is_active: false,
+            updated_at: new Date(),
+          },
+        });
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+  }
+  async update_group(
+    query: Prisma.groupsUpdateArgs,
+  ): Promise<[groups, Error | null]> {
+    try {
+      const group = await this.client.groups.update(query);
+      return [group, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as groups, error];
+    }
+  }
+  async clear_history(group_id: number): Promise<Error | null> {
+    try {
+      await this.client.statuses.deleteMany({
+        where: {
+          group_id: group_id,
+        },
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+  }
+
+  async create_group_admin(user_id: number): Promise<Error | null> {
+    try {
+      await this.client.$transaction(async (tx) => {
+        await tx.$queryRaw`CALL add_admin_to_active_groups(${user_id}::INT)`;
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
     }
   }
 }

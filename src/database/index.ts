@@ -1,4 +1,4 @@
-import { entity_types, Prisma, subdomains } from "@prisma/client";
+import { entity_types, groups, Prisma, subdomains } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { Alert } from "../types/alerts";
@@ -102,4 +102,23 @@ export interface JAIPDatabase {
   update_subdomain: (
     subdomains_query: Prisma.subdomainsUpdateArgs,
   ) => Promise<[subdomains, Error | null]>;
+
+  // GROUPS
+  get_groups_and_count: (
+    count_query: Prisma.groupsCountArgs,
+    query: Prisma.groupsFindManyArgs,
+  ) => Promise<[groups[], number, Error | null]>;
+  create_group: (
+    query: Prisma.groupsCreateArgs,
+  ) => Promise<[groups, Error | null]>;
+  remove_group: (id: number) => Promise<Error | null>;
+  update_group: (
+    subdomains_query: Prisma.groupsUpdateArgs,
+  ) => Promise<[groups, Error | null]>;
+
+  // STATUS HISTORY
+  clear_history: (group_id: number) => Promise<Error | null>;
+
+  // GROUP ADMIN
+  create_group_admin(user_id: number): Promise<Error | null>;
 }

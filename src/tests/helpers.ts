@@ -29,6 +29,12 @@ export const db_mock = {
   create_subdomain: jest.fn().mockName("create_subdomain"),
   remove_subdomain: jest.fn().mockName("remove_subdomain"),
   update_subdomain: jest.fn().mockName("update_subdomain"),
+  get_groups_and_count: jest.fn().mockName("get_groups_and_count"),
+  create_group: jest.fn().mockName("create_group"),
+  remove_group: jest.fn().mockName("remove_group"),
+  update_group: jest.fn().mockName("update_group"),
+  clear_history: jest.fn().mockName("clear_history"),
+  create_group_admin: jest.fn().mockName("create_group_admin"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest
