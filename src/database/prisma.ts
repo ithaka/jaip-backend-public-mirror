@@ -354,7 +354,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       return error;
     }
   }
-  async reactivate_subdomain(
+  async update_subdomain(
     query: Prisma.subdomainsUpdateArgs,
   ): Promise<[subdomains, Error | null]> {
     try {
