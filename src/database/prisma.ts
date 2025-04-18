@@ -14,6 +14,7 @@ import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { ensure_error } from "../utils";
+import { Alert } from "../types/alerts";
 
 export class PrismaJAIPDatabase implements JAIPDatabase {
   client: PrismaClient;
@@ -114,8 +115,30 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       .$queryRaw`CALL ${action}_${type}(${entity}::json,${is_manager})`;
   }
 
-  async get_alerts(query: Prisma.alertsFindFirstArgs) {
-    return await this.client.alerts.findFirst(query);
+  async get_alerts(): Promise<[Alert | null, Error | null]> {
+    try {
+      const result = await this.client.alerts.findFirst({
+        where: {
+          created_at: {
+            lte: new Date(),
+          },
+          expires_at: {
+            gte: new Date(),
+          },
+        },
+        select: {
+          text: true,
+          status: true,
+        },
+        orderBy: {
+          id: "desc",
+        },
+      });
+      return [result, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [null, error];
+    }
   }
 
   async get_statuses(

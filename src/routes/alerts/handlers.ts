@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { LogPayload } from "../../event_handler";
-import { Alert } from "../../types/alerts";
 import { ensure_error } from "../../utils";
 
 export const alerts_handler =
@@ -18,20 +17,11 @@ export const alerts_handler =
       },
     );
     try {
-      const result: Alert | null = await fastify.db.get_alerts({
-        where: {
-          created_at: {
-            lte: new Date(),
-          },
-          expires_at: {
-            gte: new Date(),
-          },
-        },
-        select: {
-          text: true,
-          status: true,
-        },
-      });
+      const [result, error] = await fastify.db.get_alerts();
+      if (error) {
+        throw error;
+      }
+
       if (!result || !result.text || !result.status) {
         reply.code(204);
         log_payload.event_description = "no alerts found";

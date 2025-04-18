@@ -59,7 +59,7 @@ export interface JAIPDatabase {
   ) => void;
 
   // ALERTS
-  get_alerts: (query: Prisma.alertsFindFirstArgs) => Promise<Alert | null>;
+  get_alerts: () => Promise<[Alert | null, Error | null]>;
 
   // STATUSES
   get_statuses: (
