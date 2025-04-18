@@ -21,7 +21,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-test('requests the "/auth" route with no service discovery', async () => {
+test(`requests the ${route} route with no service discovery`, async () => {
   discover_mock.mockResolvedValueOnce(["", new Error("error")]);
   const res = await app.inject({
     method: "GET",
@@ -30,7 +30,7 @@ test('requests the "/auth" route with no service discovery', async () => {
   expect(res.statusCode).toEqual(500);
 });
 
-test('requests the "/auth" route with no session data', async () => {
+test(`requests the ${route} route with no session data`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(new Error("error"));
 
@@ -41,7 +41,7 @@ test('requests the "/auth" route with no session data', async () => {
   expect(res.statusCode).toEqual(500);
 });
 
-test('requests the "/auth" route with ip bypass', async () => {
+test(`requests the ${route} route with ip bypass`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_no_email_or_code);
   db_mock.get_first_facility.mockResolvedValueOnce(
@@ -65,7 +65,7 @@ test('requests the "/auth" route with ip bypass', async () => {
   expect(res.statusCode).toEqual(200);
 });
 
-test('requests the "/auth" route with valid sitecode and invalid subdomain', async () => {
+test(`requests the ${route} route with valid sitecode and invalid domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_sitecode_by_subdomain.mockResolvedValueOnce(null);
@@ -90,7 +90,7 @@ test('requests the "/auth" route with valid sitecode and invalid subdomain', asy
   expect(res.payload).toContain("No sitecode found for nonstandard subdomain");
 });
 
-test('requests the "/auth" route with valid sitecode and valid subdomain', async () => {
+test(`requests the ${route} route with valid sitecode and valid domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_sitecode_by_subdomain.mockResolvedValueOnce(
@@ -113,7 +113,7 @@ test('requests the "/auth" route with valid sitecode and valid subdomain', async
   expect(res.statusCode).toEqual(200);
 });
 
-test('requests the "/auth" route with valid sitecode and standard subdomain', async () => {
+test(`requests the ${route} route with valid sitecode and standard domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_first_facility.mockResolvedValueOnce(
@@ -135,7 +135,7 @@ test('requests the "/auth" route with valid sitecode and standard subdomain', as
   expect(res.statusCode).toEqual(200);
 });
 
-test('requests the "/auth" route with invalid email', async () => {
+test(`requests the ${route} route with invalid email`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(null);
