@@ -24,7 +24,7 @@ export const manage_session = async (
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
     if (error) throw error;
     const query = uuid
-      ? `query { session(uuid: "${uuid}") ${session_query}}`
+      ? `mutation { session(uuid: "${uuid}") ${session_query}}`
       : `mutation { session ${session_query}}`;
 
     const url = host + "v1/graphql";
