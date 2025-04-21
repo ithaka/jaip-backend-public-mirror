@@ -13,6 +13,8 @@ import {
 } from "../../tests/fixtures/auth/fixtures";
 import axios from "axios";
 import { get_route } from "../../utils";
+import { basic_facility } from "../../tests/fixtures/users/fixtures";
+import { map_entities } from "../queries/entities";
 
 const app = build_test_server([route_settings]);
 
@@ -116,9 +118,7 @@ test(`requests the ${route} route with valid sitecode and valid domain`, async (
 test(`requests the ${route} route with valid sitecode and standard domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
-  db_mock.get_first_facility.mockResolvedValueOnce(
-    get_first_facility_resolved_value,
-  );
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({
     method: "GET",
@@ -132,6 +132,7 @@ test(`requests the ${route} route with valid sitecode and standard domain`, asyn
   expect(axios.post).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_ip_bypass).toHaveBeenCalledTimes(0);
+  expect(res.json()).toStrictEqual(map_entities(basic_facility));
   expect(res.statusCode).toEqual(200);
 });
 

@@ -24,6 +24,7 @@ export const get_entities_handler =
       log_made_by: "account-management-api",
       entity_type: type,
     };
+
     fastify.event_logger.pep_standard_log_start(
       `pep_get_${type}_start`,
       request,
@@ -47,22 +48,23 @@ export const get_entities_handler =
         type === entity_types.users
           ? group.features[FEATURES.get_users]
           : group.features[FEATURES.get_facilities];
-      const has_ungrouped_feature =
-        type === entity_types.users
-          ? request.user.ungrouped_features[
-              UNGROUPED_FEATURES.manage_superusers
-            ] ||
-            request.user.ungrouped_features[
-              UNGROUPED_FEATURES.create_group_admins
-            ]
-          : true;
-      return (
-        groups.includes(group.id) && (has_feature || has_ungrouped_feature)
-      );
+      return groups.includes(group.id) && has_feature;
     });
+
     log_payload.full_groups = full_groups;
 
-    if (full_groups.length != groups.length) {
+    const has_ungrouped_feature =
+      type === entity_types.users
+        ? request.user.ungrouped_features[
+            UNGROUPED_FEATURES.manage_superusers
+          ] ||
+          request.user.ungrouped_features[
+            UNGROUPED_FEATURES.create_group_admins
+          ]
+        : request.user.ungrouped_features[
+            UNGROUPED_FEATURES.create_group_admins
+          ];
+    if (full_groups.length !== groups.length && !has_ungrouped_feature) {
       reply
         .code(403)
         .send("You do not have permission to access all requested groups");
@@ -70,6 +72,7 @@ export const get_entities_handler =
         ...log_payload,
         event_description: `failed to get ${type}`,
       });
+      return;
     }
 
     const role =
@@ -90,7 +93,9 @@ export const get_entities_handler =
         const { total, entities } = response;
         log_payload.total = total;
         log_payload.entities = entities;
-        log_payload.user_ids = entities.map((user) => user.id!);
+        log_payload.user_ids = Object.keys(entities).map(
+          (id) => entities[id].id!,
+        );
         reply.send({
           total,
           entities,
@@ -108,7 +113,9 @@ export const get_entities_handler =
         const { total, entities } = response;
         log_payload.total = total;
         log_payload.entities = entities;
-        log_payload.user_ids = entities.map((user) => user.id!);
+        log_payload.user_ids = Object.keys(entities).map(
+          (id) => entities[id].id!,
+        );
         reply.send({
           total,
           entities,
@@ -181,6 +188,7 @@ export const remove_entities_handler =
         ...log_payload,
         event_description: `failed to get ${type}`,
       });
+      return;
     }
 
     try {
@@ -259,19 +267,19 @@ export const add_or_edit_entities_handler =
     const full_groups = request.user.groups.filter((group) => {
       const has_feature =
         type === entity_types.users
-          ? group.features[FEATURES.remove_users]
-          : group.features[FEATURES.manage_facilities];
-      const has_management_feature =
-        type === entity_types.users &&
-        request.user.ungrouped_features[UNGROUPED_FEATURES.manage_superusers]
-          ?.enabled;
-      return (
-        groups.includes(group.id) && (has_feature || has_management_feature)
-      );
+          ? group.features[FEATURES.add_or_edit_users]
+          : group.features[FEATURES.manage_facilities] ||
+            group.features[FEATURES.edit_facilities];
+      return groups.includes(group.id) && has_feature;
     });
     log_payload.full_groups = full_groups;
 
-    if (full_groups.length != groups.length) {
+    const has_ungrouped_feature =
+      type === entity_types.users &&
+      request.user.ungrouped_features[UNGROUPED_FEATURES.manage_superusers]
+        ?.enabled;
+
+    if (full_groups.length !== groups.length && !has_ungrouped_feature) {
       reply
         .code(403)
         .send("You do not have permission to access all requested groups");
@@ -279,6 +287,7 @@ export const add_or_edit_entities_handler =
         ...log_payload,
         event_description: `failed to get ${type}`,
       });
+      return;
     }
 
     try {
@@ -286,7 +295,7 @@ export const add_or_edit_entities_handler =
         const is_manager =
           !!request.user.ungrouped_features[
             UNGROUPED_FEATURES.manage_superusers
-          ].enabled;
+          ]?.enabled;
         const add_user_error = await add_or_edit_entity(
           fastify.db,
           new_user,
@@ -303,6 +312,32 @@ export const add_or_edit_entities_handler =
             ...log_payload,
             event_description: `attempted to add ${type} without exactly one group: ${groups}`,
           });
+        } else {
+          const is_manager =
+            full_groups.filter((group) => {
+              return group.features[FEATURES.manage_facilities];
+            }).length === full_groups.length;
+
+          const add_facility_error = await add_or_edit_entity(
+            fastify.db,
+            new_user,
+            type,
+            is_manager,
+          );
+          if (add_facility_error) {
+            if (
+              add_facility_error.message ===
+              "User does not have permission to add facilities"
+            ) {
+              reply
+                .code(403)
+                .send("You do not have permission to add facilities");
+              fastify.event_logger.pep_forbidden_error(request, reply, {
+                ...log_payload,
+                event_description: `failed to add ${type}`,
+              });
+            }
+          }
         }
       }
 

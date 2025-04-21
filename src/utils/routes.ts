@@ -26,7 +26,9 @@ export const ip_handler = (req: FastifyRequest): string[] => {
 };
 
 export const get_subdomain = (host: string): string => {
-  return host.split(".").slice(0, -2).join(".");
+  const split_host = host.split(".");
+  const ending = split_host[split_host.length - 1] === "localhost" ? -1 : -2;
+  return split_host.slice(0, ending).join(".");
 };
 
 export const server_error = {

@@ -4,7 +4,7 @@ import { HTTPMethods } from "fastify";
 export const VALIDATED_METHODS = ["POST", "PUT", "DELETE"] as HTTPMethods[];
 
 export const SUBDOMAINS = {
-  admin: ["pep-admin", "admin.pep"],
+  admin: ["pep-admin", "admin.pep", "admin.test-pep"],
   student: ["pep", "www.pep", "test-pep", "www.test-pep"],
 };
 

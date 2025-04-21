@@ -57,13 +57,9 @@ const remove_entities_body = {
             id: {
               type: "number",
             },
-            features: {
-              type: "object",
-              additionalProperties: {} as { [key: string]: boolean },
-            },
           },
         },
-        minLength: 1,
+        minItems: 1,
       },
     },
   },
@@ -95,16 +91,16 @@ const add_users_body = {
             },
           },
         },
-        minLength: 1,
+        minItems: 1,
         // We don't really have a max number of groups, but we need the property here so we can modify it for facilities.
-        maxLength: 1000,
+        maxItems: 1000,
       },
     },
   },
 };
 const get_add_facilities_body = () => {
   const request = { ...add_users_body };
-  request.body.properties.groups.maxLength = 1;
+  request.body.properties.groups.maxItems = 1;
   return request;
 };
 const remove_entity_response = {

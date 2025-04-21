@@ -1,6 +1,7 @@
 export const fake_subdomain = "fake-subdomain.test-pep.jstor.org";
 export const valid_student_subdomain = "test-pep.jstor.org";
 export const valid_provider_subdomain = "test-subdomain.test-pep.jstor.org";
+export const valid_admin_subdomain = "admin.test-pep.jstor.org";
 
 export const get_sitecode_by_subdomain_resolved_value = {
   facilities: {

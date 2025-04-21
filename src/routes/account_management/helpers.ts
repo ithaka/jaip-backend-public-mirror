@@ -52,7 +52,9 @@ export const get_users = async (
   page: number,
   groups: number[],
   limit: number,
-): Promise<[{ total: number; entities: User[] } | null, Error | null]> => {
+): Promise<
+  [{ total: number; entities: { [key: string]: User } } | null, Error | null]
+> => {
   try {
     const count_query = get_entities_where_clause(
       groups,
@@ -74,10 +76,21 @@ export const get_users = async (
       users_query,
     );
     const filtered_users = users.filter((user) => user);
+    const entities = filtered_users.reduce(
+      (acc, current) => {
+        if (current?.entities?.id) {
+          const user = map_entities(current);
+          acc[current.entities.id] = user;
+        }
+        return acc;
+      },
+      {} as { [key: string]: User },
+    );
     return [
       {
         total: count,
-        entities: filtered_users.map((user) => map_entities(user)),
+        // return the users as an object with the key being the user id
+        entities,
       },
       null,
     ];
@@ -93,7 +106,9 @@ export const get_facilities = async (
   page: number,
   groups: number[],
   limit: number,
-): Promise<[{ total: number; entities: User[] } | null, Error | null]> => {
+): Promise<
+  [{ total: number; entities: { [key: string]: User } } | null, Error | null]
+> => {
   try {
     const count_query = get_entities_where_clause(
       groups,
@@ -115,10 +130,21 @@ export const get_facilities = async (
       facilities_query,
     );
     const filtered_facilities = facilities.filter((facility) => facility);
+    const entities = filtered_facilities.reduce(
+      (acc, current) => {
+        if (current?.entities?.id) {
+          const user = map_entities(current);
+          acc[current.entities.id] = user;
+        }
+        return acc;
+      },
+      {} as { [key: string]: User },
+    );
     return [
       {
         total: count,
-        entities: filtered_facilities.map((facility) => map_entities(facility)),
+        // return the users as an object with the key being the user id
+        entities,
       },
       null,
     ];
@@ -241,6 +267,10 @@ export const add_or_edit_entity = async (
     // time out, and there's no good way to roll back individual changes outside of a transaction.
     // TODO: We could simplify the data structure considerably, which might make it more effective to use Prisma.
     const action = existing_entity?.id ? "edit" : "add";
+
+    if (action === "add" && type === entity_types.facilities && !is_manager) {
+      throw new Error("User does not have permission to add facilities");
+    }
     await db.manage_entity(action, type, entity, is_manager);
     return null;
   } catch (err) {

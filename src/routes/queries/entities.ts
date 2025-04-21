@@ -149,7 +149,7 @@ export const get_many_entities_select_clause = (
 });
 
 export const map_entities = (user: DBEntity): User => {
-  return {
+  const entity = {
     id: user.entities.id,
     name: user.entities.name,
     contact: user.jstor_id,
@@ -193,4 +193,5 @@ export const map_entities = (user: DBEntity): User => {
         return groups;
       }, [] as Array<Group>) || ([] as Array<Group>),
   };
+  return entity;
 };

@@ -46,7 +46,7 @@ export const auth_session_handler =
       return;
     } else {
       const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
-      if (is_admin_subdomain && current_user.type !== ENTITY_TYPES.users) {
+      if (is_admin_subdomain && current_user.type !== ENTITY_TYPES.USERS) {
         reply.code(403).send();
         fastify.event_logger.pep_forbidden_error(request, reply, log_payload);
         return;

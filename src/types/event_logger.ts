@@ -71,7 +71,7 @@ export interface CompleteLogPayload {
   entity_type: string;
   entity_role: string;
   total: number;
-  entities: User[];
+  entities: { [key: string]: User };
   user_ids: number[];
   altered_user: Partial<User>;
   is_duplicate: boolean;
