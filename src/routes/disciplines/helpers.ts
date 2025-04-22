@@ -25,7 +25,6 @@ export const attach_bulk_approval = async (
       if (type === jstor_types.discipline && "code" in item) {
         return item.code;
       } else if (type === jstor_types.headid && "headid" in item) {
-        console.log("RETURNING HEADID");
         return item.headid;
       }
     })

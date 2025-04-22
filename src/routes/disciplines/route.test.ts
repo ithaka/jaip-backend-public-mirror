@@ -67,7 +67,6 @@ test(`requests the ${disciplines_route} route with a facility and statuses`, asy
     method: "GET",
     url: disciplines_route,
   });
-  console.log(res.json()[0]);
   expect(discover_mock).toHaveBeenCalledTimes(2);
   expect(res.json()).toStrictEqual(disciplines_response_with_approval);
   expect(res.statusCode).toEqual(200);
@@ -122,7 +121,6 @@ test(`requests the ${journals_route} route with a facility and statuses`, async 
     url: journals_route,
   });
 
-  console.log(res.json()[0]);
   expect(discover_mock).toHaveBeenCalledTimes(2);
   expect(res.json()).toStrictEqual(journals_response_with_approval);
   expect(res.statusCode).toEqual(200);

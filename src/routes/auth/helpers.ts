@@ -35,7 +35,6 @@ export const manage_session = async (
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
-    console.log(response);
     if (!response.data?.data?.session) {
       throw new Error("session management failed: No session returned");
     }
