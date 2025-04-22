@@ -270,3 +270,20 @@ export const basic_facility = {
     ungrouped_features_entities: [],
   },
 };
+
+export const basic_facility_without_permissions = {
+  jstor_id: "test@test.com",
+  entities: {
+    name: "Test Facility",
+    id: 1,
+    entity_type: ENTITY_TYPES.FACILITIES,
+    groups_entities: groups_entities.facility,
+    features_groups_entities: [
+      ...search_result_permissions(false),
+      ...media_review_permissions(false),
+      ...user_permissions(false),
+      ...internal_ithaka_permissions(false),
+    ],
+    ungrouped_features_entities: [],
+  },
+};

@@ -223,41 +223,40 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   ): Promise<[Prisma.statusesCreateManyInput[] | null, Error | null]> {
     try {
       const db_inserts: Prisma.statusesCreateManyInput[] = [];
-      await this.client.$transaction(async (tx) => {
-        // It would be possible to do this in a single query by passing the existing item type in the
-        // request. This approach places minimal trust in the request
-        const existing_statuses = await tx.statuses.findMany({
-          where: {
-            jstor_item_id: code,
-            group_id: {
-              in: groups,
-            },
+      const existing_statuses = await this.client.statuses.findMany({
+        where: {
+          jstor_item_id: code,
+          group_id: {
+            in: groups,
           },
-          select: {
-            jstor_item_id: true,
-            group_id: true,
-            jstor_item_type: true,
-            status: true,
-          },
-        });
-        if (!existing_statuses.length) {
-          throw new Error(
-            "undo error: no existing statuses found for provided code in the provided groups",
-          );
-        }
-        existing_statuses.forEach((status) => {
-          db_inserts.push({
-            jstor_item_type: status.jstor_item_type,
-            jstor_item_id: code,
-            status: status_options.Approved,
-            entity_id: user_id,
-            group_id: status.group_id,
-          });
-        });
-        await tx.statuses.createMany({
-          data: db_inserts,
+        },
+        select: {
+          jstor_item_id: true,
+          group_id: true,
+          jstor_item_type: true,
+          status: true,
+        },
+      });
+      if (!existing_statuses || !existing_statuses.length) {
+        throw new Error(
+          "undo error: no existing statuses found for provided code in the provided groups",
+        );
+      }
+      existing_statuses.forEach((status) => {
+        db_inserts.push({
+          jstor_item_type: status.jstor_item_type,
+          jstor_item_id: code,
+          status: status_options.Denied,
+          entity_id: user_id,
+          group_id: status.group_id,
         });
       });
+      // It would be possible to do this in a single query by passing the existing item type in the
+      // request. This approach places minimal trust in the request
+      await this.client.statuses.createMany({
+        data: db_inserts,
+      });
+
       return [db_inserts, null];
     } catch (err) {
       const error = ensure_error(err);

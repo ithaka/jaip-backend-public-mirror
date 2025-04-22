@@ -146,6 +146,10 @@ export const route_schemas = {
         grouped: {
           any: [FEATURES.get_facilities, FEATURES.manage_facilities],
         },
+        ungrouped: [
+          UNGROUPED_FEATURES.manage_superusers,
+          UNGROUPED_FEATURES.create_group_admins,
+        ],
       },
     },
     ...get_entities_body,
@@ -260,7 +264,7 @@ export const route_schemas = {
     requires: {
       any: {
         grouped: {
-          any: [FEATURES.manage_facilities],
+          any: [FEATURES.manage_facilities, FEATURES.edit_facilities],
         },
       },
     },

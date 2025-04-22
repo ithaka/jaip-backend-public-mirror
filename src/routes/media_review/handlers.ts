@@ -451,6 +451,7 @@ export const bulk_undo_handler =
       reply.code(201);
     } catch (err) {
       const error = ensure_error(err);
+      console.log(error);
       fastify.event_logger.pep_error(
         request,
         reply,

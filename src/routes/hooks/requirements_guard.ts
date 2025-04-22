@@ -11,6 +11,8 @@ export const requirements_guard = async (
 ) => {
   const schema = request.routeOptions.schema as RequirementsSchema;
 
+  const has_no_requirements = !schema?.requires;
+
   // Begin by assuming the user has no required features
   let has_required_grouped_features_any = false;
   let has_required_grouped_features_all = false;
@@ -25,10 +27,7 @@ export const requirements_guard = async (
         break;
       }
     }
-  } else {
-    has_required_grouped_features_any = true;
   }
-
   // If having any of the features in an array in all groups is necessary, check for that
   if (schema?.requires?.any?.grouped?.all?.length) {
     const all = schema.requires.any.grouped.all;
@@ -38,8 +37,6 @@ export const requirements_guard = async (
         break;
       }
     }
-  } else {
-    has_required_grouped_features_all = true;
   }
 
   // If having any of the ungrouped features in an array is sufficient, check for that
@@ -51,14 +48,13 @@ export const requirements_guard = async (
         break;
       }
     }
-  } else {
-    has_required_ungrouped_features = true;
   }
 
   if (
     has_required_grouped_features_any ||
     has_required_grouped_features_all ||
-    has_required_ungrouped_features
+    has_required_ungrouped_features ||
+    has_no_requirements
   ) {
     return;
   }

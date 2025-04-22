@@ -20,6 +20,9 @@ export const user_has_feature_in_all_groups = (
       return false;
     }
   }
+  if (user.groups.length === 0 || !user.groups) {
+    return false;
+  }
   return true;
 };
 
