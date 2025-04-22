@@ -25,13 +25,13 @@ export const attach_bulk_approval = async (
       if (type === jstor_types.discipline && "code" in item) {
         return item.code;
       } else if (type === jstor_types.headid && "headid" in item) {
+        console.log("RETURNING HEADID");
         return item.headid;
       }
     })
     .filter((code): code is RequiredCode => {
       return !!code;
     });
-
   try {
     const [response, error] = await fastify.db.get_statuses(
       bulk_approval_query(type, codes, groups),
@@ -39,7 +39,6 @@ export const attach_bulk_approval = async (
     if (error) {
       throw error;
     }
-
     if (response && response.length) {
       // Cycle through every discipline
       items.forEach((item) => {
@@ -60,9 +59,9 @@ export const attach_bulk_approval = async (
         }
       });
     }
-
     return [items, null];
   } catch (err) {
+    console.log(err);
     const error = ensure_error(err);
     return [[], error];
   }

@@ -33,6 +33,7 @@ export const disciplines_handler =
 
       const url = code ? `${host}disciplines/${code}` : `${host}disciplines/`;
       const response = await axios.get(url);
+
       if (response.status !== 200) {
         throw new Error(
           `${is_discipline_search ? "Disciplines" : "Journals"} request failed: Status code not 200`,
@@ -43,8 +44,8 @@ export const disciplines_handler =
           `${is_discipline_search ? "Disciplines" : "Journals"}  request failed: None returned`,
         );
       }
-
       const groups = request.user.groups.map((group) => group.id);
+
       const [items, processing_error] = await attach_bulk_approval(
         fastify,
         is_discipline_search ? jstor_types.discipline : jstor_types.headid,
@@ -54,7 +55,6 @@ export const disciplines_handler =
       if (processing_error) {
         throw processing_error;
       }
-
       reply.send(items);
 
       fastify.event_logger.pep_standard_log_complete(

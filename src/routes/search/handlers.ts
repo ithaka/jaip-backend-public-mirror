@@ -318,7 +318,7 @@ export const search_handler =
                 acc[curr.groups.id] = {
                   ...curr,
                   statusLabel: label,
-                  statusCreatedAt: curr.created_at,
+                  statusCreatedAt: curr.created_at!,
                   groupID: curr.groups.id,
                   groupName: curr.groups.name,
                 };
@@ -335,7 +335,7 @@ export const search_handler =
           const new_status: History = {
             ...status,
             statusLabel: status.status,
-            statusCreatedAt: status.created_at,
+            statusCreatedAt: status.created_at!,
             groupID: status.groups?.id,
             groupName: status.groups?.name,
           };

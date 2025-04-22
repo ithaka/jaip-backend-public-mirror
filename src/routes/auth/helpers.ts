@@ -35,6 +35,7 @@ export const manage_session = async (
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
+    console.log(response);
     if (!response.data?.data?.session) {
       throw new Error("session management failed: No session returned");
     }
@@ -85,7 +86,7 @@ const get_user = async (
   try {
     // @ts-expect-error Prisma isn't able to parse the query correctly in assigning a type to the result.
     const result: DBEntity = await db.get_first_user(get_user_query(arr));
-    if (result === null) {
+    if (!result) {
       throw new Error("No user found with the provided emails");
     }
     return [map_entities(result), null];
@@ -105,8 +106,8 @@ const get_facility = async (
     const result: DBEntity = await db.get_first_facility(
       get_facility_query(arr),
     );
-    if (result === null) {
-      throw new Error("No user found with the provided emails");
+    if (!result) {
+      throw new Error("No facility found with the provided emails");
     }
     return [map_entities(result), null];
   } catch (err) {
