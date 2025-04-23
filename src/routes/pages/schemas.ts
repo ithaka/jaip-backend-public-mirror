@@ -2,8 +2,8 @@ import { SWAGGER_TAGS } from "../../consts";
 import { CedarMetadataReturn } from "../../types/routes";
 import { standard_errors } from "../../utils";
 
-const page_prefix = "/page";
-const metadata_prefix = "/metadata";
+export const page_prefix = "/page";
+export const metadata_prefix = "/metadata";
 
 export const route_schemas = {
   metadata: {

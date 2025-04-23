@@ -166,12 +166,13 @@ export const metadata_handler =
       );
 
       if (is_forbidden) {
-        reply.code(403);
+        reply.code(403).send({ status: 403 });
         return_metadata.status = 403;
         fastify.event_logger.pep_forbidden_error(request, reply, {
           ...log_payload,
           event_description: `access to ${iid} is forbidden for group ${request.user.groups[0].id}`,
         });
+        return;
       }
 
       const entitlement_map = await get_entitlement_map(
