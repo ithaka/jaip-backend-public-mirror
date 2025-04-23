@@ -20,9 +20,13 @@ import {
 import axios from "axios";
 import {
   axios_session_data_with_email,
+  valid_admin_subdomain,
   valid_student_subdomain,
 } from "../../../tests/fixtures/auth/fixtures";
-import { basic_facility } from "../../../tests/fixtures/users/fixtures";
+import {
+  basic_facility,
+  basic_reviewer,
+} from "../../../tests/fixtures/users/fixtures";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
@@ -205,4 +209,37 @@ test(`requests the ${metadata_route} route with a facility and denied status`, a
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
+});
+
+test(`requests the ${metadata_route} route with an admin and item approval`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  axios.get = jest
+    .fn()
+    .mockResolvedValueOnce({
+      status: 200,
+      data: cedar_identity_response,
+    })
+    .mockResolvedValueOnce({
+      status: 200,
+      data: cedar_item_view_response,
+    })
+    .mockResolvedValue({
+      status: 200,
+      data: ale_response,
+    });
+
+  const res = await app.inject({
+    method: "GET",
+    url: metadata_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
+  });
+
+  expect(res.json()).toStrictEqual(metadata_response_allowed);
+  expect(axios.get).toHaveBeenCalledTimes(3);
+  expect(db_mock.get_item_status).toHaveBeenCalledTimes(0);
+  expect(res.statusCode).toEqual(200);
 });
