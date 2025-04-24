@@ -68,7 +68,7 @@ export const get_ungrouped_features_handler =
 
       const [features, count, error] =
         await fastify.db.get_ungrouped_features_and_count(
-          query.where as Prisma.ungrouped_featuresCountArgs,
+          { where: query.where } as Prisma.ungrouped_featuresCountArgs,
           query,
         );
       if (error) {

@@ -34,7 +34,7 @@ export const get_entities_handler =
       },
     );
 
-    const { query, page, groups, limit } = request.body;
+    const { query, page, groups, limit, include_ungrouped } = request.body;
     log_payload.query = query;
     log_payload.page = page.toString();
     log_payload.groups = groups;
@@ -80,6 +80,10 @@ export const get_entities_handler =
     log_payload.entity_role = role;
 
     try {
+      const is_manager =
+        !!request.user.ungrouped_features[UNGROUPED_FEATURES.manage_superusers]
+          ?.enabled && type === entity_types.users;
+
       if (type === entity_types.users) {
         const [response, user_query_error] = await get_users(
           fastify.db,
@@ -87,6 +91,7 @@ export const get_entities_handler =
           page,
           groups,
           limit,
+          include_ungrouped && is_manager,
         );
         if (user_query_error) throw user_query_error;
         if (!response) throw new Error("failed to get users");

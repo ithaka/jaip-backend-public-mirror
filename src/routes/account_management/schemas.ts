@@ -23,6 +23,10 @@ const get_entities_body = {
       limit: {
         type: "number",
       },
+      include_ungrouped: {
+        type: "boolean",
+        default: false,
+      },
     },
   },
 };

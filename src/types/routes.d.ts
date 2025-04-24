@@ -167,6 +167,7 @@ export interface GetEntitiesRequest {
   page: number;
   groups: number[];
   limit: number;
+  include_ungrouped?: boolean;
 }
 
 export interface RemoveEntitiesRequest {

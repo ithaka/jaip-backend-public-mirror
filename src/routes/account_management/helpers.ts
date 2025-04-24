@@ -13,21 +13,36 @@ const get_entities_where_clause = (
   groups: number[],
   role: user_roles,
   query: string,
+  include_ungrouped: boolean = false,
 ) => {
-  return {
-    where: {
-      entities: {
-        groups_entities: {
-          some: {
-            group_id: {
-              in: groups,
-            },
-            role: {
-              equals: role,
-            },
+  let entities_clause = {};
+  if (include_ungrouped) {
+    entities_clause = {
+      groups_entities: {
+        some: {
+          role: {
+            equals: role,
           },
         },
       },
+    };
+  } else {
+    entities_clause = {
+      groups_entities: {
+        some: {
+          group_id: {
+            in: groups,
+          },
+          role: {
+            equals: role,
+          },
+        },
+      },
+    };
+  }
+  const where_clause = {
+    where: {
+      entities: entities_clause,
       OR: [
         {
           jstor_id: {
@@ -44,6 +59,8 @@ const get_entities_where_clause = (
       ],
     },
   };
+
+  return where_clause;
 };
 
 export const get_users = async (
@@ -52,6 +69,7 @@ export const get_users = async (
   page: number,
   groups: number[],
   limit: number,
+  include_ungrouped: boolean = false,
 ): Promise<
   [{ total: number; entities: { [key: string]: User } } | null, Error | null]
 > => {
@@ -60,6 +78,7 @@ export const get_users = async (
       groups,
       user_roles.admin,
       query,
+      include_ungrouped,
     );
     const users_query = {
       ...get_db_pagination(page, limit),
@@ -68,7 +87,12 @@ export const get_users = async (
           name: "asc",
         },
       },
-      ...get_entities_where_clause(groups, user_roles.admin, query),
+      ...get_entities_where_clause(
+        groups,
+        user_roles.admin,
+        query,
+        include_ungrouped,
+      ),
       select: get_many_entities_select_clause(user_roles.admin, groups),
     } as Prisma.usersFindManyArgs;
     const [count, users] = await db.get_users_and_count(
