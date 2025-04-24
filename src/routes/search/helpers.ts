@@ -221,10 +221,7 @@ export const do_search3 = async (
 ): Promise<[AxiosResponse | null, Error | null]> => {
   try {
     const url = host + SEARCH3.path;
-    const search_result = await axios({
-      url,
-      method: "POST",
-      data: search3_request,
+    const search_result = await axios.post(url, search3_request, {
       headers: {
         Cookie: `UUID=${uuid}`,
       },

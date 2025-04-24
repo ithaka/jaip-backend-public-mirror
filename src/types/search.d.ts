@@ -52,13 +52,13 @@ export interface Search3Document {
   translated_title?: string[];
   authors?: string[];
   citation_line?: string;
-  is_review?: string;
+  is_review?: string | null;
   reviewed_works?: string[];
   serial_numbers?: string[];
   journal?: string[];
   jid?: string[];
   iid?: string[];
-  book_volume?: string;
+  book_volume?: string | null;
   edition?: string[];
   editor?: string[];
   publisher?: components.Publisher[];
@@ -83,7 +83,7 @@ export interface Search3Document {
     cty?: string;
   };
   tb?: string;
-  tbsub?: string;
+  tbsub?: string | null;
   captions?: string[];
   item_title?: string;
   sequence_number?: string;

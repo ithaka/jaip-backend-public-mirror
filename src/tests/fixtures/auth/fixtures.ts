@@ -53,7 +53,22 @@ export const axios_session_data_with_email = {
   data: {
     data: {
       session: {
-        uuid: "uuid",
+        ip: "127.0.0.1",
+        uuid: "db4cbfd4-7912-44a7-8cbf-d47912e4a792",
+        licenses: [
+          {
+            id: "3b07c615-baf7-4c39-b35d-e7d67f0a2b85",
+            entitlement: {
+              id: "123959837372834",
+            },
+          },
+          {
+            id: "da6ca136-272c-4249-bd1a-db83b6e947d0",
+            entitlement: {
+              id: "123959836153375",
+            },
+          },
+        ],
         userAccount: {
           contact: {
             email: "email@test.edu",

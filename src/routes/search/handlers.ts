@@ -132,6 +132,23 @@ export const status_search_handler =
       if (error) {
         throw error;
       }
+      if (!status_results?.length) {
+        reply.send({
+          docs: [],
+          total: 0,
+        });
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_status_search_complete",
+          request,
+          reply,
+          {
+            ...log_payload,
+            event_description:
+              "search for documents by status complete. No documents with status found.",
+          },
+        );
+        return;
+      }
       let doi_filter = "(";
       const statuses = (status_results as Status[]) || [];
       for (const [index, status] of statuses.entries()) {
@@ -276,6 +293,7 @@ export const search_handler =
         document_statuses_promise,
         snippets_promise,
       ]);
+
       const [bulk_approval_statuses, bulk_approval_status_error] =
         all_requests[0];
       const [document_statuses, document_status_error] = all_requests[1];
@@ -294,6 +312,7 @@ export const search_handler =
       }
 
       const return_docs: MediaRecord[] = [];
+
       // Iterate through the documents and add the statuses and snippets
       docs.forEach((doc: Search3Document) => {
         const new_doc = map_document(doc);
@@ -315,12 +334,26 @@ export const search_handler =
                 const label = is_journal_match
                   ? `${status_options.Approved} by Journal`
                   : `${status_options.Approved} by Discipline`;
+
+                const comments = curr.status_details?.find(
+                  (detail) => detail.type === "comments",
+                )?.detail;
+                const reason = curr.status_details?.find(
+                  (detail) => detail.type === "reason",
+                )?.detail;
+
                 acc[curr.groups.id] = {
-                  ...curr,
+                  status: curr.status,
                   statusLabel: label,
+                  entityName: curr.entities?.name,
+                  entityID: curr.entities?.id,
                   statusCreatedAt: curr.created_at!,
                   groupID: curr.groups.id,
                   groupName: curr.groups.name,
+                  statusDetails: {
+                    comments: comments || "",
+                    reason: reason || "",
+                  },
                 };
               }
             }
@@ -348,13 +381,14 @@ export const search_handler =
             mediaReviewStatuses[status.groups.id] = status;
           }
 
-          // This is where we'll include all of them in the history. We'll only have the most recent
-          // for facilities (this selection is handled in the db query), but admins get the whole history.
-          if (!new_doc.history) {
-            new_doc.history = [];
-          }
-          if (status.jstor_item_id === doc.doi) {
-            new_doc.history.push(new_status);
+          // This is where we'll include all of them in the history for admins.
+          if (request.is_authenticated_admin) {
+            if (!new_doc.history) {
+              new_doc.history = [];
+            }
+            if (status.jstor_item_id === doc.doi) {
+              new_doc.history.push(new_status);
+            }
           }
         }
 
