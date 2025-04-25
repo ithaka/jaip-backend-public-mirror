@@ -39,6 +39,7 @@ export interface CompleteLogPayload {
   doi: string;
   item_doi: string;
   dois: string[];
+  dois_successfully_retrieved: string[];
   comments: string;
   reason: string;
   code: string;

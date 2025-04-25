@@ -10,6 +10,8 @@ import {
   bulk_statuses,
   item_statuses,
   processed_search_response_with_bulk_statuses,
+  processed_search_response_with_mixed_statuses,
+  processed_search_response_with_mixed_statuses_reviewer,
   search3_results,
   search_request_invalid,
   search_request_valid,
@@ -135,13 +137,13 @@ test(`requests the ${search_route} route with a facility and valid body and both
   expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(0);
   expect(axios.post).toHaveBeenCalledTimes(2);
   expect(res.json()).toEqual({
-    docs: processed_search_response_with_bulk_statuses,
+    docs: processed_search_response_with_mixed_statuses,
     total: search3_results.total,
   });
   expect(res.statusCode).toEqual(200);
 });
 
-test.only(`requests the ${search_route} route with a reviewer and valid body and both bulk and item statuses`, async () => {
+test(`requests the ${search_route} route with a reviewer and valid body and both bulk and item statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.post = jest
     .fn()
@@ -153,7 +155,7 @@ test.only(`requests the ${search_route} route with a reviewer and valid body and
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
   db_mock.get_statuses
     .mockResolvedValueOnce([bulk_statuses, null])
-    .mockResolvedValueOnce([[], null]);
+    .mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
 
   const res = await app.inject({
@@ -169,7 +171,7 @@ test.only(`requests the ${search_route} route with a reviewer and valid body and
   expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
   expect(axios.post).toHaveBeenCalledTimes(2);
   expect(res.json()).toEqual({
-    docs: processed_search_response_with_bulk_statuses,
+    docs: processed_search_response_with_mixed_statuses_reviewer,
     total: search3_results.total,
   });
   expect(res.statusCode).toEqual(200);

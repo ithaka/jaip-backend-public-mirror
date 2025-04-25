@@ -9,6 +9,7 @@ export interface SearchRequest {
   groups?: number[];
   statusStartDate?: Date;
   statusEndDate?: Date;
+  dois?: string[];
 }
 
 export interface StatusSearchRequest extends SearchRequest {
@@ -45,7 +46,7 @@ export interface Search3Document {
   id: string;
   doi: string;
   score: number;
-  raw_type: string;
+  raw_type?: string;
   type?: string;
   title?: string[];
   subtitle?: string[];
@@ -67,7 +68,7 @@ export interface Search3Document {
   resource_type?: string;
   book_doi?: string;
   publication_year?: number;
-  ab_segment: string;
+  ab_segment?: string;
   human_readable_type?: string;
   additional_fields: {
     headid?: string[];

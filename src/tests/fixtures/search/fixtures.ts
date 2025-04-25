@@ -1,4 +1,5 @@
 import { map_document } from "../../../routes/queries/search";
+import { Status } from "../../../types/database";
 import { MediaRecord } from "../../../types/media_record";
 
 export const search_request_invalid = {
@@ -47,60 +48,7 @@ export const search3_results = {
     {
       id: "2f79f022-1ba9-31d0-95c3-497d81e818ed",
       doi: "10.2307/resrep62411",
-      score: 49.980583,
-      raw_type: "research_report",
-      tb: "How Will the Probowo Administration Shape Indonesia’s Foreign Policy as a Middle Power?",
-      tbsub: null,
-      type: "research_report",
-      title: [
-        "How Will the Probowo Administration Shape Indonesia’s Foreign Policy as a Middle Power?",
-      ],
-      subtitle: [],
-      translated_title: [],
-      author: ["Calvin Khoe"],
-      citation_line: "Aug. 20, 2024",
-      is_review: null,
-      reviewed_works: [],
-      serial_numbers: [],
-      journal: [],
-      jid: [],
-      iid: [],
-      book_volume: null,
-      edition: [],
-      editor: [],
-      publisher: [
-        {
-          code: "eastwestcenter",
-          publisher: "East-West Center",
-          role: "LICENSOR",
-        },
-      ],
-      tokens: [
-        "123959835122625",
-        "123959836691195",
-        "123959836691205",
-        "123959837548383",
-        "123959837548762",
-        "123959837863267",
-        "16124",
-        "17000000006",
-        "17000000013",
-        "17000000019",
-        "17000000027",
-        "17000000050",
-        "17000000051",
-        "99999002752548",
-        "99999003237585",
-        "99999004164145",
-        "99999004462325",
-      ],
-      flags: ["pdf", "page_scan", "free", "openAccess"],
-      resource_type: "research_report",
-      topics: [],
-      ab_segment: "0/basic_search_gsv2/control",
-      has_access: true,
-      human_readable_type: "Research Report",
-      genai_opt_out: false,
+      score: 1,
       additional_fields: {
         year: 2024,
         cty: "research_report",
@@ -116,58 +64,7 @@ export const search3_results = {
     {
       id: "bb4b2810-5aa8-3ca2-b4cf-a2ac4c594cca",
       doi: "10.2307/resrep62436",
-      score: 43.68752,
-      raw_type: "research_report",
-      tb: "Prevalence of GSE Appraisal Waivers",
-      tbsub: null,
-      type: "research_report",
-      title: ["Prevalence of GSE Appraisal Waivers"],
-      subtitle: [],
-      translated_title: [],
-      author: ["American Enterprise Institute"],
-      citation_line: "Aug. 19, 2024",
-      is_review: null,
-      reviewed_works: [],
-      serial_numbers: [],
-      journal: [],
-      jid: [],
-      iid: [],
-      book_volume: null,
-      edition: [],
-      editor: [],
-      publisher: [
-        {
-          code: "aei",
-          publisher: "American Enterprise Institute",
-          role: "LICENSOR",
-        },
-      ],
-      tokens: [
-        "123959835122625",
-        "123959836691195",
-        "123959836691205",
-        "123959837548383",
-        "123959837548762",
-        "123959837863267",
-        "16124",
-        "17000000006",
-        "17000000013",
-        "17000000019",
-        "17000000027",
-        "17000000050",
-        "17000000051",
-        "99999002752548",
-        "99999003237585",
-        "99999004164145",
-        "99999004421335",
-      ],
-      flags: ["pdf", "page_scan", "free", "openAccess"],
-      resource_type: "research_report",
-      topics: [],
-      ab_segment: "0/basic_search_gsv2/control",
-      has_access: true,
-      human_readable_type: "Research Report",
-      genai_opt_out: false,
+      score: 1,
       additional_fields: {
         year: 2024,
         cty: "research_report",
@@ -184,58 +81,7 @@ export const search3_results = {
     {
       id: "5caee2c7-cd6b-3fd3-9aaa-804fde36f779",
       doi: "10.2307/resrep62406",
-      score: 49.980583,
-      raw_type: "research_report",
-      tb: "Japan’s Arctic Policy:",
-      tbsub: "Current Status and Challenges",
-      type: "research_report",
-      title: ["Japan’s Arctic Policy:"],
-      subtitle: ["Current Status and Challenges"],
-      translated_title: [],
-      author: ["Sakiko Hataya"],
-      citation_line: "Aug. 15, 2024",
-      is_review: null,
-      reviewed_works: [],
-      serial_numbers: [],
-      journal: [],
-      jid: [],
-      iid: [],
-      book_volume: null,
-      edition: [],
-      editor: [],
-      publisher: [
-        {
-          code: "eastwestcenter",
-          publisher: "East-West Center",
-          role: "LICENSOR",
-        },
-      ],
-      tokens: [
-        "123959835122625",
-        "123959836691195",
-        "123959836691205",
-        "123959837548383",
-        "123959837548762",
-        "123959837863267",
-        "16124",
-        "17000000006",
-        "17000000013",
-        "17000000019",
-        "17000000027",
-        "17000000050",
-        "17000000051",
-        "99999002752548",
-        "99999003237585",
-        "99999004164145",
-        "99999004462325",
-      ],
-      flags: ["pdf", "page_scan", "free", "openAccess"],
-      resource_type: "research_report",
-      topics: [],
-      ab_segment: "0/basic_search_gsv2/control",
-      has_access: true,
-      human_readable_type: "Research Report",
-      genai_opt_out: false,
+      score: 1,
       additional_fields: {
         year: 2024,
         cty: "research_report",
@@ -251,60 +97,7 @@ export const search3_results = {
     {
       id: "cbd8c5f1-ac9d-3f54-a40e-0c43ba4b3bbe",
       doi: "10.2307/resrep62407",
-      score: 49.980583,
-      raw_type: "research_report",
-      tb: "US Perspectives on Sino-Russian Cooperation in the Arctic and Roles for Partners",
-      tbsub: null,
-      type: "research_report",
-      title: [
-        "US Perspectives on Sino-Russian Cooperation in the Arctic and Roles for Partners",
-      ],
-      subtitle: [],
-      translated_title: [],
-      author: ["Rebecca Pincus"],
-      citation_line: "Aug. 15, 2024",
-      is_review: null,
-      reviewed_works: [],
-      serial_numbers: [],
-      journal: [],
-      jid: [],
-      iid: [],
-      book_volume: null,
-      edition: [],
-      editor: [],
-      publisher: [
-        {
-          code: "eastwestcenter",
-          publisher: "East-West Center",
-          role: "LICENSOR",
-        },
-      ],
-      tokens: [
-        "123959835122625",
-        "123959836691195",
-        "123959836691205",
-        "123959837548383",
-        "123959837548762",
-        "123959837863267",
-        "16124",
-        "17000000006",
-        "17000000013",
-        "17000000019",
-        "17000000027",
-        "17000000050",
-        "17000000051",
-        "99999002752548",
-        "99999003237585",
-        "99999004164145",
-        "99999004462325",
-      ],
-      flags: ["pdf", "page_scan", "free", "openAccess"],
-      resource_type: "research_report",
-      topics: [],
-      ab_segment: "0/basic_search_gsv2/control",
-      has_access: true,
-      human_readable_type: "Research Report",
-      genai_opt_out: false,
+      score: 1,
       additional_fields: {
         year: 2024,
         cty: "research_report",
@@ -325,7 +118,7 @@ export const bulk_statuses = [
     jstor_item_type: "headid",
     status: "Approved",
     // created_at: new Date('2023-10-01T00:00:00Z'),
-    entities: { id: 238, name: "ILIUM Test Facility" },
+    entities: { id: 3, name: "Test Reviewer" },
     groups: { id: 1, name: "Ithaka" },
   },
   {
@@ -333,7 +126,7 @@ export const bulk_statuses = [
     jstor_item_type: "discipline",
     status: "Approved",
     // created_at: new Date('2023-10-01T00:00:00Z'),
-    entities: { id: 238, name: "ILIUM Test Facility" },
+    entities: { id: 3, name: "Test Reviewer" },
     groups: { id: 1, name: "Ithaka" },
   },
 ];
@@ -344,21 +137,39 @@ export const item_statuses = [
     jstor_item_type: "doi",
     status: "Denied",
     // created_at: new Date('2023-10-01T00:00:00Z'),
-    entities: { id: 238, name: "ILIUM Test Facility" },
+    entities: { id: 3, name: "Test Reviewer" },
     groups: { id: 1, name: "Ithaka" },
+    status_details: [
+      {
+        type: "comments",
+        detail: "This is a test comment.",
+      },
+      {
+        type: "reason",
+        detail: "This is a test reason.",
+      },
+    ],
   },
   {
     jstor_item_id: "10.2307/resrep62407",
     jstor_item_type: "doi",
     status: "Incomplete",
     // created_at: new Date('2023-10-01T00:00:00Z'),
-    entities: { id: 238, name: "ILIUM Test Facility" },
+    entities: { id: 3, name: "Test Reviewer" },
     groups: { id: 1, name: "Ithaka" },
+    status_details: [
+      {
+        type: "comments",
+        detail: "This is a test comment.",
+      },
+      {
+        type: "reason",
+        detail: "This is a test reason.",
+      },
+    ],
   },
 ];
 const bulk_approval_base_object = {
-  entityID: 238,
-  entityName: "ILIUM Test Facility",
   groupID: 1,
   groupName: "Ithaka",
   status: "Approved",
@@ -381,28 +192,45 @@ const approved_by_journal_media_review_object = {
 };
 
 const item_status_base_object = {
-  entityID: 238,
-  entityName: "ILIUM Test Facility",
   groupID: 1,
   groupName: "Ithaka",
 };
 
 export const denied_item_status = {
-  ...item_status_base_object,
-  status: "Denied",
-  statusLabel: "Denied",
-  statusDetails: {
-    comments: "This is a test comment.",
-    reason: "This is a test reason.",
+  "1": {
+    ...item_status_base_object,
+    status: "Denied",
+    statusLabel: "Denied",
+    statusDetails: {
+      comments: "This is a test comment.",
+      reason: "This is a test reason.",
+    },
+  },
+};
+
+export const denied_item_status_reviewer = {
+  "1": {
+    ...denied_item_status["1"],
+    entityID: 3,
+    entityName: "Test Reviewer",
   },
 };
 export const incomplete_item_status = {
-  ...item_status_base_object,
-  status: "Incomplete",
-  statusLabel: "Incomplete",
-  statusDetails: {
-    comments: "This is a test comment.",
-    reason: "This is a test reason.",
+  "1": {
+    ...item_status_base_object,
+    status: "Incomplete",
+    statusLabel: "Incomplete",
+    statusDetails: {
+      comments: "This is a test comment.",
+      reason: "This is a test reason.",
+    },
+  },
+};
+export const incomplete_item_status_reviewer = {
+  "1": {
+    ...incomplete_item_status["1"],
+    entityID: 3,
+    entityName: "Test Reviewer",
   },
 };
 export const processed_search_response = search3_results.results.map((doc) => {
@@ -446,9 +274,71 @@ export const processed_search_response_with_mixed_statuses = [
   add_approved_by_discipline_status(processed_search_response[1]),
   add_approved_by_journal_status(processed_search_response[2]),
   {
-    ...processed_search_response[2],
+    ...processed_search_response[3],
     mediaReviewStatuses: {
       ...incomplete_item_status,
     },
   },
 ];
+
+export const processed_search_response_with_mixed_statuses_reviewer = [
+  {
+    ...processed_search_response[0],
+    mediaReviewStatuses: {
+      ...denied_item_status_reviewer,
+    },
+    history: [
+      {
+        ...denied_item_status_reviewer["1"],
+      },
+    ],
+  },
+  add_approved_by_discipline_status(processed_search_response[1]),
+  add_approved_by_journal_status(processed_search_response[2]),
+  {
+    ...processed_search_response[3],
+    mediaReviewStatuses: {
+      ...incomplete_item_status_reviewer,
+    },
+    history: [
+      {
+        ...incomplete_item_status_reviewer["1"],
+      },
+    ],
+  },
+];
+
+export const search_status_results = [
+  {
+    entity_id: 3,
+    jstor_item_id: "10.2307/resrep62411",
+    jstor_item_type: "doi",
+    status: "Denied",
+    group_id: 1,
+    created_at: new Date("2023-10-01T00:00:00Z"),
+  },
+  {
+    entity_id: 3,
+    jstor_item_id: "10.2307/resrep62436",
+    jstor_item_type: "doi",
+    status: "Approved",
+    group_id: 1,
+    created_at: new Date("2023-10-01T00:00:00Z"),
+  },
+  {
+    entity_id: 3,
+    jstor_item_id: "10.2307/resrep62406",
+    jstor_item_type: "doi",
+    status: "Approved",
+    group_id: 1,
+    created_at: new Date("2023-10-01T00:00:00Z"),
+  },
+  {
+    entity_id: 3,
+    jstor_item_id: "10.2307/resrep06056",
+    jstor_item_type: "doi",
+    status: "Approved",
+    group_id: 2,
+    created_at: new Date("2023-10-01T00:00:00Z"),
+  },
+] as Status[];

@@ -6,7 +6,7 @@ import { ensure_error } from "../../utils";
 import { SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
 import { JAIPDatabase } from "../../database";
 
-const facility_select = {
+const status_select = {
   jstor_item_id: true,
   jstor_item_type: true,
   status: true,
@@ -23,9 +23,6 @@ const facility_select = {
       name: true,
     },
   },
-};
-const user_select = {
-  ...facility_select,
   status_details: {
     select: {
       type: true,
@@ -50,6 +47,42 @@ export const key_statuses = (
   }
   return keyed_statuses;
 };
+
+export const format_status_details = (
+  status: Status,
+): { comments: string; reason: string } => {
+  const comments = status.status_details?.find(
+    (detail) => detail.type === "comments",
+  )?.detail;
+  const reason = status.status_details?.find(
+    (detail) => detail.type === "reason",
+  )?.detail;
+  const statusDetails = {
+    comments: comments || "",
+    reason: reason || "",
+  };
+  return statusDetails;
+};
+export const filter_facility_statuses = (statuses: Status[]) => {
+  // Filter out the entity details for all statuses and status details for pending statuses
+  // and return the rest of the statuses.
+  return statuses.map((status) => {
+    const { status_details, ...rest } = status;
+    if (status.status === "Pending") {
+      return {
+        ...rest,
+        status_details: [],
+        entities: null,
+      };
+    }
+    return {
+      ...rest,
+      status_details,
+      entities: null,
+    };
+  });
+};
+
 export const get_facility_statuses = async (
   db: JAIPDatabase,
   dois: string[],
@@ -68,13 +101,14 @@ export const get_facility_statuses = async (
       orderBy: {
         created_at: "desc",
       },
-      take: 1,
-      select: facility_select,
+      distinct: ["jstor_item_id", "group_id"],
+      select: status_select,
     });
     if (error) {
       throw error;
     }
-    return [key_statuses(results), null];
+
+    return [key_statuses(filter_facility_statuses(results)), null];
   } catch (err) {
     const error = ensure_error(err);
     return [{}, error];
@@ -95,7 +129,7 @@ export const get_user_statuses = async (
       orderBy: {
         created_at: "desc",
       },
-      select: user_select,
+      select: status_select,
     });
     if (error) {
       throw error;
@@ -127,7 +161,7 @@ export const get_bulk_statuses = async (
         created_at: "desc",
       },
       // There are no status details on a bulk approval, so we can use the facility select here.
-      select: facility_select,
+      select: status_select,
     });
     if (error) {
       throw error;

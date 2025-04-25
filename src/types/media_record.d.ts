@@ -25,6 +25,8 @@ export interface MediaRecord {
 }
 
 export interface History {
+  entityID?: number;
+  entityName?: string;
   status: Status;
   statusLabel: string;
   statusCreatedAt: Date | null;

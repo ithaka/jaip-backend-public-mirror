@@ -78,12 +78,14 @@ export interface Status {
   jstor_item_id: string | null;
   jstor_item_type: jstor_types | null;
   status: status_options | StatusOptions | null;
+  entity_id?: number | null;
+  group_id?: number | null;
   created_at?: Date | null;
-  entities: {
+  entities?: {
     id: number;
     name: string;
   } | null;
-  groups: {
+  groups?: {
     id: number;
     name: string;
   } | null;

@@ -12,6 +12,7 @@ import { jstor_types, Prisma, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
 import {
   do_search3,
+  format_status_details,
   get_bulk_statuses,
   get_facility_statuses,
   get_snippets,
@@ -132,6 +133,7 @@ export const status_search_handler =
       if (error) {
         throw error;
       }
+
       if (!status_results?.length) {
         reply.send({
           docs: [],
@@ -149,6 +151,8 @@ export const status_search_handler =
         );
         return;
       }
+
+      const dois = status_results.map((status) => status.jstor_item_id!);
       let doi_filter = "(";
       const statuses = (status_results as Status[]) || [];
       for (const [index, status] of statuses.entries()) {
@@ -160,6 +164,18 @@ export const status_search_handler =
       doi_filter += ")";
 
       request.body.filters.push(doi_filter);
+      request.body.dois = dois;
+
+      fastify.event_logger.pep_standard_log_complete(
+        "pep_statuses_retrieved",
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "statuses retrieved from database",
+          dois: dois,
+        },
+      );
 
       // We need to clear the existing query now that we've used it to get statuses from the
       // database. The request will now be used to build a request for Search3 that won't
@@ -220,6 +236,15 @@ export const search_handler =
         ...SEARCH3.queries.defaults,
       };
 
+      const full_groups = request.user.groups.filter((group) => {
+        const groups =
+          request.body.groups || request.user.groups.map((group) => group.id);
+        return groups.includes(group.id);
+      });
+      const groups = full_groups.map((group) => group.id);
+      log_payload.groups = groups;
+      log_payload.full_groups = full_groups;
+
       search3_request.filter_queries = [...search3_request.filter_queries];
       for (const [i, filter] of filters.entries()) {
         for (const [key, value] of Object.entries(SEARCH3.queries.maps)) {
@@ -271,15 +296,13 @@ export const search_handler =
       const bulk_approval_promise = get_bulk_statuses(
         fastify.db,
         disc_and_journal_ids,
-        request.user.groups.map((group) => group.id),
+        groups,
       );
+
       const document_statuses_promise = request.is_authenticated_admin
         ? get_user_statuses(fastify.db, dois)
-        : get_facility_statuses(
-            fastify.db,
-            dois,
-            request.user.groups.map((group) => group.id),
-          );
+        : get_facility_statuses(fastify.db, dois, groups);
+
       const snippets_promise = get_snippets(
         fastify,
         ids,
@@ -345,8 +368,6 @@ export const search_handler =
                 acc[curr.groups.id] = {
                   status: curr.status,
                   statusLabel: label,
-                  entityName: curr.entities?.name,
-                  entityID: curr.entities?.id,
                   statusCreatedAt: curr.created_at!,
                   groupID: curr.groups.id,
                   groupName: curr.groups.name,
@@ -363,22 +384,28 @@ export const search_handler =
         );
 
         // Add the individual statuses
-        const mediaReviewStatuses = {} as { [key: string]: Status };
+        const mediaReviewStatuses = {} as { [key: string]: History };
         for (const status of document_statuses[new_doc.doi] || []) {
+          const status_details = format_status_details(status);
           const new_status: History = {
-            ...status,
+            status: status.status,
             statusLabel: status.status,
+            statusDetails: status_details,
             statusCreatedAt: status.created_at!,
             groupID: status.groups?.id,
             groupName: status.groups?.name,
           };
+          if (request.is_authenticated_admin) {
+            new_status.entityName = status.entities?.name;
+            new_status.entityID = status.entities?.id;
+          }
           // We only need the first one, because they're already in descending order of created_at
           if (
             status.groups &&
             status.jstor_item_id === new_doc.doi &&
             !mediaReviewStatuses[status.groups.id]
           ) {
-            mediaReviewStatuses[status.groups.id] = status;
+            mediaReviewStatuses[status.groups.id] = new_status;
           }
 
           // This is where we'll include all of them in the history for admins.
@@ -392,12 +419,35 @@ export const search_handler =
           }
         }
 
+        // If there are individual statuses that are not bulk approval,
+        // those should take precedence over the bulk approval statuses.
+        if (Object.keys(mediaReviewStatuses).length > 0) {
+          new_doc.mediaReviewStatuses = {
+            ...mediaReviewStatuses,
+          };
+        }
+
         // Attach the snippets, which are keyed by the id
         new_doc.snippets = snippets[doc.id];
-
         return_docs.push(new_doc);
       });
 
+      if (request.body.dois && request.body.dois.length !== docs.length) {
+        // If the number of dois from the statuses table does not match the number of
+        // documents returned, we know that there's a mismatch. This log will help us
+        // determine how prevalent that is.
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_status_search_doi_mismatch",
+          request,
+          reply,
+          {
+            ...log_payload,
+            event_description: "mismatch between dois and documents",
+            dois: request.body.dois,
+            dois_successfully_retrieved: docs.map((doc) => doc.doi),
+          },
+        );
+      }
       const p = count / limit;
       const maxP = Math.ceil(p);
       let updated_total = total;

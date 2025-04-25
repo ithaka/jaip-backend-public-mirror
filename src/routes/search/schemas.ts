@@ -35,6 +35,12 @@ export const route_schemas = {
           },
           minItems: 1,
         },
+        dois: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
       },
     },
     response: {
