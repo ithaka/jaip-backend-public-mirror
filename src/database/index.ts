@@ -3,13 +3,13 @@ import {
   features,
   groups,
   Prisma,
-  subdomains,
   ungrouped_features,
 } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { Alert } from "../types/alerts";
 import { Feature } from "../types/features";
+import { Subdomain } from "../types/routes";
 
 export interface JAIPDatabase {
   // HEALTHCHECK
@@ -98,17 +98,12 @@ export interface JAIPDatabase {
   get_subdomains_and_count: (
     count_query: Prisma.subdomainsCountArgs,
     query: Prisma.subdomainsFindManyArgs,
-  ) => Promise<[subdomains[], number, Error | null]>;
-  create_subdomain: (
-    query: Prisma.subdomainsCreateArgs,
-  ) => Promise<[subdomains, Error | null]>;
-  remove_subdomain: (
-    subdomains_facilities_query: Prisma.subdomains_facilitiesDeleteManyArgs,
-    subdomains_query: Prisma.subdomainsUpdateArgs,
-  ) => Promise<Error | null>;
+  ) => Promise<[Subdomain[], number, Error | null]>;
+  create_subdomain: (name: string) => Promise<[Subdomain, Error | null]>;
+  remove_subdomain: (id: number) => Promise<Error | null>;
   update_subdomain: (
     subdomains_query: Prisma.subdomainsUpdateArgs,
-  ) => Promise<[subdomains, Error | null]>;
+  ) => Promise<[Subdomain, Error | null]>;
 
   // GROUPS
   get_groups_and_count: (

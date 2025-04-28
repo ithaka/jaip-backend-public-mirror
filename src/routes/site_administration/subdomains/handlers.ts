@@ -7,7 +7,7 @@ import {
   NameAndIdBody,
   NameOnlyBody,
 } from "../../../types/routes";
-import { entity_types, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const get_subdomains_handler =
   (fastify: FastifyInstance) =>
@@ -109,14 +109,7 @@ export const add_subdomain_handler =
     log_payload.db_subdomain = name;
 
     try {
-      const [subdomain, error] = await fastify.db.create_subdomain({
-        data: {
-          subdomain: name,
-          entity_type: entity_types.facilities,
-          is_active: true,
-          updated_at: new Date(),
-        },
-      });
+      const [subdomain, error] = await fastify.db.create_subdomain(name);
       if (error) {
         throw error;
       }
@@ -187,24 +180,7 @@ export const delete_subdomain_handler =
     log_payload.db_subdomain_id = id;
 
     try {
-      const error = await fastify.db.remove_subdomain(
-        {
-          where: {
-            subdomains: {
-              id: id,
-            },
-          },
-        },
-        {
-          where: {
-            id,
-          },
-          data: {
-            is_active: false,
-            updated_at: new Date(),
-          },
-        },
-      );
+      const error = await fastify.db.remove_subdomain(id);
       if (error) {
         throw error;
       }
@@ -344,6 +320,27 @@ export const edit_subdomain_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // The .code property can be accessed in a type-safe manner.
+        // This indicates a unique constraint violation.
+        if (error.code === "P2002") {
+          reply.send({ duplicate: true });
+        }
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_edit_subdomain_complete",
+          request,
+          reply,
+          {
+            is_duplicate: true,
+            ...log_payload,
+            event_description:
+              "attempted to edit subdomain would create a duplicate",
+          },
+        );
+        return;
+      }
+
       fastify.event_logger.pep_error(
         request,
         reply,

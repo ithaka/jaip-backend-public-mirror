@@ -232,8 +232,8 @@ export interface EntitlementMap {
 export interface Subdomain {
   subdomain: string;
   is_active: boolean;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
   // The duplicate property is only returned when a user attempts to create a duplicate
   // of an existing subdomain.
   duplicate?: boolean;

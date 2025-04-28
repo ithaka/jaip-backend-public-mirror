@@ -5,7 +5,6 @@ import {
   Prisma,
   PrismaClient,
   status_options,
-  subdomains,
   user_roles,
   features,
   ungrouped_features,
@@ -15,6 +14,7 @@ import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
 import { ensure_error } from "../utils";
 import { Alert } from "../types/alerts";
+import { Subdomain } from "../types/routes";
 
 export class PrismaJAIPDatabase implements JAIPDatabase {
   client: PrismaClient;
@@ -339,7 +339,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   async get_subdomains_and_count(
     count_query: Prisma.subdomainsCountArgs,
     query: Prisma.subdomainsFindManyArgs,
-  ): Promise<[subdomains[], number, Error | null]> {
+  ): Promise<[Subdomain[], number, Error | null]> {
     try {
       const [count, subdomains] = await this.client.$transaction(async (tx) => {
         const count = await tx.subdomains.count(count_query);
@@ -359,25 +359,41 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       return [[], 0, error];
     }
   }
-  async create_subdomain(
-    query: Prisma.subdomainsCreateArgs,
-  ): Promise<[subdomains, Error | null]> {
+  async create_subdomain(name: string): Promise<[Subdomain, Error | null]> {
     try {
-      const subdomain = await this.client.subdomains.create(query);
+      const subdomain = await this.client.subdomains.create({
+        data: {
+          subdomain: name,
+          entity_type: entity_types.facilities,
+          is_active: true,
+          updated_at: new Date(),
+        },
+      });
       return [subdomain, null];
     } catch (err) {
       const error = ensure_error(err);
-      return [{} as subdomains, error];
+      return [{} as Subdomain, error];
     }
   }
-  async remove_subdomain(
-    subdomains_facilities_query: Prisma.subdomains_facilitiesDeleteManyArgs,
-    query: Prisma.subdomainsUpdateArgs,
-  ): Promise<Error | null> {
+  async remove_subdomain(id: number): Promise<Error | null> {
     try {
       await this.client.$transaction(async (tx) => {
-        await tx.subdomains_facilities.deleteMany(subdomains_facilities_query);
-        await tx.subdomains.update(query);
+        await tx.subdomains_facilities.deleteMany({
+          where: {
+            subdomains: {
+              id: id,
+            },
+          },
+        });
+        await tx.subdomains.update({
+          where: {
+            id,
+          },
+          data: {
+            is_active: false,
+            updated_at: new Date(),
+          },
+        });
       });
       return null;
     } catch (err) {
@@ -387,13 +403,13 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   }
   async update_subdomain(
     query: Prisma.subdomainsUpdateArgs,
-  ): Promise<[subdomains, Error | null]> {
+  ): Promise<[Subdomain, Error | null]> {
     try {
       const subdomain = await this.client.subdomains.update(query);
       return [subdomain, null];
     } catch (err) {
       const error = ensure_error(err);
-      return [{} as subdomains, error];
+      return [{} as Subdomain, error];
     }
   }
   async get_groups_and_count(
