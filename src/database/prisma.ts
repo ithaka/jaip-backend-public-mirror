@@ -52,10 +52,18 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     )) as IPBypassResult | null;
   }
   async get_valid_subdomain(
-    query: Prisma.subdomainsFindFirstArgs,
+    target: string,
   ): Promise<[{ subdomain: string } | null, Error | null]> {
     try {
-      const subdomain = await this.client.subdomains.findFirst(query);
+      const subdomain = await this.client.subdomains.findFirst({
+        where: {
+          subdomain: target,
+          is_active: true,
+        },
+        select: {
+          subdomain: true,
+        },
+      });
       return [subdomain, null];
     } catch (err) {
       const error = ensure_error(err);

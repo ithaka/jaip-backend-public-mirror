@@ -31,7 +31,7 @@ export interface JAIPDatabase {
     query: Prisma.subdomains_facilitiesFindFirstArgs,
   ) => Promise<IPBypassResult | null>;
   get_valid_subdomain: (
-    query: Prisma.subdomainsFindFirstArgs,
+    target: string,
   ) => Promise<[{ subdomain: string } | null, Error | null]>;
 
   // ACCOUNT MANAGEMENT

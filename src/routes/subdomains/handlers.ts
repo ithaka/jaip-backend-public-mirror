@@ -33,22 +33,25 @@ export const subdomain_validation_handler =
           event_description: "returning subdomain in valid list",
         },
       );
+      return;
     }
     try {
-      const [result, error] = await fastify.db.get_valid_subdomain({
-        where: {
-          subdomain,
-          is_active: true,
-        },
-        select: {
-          subdomain: true,
-        },
-      });
+      const [result, error] = await fastify.db.get_valid_subdomain(subdomain);
       if (error) {
         throw error;
       }
       if (!result) {
-        throw new Error("Subdomain not found");
+        reply.code(401);
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_validate_subdomain_complete",
+          request,
+          reply,
+          {
+            ...log_payload,
+            event_description: "no subdomains found in db",
+          },
+        );
+        return;
       }
       reply.send(result);
       fastify.event_logger.pep_standard_log_complete(
