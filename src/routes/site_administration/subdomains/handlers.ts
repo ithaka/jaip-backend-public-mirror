@@ -335,7 +335,7 @@ export const edit_subdomain_handler =
             is_duplicate: true,
             ...log_payload,
             event_description:
-              "attempted to edit subdomain would create a duplicate",
+              "attempt to edit subdomain would create a duplicate",
           },
         );
         return;

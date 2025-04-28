@@ -339,13 +339,13 @@ export const edit_group_handler =
           reply.send({ duplicate: true });
         }
         fastify.event_logger.pep_standard_log_complete(
-          "pep_add_group_complete",
+          "pep_edit_group_complete",
           request,
           reply,
           {
             is_duplicate: true,
             ...log_payload,
-            event_description: "attempted to add duplicate group",
+            event_description: "attempt to edit group would create a duplicate",
           },
         );
         return;
