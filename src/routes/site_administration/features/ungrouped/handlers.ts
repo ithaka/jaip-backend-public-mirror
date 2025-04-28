@@ -76,7 +76,14 @@ export const get_ungrouped_features_handler =
       }
 
       reply.send({
-        features,
+        features: features.map((feature) => ({
+          id: feature.id,
+          name: feature.name,
+          display_name: feature.display_name,
+          category: feature.category,
+          description: feature.description,
+          is_active: feature.is_active,
+        })),
         total: count,
       });
       fastify.event_logger.pep_standard_log_complete(
@@ -163,7 +170,14 @@ export const add_ungrouped_feature_handler =
         throw error;
       }
 
-      reply.send(feature);
+      reply.send({
+        name: feature.name,
+        display_name: feature.display_name,
+        category: feature.category,
+        description: feature.description,
+        id: feature.id,
+        is_active: feature.is_active,
+      });
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_add_ungrouped_feature_complete",
@@ -286,7 +300,14 @@ export const reactivate_ungrouped_feature_handler =
       if (error) {
         throw error;
       }
-      reply.send(feature);
+      reply.send({
+        name: feature.name,
+        display_name: feature.display_name,
+        category: feature.category,
+        description: feature.description,
+        id: feature.id,
+        is_active: feature.is_active,
+      });
       fastify.event_logger.pep_standard_log_complete(
         "pep_reactivate_ungrouped_feature_complete",
         request,
@@ -374,7 +395,14 @@ export const edit_ungrouped_feature_handler =
         throw error;
       }
       log_payload.feature = feature;
-      reply.send(feature);
+      reply.send({
+        name: feature.name,
+        display_name: feature.display_name,
+        category: feature.category,
+        description: feature.description,
+        id: feature.id,
+        is_active: feature.is_active,
+      });
       fastify.event_logger.pep_standard_log_complete(
         "pep_edit_ungrouped_feature_complete",
         request,
@@ -386,6 +414,28 @@ export const edit_ungrouped_feature_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
+
+      // This specific error can be handled separately.
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // The .code property can be accessed in a type-safe manner.
+        // This indicates a unique constraint violation.
+        if (error.code === "P2002") {
+          reply.send({ duplicate: true });
+        }
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_edit_ungrouped_feature_complete",
+          request,
+          reply,
+          {
+            is_duplicate: true,
+            ...log_payload,
+            event_description:
+              "attempt to edit duplicate would result in a duplicate name",
+          },
+        );
+        return;
+      }
+
       fastify.event_logger.pep_error(
         request,
         reply,

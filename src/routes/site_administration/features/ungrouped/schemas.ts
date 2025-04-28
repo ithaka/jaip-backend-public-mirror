@@ -124,7 +124,7 @@ export const route_schemas = {
     method: "PATCH",
     requires: {
       any: {
-        ungrouped: [UNGROUPED_FEATURES.add_feature],
+        ungrouped: [UNGROUPED_FEATURES.add_ungrouped_feature],
       },
     },
     response: {

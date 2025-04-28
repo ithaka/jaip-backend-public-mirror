@@ -12,12 +12,11 @@ import {
   valid_admin_subdomain,
 } from "../../../../../tests/fixtures/auth/fixtures";
 import {
-  basic_user_ungrouped_add_grouped_feature,
-  basic_user_ungrouped_edit_grouped_feature,
-  reactivate_grouped_feature_body_invalid,
-  reactivate_grouped_feature_body_valid,
-  grouped_feature_response,
-} from "../../../../../tests/fixtures/site_administration/features/grouped/fixtures";
+  basic_user_ungrouped_edit_ungrouped_feature,
+  basic_user_ungrouped_remove_ungrouped_feature,
+  delete_ungrouped_feature_body_invalid,
+  delete_ungrouped_feature_body_valid,
+} from "../../../../../tests/fixtures/site_administration/features/ungrouped/fixtures";
 
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
@@ -26,10 +25,10 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-const route = `${prefix}${get_route(route_schemas.reactivate_group_feature)}`;
+const route = `${prefix}${get_route(route_schemas.delete_ungrouped_feature)}`;
 test(`requests the ${route} route`, async () => {
   const res = await app.inject({
-    method: "PATCH",
+    method: "DELETE",
     url: route,
   });
   expect(res.statusCode).toEqual(400);
@@ -37,55 +36,48 @@ test(`requests the ${route} route`, async () => {
 
 test(`requests the ${route} route with invalid body`, async () => {
   const res = await app.inject({
-    method: "PATCH",
+    method: "DELETE",
     url: `${route}`,
-    payload: reactivate_grouped_feature_body_invalid,
+    payload: delete_ungrouped_feature_body_invalid,
   });
   expect(res.statusCode).toEqual(400);
 });
 
-test(`requests the ${route} route with valid body and no ungrouped feature permissions`, async () => {
+test(`requests the ${route} route with valid body and no subdomain permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
-    basic_user_ungrouped_edit_grouped_feature,
+    basic_user_ungrouped_edit_ungrouped_feature,
   );
 
   const res = await app.inject({
-    method: "PATCH",
+    method: "DELETE",
     url: `${route}`,
-    payload: reactivate_grouped_feature_body_valid,
+    payload: delete_ungrouped_feature_body_valid,
   });
 
   expect(res.statusCode).toEqual(403);
 });
 
-test(`requests the ${route} route with valid body and add ungrouped feature permissions`, async () => {
+test(`requests the ${route} route with valid body and remove subdomain permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
-    basic_user_ungrouped_add_grouped_feature,
+    basic_user_ungrouped_remove_ungrouped_feature,
   );
-  db_mock.update_grouped_feature.mockResolvedValueOnce([
-    {
-      ...grouped_feature_response[0],
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-    null,
-  ]);
+  db_mock.remove_ungrouped_feature.mockResolvedValueOnce(null);
 
   const res = await app.inject({
-    method: "PATCH",
+    method: "DELETE",
     url: `${route}`,
-    payload: reactivate_grouped_feature_body_valid,
+    payload: delete_ungrouped_feature_body_valid,
     headers: {
       host: valid_admin_subdomain,
     },
   });
 
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
-  expect(db_mock.update_grouped_feature).toHaveBeenCalledTimes(1);
-  expect(res.json()).toStrictEqual(grouped_feature_response[0]);
+  expect(db_mock.remove_ungrouped_feature).toHaveBeenCalledTimes(1);
+  expect(res.payload).toStrictEqual("");
   expect(res.statusCode).toEqual(200);
 });
