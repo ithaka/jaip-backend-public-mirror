@@ -12,7 +12,7 @@ test(`requests the ${route} route when no alert exists`, async () => {
   db_mock.get_alerts.mockResolvedValueOnce([null, null]);
   const res = await app.inject({
     method: "GET",
-    url: `${prefix}${get_route(route_schemas.alerts)}`,
+    url: route,
   });
   expect(res.statusCode).toEqual(204);
 });
@@ -21,7 +21,7 @@ test(`requests the ${route} route when an alert exists`, async () => {
   db_mock.get_alerts.mockResolvedValueOnce([alerts_fixture, null]);
   const res = await app.inject({
     method: "GET",
-    url: `${prefix}${get_route(route_schemas.alerts)}`,
+    url: route,
   });
   expect(res.json()).toStrictEqual(alerts_fixture);
   expect(res.statusCode).toEqual(200);
@@ -34,7 +34,7 @@ test(`requests the ${route} route when the database errors`, async () => {
   ]);
   const res = await app.inject({
     method: "GET",
-    url: `${prefix}${get_route(route_schemas.alerts)}`,
+    url: route,
   });
 
   expect(res.statusCode).toEqual(500);
