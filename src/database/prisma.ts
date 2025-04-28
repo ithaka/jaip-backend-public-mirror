@@ -435,11 +435,13 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       return [[], 0, error];
     }
   }
-  async create_group(
-    query: Prisma.groupsCreateArgs,
-  ): Promise<[groups, Error | null]> {
+  async create_group(name: string): Promise<[groups, Error | null]> {
     try {
-      const group = await this.client.groups.create(query);
+      const group = await this.client.groups.create({
+        data: {
+          name: name,
+        },
+      });
       return [group, null];
     } catch (err) {
       const error = ensure_error(err);

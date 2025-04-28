@@ -58,7 +58,11 @@ export const get_groups_handler =
       }
 
       reply.send({
-        groups,
+        groups: groups.map((group) => ({
+          id: group.id,
+          name: group.name,
+          is_active: group.is_active,
+        })),
         total: count,
       });
       fastify.event_logger.pep_standard_log_complete(
@@ -106,16 +110,16 @@ export const add_group_handler =
     log_payload.group_name = name;
 
     try {
-      const [group, error] = await fastify.db.create_group({
-        data: {
-          name: name,
-        },
-      });
+      const [group, error] = await fastify.db.create_group(name);
       if (error) {
         throw error;
       }
 
-      reply.send(group);
+      reply.send({
+        id: group.id,
+        name: group.name,
+        is_active: group.is_active,
+      });
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_add_group_complete",
@@ -239,7 +243,11 @@ export const reactivate_group_handler =
         throw error;
       }
 
-      reply.send(group);
+      reply.send({
+        id: group.id,
+        name: group.name,
+        is_active: group.is_active,
+      });
       fastify.event_logger.pep_standard_log_complete(
         "pep_reactivate_group_complete",
         request,
@@ -302,12 +310,15 @@ export const edit_group_handler =
           updated_at: new Date(),
         },
       });
-
       if (error) {
         throw error;
       }
 
-      reply.send(group);
+      reply.send({
+        id: group.id,
+        name: group.name,
+        is_active: group.is_active,
+      });
       fastify.event_logger.pep_standard_log_complete(
         "pep_edit_group_complete",
         request,
@@ -319,6 +330,27 @@ export const edit_group_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
+
+      // This specific error can be handled separately.
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // The .code property can be accessed in a type-safe manner.
+        // This indicates a unique constraint violation.
+        if (error.code === "P2002") {
+          reply.send({ duplicate: true });
+        }
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_add_group_complete",
+          request,
+          reply,
+          {
+            is_duplicate: true,
+            ...log_payload,
+            event_description: "attempted to add duplicate group",
+          },
+        );
+        return;
+      }
+
       fastify.event_logger.pep_error(
         request,
         reply,
