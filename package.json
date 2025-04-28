@@ -4,8 +4,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "LOG_LEVEL=info nodemon  --inspect src/server.ts",
-    "test": "LOG_LEVEL=error jest src/routes/search/__tests__/status.test.ts --maxWorkers=50%",
-    "test:ci": "LOG_LEVEL=error jest src/routes/search/__tests__/status.test.ts --runInBand",
+    "test": "LOG_LEVEL=error jest src/ --maxWorkers=50%",
+    "test:ci": "LOG_LEVEL=error jest src/ --runInBand",
     "postinstall": "husky && prisma generate",
     "pre-commit": "lint-staged",
     "type-check": "tsc --noEmit",
