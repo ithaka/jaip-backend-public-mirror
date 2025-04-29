@@ -70,9 +70,6 @@ spec:
   owner: jaip
   lifecycle: beta
   system: jaip
-  # This definition is currently using the test URL. This should be updated to prod once it's actually in use,
-  # but it's also not really that important, as this shouldn't generally be relied upon for much of anything.
-  # See: https://github.com/backstage/backstage/issues/17736
   definition:
     $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
 ---
