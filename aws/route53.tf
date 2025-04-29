@@ -41,6 +41,12 @@ locals {
   # Orijin devices in Massachusetts).
   prod_provider_prefixes = [
     "prod-subdomain-example",
+    "orijin-ma",
+    "orijin-ut",
+    "atlo-az",
+    "atlo-fl",
+    "atlo-ks",
+    "atlo-la",
   ]
 
   # Validation
@@ -90,6 +96,40 @@ terraform {
   }
 }
 
+# TEMPORARY ADMIN SITE
+resource "aws_route53_zone" "temporary_admin_zone" {
+  name = local.temporary_admin_domain
+
+  tags = {
+    "ithaka/environment" = "prod"
+    "ithaka/owner"       = "jaip"
+    "ithaka/business.unit" = "labs"
+    "ithaka/app" = local.app_name
+    app = local.app_name
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# This is the main record for the old admin subdomain. This should be
+# set to redirect to the new admin subdomain.
+resource "aws_route53_record" "temporary_admin_record" {
+  zone_id = aws_route53_zone.temporary_admin_zone.zone_id
+  name    = "${local.temporary_admin_domain}"
+  type    = "A"
+  alias {
+    # NOTE: Do NOT update this until the migration is ready for the final
+    # stage and participants have been notified.
+    name                   = local.cloudfront_dns
+    zone_id                = local.zone_id 
+    evaluate_target_health = true
+  }
+  lifecycle {
+    # prevent_destroy = true
+  }
+}
 
 # PRODUCTION
 resource "aws_route53_zone" "zone" {
@@ -123,23 +163,6 @@ resource "aws_route53_record" "record" {
   }
 }
 
-# This is the main record for the old admin subdomain. This should be
-# set to redirect to the new admin subdomain.
-resource "aws_route53_record" "temporary_admin_record" {
-  zone_id = aws_route53_zone.zone.zone_id
-  name    = "${local.temporary_admin_domain}"
-  type    = "A"
-  alias {
-    # NOTE: Do NOT update this until the migration is ready for the final
-    # stage and participants have been notified.
-    name                   = local.cloudfront_dns
-    zone_id                = local.zone_id 
-    evaluate_target_health = true
-  }
-  lifecycle {
-    prevent_destroy = true
-  }
-}
 
 # These are the production subdomains. They include the provider subdomain
 # prefixed to the production subdomain, e.g., prod-subdomain-example.pep.jstor.org.
