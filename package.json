@@ -56,7 +56,7 @@
     "typescript-eslint": "^8.26.1"
   },
   "lint-staged": {
-    "src/**/*.ts": [
+    "src": [
       "prettier --write",
       "eslint --fix"
     ]
