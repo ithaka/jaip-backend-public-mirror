@@ -160,6 +160,16 @@ export interface AddEntitiesRequest {
   contact: string;
   name: string;
   groups: Group[];
+  ungrouped_features?: {
+    [key: string]: {
+      id: number;
+      name: string;
+      display_name: string;
+      category: string;
+      description: string;
+      is_active: boolean;
+    }
+  }
 }
 
 export interface GetEntitiesRequest {
