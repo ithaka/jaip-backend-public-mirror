@@ -248,7 +248,7 @@ export const remove_facility = async (
 
 const trim_entity = (entity: User): User => {
   entity.contact = entity.contact!.trim().toLowerCase();
-  entity.name = entity.name.trim().toLowerCase();
+  entity.name = entity.name.trim();
   return entity;
 };
 
