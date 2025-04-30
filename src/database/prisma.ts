@@ -29,7 +29,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
         console.log("Duration: " + e.duration + "ms");
       },
     );
-      client.$on(
+    client.$on(
       // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
       "error",
       (e: { query: string; params: string; duration: number }) => {
@@ -135,23 +135,27 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     entity: User,
     is_manager: boolean,
   ) {
-    let procedure = `${action}_${type}`;
+    const procedure = `${action}_${type}`;
     switch (procedure) {
       case "add_facilities":
-        await this.client
-          .$queryRaw(Prisma.sql`CALL add_facilities(${entity}::json,${is_manager})`);
+        await this.client.$queryRaw(
+          Prisma.sql`CALL add_facilities(${entity}::json,${is_manager})`,
+        );
         break;
       case "edit_facilities":
-        await this.client
-          .$queryRaw(Prisma.sql`CALL edit_facilities(${entity}::json,${is_manager})`);
+        await this.client.$queryRaw(
+          Prisma.sql`CALL edit_facilities(${entity}::json,${is_manager})`,
+        );
         break;
       case "add_users":
-        await this.client
-          .$queryRaw(Prisma.sql`CALL add_users(${entity}::json,${is_manager})`);
+        await this.client.$queryRaw(
+          Prisma.sql`CALL add_users(${entity}::json,${is_manager})`,
+        );
         break;
       case "edit_users":
-        await this.client
-          .$queryRaw(Prisma.sql`CALL edit_users(${entity}::json,${is_manager})`);
+        await this.client.$queryRaw(
+          Prisma.sql`CALL edit_users(${entity}::json,${is_manager})`,
+        );
         break;
       default:
         throw new Error("Invalid action");
@@ -457,7 +461,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       if (!groups) {
         throw new Error("Groups not found");
       }
-  
+
       return [groups, count || 0, null];
     } catch (err) {
       const error = ensure_error(err);

@@ -26,26 +26,28 @@ const plugin: FastifyPluginAsync<JAIPDatabasePluginOptions> = fp(
 );
 
 const options = {
-  db: new PrismaJAIPDatabase(new PrismaClient({
-    log: [
-      {
-        emit: "event",
-        level: "query",
-      },
-      {
-        emit: "stdout",
-        level: "error",
-      },
-      {
-        emit: "stdout",
-        level: "info",
-      },
-      {
-        emit: "stdout",
-        level: "warn",
-      },
-    ],
-  })),
+  db: new PrismaJAIPDatabase(
+    new PrismaClient({
+      log: [
+        {
+          emit: "event",
+          level: "query",
+        },
+        {
+          emit: "stdout",
+          level: "error",
+        },
+        {
+          emit: "stdout",
+          level: "info",
+        },
+        {
+          emit: "stdout",
+          level: "warn",
+        },
+      ],
+    }),
+  ),
 };
 
 export default {
