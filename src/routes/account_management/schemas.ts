@@ -103,7 +103,7 @@ const add_users_body = {
   },
 };
 const get_add_facilities_body = () => {
-  const request = { ...add_users_body };
+  const request = structuredClone(add_users_body);
   request.body.properties.groups.maxItems = 1;
   return request;
 };
