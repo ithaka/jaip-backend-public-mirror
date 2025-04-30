@@ -316,7 +316,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
         const statuses = (await tx.statuses.findMany(query)) || [];
         return [statuses, count];
       });
-      return [statuses as unknown as Status[], count, null];
+      return [statuses as unknown as Status[], count || 0, null];
     } catch (err) {
       const error = ensure_error(err);
       return [null, null, error];
@@ -349,11 +349,8 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       if (!subdomains) {
         throw new Error("Subdomains not found");
       }
-      if (!count) {
-        throw new Error("Count not found");
-      }
 
-      return [subdomains, count, null];
+      return [subdomains, count || 0, null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], 0, error];
@@ -425,11 +422,8 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       if (!groups) {
         throw new Error("Groups not found");
       }
-      if (!count) {
-        throw new Error("Count not found");
-      }
-
-      return [groups, count, null];
+  
+      return [groups, count || 0, null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], 0, error];
@@ -540,11 +534,8 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       if (!features) {
         throw new Error("Features not found");
       }
-      if (!count) {
-        throw new Error("Count not found");
-      }
 
-      return [features, count, null];
+      return [features, count || 0, null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], 0, error];
@@ -620,11 +611,8 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       if (!features) {
         throw new Error("Features not found");
       }
-      if (!count) {
-        throw new Error("Count not found");
-      }
 
-      return [features, count, null];
+      return [features, count || 0, null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], 0, error];
