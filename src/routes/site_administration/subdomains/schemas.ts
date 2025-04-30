@@ -1,4 +1,4 @@
-import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../consts";
+import { FEATURES, SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../consts";
 import { Subdomain } from "../../../types/routes";
 import { standard_post_errors } from "../../../utils";
 
@@ -16,6 +16,9 @@ export const route_schemas = {
           UNGROUPED_FEATURES.edit_subdomain,
           UNGROUPED_FEATURES.delete_subdomain,
         ],
+        grouped: [
+          FEATURES.manage_facilities,
+        ]
       },
     },
     response: {
@@ -42,7 +45,7 @@ export const route_schemas = {
     },
     body: {
       type: "object",
-      required: ["name", "page", "limit", "is_active"],
+      required: ["is_active"],
       properties: {
         name: { type: "string" },
         page: { type: "number" },

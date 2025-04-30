@@ -24,9 +24,9 @@ export const get_subdomains_handler =
       },
     );
 
-    const name = request.body.name!;
-    const page = request.body.page!;
-    const limit = request.body.limit!;
+    const name = request.body.name || "";
+    const page = request.body.page;
+    const limit = request.body.limit;
     const is_active = request.body.is_active!;
 
     try {
@@ -41,20 +41,22 @@ export const get_subdomains_handler =
       if (is_active) {
         where_clause!.where!.is_active = is_active;
       }
-
+      const query: Prisma.subdomainsFindManyArgs = {
+        where: where_clause.where,
+        orderBy: {
+          subdomain: "asc",
+        },
+      }
+      if (limit && page) {
+        query.skip = (page - 1) * limit;
+        query.take = limit;
+      }
       const [subdomains, count, error] =
         await fastify.db.get_subdomains_and_count(
           {
             ...(where_clause as Prisma.subdomainsCountArgs),
           },
-          {
-            ...where_clause,
-            skip: (page - 1) * limit,
-            take: limit,
-            orderBy: {
-              subdomain: "asc",
-            },
-          },
+          query,
         );
       if (error) {
         throw error;
