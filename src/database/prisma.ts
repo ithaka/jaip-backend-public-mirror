@@ -20,6 +20,22 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   client: PrismaClient;
 
   constructor(client: PrismaClient) {
+    client.$on(
+      // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
+      "query",
+      (e: { query: string; params: string; duration: number }) => {
+        console.log("Query: " + e.query);
+        console.log("Params: " + e.params);
+        console.log("Duration: " + e.duration + "ms");
+      },
+    );
+      client.$on(
+      // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
+      "error",
+      (e: { query: string; params: string; duration: number }) => {
+        console.log("Error: " + JSON.stringify(e));
+      },
+    );
     this.client = client;
   }
 
@@ -119,8 +135,27 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     entity: User,
     is_manager: boolean,
   ) {
-    await this.client
-      .$queryRaw`CALL ${action}_${type}(${entity}::json,${is_manager})`;
+    let procedure = `${action}_${type}`;
+    switch (procedure) {
+      case "add_facilities":
+        await this.client
+          .$queryRaw(Prisma.sql`CALL add_facilities(${entity}::json,${is_manager})`);
+        break;
+      case "edit_facilities":
+        await this.client
+          .$queryRaw(Prisma.sql`CALL edit_facilities(${entity}::json,${is_manager})`);
+        break;
+      case "add_users":
+        await this.client
+          .$queryRaw(Prisma.sql`CALL add_users(${entity}::json,${is_manager})`);
+        break;
+      case "edit_users":
+        await this.client
+          .$queryRaw(Prisma.sql`CALL edit_users(${entity}::json,${is_manager})`);
+        break;
+      default:
+        throw new Error("Invalid action");
+    }
   }
 
   async get_alerts(): Promise<[Alert | null, Error | null]> {
