@@ -16,17 +16,8 @@ const get_entities_where_clause = (
   include_ungrouped: boolean = false,
 ) => {
   let entities_clause = {};
-  if (include_ungrouped) {
-    entities_clause = {
-      groups_entities: {
-        some: {
-          role: {
-            equals: role,
-          },
-        },
-      },
-    };
-  } else {
+  const roles: user_roles[] = [role]
+  if (!include_ungrouped) {
     entities_clause = {
       groups_entities: {
         some: {
@@ -34,13 +25,13 @@ const get_entities_where_clause = (
             in: groups,
           },
           role: {
-            equals: role,
+            in: roles,
           },
         },
       },
     };
   }
-  const where_clause = {
+  const where_clause: Prisma.usersFindManyArgs = {
     where: {
       entities: entities_clause,
       OR: [
@@ -57,9 +48,8 @@ const get_entities_where_clause = (
           },
         },
       ],
-    },
-  };
-
+  }
+}
   return where_clause;
 };
 
@@ -79,7 +69,7 @@ export const get_users = async (
       user_roles.admin,
       query,
       include_ungrouped,
-    );
+    ) as Prisma.usersCountArgs;
     const users_query = {
       ...get_db_pagination(page, limit),
       orderBy: {
@@ -92,7 +82,7 @@ export const get_users = async (
         user_roles.admin,
         query,
         include_ungrouped,
-      ),
+      ) as Prisma.usersFindManyArgs,
       select: get_many_entities_select_clause(user_roles.admin, groups),
     } as Prisma.usersFindManyArgs;
     const [count, users] = await db.get_users_and_count(
@@ -138,7 +128,7 @@ export const get_facilities = async (
       groups,
       user_roles.user,
       query,
-    );
+    ) as Prisma.facilitiesCountArgs;
     const facilities_query = {
       ...get_db_pagination(page, limit),
       orderBy: {
@@ -224,7 +214,7 @@ export const remove_user = async (
   groups: Group[],
 ): Promise<Error | null> => {
   try {
-    db.remove_user(get_remove_entity_query(id, groups));
+    await db.remove_user(get_remove_entity_query(id, groups));
     return null;
   } catch (err) {
     const error = ensure_error(err);
@@ -261,7 +251,6 @@ export const add_or_edit_entity = async (
   try {
     // Trim whitespace from the entity's contact and name fields and convert to lowercase
     entity = trim_entity(entity);
-
     // It is possible that the user submitting this request does not have the required permissions
     // to see that the entity they're adding already exists in another group. So first we check for that possibility.
     let existing_entity = {} as { id: number } | null;
@@ -291,7 +280,9 @@ export const add_or_edit_entity = async (
     // time out, and there's no good way to roll back individual changes outside of a transaction.
     // TODO: We could simplify the data structure considerably, which might make it more effective to use Prisma.
     const action = existing_entity?.id ? "edit" : "add";
-
+    if (existing_entity?.id) {
+      entity.id = existing_entity.id;
+    }
     if (action === "add" && type === entity_types.facilities && !is_manager) {
       throw new Error("User does not have permission to add facilities");
     }

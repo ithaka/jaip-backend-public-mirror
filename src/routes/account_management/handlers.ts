@@ -255,13 +255,12 @@ export const add_or_edit_entities_handler =
     );
 
     const requested_user = request.body;
-    // The request won't include the type or ungrouped features. The function will not alter ungrouped features, so that
-    // can be ignored, but the type does need to be included.
     const new_user: User = {
       ...requested_user,
       type,
-      ungrouped_features: {},
+      ungrouped_features: requested_user.ungrouped_features || {}
     };
+
     log_payload.altered_user = new_user;
     const groups = new_user.groups.map((group) => group.id);
     log_payload.groups = groups;

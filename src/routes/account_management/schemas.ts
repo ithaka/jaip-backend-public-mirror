@@ -72,7 +72,7 @@ const remove_entities_body = {
 const add_users_body = {
   body: {
     type: "object",
-    required: ["groups", "contact", "name"],
+    required: ["contact", "name"],
     properties: {
       contact: {
         type: "string",
@@ -80,6 +80,29 @@ const add_users_body = {
       name: {
         type: "string",
         minLength: 1,
+      },
+      ungrouped_features: {
+        type: "object",
+        properties: {
+          id: {
+            type: "number",
+          },
+          name: {
+            type: "string",
+          },
+          display_name: {
+            type: "string",
+          },
+          category: {
+            type: "string",
+          },
+          description: {
+            type: "string",
+          },
+          enabled: {
+            type: "boolean",
+          },
+        }
       },
       groups: {
         type: "array",
@@ -95,13 +118,13 @@ const add_users_body = {
             },
           },
         },
-        minItems: 1,
         // We don't really have a max number of groups, but we need the property here so we can modify it for facilities.
         maxItems: 1000,
       },
     },
   },
 };
+
 const get_add_facilities_body = () => {
   const request = structuredClone(add_users_body);
   request.body.properties.groups.maxItems = 1;
