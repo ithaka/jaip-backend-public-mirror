@@ -10,6 +10,7 @@ import {
   get_page_url,
   get_s3_object,
 } from "./helpers";
+import { AxiosError } from "axios";
 
 export const page_handler =
   (fastify: FastifyInstance) =>
@@ -196,7 +197,12 @@ export const metadata_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      reply.code(500).send(error.message);
+
+      if (error instanceof AxiosError && error.code === AxiosError.ERR_BAD_REQUEST) {
+        reply.code(404).send({ status: 404 });
+      } else {
+        reply.code(500).send(error.message);
+      }
       fastify.event_logger.pep_error(
         request,
         reply,
