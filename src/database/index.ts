@@ -3,6 +3,7 @@ import {
   features,
   groups,
   Prisma,
+  status_options,
   ungrouped_features,
 } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -87,7 +88,14 @@ export interface JAIPDatabase {
     user_id: number,
   ) => Promise<Error | null>;
   get_search_statuses: (
-    query: Prisma.statusesFindManyArgs,
+    query_string: string,
+    groups: number[],
+    query_statuses: status_options[],
+    start_date: Date,
+    end_date: Date,
+    sort: string,
+    limit: number,
+    page: number,
   ) => Promise<[Status[] | null, number | null, Error | null]>;
 
   // TOKENS

@@ -345,22 +345,38 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
   async get_search_statuses(
-    query: Prisma.statusesFindManyArgs,
+    query_string: string,
+    groups: number[],
+    query_statuses: status_options[],
+    start_date: Date,
+    end_date: Date,
+    sort: string,
+    limit: number,
+    page: number,
   ): Promise<[Status[] | null, number | null, Error | null]> {
     try {
+      // TODO: This absurd query is a bit of a hack to get around some limitations with Prisma and subqueries. It could certainly be 
+      // simplified if we didn't need a count, and could probably be simplified further to a standard prisma query as well.
+      let where_clause = `LOWER(status_details.detail) LIKE '%' || LOWER('${query_string}') || '%' OR LOWER(statuses.status::text) LIKE '%' || LOWER('${query_string}') || '%' OR LOWER(entities.name) LIKE '%' || LOWER('${query_string}') || '%' OR LOWER(users.jstor_id) LIKE '%' || LOWER('${query_string}') || '%'`;
+      if (query_string === "") {
+        where_clause += " OR status_details.detail IS NULL";
+      }
       const [statuses, count] = await this.client.$transaction(async (tx) => {
-        const count = await tx.statuses.count({
-          where: query.where,
-        });
-        const statuses = (await tx.statuses.findMany(query)) || [];
-        return [statuses, count];
+        const max_ids_object: { max: number }[] = await tx.$queryRaw`SELECT MAX(id) FROM statuses WHERE group_id = ANY(${groups}::INT[]) GROUP BY jstor_item_id`;
+        const id_object: { id: number }[] = await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map(obj=>obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::date AND statuses.created_at <= ${end_date}::date AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id`;
+        const count_response: { count: BigInt }[] = await tx.$queryRaw`SELECT COUNT(*) FROM statuses WHERE id=ANY(${id_object.map(obj=>obj.id)})`;
+        const statuses = await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${id_object.map(obj=>obj.id)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::date AND statuses.created_at <= ${end_date}::date AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY ${sort==="new" ? "statuses.created_at DESC" : "statuses.created_at ASC"} LIMIT ${limit} OFFSET ${limit * (page - 1)}`;
+        return [statuses, (count_response || [])[0].count];
+      }, {
+        timeout: 10000
       });
-      return [statuses as unknown as Status[], count || 0, null];
+      return [statuses as unknown as Status[], Number(count), null];
     } catch (err) {
       const error = ensure_error(err);
       return [null, null, error];
     }
   }
+
   async get_all_tokens(): Promise<[string[], Error | null]> {
     try {
       const tokens = await this.client.tokens.findMany({

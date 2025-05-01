@@ -86,54 +86,13 @@ export const status_search_handler =
         },
       };
 
-      // If the a search query is included and the user is an admin, we'll
-      // search the status details and entities as well.
-      const query_string = request.body.statusQuery;
-      if (query_string && request.is_authenticated_admin) {
-        query.where!.OR = [
-          {
-            jstor_item_id: {
-              contains: query_string,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            status_details: {
-              some: {
-                detail: {
-                  contains: query_string,
-                  mode: Prisma.QueryMode.insensitive,
-                },
-              },
-            },
-          },
-          {
-            entities: {
-              name: {
-                contains: query_string,
-                mode: Prisma.QueryMode.insensitive,
-              },
-            },
-          },
-          {
-            entities: {
-              users: {
-                jstor_id: {
-                  contains: query_string,
-                  mode: Prisma.QueryMode.insensitive,
-                },
-              },
-            },
-          },
-        ];
-      }
+      const query_string = request.body.statusQuery.trim();
 
       const [status_results, count, error] =
-        await fastify.db.get_search_statuses(query);
+        await fastify.db.get_search_statuses(query_string, groups, query_statuses, start_date, end_date, request.body.sort, request.body.limit, request.body.pageNo);
       if (error) {
         throw error;
       }
-
       if (!status_results?.length) {
         reply.send({
           docs: [],
