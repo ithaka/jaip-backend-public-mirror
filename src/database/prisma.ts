@@ -367,7 +367,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
             await tx.$queryRaw`SELECT MAX(id) FROM statuses WHERE group_id = ANY(${groups}::INT[]) GROUP BY jstor_item_id, group_id`;
           const id_object: { id: number }[] =
             await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::date AND statuses.created_at <= ${end_date}::date AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id`;
-          const count_response: { count: BigInt }[] =
+          const count_response: { count: bigint }[] =
             await tx.$queryRaw`SELECT COUNT(*) FROM statuses WHERE id=ANY(${id_object.map((obj) => obj.id)})`;
           const statuses =
             await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${id_object.map((obj) => obj.id)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::date AND statuses.created_at <= ${end_date}::date AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY ${sort === "new" ? "statuses.created_at DESC" : "statuses.created_at ASC"} LIMIT ${limit} OFFSET ${limit * (page - 1)}`;

@@ -65,27 +65,6 @@ export const status_search_handler =
 
       const groups = request.body.groups || [];
 
-      const query: Prisma.statusesFindManyArgs = {
-        where: {
-          status: {
-            in: query_statuses,
-          },
-          jstor_item_type: jstor_types.doi,
-          group_id: {
-            in: groups,
-          },
-          created_at: {
-            gte: start_date,
-            lte: end_date,
-          },
-        },
-        skip: request.body.limit * (request.body.pageNo - 1),
-        take: request.body.limit,
-        orderBy: {
-          created_at: "desc",
-        },
-      };
-
       const query_string = request.body.statusQuery.trim();
 
       const [status_results, count, error] =
