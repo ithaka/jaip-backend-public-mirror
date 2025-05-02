@@ -356,7 +356,7 @@ export const get_md_from_cedar = (
       md.isRightToLeft = item.bidirectional_category === "right_to_left";
     }
     if (item.page_images.length > 0 && md.pageCount === 0) {
-      md.pageCount = item.page_images.length;
+      md.pageCount = parseInt(item.page_count, 10);
     }
     if (
       md.itemType &&
