@@ -191,10 +191,10 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
-      const { query, limit, pageNo, sort, facets, filters, statusQuery } =
+      const { query, limit, pageNo, sort, facets, filters } =
         request.body;
       log_payload.search_request = request.body;
-      const query_string = query || statusQuery || "";
+      const query_string = query || "";
       const page_mark = btoa(`pageMark=${pageNo}`);
       const search3_request: Search3Request = {
         query: query_string,
@@ -222,7 +222,6 @@ export const search_handler =
         }
       }
       search3_request.filter_queries.push(...filters);
-
       if (facets.length) {
         search3_request.ms_facet_fields = facets.map((facet) => {
           return {
