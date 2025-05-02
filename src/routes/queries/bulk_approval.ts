@@ -11,7 +11,7 @@ export const bulk_approval_query = (
   groups: number[],
 ): Prisma.statusesFindManyArgs => {
   return {
-    distinct: ["jstor_item_id"],
+    distinct: ["jstor_item_id", "group_id"],
     select: {
       jstor_item_id: true,
       jstor_item_type: true,
@@ -35,9 +35,6 @@ export const bulk_approval_query = (
       },
       jstor_item_id: {
         in: codes,
-      },
-      status: {
-        equals: "Approved",
       },
       group_id: {
         in: groups,

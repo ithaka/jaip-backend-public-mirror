@@ -206,7 +206,7 @@ ALTER PROCEDURE public.add_facilities(fac json) OWNER TO postgres;
 -- Name: add_facilities(json, boolean); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.add_facilities(fac json, is_manager boolean)
+CREATE OR REPLACE PROCEDURE public.add_facilities(fac json, is_manager boolean)
     LANGUAGE plpgsql
     AS $$
   DECLARE
@@ -227,7 +227,7 @@ CREATE PROCEDURE public.add_facilities(fac json, is_manager boolean)
     INSERT INTO facilities (jstor_id, id) VALUES (fac->>'contact', e.id);
 
     IF is_manager THEN
-      FOR ufname, ufdetails IN SELECT * FROM json_each(usr->'ungrouped_features') WHERE json_typeof(usr->'ungrouped_features')='object'
+      FOR ufname, ufdetails IN SELECT * FROM json_each(fac->'ungrouped_features') WHERE json_typeof(fac->'ungrouped_features')='object'
       LOOP
         fenabled:=(ufdetails->>'enabled'); 
         INSERT INTO ungrouped_features_entities (entity_id, feature_id, enabled) 
@@ -737,7 +737,7 @@ ALTER PROCEDURE public.edit_facilities(fac json) OWNER TO postgres;
 -- Name: edit_facilities(json, boolean); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.edit_facilities(fac json, is_manager boolean)
+CREATE OR REPLACE PROCEDURE public.edit_facilities(fac json, is_manager boolean)
     LANGUAGE plpgsql
     AS $$
   DECLARE
@@ -775,7 +775,7 @@ CREATE PROCEDURE public.edit_facilities(fac json, is_manager boolean)
     END IF;
 
     IF is_manager THEN
-      FOR ufname, ufdetails IN SELECT * FROM json_each(usr->'ungrouped_features') WHERE json_typeof(usr->'ungrouped_features')='object'
+      FOR ufname, ufdetails IN SELECT * FROM json_each(fac->'ungrouped_features') WHERE json_typeof(fac->'ungrouped_features')='object'
       LOOP
         fenabled:=(ufdetails->>'enabled'); 
         INSERT INTO ungrouped_features_entities (entity_id, feature_id, enabled) 
@@ -971,7 +971,7 @@ ALTER PROCEDURE public.edit_users(usr json) OWNER TO postgres;
 -- Name: edit_users(json, boolean); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.edit_users(usr json, is_manager boolean)
+CREATE OR REPLACE PROCEDURE public.edit_users(usr json, is_manager boolean)
     LANGUAGE plpgsql
     AS $$
   DECLARE
@@ -1008,9 +1008,10 @@ CREATE PROCEDURE public.edit_users(usr json, is_manager boolean)
     IF  is_manager THEN
       FOR ufname, ufdetails IN SELECT * FROM json_each(usr->'ungrouped_features') WHERE json_typeof(usr->'ungrouped_features')='object'
       LOOP
+        RAISE NOTICE 'Ungrouped feature: %', ufname;
         fenabled:=(ufdetails->>'enabled'); 
         INSERT INTO ungrouped_features_entities (entity_id, feature_id, enabled) 
-        VALUES (user_id, (SELECT id FROM ungrouped_features WHERE name=ufname), fenabled)
+        VALUES (user_id, (SELECT id FROM ungrouped_features WHERE name=ufname AND is_active=true), fenabled)
         ON CONFLICT (feature_id, entity_id) DO UPDATE
         SET enabled=fenabled, updated_at=DEFAULT;
       END LOOP;
@@ -1041,7 +1042,7 @@ CREATE PROCEDURE public.edit_users(usr json, is_manager boolean)
 END; $$;
 
 
-ALTER PROCEDURE public.edit_users(usr json, is_manager boolean) OWNER TO postgres;
+ALTER PROCEDURE public.edit_users(usr json, is_manager boolean) OWNER TO masterpostgresuser;
 
 --
 -- Name: feature_mods(); Type: FUNCTION; Schema: public; Owner: postgres

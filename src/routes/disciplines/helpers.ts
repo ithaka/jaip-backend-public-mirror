@@ -5,7 +5,7 @@ import {
 } from "../queries/bulk_approval";
 import { FastifyInstance } from "fastify";
 import { ensure_error } from "../../utils";
-import { jstor_types } from "@prisma/client";
+import { jstor_types, status_options } from "@prisma/client";
 
 type RequiredCode = Required<string>;
 
@@ -43,6 +43,9 @@ export const attach_bulk_approval = async (
       items.forEach((item) => {
         // Get an array of all statuses for this discipline
         const statuses = response.filter((status) => {
+          if (status.status !== status_options.Approved) {
+            return false;
+          }
           if (type === jstor_types.discipline && "code" in item) {
             return status.jstor_item_id === item.code;
           } else if (type === jstor_types.headid && "headid" in item) {

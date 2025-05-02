@@ -314,6 +314,7 @@ export const search_handler =
 
       // Iterate through the documents and add the statuses and snippets
       docs.forEach((doc: Search3Document) => {
+        
         const new_doc = map_document(doc);
         // Start with bulk approval, which will be overridden by individual statuses
         new_doc.mediaReviewStatuses = bulk_approval_statuses.reduce(
@@ -329,6 +330,7 @@ export const search_handler =
                 doc.additional_fields.disc_str?.includes(
                   curr.jstor_item_id ?? "",
                 );
+
               if (is_journal_match || is_discipline_match) {
                 const label = is_journal_match
                   ? `${status_options.Approved} by Journal`

@@ -28,7 +28,7 @@ export const page_handler =
       page,
     };
     fastify.event_logger.pep_standard_log_start(
-      `pep_get_metadata_start`,
+      `pep_get_page_start`,
       request,
       {
         ...log_payload,
@@ -38,7 +38,6 @@ export const page_handler =
     try {
       const group_ids = request.user.groups.map((group) => group.id);
       log_payload.full_groups = request.user.groups;
-
       const extracts = await get_and_extract_metadata(
         fastify,
         iid,
@@ -197,7 +196,6 @@ export const metadata_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-
       if (
         error instanceof AxiosError &&
         error.code === AxiosError.ERR_BAD_REQUEST
