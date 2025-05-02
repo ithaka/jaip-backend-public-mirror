@@ -364,7 +364,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       const [statuses, count] = await this.client.$transaction(
         async (tx) => {
           const max_ids_object: { max: number }[] =
-            await tx.$queryRaw`SELECT MAX(id) FROM statuses WHERE group_id = ANY(${groups}::INT[]) GROUP BY jstor_item_id`;
+            await tx.$queryRaw`SELECT MAX(id) FROM statuses WHERE group_id = ANY(${groups}::INT[]) GROUP BY jstor_item_id, group_id`;
           const id_object: { id: number }[] =
             await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::date AND statuses.created_at <= ${end_date}::date AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id`;
           const count_response: { count: BigInt }[] =
@@ -377,6 +377,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
           timeout: 10000,
         },
       );
+
       return [statuses as unknown as Status[], Number(count), null];
     } catch (err) {
       const error = ensure_error(err);
