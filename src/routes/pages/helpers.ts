@@ -102,8 +102,15 @@ export const extract_metadata = (
     // Extract search terms from cedar metadata
     const journal_iids = cedar_identity_data.journal_iid;
     const doi = cedar_item_view_data.find((item) => item.doi)?.doi;
-    const disc_codes =
-      cedar_item_view_data.find((item) => item.disc_codes)?.disc_codes || [];
+
+    const codes =
+      cedar_item_view_data.find((item) => {
+        return item.disc_codes
+      })?.disc_codes || [];
+    const disciplines = cedar_item_view_data.find((item) => {
+      return item.disciplines
+    })?.disciplines;
+    const disc_codes = codes.concat(Object.keys(disciplines || {}));
 
     // Add metadata to log payload
     log_payload.cedar_identity_block = cedar_identity_data;

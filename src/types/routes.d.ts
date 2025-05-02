@@ -203,6 +203,7 @@ export interface CedarItemView {
   doi: string;
   id: string;
   disc_codes: string[];
+  disciplines: { [ key: string]: string };
 }
 
 export interface CedarIdentityBlock {
