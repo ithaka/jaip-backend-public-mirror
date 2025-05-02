@@ -168,8 +168,8 @@ export interface AddEntitiesRequest {
       category: string;
       description: string;
       is_active: boolean;
-    }
-  }
+    };
+  };
 }
 
 export interface GetEntitiesRequest {

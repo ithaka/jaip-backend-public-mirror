@@ -16,7 +16,7 @@ const get_entities_where_clause = (
   include_ungrouped: boolean = false,
 ) => {
   let entities_clause = {};
-  const roles: user_roles[] = [role]
+  const roles: user_roles[] = [role];
   if (!include_ungrouped) {
     entities_clause = {
       groups_entities: {
@@ -48,8 +48,8 @@ const get_entities_where_clause = (
           },
         },
       ],
-  }
-}
+    },
+  };
   return where_clause;
 };
 
@@ -77,12 +77,12 @@ export const get_users = async (
           name: "asc",
         },
       },
-      ...get_entities_where_clause(
+      ...(get_entities_where_clause(
         groups,
         user_roles.admin,
         query,
         include_ungrouped,
-      ) as Prisma.usersFindManyArgs,
+      ) as Prisma.usersFindManyArgs),
       select: get_many_entities_select_clause(user_roles.admin, groups),
     } as Prisma.usersFindManyArgs;
     const [count, users] = await db.get_users_and_count(

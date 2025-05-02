@@ -258,7 +258,7 @@ export const add_or_edit_entities_handler =
     const new_user: User = {
       ...requested_user,
       type,
-      ungrouped_features: requested_user.ungrouped_features || {}
+      ungrouped_features: requested_user.ungrouped_features || {},
     };
 
     log_payload.altered_user = new_user;

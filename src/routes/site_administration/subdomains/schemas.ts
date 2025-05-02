@@ -16,9 +16,7 @@ export const route_schemas = {
           UNGROUPED_FEATURES.edit_subdomain,
           UNGROUPED_FEATURES.delete_subdomain,
         ],
-        grouped: [
-          FEATURES.manage_facilities,
-        ]
+        grouped: [FEATURES.manage_facilities],
       },
     },
     response: {

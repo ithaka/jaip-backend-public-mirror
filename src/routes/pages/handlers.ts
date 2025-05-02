@@ -198,7 +198,10 @@ export const metadata_handler =
     } catch (err) {
       const error = ensure_error(err);
 
-      if (error instanceof AxiosError && error.code === AxiosError.ERR_BAD_REQUEST) {
+      if (
+        error instanceof AxiosError &&
+        error.code === AxiosError.ERR_BAD_REQUEST
+      ) {
         reply.code(404).send({ status: 404 });
       } else {
         reply.code(500).send(error.message);

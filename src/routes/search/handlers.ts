@@ -89,7 +89,16 @@ export const status_search_handler =
       const query_string = request.body.statusQuery.trim();
 
       const [status_results, count, error] =
-        await fastify.db.get_search_statuses(query_string, groups, query_statuses, start_date, end_date, request.body.sort, request.body.limit, request.body.pageNo);
+        await fastify.db.get_search_statuses(
+          query_string,
+          groups,
+          query_statuses,
+          start_date,
+          end_date,
+          request.body.sort,
+          request.body.limit,
+          request.body.pageNo,
+        );
       if (error) {
         throw error;
       }

@@ -46,7 +46,7 @@ export const get_subdomains_handler =
         orderBy: {
           subdomain: "asc",
         },
-      }
+      };
       if (limit && page) {
         query.skip = (page - 1) * limit;
         query.take = limit;

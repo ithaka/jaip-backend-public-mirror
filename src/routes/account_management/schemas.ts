@@ -102,7 +102,7 @@ const add_users_body = {
           enabled: {
             type: "boolean",
           },
-        }
+        },
       },
       groups: {
         type: "array",
