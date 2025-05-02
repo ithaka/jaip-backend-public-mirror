@@ -279,16 +279,25 @@ export const search_handler =
       );
 
       // This is where we wait for all three requests to complete
-      const all_requests = await Promise.all([
+      const all_requests = await Promise.allSettled([
         bulk_approval_promise,
         document_statuses_promise,
         snippets_promise,
       ]);
 
+      if (all_requests[0].status === "rejected") {
+        throw all_requests[0].reason;
+      }
+      if (all_requests[1].status === "rejected") {
+        throw all_requests[1].reason;
+      }
+      if (all_requests[2].status === "rejected") {
+        throw all_requests[2].reason;
+      }
       const [bulk_approval_statuses, bulk_approval_status_error] =
-        all_requests[0];
-      const [document_statuses, document_status_error] = all_requests[1];
-      const [snippets, snippets_error] = all_requests[2];
+        all_requests[0].value;
+      const [document_statuses, document_status_error] = all_requests[1].value;
+      const [snippets, snippets_error] = all_requests[2].value;
 
       // Handle errors. We'll just take them one at a time. If multiple requests fail,
       // we'll only log the first one.

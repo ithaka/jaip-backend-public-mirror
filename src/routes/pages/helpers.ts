@@ -158,21 +158,32 @@ export const get_cedar_metadata = async (
 
     // Wait for both requests to finish
     const [cedar_identity_response, cedar_item_view_response] =
-      await Promise.all([cedar_identity_promise, cedar_item_view_promise]);
+      await Promise.allSettled([cedar_identity_promise, cedar_item_view_promise]);
+
+    if (cedar_identity_response.status === "rejected") {
+      throw new Error(
+        `Cedar identity metadata request failed: ${cedar_identity_response.reason}`,
+      );
+    }
+    if (cedar_item_view_response.status === "rejected") {
+      throw new Error(
+        `Cedar item view metadata request failed: ${cedar_item_view_response.reason}`,
+      );
+    }
 
     // Check if the requests were successful
-    if (cedar_identity_response.status !== 200) {
+    if (cedar_identity_response.value.status !== 200) {
       throw new Error(
         `Cedar identity metadata request failed: Status code not 200`,
       );
     }
-    if (cedar_item_view_response.status !== 200) {
+    if (cedar_item_view_response.value.status !== 200) {
       throw new Error(
         `Cedar item view metadata request failed: Status code not 200`,
       );
     }
 
-    return [cedar_identity_response.data, cedar_item_view_response.data];
+    return [cedar_identity_response.value.data, cedar_item_view_response.value.data];
   } catch (err) {
     const error = ensure_error(err);
     return error;
