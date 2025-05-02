@@ -8,7 +8,7 @@ import {
 } from "../../types/routes";
 import { SEARCH3 } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
-import { jstor_types, Prisma, status_options } from "@prisma/client";
+import { jstor_types, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
 import {
   do_search3,
