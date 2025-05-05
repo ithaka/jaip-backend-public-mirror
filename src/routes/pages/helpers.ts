@@ -105,8 +105,8 @@ export const extract_metadata = (
 
     const codes =
       cedar_item_view_data.find((item) => {
-        return item.disc_codes
-      })?.disc_codes || [];
+        return item.disc_code
+      })?.disc_code || [];
     const disciplines = cedar_item_view_data.find((item) => {
       return item.disciplines
     })?.disciplines;

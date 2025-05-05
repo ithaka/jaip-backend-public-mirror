@@ -202,7 +202,7 @@ export interface CedarItemView {
   bidirectional_category: string;
   doi: string;
   id: string;
-  disc_codes: string[];
+  disc_code: string[];
   page_count: string;
   disciplines: { [ key: string]: string };
 }
