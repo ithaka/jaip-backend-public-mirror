@@ -102,7 +102,6 @@ export interface JAIPDatabase {
   get_all_tokens: () => Promise<[string[], Error | null]>;
 
   // SITE ADMINISTRATION
-  
   // SUBDOMAINS
   get_subdomains_and_count: (
     count_query: Prisma.subdomainsCountArgs,
