@@ -13,6 +13,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
+import {v4 as uuidv4} from 'uuid';
 
 export const manage_session = async (
   fastify: FastifyInstance,
@@ -24,40 +25,41 @@ export const manage_session = async (
     fastify.log.info("Attempting to manage session");
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
     if (error) throw error;
-    const query = uuid
-      ? `mutation { session(uuid: "${uuid}") ${session_query}}`
-      : `mutation { session ${session_query}}`;
+    const session_uuid = uuid || uuidv4();
+    const query = `mutation { sessionHttpHeaders(uuid: "${session_uuid}") ${session_query}}`;
 
+    console.log(request.headers);
     const url = host + "v1/graphql";
 
-    console.log("REQUEST HEADERS" , request.headers)
+    const headers = {
+      ...request.headers,
+    }
     const response = await axios.post(url, {
       query,
     }, {
-      headers: {
-        ...request.headers,
-        "X-Forwarded-For": request.headers["x-forwarded-for"] || request.ip,
-      }
+      headers: headers
     });
+    console.log("REQUEST HEADERS" , headers)
+
     console.log(`SESSION MANAGER RESPONSE`, response.data);
 
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
-    if (!response.data?.data?.session) {
+    if (!response.data?.data?.sessionHttpHeaders) {
       throw new Error("session management failed: No session returned");
     }
     fastify.log.info(
-      `Session data retrieved: ${response.data?.data?.session?.uuid}`,
+      `Session data retrieved: ${response.data?.data?.sessionHttpHeaders?.uuid}`,
     );
-    session = response.data?.data?.session;
+    session = response.data?.data?.sessionHttpHeaders;
     if (!session.uuid) {
       throw new Error("session management failed: session has no UUID");
     }
     return [session, null];
   } catch (err) {
     const error = ensure_error(err);
-
+    console.log("SESSION MANAGER ERROR", error);
     return [{} as Session, error];
   }
 };
