@@ -30,11 +30,6 @@ build app image:
   extends: .build-image
   variables:
     CI_DEBUG_TRACE: true
-  before_script:
-    - echo $JAIP_DB_URL
-    - echo $API_TARGET
-    - echo $ENVIRONMENT
-
 
 # Local chart. This chart configures the database secrets.
 render local chart:
