@@ -211,8 +211,6 @@ export const denied_item_status = {
 export const denied_item_status_reviewer = {
   "1": {
     ...denied_item_status["1"],
-    entityID: 3,
-    entityName: "Test Reviewer",
   },
 };
 export const incomplete_item_status = {
@@ -229,8 +227,6 @@ export const incomplete_item_status = {
 export const incomplete_item_status_reviewer = {
   "1": {
     ...incomplete_item_status["1"],
-    entityID: 3,
-    entityName: "Test Reviewer",
   },
 };
 export const processed_search_response = search3_results.results.map((doc) => {
