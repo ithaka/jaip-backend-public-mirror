@@ -132,6 +132,7 @@ export const status_search_handler =
       // database. The request will now be used to build a request for Search3 that won't
       // use a query.
       request.body.query = "";
+      request.body.pageNo = 1;
       await search_handler(fastify, count || 0)(request, reply);
 
       fastify.event_logger.pep_standard_log_complete(
@@ -229,7 +230,7 @@ export const search_handler =
         throw search_error;
       }
 
-      fastify.log.info(`Doing search3 request`);
+      fastify.log.info(`Doing search3 request: ${search3_request}`);
       const [search_result, error] = await do_search3(
         host,
         search3_request,
