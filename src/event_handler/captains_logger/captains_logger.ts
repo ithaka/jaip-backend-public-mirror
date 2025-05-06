@@ -25,7 +25,7 @@ export class CaptainsLogger implements EventLogger {
       ip_address: request.headers["fastly-client-ip"]
         ? request.headers["fastly-client-ip"]
         : request.ip,
-      requestid: request.id,
+      requestid: request.headers["x-request-id"] || request.id,
       user_agent: request.headers["user-agent"],
       uuid: request.cookies.uuid,
       host: request.host,
