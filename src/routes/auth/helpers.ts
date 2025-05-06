@@ -29,10 +29,18 @@ export const manage_session = async (
       : `mutation { session ${session_query}}`;
 
     const url = host + "v1/graphql";
-    fastify.log.info(`Session manager URL: ${url}`);
+
+    console.log("REQUEST HEADERS" , request.headers)
     const response = await axios.post(url, {
       query,
+    }, {
+      headers: {
+        ...request.headers,
+        "X-Forwarded-For": request.headers["x-forwarded-for"] || request.ip,
+      }
     });
+    console.log(`SESSION MANAGER RESPONSE`, response.data);
+
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
