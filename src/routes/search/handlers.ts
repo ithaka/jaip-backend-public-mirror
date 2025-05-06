@@ -255,7 +255,7 @@ export const search_handler =
 
       fastify.log.info(`Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`);
       const document_statuses_promise = request.is_authenticated_admin
-        ? get_user_statuses(fastify.db, dois)
+        ? get_user_statuses(fastify.db, dois, groups)
         : get_facility_statuses(fastify.db, dois, groups);
 
       const snippets_promise = get_snippets(
@@ -369,7 +369,8 @@ export const search_handler =
           if (
             status.groups &&
             status.jstor_item_id === new_doc.doi &&
-            !mediaReviewStatuses[status.groups.id]
+            !mediaReviewStatuses[status.groups.id] &&
+            groups.includes(status.groups.id)
           ) {
             mediaReviewStatuses[status.groups.id] = new_status;
           }

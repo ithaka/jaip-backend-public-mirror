@@ -5,6 +5,7 @@ import { Search3Document, Search3Request, Snippet } from "../../types/search";
 import { ensure_error } from "../../utils";
 import { SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
 import { JAIPDatabase } from "../../database";
+import { status_options } from "@prisma/client";
 
 const status_select = {
   jstor_item_id: true,
@@ -68,7 +69,7 @@ export const filter_facility_statuses = (statuses: Status[]) => {
   // and return the rest of the statuses.
   return statuses.map((status) => {
     const { status_details, ...rest } = status;
-    if (status.status === "Pending") {
+    if (status.status === status_options.Pending) {
       return {
         ...rest,
         status_details: [],
@@ -80,6 +81,28 @@ export const filter_facility_statuses = (statuses: Status[]) => {
       status_details,
       entities: null,
     };
+  });
+};
+
+export const filter_user_statuses = (statuses: Status[], groups: number[]) => {
+  // Filter out the entity details for all statuses and status details for pending statuses
+  // and return the rest of the statuses.
+  return statuses.map((status) => {
+    const { status_details, ...rest } = status;
+    if (status.status === status_options.Pending) {
+      return {
+        ...rest,
+        status_details: groups.includes(status.groups?.id || 0) ? status_details : [],
+        entities: groups.includes(status.groups?.id || 0) ? status.entities : null,
+      };
+    }
+    return {
+      ...rest,
+      status_details,
+      entities: null,
+    };
+  }).filter((status) => {
+    return status.status !== status_options.Pending || groups.includes(status.groups?.id || 0);
   });
 };
 
@@ -118,6 +141,7 @@ export const get_facility_statuses = async (
 export const get_user_statuses = async (
   db: JAIPDatabase,
   dois: string[],
+  groups: number[],
 ): Promise<[{ [key: string]: Status[] }, Error | null]> => {
   try {
     const [results, error] = await db.get_statuses({
@@ -134,7 +158,7 @@ export const get_user_statuses = async (
     if (error) {
       throw error;
     }
-    return [key_statuses(results), null];
+    return [key_statuses(filter_user_statuses(results, groups)), null];
   } catch (err) {
     const error = ensure_error(err);
     return [{}, error];
