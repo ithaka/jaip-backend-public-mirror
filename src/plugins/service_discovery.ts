@@ -39,7 +39,7 @@ const discovery_handler = async function (
           (instance: JSTORInstance) => instance.homePageUrl,
         );
         if (homePageUrl) {
-          console.log("Service discovered at", homePageUrl);
+          console.log("Service discovered at", homePageUrl.homePageUrl);
           return [homePageUrl.homePageUrl, null];
         } else {
           throw new Error(
