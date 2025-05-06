@@ -14,6 +14,7 @@ export interface User {
   // This value is only used when adding or editing users
   contact?: string;
   groups: Array<Group>;
+  uuid?: UUID;
 }
 
 export interface Entity {

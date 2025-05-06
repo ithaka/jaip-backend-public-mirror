@@ -26,6 +26,7 @@ export const auth_session_handler =
       session,
     );
     if (current_user) {
+      current_user.uuid = session.uuid;
       log_payload.user = current_user;
     }
     if (error) {
