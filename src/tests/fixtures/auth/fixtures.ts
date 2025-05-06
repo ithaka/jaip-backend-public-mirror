@@ -27,7 +27,7 @@ export const get_ip_bypass_resolved_value = {
 export const axios_session_data_no_email_or_code = {
   data: {
     data: {
-      session: {
+      sessionHttpHeaders: {
         uuid: "uuid",
       },
     },
@@ -38,7 +38,7 @@ export const axios_session_data_no_email_or_code = {
 export const axios_session_data_with_code = {
   data: {
     data: {
-      session: {
+      sessionHttpHeaders: {
         uuid: "uuid",
         userAccount: {
           code: "test_sitecode",
@@ -52,7 +52,7 @@ export const axios_session_data_with_code = {
 export const axios_session_data_with_email = {
   data: {
     data: {
-      session: {
+      sessionHttpHeaders: {
         ip: "127.0.0.1",
         uuid: "db4cbfd4-7912-44a7-8cbf-d47912e4a792",
         licenses: [
