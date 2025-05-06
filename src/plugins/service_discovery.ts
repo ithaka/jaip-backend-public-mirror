@@ -34,7 +34,6 @@ const discovery_handler = async function (
       throw new Error(msg);
     }
     if (Array.isArray(data)) {
-      console.log("Service discovery response:", data);
       if (data.length) {
         const homePageUrl = data.find(
           (instance: JSTORInstance) => instance.homePageUrl,
