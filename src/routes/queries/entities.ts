@@ -149,12 +149,11 @@ export const get_many_entities_select_clause = (
 });
 
 export const map_entities = (user: DBEntity): User => {
-  const entity = {
+  const entity: User = {
     id: user.entities.id,
     name: user.entities.name,
     contact: user.jstor_id,
     type: user.entities.entity_type,
-    uuid: user.uuid,
     ungrouped_features:
       user.entities.ungrouped_features_entities?.reduce((acc, curr) => {
         if (curr.enabled && curr.ungrouped_features.is_active) {
@@ -194,5 +193,8 @@ export const map_entities = (user: DBEntity): User => {
         return groups;
       }, [] as Array<Group>) || ([] as Array<Group>),
   };
+  if (user.uuid) {
+    entity.uuid = user.uuid;
+  }
   return entity;
 };

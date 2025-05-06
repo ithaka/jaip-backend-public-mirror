@@ -194,6 +194,7 @@ export const basic_reviewer = {
 
 export const basic_user_ungrouped = {
   jstor_id: "test@test.com",
+  uuid: "uuid",
   entities: {
     name: "Test User Basic Ungrouped",
     id: 2,
