@@ -10,6 +10,7 @@ export interface DBEntity {
   id?: number;
   jstor_id: string;
   entities: Entities;
+  uuid?: string;
 }
 export interface DBGroup {
   name: string;

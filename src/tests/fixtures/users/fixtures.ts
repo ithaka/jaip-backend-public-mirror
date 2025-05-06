@@ -256,6 +256,7 @@ export const basic_user_ungrouped_create_group_admins = {
 
 export const basic_facility = {
   jstor_id: "test@test.com",
+  uuid: "uuid",
   entities: {
     name: "Test Facility",
     id: 1,
@@ -273,6 +274,7 @@ export const basic_facility = {
 
 export const basic_facility_without_permissions = {
   jstor_id: "test@test.com",
+  uuid: "uuid",
   entities: {
     name: "Test Facility",
     id: 1,

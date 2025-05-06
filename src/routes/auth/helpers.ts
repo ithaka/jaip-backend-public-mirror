@@ -39,9 +39,6 @@ export const manage_session = async (
     }, {
       headers: headers
     });
-    console.log("REQUEST HEADERS" , headers)
-
-    console.log(`SESSION MANAGER RESPONSE`, response.data);
 
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");

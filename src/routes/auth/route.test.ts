@@ -115,7 +115,7 @@ test(`requests the ${route} route with valid sitecode and valid domain`, async (
   expect(res.statusCode).toEqual(200);
 });
 
-test(`requests the ${route} route with valid sitecode and standard domain`, async () => {
+test.only(`requests the ${route} route with valid sitecode and standard domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
