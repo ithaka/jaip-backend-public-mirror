@@ -21,6 +21,7 @@ export const manage_session = async (
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   try {
+    fastify.log.info("Attempting to manage session");
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
     if (error) throw error;
     const query = uuid
@@ -28,16 +29,19 @@ export const manage_session = async (
       : `mutation { session ${session_query}}`;
 
     const url = host + "v1/graphql";
+    fastify.log.info(`Session manager URL: ${url}`);
     const response = await axios.post(url, {
       query,
     });
-
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
     if (!response.data?.data?.session) {
       throw new Error("session management failed: No session returned");
     }
+    fastify.log.info(
+      `Session data retrieved: ${response.data?.data?.session?.uuid}`,
+    );
     session = response.data?.data?.session;
     if (!session.uuid) {
       throw new Error("session management failed: session has no UUID");
@@ -197,6 +201,7 @@ export const get_current_user = async (
   try {
     // Extract the email from the session
     const emails = get_email_from_session(session);
+    fastify.log.info(`Emails found in session: ${emails}`);
     // If there are emails, try to find a user with one of them
     if (emails.length) {
       const [result, error] = await get_user(fastify.db, emails);
@@ -211,8 +216,10 @@ export const get_current_user = async (
 
     // Extract the codes from the session
     const codes = get_code_from_session(session);
+    fastify.log.info(`Codes found in session: ${codes}`);
     if (codes.length) {
       const subdomain = request.subdomain;
+      fastify.log.info(`Subdomain found in request: ${subdomain}`);
       if (!SUBDOMAINS.student.includes(subdomain)) {
         const [sitecode, error] = await get_sitecode_by_subdomain(
           fastify.db,
@@ -222,6 +229,7 @@ export const get_current_user = async (
         if (error) {
           throw error;
         } else if (sitecode) {
+          fastify.log.info(`Sitecode found for subdomain ${subdomain}: ${sitecode}`)
           codes.push(sitecode);
         } else {
           throw new Error(
@@ -230,6 +238,7 @@ export const get_current_user = async (
         }
       }
 
+      fastify.log.info(`Getting facility by code: ${codes}`);
       // If there are codes, try to find a facility with one of them
       const [result, error] = await get_facility(fastify.db, codes);
       current_user = result;
@@ -245,6 +254,7 @@ export const get_current_user = async (
     // Extract an array of possible IPs from the request
     const ips = ip_handler(request);
     for (const ip of ips) {
+      fastify.log.info(`Attempting IP bypass: ${ip}`);
       const [result, error] = await get_ip_bypass(fastify.db, ip);
       if (error) {
         throw error;

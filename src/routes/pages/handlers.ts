@@ -48,6 +48,7 @@ export const page_handler =
       }
       const { doi, journal_iids, disc_codes, cedar_item_view_data } = extracts;
 
+      fastify.log.info(`Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`);
       const is_forbidden = await get_is_forbidden(
         fastify.db,
         request.is_authenticated_student,
@@ -57,6 +58,7 @@ export const page_handler =
         group_ids,
       );
 
+      fastify.log.info("Is forbidden: ", is_forbidden);
       if (is_forbidden) {
         reply.code(403);
         fastify.event_logger.pep_forbidden_error(request, reply, {
@@ -66,18 +68,23 @@ export const page_handler =
         return;
       }
 
+      fastify.log.info(`Getting page URL for ${iid}, page ${page}`);
       const [url, page_index] = get_page_url(cedar_item_view_data, page || "");
+
+      fastify.log.info(`Page URL: ${url}`);
       log_payload.page_index = page_index;
       if (!url) {
         throw new Error(`Page ${page_index} not found for ${iid}`);
       }
       log_payload.page_path = url;
+      fastify.log.info(`Getting S3 object for ${url}`);
       const [stream, s3_error] = await get_s3_object(url);
       if (s3_error) {
         throw s3_error;
       }
       reply.send(stream);
 
+      fastify.log.info(`Getting entitlement map for ${iid}`);
       const entitlement_map = await get_entitlement_map(
         fastify,
         iid,
@@ -138,6 +145,7 @@ export const metadata_handler =
       const group_ids = request.user.groups.map((group) => group.id);
       log_payload.full_groups = request.user.groups;
 
+      fastify.log.info(`Getting metadata for ${iid}`);
       const extracts = await get_and_extract_metadata(
         fastify,
         iid,
@@ -156,6 +164,7 @@ export const metadata_handler =
         status: 200,
       });
 
+      fastify.log.info(`Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`);
       const is_forbidden = await get_is_forbidden(
         fastify.db,
         request.is_authenticated_student,
@@ -165,6 +174,7 @@ export const metadata_handler =
         group_ids,
       );
 
+      fastify.log.info("Is forbidden: ", is_forbidden);
       if (is_forbidden) {
         reply.code(403).send({ status: 403 });
         return_metadata.status = 403;
@@ -175,6 +185,7 @@ export const metadata_handler =
         return;
       }
 
+      fastify.log.info(`Getting entitlement map for ${iid}`);
       const entitlement_map = await get_entitlement_map(
         fastify,
         iid,

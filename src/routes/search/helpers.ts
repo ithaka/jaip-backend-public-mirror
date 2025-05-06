@@ -184,6 +184,8 @@ export const get_snippets = async (
       return [{}, null];
     }
 
+    fastify.log.info(`Getting snippets for ids: ${ids}`);
+    
     const [host, search_error] = await fastify.discover(
       SEARCH_SNIPPET_SERVICE.name,
     );
@@ -201,6 +203,7 @@ export const get_snippets = async (
 
     const url = host + "v2/snippets";
 
+    fastify.log.info(`Getting snippets from ${url}`);
     const search_result = await axios({
       url,
       method: "POST",
@@ -228,7 +231,9 @@ export const get_tokens = async (
 ): Promise<[string[], Error | null]> => {
   const tokens: string[] = [];
   try {
+    request.log.info(`User is authenticated admin: ${request.is_authenticated_admin}`);
     if (request.is_authenticated_admin) {
+      request.log.info(`Getting all tokens for admin user`);
       const [db_tokens, error] = await db.get_all_tokens();
       if (error) {
         throw error;
@@ -237,6 +242,7 @@ export const get_tokens = async (
         tokens.push(t);
       });
     } else {
+      request.log.info(`Using tokens from session`);
       for (const license of request.session.licenses) {
         tokens.push(license.entitlement.id);
       }
@@ -248,6 +254,7 @@ export const get_tokens = async (
 
   return [tokens, null];
 };
+
 export const do_search3 = async (
   host: string,
   search3_request: Search3Request,

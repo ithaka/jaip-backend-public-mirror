@@ -32,6 +32,7 @@ export const disciplines_handler =
       }
 
       const url = code ? `${host}disciplines/${code}` : `${host}disciplines/`;
+      fastify.log.info(`Checking disciplines/journals URL: ${url}`);
       const response = await axios.get(url);
 
       if (response.status !== 200) {
@@ -45,7 +46,7 @@ export const disciplines_handler =
         );
       }
       const groups = request.user.groups.map((group) => group.id);
-
+      fastify.log.info(`Retrieved disciplines/journals, getting bulk approval statuses`);
       const [items, processing_error] = await attach_bulk_approval(
         fastify,
         is_discipline_search ? jstor_types.discipline : jstor_types.headid,

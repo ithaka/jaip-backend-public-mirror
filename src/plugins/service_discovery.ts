@@ -20,6 +20,7 @@ const discovery_handler = async function (
 ): Promise<[string, Error | null]> {
   const url = `http://localhost:8888/v1/apps/${service}/instances`;
   try {
+    console.log("Attempting service discovery for", service);
     const {
       data,
       status,
@@ -33,11 +34,13 @@ const discovery_handler = async function (
       throw new Error(msg);
     }
     if (Array.isArray(data)) {
+      console.log("Service discovery response:", data);
       if (data.length) {
         const homePageUrl = data.find(
           (instance: JSTORInstance) => instance.homePageUrl,
         );
         if (homePageUrl) {
+          console.log("Service discovered at", homePageUrl);
           return [homePageUrl.homePageUrl, null];
         } else {
           throw new Error(

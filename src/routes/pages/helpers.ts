@@ -76,11 +76,13 @@ export const get_and_extract_metadata = async (
 ) => {
   log_payload.item_id = iid;
   try {
+    fastify.log.info(`Attempting to get Cedar metadata for ${iid}`);
     const cedar_metadata = await get_cedar_metadata(fastify, iid);
     if (cedar_metadata instanceof Error) {
       throw cedar_metadata;
     }
 
+    fastify.log.info(`Attempting to extract cedar metadata for ${iid}`);
     const extracts = extract_metadata(cedar_metadata, log_payload);
     if (extracts instanceof Error) {
       throw extracts;
@@ -150,6 +152,7 @@ export const get_cedar_metadata = async (
 
     // Get both the identity block and item view metadata
     const url = `${cedar_host}${CEDAR_DELIVERY_SERVICE.path}`;
+    fastify.log.info(`Cedar metadata URL: ${url}`);
     const cedar_identity_promise = axios.get(url, {
       params: {
         ...CEDAR_DELIVERY_SERVICE.queries.params.identity_block,
@@ -282,12 +285,14 @@ export const get_entitlement_map = async (
   iid: string,
   uuid: string,
 ): Promise<EntitlementMap> => {
+  fastify.log.info(`Attempting to get ALE metadata for ${iid}`);
   const [ale_host, ale_error] = await fastify.discover(ALE_QUERY_SERVICE.name);
   if (ale_error) {
     throw ale_error;
   }
 
   const ale_url = `${ale_host}${ALE_QUERY_SERVICE.path}`;
+  fastify.log.info(`ALE metadata URL: ${ale_url}`);
   const ale_response = await axios.get(ale_url, {
     params: {
       uuid,

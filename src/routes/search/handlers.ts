@@ -45,14 +45,17 @@ export const status_search_handler =
       const status = params.status;
       const start_date = request.body.statusStartDate;
       const end_date = request.body.statusEndDate;
-
       const query_statuses: status_options[] = [];
+
+      fastify.log.info(`Searching for statuses with status: ${status}, start_date: ${start_date}, end_date: ${end_date}`);
       if (status === "completed") {
         query_statuses.push(status_options.Approved, status_options.Denied);
       } else {
         const capitalized = status.charAt(0).toUpperCase() + status.slice(1);
+        fastify.log.info(`Capitalized status: ${capitalized}`);
         const option =
           status_options[capitalized as keyof typeof status_options];
+        fastify.log.info(`Final search option: ${option}`);
         if (!option) {
           reply.code(400).send("Invalid status parameter");
           fastify.event_logger.pep_bad_request_error(request, reply, {
@@ -67,6 +70,7 @@ export const status_search_handler =
 
       const query_string = request.body.statusQuery.trim();
 
+      fastify.log.info(`Getting search statuses with query: ${query_string}`);
       const [status_results, count, error] =
         await fastify.db.get_search_statuses(
           query_string,
@@ -219,11 +223,13 @@ export const search_handler =
 
       log_payload.search3_request = search3_request;
 
+      fastify.log.info(`Getting search3 host`);
       const [host, search_error] = await fastify.discover(SEARCH3.name);
       if (search_error) {
         throw search_error;
       }
 
+      fastify.log.info(`Doing search3 request`);
       const [search_result, error] = await do_search3(
         host,
         search3_request,
@@ -233,10 +239,12 @@ export const search_handler =
         throw error;
       }
 
+      fastify.log.info(`Attempting to retrieve status keys`);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
       );
 
+      fastify.log.info(`Getting bulk statuses for ${disc_and_journal_ids}`);
       // Get the discipline/journal statuses and then the individual statuses, then snippets
       // We do not wait for these requests individually, because they can be done in parallel.
       const bulk_approval_promise = get_bulk_statuses(
@@ -245,6 +253,7 @@ export const search_handler =
         groups,
       );
 
+      fastify.log.info(`Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`);
       const document_statuses_promise = request.is_authenticated_admin
         ? get_user_statuses(fastify.db, dois)
         : get_facility_statuses(fastify.db, dois, groups);

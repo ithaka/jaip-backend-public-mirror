@@ -20,6 +20,7 @@ export const attach_bulk_approval = async (
     return [items, null];
   }
 
+  fastify.log.info(`Getting bulk approval statuses for ${type}`);
   const codes = items
     .map((item) => {
       if (type === jstor_types.discipline && "code" in item) {
@@ -31,6 +32,7 @@ export const attach_bulk_approval = async (
     .filter((code): code is RequiredCode => {
       return !!code;
     });
+  fastify.log.info(`Getting bulk approval statuses using ${codes.length} codes`);
   try {
     const [response, error] = await fastify.db.get_statuses(
       bulk_approval_query(type, codes, groups),
@@ -41,14 +43,18 @@ export const attach_bulk_approval = async (
     if (response && response.length) {
       // Cycle through every discipline
       items.forEach((item) => {
+        fastify.log.info(`Checking Journal or Discipline: ${item}`);
         // Get an array of all statuses for this discipline
         const statuses = response.filter((status) => {
+          fastify.log.info(`Checking status ${status.jstor_item_id} against ${item} for ${status.status}`);
           if (status.status !== status_options.Approved) {
             return false;
           }
           if (type === jstor_types.discipline && "code" in item) {
+            fastify.log.info(`Checking found approved status for ${item.code}`);
             return status.jstor_item_id === item.code;
           } else if (type === jstor_types.headid && "headid" in item) {
+            fastify.log.info(`Checking found approved status for ${item.headid}`);
             return status.jstor_item_id === item.headid;
           }
         });

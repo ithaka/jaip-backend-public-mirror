@@ -19,6 +19,7 @@ export const auth_session_handler =
       throw err;
     }
     log_payload.sessionid = session.uuid;
+    fastify.log.info(`Getting current user from session ${session.uuid}`);
     const [current_user, error] = await get_current_user(
       fastify,
       request,
