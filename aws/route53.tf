@@ -6,21 +6,22 @@ locals {
   test_domain = "test-pep.jstor.org"
   temporary_admin_domain = "pep-admin.jstor.org"
 
+  # Admin Redirect
+  s3_website = "s3-website-us-east-1.amazonaws.com"
+  s3_zone_id = "Z3AQBSTGFYJSTF"
+
   # Subdomain building
   separator = "."
   admin_prefix = "admin"
 
-  # Validation
-  validation_prefix = "_acme-challenge"
-  validation_target = "27hx4qgrptn0xjgkgn.fastly-validations.com"
-  test_validation_target = "ezr3a4rvljjwz92g40.fastly-validations.com"
-
-  # Cloudfront
-  zone_id = "Z2FDTNDATAQYW2" # This is hardcoded because the hosted zone id for CloudFront is a constant
-  cloudfront_dns = "d6u2bqjxuux94.cloudfront.net."
-
   # Fastly
   fastly = "jstor.map.fastly.net."
+  fastly_ips = [
+    "151.101.0.152",
+    "151.101.64.152",
+    "151.101.128.152",
+    "151.101.192.152",
+  ]
 
   # Environments
   test_environment = "test"
@@ -48,11 +49,6 @@ locals {
     "atlo-ks",
     "atlo-la",
   ]
-
-  # Validation
-  validation_domain = join(local.separator, [local.validation_prefix, local.domain])
-  test_validation_domain = join(local.separator, [local.validation_prefix, local.test_domain])
-
 }
 
 locals {
@@ -122,8 +118,8 @@ resource "aws_route53_record" "temporary_admin_record" {
   alias {
     # NOTE: Do NOT update this until the migration is ready for the final
     # stage and participants have been notified.
-    name                   = local.cloudfront_dns
-    zone_id                = local.zone_id 
+    name                   = local.s3_website
+    zone_id                = local.s3_zone_id
     evaluate_target_health = true
   }
   lifecycle {
@@ -153,11 +149,8 @@ resource "aws_route53_record" "record" {
   zone_id = aws_route53_zone.zone.zone_id
   name    = "${local.domain}"
   type    = "A"
-  alias {
-    name                   = local.cloudfront_dns
-    zone_id                = local.zone_id 
-    evaluate_target_health = true
-  }
+  ttl   = 60
+  records = local.fastly_ips
   lifecycle {
     prevent_destroy = true
   }
@@ -204,12 +197,7 @@ resource "aws_route53_record" "test_record" {
   name    = local.test_domain
   type    = "A"
   ttl   = 60
-  records = [
-    "151.101.0.152",
-    "151.101.64.152",
-    "151.101.128.152",
-    "151.101.192.152",
-  ]
+  records = local.fastly_ips
   # In general, we don't need to worry about destroying this record, but to 
   # keep things consistent with prod and to avoid accidents, we'll prevent
   # destroying it.
@@ -232,31 +220,4 @@ resource "aws_route53_record" "test_subdomains" {
   # lifecycle {
   #   prevent_destroy = true
   # }
-}
-
-# VALIDATIONS
-resource "aws_route53_record" "validation" {
-  zone_id = aws_route53_zone.zone.zone_id
-  name    = local.validation_domain
-  type    = "CNAME"
-  ttl    = 60
-  records = [
-    local.validation_target
-  ]
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "aws_route53_record" "test_validation" {
-  zone_id = aws_route53_zone.test_zone.zone_id
-  name    = local.test_validation_domain
-  type    = "CNAME"
-  ttl   = 60
-  records = [
-    local.test_validation_target
-  ]
-  lifecycle {
-    prevent_destroy = true
-  }
 }
