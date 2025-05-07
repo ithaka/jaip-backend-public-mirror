@@ -1,6 +1,7 @@
 import { EventLogger, LogPayload } from "../../types/event_logger";
 import { v4 as uuidv4 } from "uuid";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { User } from "../../types/entities";
 export class CaptainsLogger implements EventLogger {
   #base_log = {
     origin: "jaip-backend",
@@ -30,9 +31,9 @@ export class CaptainsLogger implements EventLogger {
       uuid: request.cookies.uuid,
       host: request.host,
       subdomain: request.subdomain,
-      request_headers: request.headers,
+      request_headers: request.headers as Record<string, string>,
       request_body: request.body,
-      user: request.user,
+      user: request.user as User,
       group_ids: request.user?.groups.map((group) => group.id),
       sessionid: request.session?.uuid,
       path: request.routeOptions.url,
