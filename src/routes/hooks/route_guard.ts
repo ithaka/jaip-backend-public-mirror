@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { manage_session, get_current_user } from "../auth/helpers";
+import { manage_session, get_current_user, get_email_from_session, get_code_from_session } from "../auth/helpers";
 import { ensure_error } from "../../utils";
 import { SUBDOMAINS } from "../../consts";
 
@@ -18,7 +18,8 @@ export const route_guard = async (
     const [current_user, user_error] = await get_current_user(
       request.server,
       request,
-      session,
+      get_email_from_session(session),
+      get_code_from_session(session),
     );
     if (user_error) {
       throw user_error;

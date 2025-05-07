@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SUBDOMAINS, ENTITY_TYPES } from "../../consts";
 import { LogPayload } from "../../event_handler";
-import { manage_session, get_current_user } from "./helpers";
+import { manage_session, get_current_user, get_email_from_session, get_code_from_session } from "./helpers";
 
 export const auth_session_handler =
   (fastify: FastifyInstance) =>
@@ -23,7 +23,8 @@ export const auth_session_handler =
     const [current_user, error] = await get_current_user(
       fastify,
       request,
-      session,
+      get_email_from_session(session),
+      get_code_from_session(session),
     );
     if (current_user) {
       current_user.uuid = session.uuid;
