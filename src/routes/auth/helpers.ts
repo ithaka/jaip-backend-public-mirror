@@ -13,6 +13,8 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
+import { randomUUID } from "crypto";
+import { v4 } from "uuid";
 
 export const manage_session = async (
   fastify: FastifyInstance,
@@ -21,7 +23,11 @@ export const manage_session = async (
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   const session_uuid = uuid;
-
+  if (!session_uuid) {
+    // This is to check whether the uuid generation is properly random. It seems 
+    // we may have had some duplicate UUIDs.
+    fastify.log.info(`No UUID found in request: ${v4()}`);
+  }
   try {
     fastify.log.info(`Attempting to manage session: ${session_uuid}`);
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
