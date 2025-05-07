@@ -13,7 +13,6 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
-import { randomUUID } from "crypto";
 import { v4 } from "uuid";
 
 export const manage_session = async (
