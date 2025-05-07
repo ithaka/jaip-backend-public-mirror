@@ -274,7 +274,7 @@ export const get_current_user = async (
     if (codes.length) {
       const subdomain = request.subdomain;
       fastify.log.info(`Subdomain found in request: ${subdomain}`);
-      if (!SUBDOMAINS.student.includes(subdomain)) {
+      if (!SUBDOMAINS.student.includes(subdomain) && !SUBDOMAINS.admin.includes(subdomain)) {
         const [sitecode, error] = await get_sitecode_by_subdomain(
           fastify.db,
           subdomain,
