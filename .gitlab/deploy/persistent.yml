@@ -30,5 +30,3 @@ deploy:
 sync:
   stage: post-deploy
   extends: .argocd-sync
-  before_script:
-    - echo $ENVIRONMENT
