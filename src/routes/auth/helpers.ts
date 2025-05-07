@@ -22,11 +22,7 @@ export const manage_session = async (
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
   const session_uuid = uuid;
-  if (!session_uuid) {
-    // This is to check whether the uuid generation is properly random. It seems 
-    // we may have had some duplicate UUIDs.
-    fastify.log.info(`No UUID found in request: ${v4()}`);
-  }
+
   try {
     fastify.log.info(`Attempting to manage session: ${session_uuid}`);
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
@@ -98,6 +94,15 @@ export const manage_session = async (
     if (!session.uuid) {
       throw new Error("session management failed: session has no UUID");
     }
+
+    const emails = get_email_from_session(session);
+    const codes = get_code_from_session(session);
+    if (codes.length>1 && !emails.length) {
+      fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+      fastify.log.info(`Attempting to get new session with new UUID, Request ID: ${request.headers["x-request-id"]}`);
+      request.cookies.uuid = "";
+      return await manage_session(fastify, request);
+    }
     return [session, null];
   } catch (err) {
     const error = ensure_error(err);
@@ -105,7 +110,7 @@ export const manage_session = async (
   }
 };
 
-const get_code_from_session = (session: Session): string[] => {
+export const get_code_from_session = (session: Session): string[] => {
   const codes = [];
   if (session.userAccount?.code) {
     codes.push(session.userAccount.code);
@@ -118,7 +123,7 @@ const get_code_from_session = (session: Session): string[] => {
 
   return codes;
 };
-const get_email_from_session = (session: Session): string[] => {
+export const get_email_from_session = (session: Session): string[] => {
   const emails = [];
   if (session.userAccount?.contact?.email) {
     emails.push(session.userAccount.contact.email);
@@ -246,12 +251,11 @@ const get_sitecode_by_subdomain = async (
 export const get_current_user = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
-  session: Session,
+  emails: string[],
+  codes: string[],
 ): Promise<[User | null, Error | null]> => {
   let current_user: User | null = null;
   try {
-    // Extract the email from the session
-    const emails = get_email_from_session(session);
     fastify.log.info(`Emails found in session: ${emails}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
     // If there are emails, try to find a user with one of them
     if (emails.length) {
@@ -265,12 +269,7 @@ export const get_current_user = async (
       }
     }
 
-    // Extract the codes from the session
-    const codes = get_code_from_session(session);
     fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
-    if (codes.length>1) {
-      fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
-    }
     if (codes.length) {
       const subdomain = request.subdomain;
       fastify.log.info(`Subdomain found in request: ${subdomain}`);
