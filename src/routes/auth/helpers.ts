@@ -263,7 +263,7 @@ export const get_current_user = async (
 
     // Extract the codes from the session
     const codes = get_code_from_session(session);
-    fastify.log.info(`Codes found in session: ${codes}`);
+    fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}`);
     if (codes.length) {
       const subdomain = request.subdomain;
       fastify.log.info(`Subdomain found in request: ${subdomain}`);
