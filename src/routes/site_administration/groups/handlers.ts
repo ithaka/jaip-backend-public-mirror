@@ -110,7 +110,7 @@ export const add_group_handler =
     log_payload.group_name = name;
 
     try {
-      const [group, error] = await fastify.db.create_group(name);
+      const [group, error] = await fastify.db.create_group(name, request.user.id!);
       if (error) {
         throw error;
       }

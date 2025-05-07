@@ -492,13 +492,42 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       return [[], 0, error];
     }
   }
-  async create_group(name: string): Promise<[groups, Error | null]> {
+  async create_group(name: string, user_id: number): Promise<[groups, Error | null]> {
     try {
-      const group = await this.client.groups.create({
-        data: {
-          name: name,
+      const features = await this.client.features.findMany({
+        where: {
+          is_active: true,
+        },
+        select: {
+          id: true,
         },
       });
+      const group = await this.client.$transaction(async (tx) => {
+        const group = await tx.groups.create({
+          data: {
+            name: name,
+          },
+        });
+        await tx.groups_entities.create({
+          data: {
+            group_id: group.id,
+            entity_id: user_id,
+            role: user_roles.admin,
+          },
+        })
+        await tx.features_groups_entities.createMany({
+          data: features.map((feature) => {
+            return {
+              group_id: group.id,
+              entity_id: user_id,
+              feature_id: feature.id,
+              enabled: true,
+            };
+          }),
+        })
+        return group;
+      })
+
       return [group, null];
     } catch (err) {
       const error = ensure_error(err);

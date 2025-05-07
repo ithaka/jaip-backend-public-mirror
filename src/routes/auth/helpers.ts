@@ -21,10 +21,10 @@ export const manage_session = async (
 ): Promise<[Session, Error | null]> => {
   const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
-  const session_uuid = uuid || uuidv4();
+  const session_uuid = uuid;
 
   try {
-    fastify.log.info("Attempting to manage session");
+    fastify.log.info(`Attempting to manage session: ${session_uuid}`);
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
     if (error) throw error;
     const url = host + "v1/graphql";
@@ -41,7 +41,7 @@ export const manage_session = async (
       "fastly-dc": request.headers["fastly-dc"],
       "fastly-ff": request.headers["fastly-ff"],
       "fastly-ssl": request.headers["fastly-ssl"],
-      "fastly-client-ip": request.headers["fastly-client-ip"],
+      "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
       "fastly-orig-accept-encoding": request.headers["fastly-orig-accept-encoding"],
       region: request.headers.region,
       city: request.headers.city,
@@ -73,7 +73,7 @@ export const manage_session = async (
       "country-code": request.headers["country-code"],
     }
 
-    const query = `mutation { sessionHttpHeaders(uuid: "${session_uuid}") ${session_query}}`;
+    const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
 
     const response = await axios.post(url, {
       query,
@@ -248,7 +248,7 @@ export const get_current_user = async (
   try {
     // Extract the email from the session
     const emails = get_email_from_session(session);
-    fastify.log.info(`Emails found in session: ${emails}`);
+    fastify.log.info(`Emails found in session: ${emails}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
     // If there are emails, try to find a user with one of them
     if (emails.length) {
       const [result, error] = await get_user(fastify.db, emails);
@@ -263,7 +263,7 @@ export const get_current_user = async (
 
     // Extract the codes from the session
     const codes = get_code_from_session(session);
-    fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}`);
+    fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
     if (codes.length) {
       const subdomain = request.subdomain;
       fastify.log.info(`Subdomain found in request: ${subdomain}`);

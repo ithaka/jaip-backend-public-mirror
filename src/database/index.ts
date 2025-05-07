@@ -119,7 +119,7 @@ export interface JAIPDatabase {
     count_query: Prisma.groupsCountArgs,
     query: Prisma.groupsFindManyArgs,
   ) => Promise<[groups[], number, Error | null]>;
-  create_group: (name: string) => Promise<[groups, Error | null]>;
+  create_group: (name: string, user_id: number) => Promise<[groups, Error | null]>;
   remove_group: (id: number) => Promise<Error | null>;
   update_group: (
     subdomains_query: Prisma.groupsUpdateArgs,
