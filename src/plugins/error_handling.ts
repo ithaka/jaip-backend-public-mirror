@@ -10,7 +10,7 @@ const error_handler_plugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
     });
   });
 
-const options = { environment: process.env.NODE_ENV || "dev" };
+const options = { environment: process.env.ENVIRONMENT || "dev" };
 const plugin = error_handler_plugin;
 
 export default {

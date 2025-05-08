@@ -31,6 +31,7 @@ export interface CompleteLogPayload {
   db_subdomain: string;
   db_subdomain_id: number;
   db_subdomains: Subdomain[];
+  environment: string;
   feature_id: number;
   feature: Feature;
   features: Feature[];
