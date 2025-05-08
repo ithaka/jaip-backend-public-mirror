@@ -14,6 +14,7 @@ import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
 
+const counter: { [key: string]: number }= {};
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -96,11 +97,20 @@ export const manage_session = async (
 
     const emails = get_email_from_session(session);
     const codes = get_code_from_session(session);
-    if (codes.length>1 && !emails.length) {
+    if (codes.length>1 && !emails.length && counter[session_uuid] < 5) {
       fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
-      fastify.log.info(`Attempting to get new session with new UUID, Request ID: ${request.headers["x-request-id"]}`);
+      fastify.log.info(`Attempting to expire session with UUID, Request ID: ${request.headers["x-request-id"]}`);
+      const query = `mutation { expireSession(uuid: "${ session_uuid }") ${session_query}}`;
+      await axios.post(url, {
+        query,
+      }, {
+        headers: headers
+      });
       request.cookies.uuid = "";
+      counter[session_uuid] = (counter[session_uuid] || 0) + 1;
       return await manage_session(fastify, request);
+    } else if (counter[session_uuid] >= 5) {
+      fastify.log.info(`Session with UUID ${session_uuid} has attempted ${counter[session_uuid]} times, please contact support.`);
     }
     return [session, null];
   } catch (err) {
