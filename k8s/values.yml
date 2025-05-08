@@ -11,6 +11,9 @@ requiredTags:
   environment: $ENVIRONMENT
   businessUnit: $ITHAKA_BUSINESS_UNIT
 
+envVars:
+  NODE_ENV: override_in_setup_yml # required - overwritten in EXTRA_HELM_TEMPLATE_OPTIONS --set envVars.NODE_ENV
+
 extraEnv:
   - name: DATABASE_URL
     valueFrom:
