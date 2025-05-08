@@ -9,6 +9,7 @@ import search from "./search/routes";
 import pages from "./pages/routes";
 import account_management from "./account_management/routes";
 import site_administration from "./site_administration";
+import environment from "./environment/routes";
 
 // Some of these routes are grouped, so we need to flatten the array
 // to avoid nested arrays in the final export. While the realistic depth
@@ -26,4 +27,5 @@ export default [
   pages,
   account_management,
   site_administration,
+  environment,
 ].flat(10);
