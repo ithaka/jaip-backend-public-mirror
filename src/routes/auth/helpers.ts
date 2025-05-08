@@ -96,13 +96,16 @@ export const manage_session = async (
     }
 
     const emails = get_email_from_session(session);
+    fastify.log.info(`Emails found in session: ${emails}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+
     const codes = get_code_from_session(session);
-    if (codes.length>1 && emails.length) {
+    fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+
+    if (codes.length>1 && !emails.length) {
       fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
       fastify.log.info(`Counter: ${counter[session_uuid]}`);
   
       if (counter[session_uuid] < 5) {
-        fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
         fastify.log.info(`Attempting to expire session with UUID, Request ID: ${request.headers["x-request-id"]}`);
         const query = `mutation { expireSession(uuid: "${ session_uuid }") ${session_query}}`;
         await axios.post(url, {
@@ -269,8 +272,7 @@ export const get_current_user = async (
   codes: string[],
 ): Promise<[User | null, Error | null]> => {
   let current_user: User | null = null;
-  try {
-    fastify.log.info(`Emails found in session: ${emails}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+  try {   
     // If there are emails, try to find a user with one of them
     if (emails.length) {
       const [result, error] = await get_user(fastify.db, emails);
@@ -283,7 +285,6 @@ export const get_current_user = async (
       }
     }
 
-    fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
     if (codes.length) {
       const subdomain = request.subdomain;
       fastify.log.info(`Subdomain found in request: ${subdomain}`);
