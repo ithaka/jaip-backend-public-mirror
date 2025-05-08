@@ -32,45 +32,8 @@ export const manage_session = async (
     // These headers are spelled out specifically because some headers properties
     // will throw bad request errors from session service. 
     const headers = {
-      cookie: request.headers.cookie,
-      host: request.headers.host,
-      "user-agent": request.headers["user-agent"],
-      "x-forwarded-for": request.headers["x-forwarded-for"],
-      referer: request.headers.referer,
-      "x-request-id": request.headers["x-request-id"],
-      "fastly-dc": request.headers["fastly-dc"],
-      "fastly-ff": request.headers["fastly-ff"],
-      "fastly-ssl": request.headers["fastly-ssl"],
       "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
-      "fastly-orig-accept-encoding": request.headers["fastly-orig-accept-encoding"],
-      region: request.headers.region,
-      city: request.headers.city,
-      "x-envoy-external-address": request.headers["x-envoy-external-address"],
-      "x-envoy-expected-rq-timeout-ms": request.headers["x-envoy-expected-rq-timeout-ms"],
-      "x-sigsci-edgemodule": request.headers["x-sigsci-edgemodule"],
-      "x-sigsci-requestid": request.headers["x-sigsci-requestid"],
       "x-jstor-requestid": request.headers["x-jstor-requestid"],
-      "x-forwarded-host": request.headers["x-forwarded-host"],
-      "x-forwarded-proto": request.headers["x-forwarded-proto"],
-      "x-forwarded-port": request.headers["x-forwarded-port"],
-      "x-forwarded-server": request.headers["x-forwarded-server"],
-      "x-timer": request.headers["x-timer"],
-      "x-amzn-trace-id": request.headers["x-amzn-trace-id"],
-      "x-requested-host": request.headers["x-requested-host"],
-      "gmt-offset": request.headers["gmt-offset"],
-      "accept-language": request.headers["accept-language"],
-      "accept-encoding": request.headers["accept-encoding"],
-      "accept": request.headers["accept"],
-      "sec-fetch-site": request.headers["sec-fetch-site"],
-      "sec-fetch-mode": request.headers["sec-fetch-mode"],
-      "sec-fetch-dest": request.headers["sec-fetch-dest"],
-      "sec-ch-ua": request.headers["sec-ch-ua"],
-      "sec-ch-ua-mobile": request.headers["sec-ch-ua-mobile"],
-      "sec-ch-ua-platform": request.headers["sec-ch-ua-platform"],
-      "cdn-loop": request.headers["cdn-loop"],
-      "priority": request.headers["priority"],
-      "continent-code": request.headers["continent-code"],
-      "country-code": request.headers["country-code"],
     }
 
     const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
@@ -105,7 +68,7 @@ export const manage_session = async (
       fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
       fastify.log.info(`Counter: ${counter[session_uuid]}`);
   
-      if (counter[session_uuid] < 5) {
+      if (!counter[session_uuid] || counter[session_uuid] < 5) {
         fastify.log.info(`Attempting to expire session with UUID, Request ID: ${request.headers["x-request-id"]}`);
         const query = `mutation { expireSession(uuid: "${ session_uuid }") ${session_query}}`;
         await axios.post(url, {
