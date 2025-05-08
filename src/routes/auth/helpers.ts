@@ -69,7 +69,7 @@ export const manage_session = async (
       fastify.log.info(`Counter: ${counter[session_uuid]}`);
   
       if (!counter[session_uuid] || counter[session_uuid] < 5) {
-        fastify.log.info(`Attempting to expire session with UUID, Request ID: ${request.headers["x-request-id"]}`);
+        fastify.log.info(`Attempting to expire session with UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}}`);
         const query = `mutation { expireSession(uuid: "${ session_uuid }") ${session_query}}`;
         await axios.post(url, {
           query,
