@@ -1,7 +1,6 @@
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SUBDOMAINS } from "../../consts";
 
 export const environment_handler =
   (fastify: FastifyInstance) =>
