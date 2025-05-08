@@ -74,7 +74,9 @@ export const manage_session = async (
         await axios.post(url, {
           query,
         }, {
-          headers: headers
+          headers: {
+            "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
+          }
         });
         request.cookies.uuid = "";
         counter[session_uuid] = (counter[session_uuid] || 0) + 1;
