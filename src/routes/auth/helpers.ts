@@ -14,7 +14,7 @@ import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
 
-const counter: { [key: string]: number }= {};
+let counter: { [key: string]: number }= {};
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -96,9 +96,7 @@ export const manage_session = async (
     }
     if (codes.length===1 && ignore_cookie) {
       fastify.log.info(`Successfully got single code on retry, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session.uuid}`);
-      if (request.cookies.uuid && counter[request.cookies.uuid]) {
-        delete counter[request.cookies.uuid];
-      }
+      counter = {}
       request.cookies.uuid = session.uuid;
     }
     return [session, null];
