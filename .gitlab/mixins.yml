@@ -38,6 +38,8 @@
     K8S_ACTION: apply
     BASE_URL: https://jaip-backend-$CI_MERGE_REQUEST_IID.apps.test.cirrostratus.org/jaip/api
     DATABASE_SECRET_NAME: jaip-database-creds
+    AUTOSCALING_ENABLED: "false"
+
 
 .test-env:
   variables:
