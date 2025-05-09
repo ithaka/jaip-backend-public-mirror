@@ -18,11 +18,10 @@ const counter: { [key: string]: number }= {};
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
+  ignore_cookie: boolean = false,
 ): Promise<[Session, Error | null]> => {
-  const uuid = request.cookies.uuid || "";
   let session: Session = {} as Session;
-  const session_uuid = uuid;
-
+  const session_uuid = ignore_cookie ? "" : request.cookies.uuid;
   try {
     fastify.log.info(`Attempting to manage session: ${session_uuid}`);
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
@@ -38,6 +37,9 @@ export const manage_session = async (
 
     const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
 
+    if (ignore_cookie) {
+      fastify.log.info(`Ignoring cookie, attempting to get session without UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+    }
     const response = await axios.post(url, {
       query,
     }, {
@@ -66,9 +68,11 @@ export const manage_session = async (
 
     if (codes.length>1 && !emails.length) {
       fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
-      fastify.log.info(`Counter: ${counter[session_uuid]}`);
+      if (session_uuid) {
+        fastify.log.info(`Counter: ${counter[session_uuid]}`);
+      }
   
-      if (!counter[session_uuid] || counter[session_uuid] < 5) {
+      if (session_uuid && (!counter[session_uuid] || counter[session_uuid] < 5)) {
         fastify.log.info(`Attempting to expire session with UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}}`);
         const query = `mutation { expireSession(uuid: "${ session_uuid }") ${session_query}}`;
         await axios.post(url, {
@@ -78,12 +82,16 @@ export const manage_session = async (
             "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
           }
         });
-        request.cookies.uuid = "";
         counter[session_uuid] = (counter[session_uuid] || 0) + 1;
-        return await manage_session(fastify, request);
-      } else if (counter[session_uuid] >= 5) {
-        fastify.log.info(`Session with UUID ${session_uuid} has attempted ${counter[session_uuid]} times, please contact support.`);
+        return await manage_session(fastify, request, true);
+      } else if (session_uuid && counter[session_uuid] >= 5) {
+        fastify.log.info(`Session with UUID ${session_uuid} has attempted ${counter[session_uuid]} times.`);
+      } else {
+        fastify.log.info(`Multiple Codes found, but no session UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
       }
+    }
+    if (codes.length===1 && ignore_cookie) {
+      fastify.log.info(`Successfully got single code on retry, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session.uuid}`);
     }
     return [session, null];
   } catch (err) {
