@@ -92,6 +92,9 @@ export const manage_session = async (
     }
     if (codes.length===1 && ignore_cookie) {
       fastify.log.info(`Successfully got single code on retry, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session.uuid}`);
+      if (request.cookies.uuid && counter[request.cookies.uuid]) {
+        delete counter[request.cookies.uuid];
+      }
     }
     return [session, null];
   } catch (err) {
