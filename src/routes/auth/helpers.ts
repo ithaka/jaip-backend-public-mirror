@@ -99,6 +99,7 @@ export const manage_session = async (
       if (request.cookies.uuid && counter[request.cookies.uuid]) {
         delete counter[request.cookies.uuid];
       }
+      request.cookies.uuid = session.uuid;
     }
     return [session, null];
   } catch (err) {
