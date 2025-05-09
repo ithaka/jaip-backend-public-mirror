@@ -35,13 +35,6 @@ prometheus:
 internalPort: 8080
 healthcheckPath: /api/v2/healthcheck
 
-spec:
-  template:
-    spec:
-      containers:
-        ports:
-          containerPort: 8080
-
 resources:
   requests:
     memory: 2Gi
@@ -49,7 +42,14 @@ resources:
   limits:
     memory: 12000Mi
     cpu: 500m
-  
+
+spec:
+  template:
+    spec:
+      containers:
+        ports:
+          containerPort: 8080
+
 # Opt in to the new Sirius sidecar container that ensures this application is discoverable in Capstan, and replaces ITHAKA's legacy sidecar container
 # https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml?ref_type=heads#L85
 sirius:

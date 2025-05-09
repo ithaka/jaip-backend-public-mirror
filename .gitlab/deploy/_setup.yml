@@ -26,6 +26,8 @@ variables:
   FAIL_ON_SEVERITY: critical unknown
   GROUP_NAME: $ITHAKA_OWNER
   HELM_CHART_PATH: https://artifactory.acorn.cirrostratus.org/artifactory/helm/capstan-app/capstan-app.tgz:1.23.2
+  BASIC_HELM_TEMPLATE_OPTIONS: '-f $CI_PROJECT_DIR/k8s/values.yml --set environment=$ENVIRONMENT'
+  EXTRA_HELM_TEMPLATE_OPTIONS: $BASIC_HELM_TEMPLATE_OPTIONS
   INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
   ITHAKA_OWNER: jaip
   ITHAKA_BUSINESS_UNIT: labs
@@ -34,10 +36,7 @@ variables:
   SEVERITY: critical high unknown
   ENABLE_GLOO_ROUTING: "true"
   DEPLOYED_URL: https://$EUREKA_SERVICE_NAME.apps.$ENVIRONMENT.cirrostratus.org
-  # Default to autoscaling, but allow the parent pipeline to override for the ephemeral cluster based on the envvars passed by mixins.yaml
-  AUTOSCALING_ENABLED: "true"
-  BASIC_HELM_TEMPLATE_OPTIONS: '-f $CI_PROJECT_DIR/k8s/values.yml --set environment=$ENVIRONMENT'
-  EXTRA_HELM_TEMPLATE_OPTIONS: $BASIC_HELM_TEMPLATE_OPTIONS --set autoscaling.enabled=$AUTOSCALING_ENABLED  
+
 
 # JAIP Database Credentials
   JAIP_DB_URL: "/$API_TARGET/labs/jaip/jaip-backend/database/url"
