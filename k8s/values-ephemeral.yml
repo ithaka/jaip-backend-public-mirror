@@ -1,0 +1,11 @@
+# Note that resources on the ephemeral cluster are relatively limited
+# (<1GB memory) so be sure to differentiate these values from those in the test
+# and prod clusters.
+# https://wiki.ithaka.org/display/softdel/Explanation%3A+GitLab+CI+Job+Pod+Container+Resources
+resources:
+  requests:
+    memory: 500Mi
+    cpu: 100m
+  limits:
+    memory: 800Mi
+    cpu: 150m
