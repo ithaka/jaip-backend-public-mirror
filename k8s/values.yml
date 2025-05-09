@@ -35,6 +35,14 @@ prometheus:
 internalPort: 8080
 healthcheckPath: /api/v2/healthcheck
 
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 100m
+  limits:
+    memory: 12000Mi
+    cpu: 500m
+
 spec:
   template:
     spec:
