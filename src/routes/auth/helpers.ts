@@ -30,15 +30,21 @@ export const manage_session = async (
     
     // These headers are spelled out specifically because some headers properties
     // will throw bad request errors from session service. 
-    const headers = {
+    const headers: { 
+      "fastly-client-ip": string | string[] | undefined, 
+      "x-jstor-requestid"?: string | string[] | undefined } = {
       "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
-      "x-jstor-requestid": request.headers["x-jstor-requestid"],
+    }
+    if (!ignore_cookie) {
+      headers["x-jstor-requestid"] = request.headers["x-jstor-requestid"]
     }
 
     const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
 
     if (ignore_cookie) {
-      fastify.log.info(`Ignoring cookie, attempting to get session without UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+      fastify.log.info(`Ignoring cookie, attempting to get session without UUID, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session_uuid}`);
+      fastify.log.info(`Original UUID: ${request.cookies.uuid}, Query: ${query}`);
+      fastify.log.info(`Original UUID: ${request.cookies.uuid}, Headers: ${headers}`);
     }
     const response = await axios.post(url, {
       query,
@@ -78,9 +84,7 @@ export const manage_session = async (
         await axios.post(url, {
           query,
         }, {
-          headers: {
-            "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
-          }
+          headers: headers
         });
         counter[session_uuid] = (counter[session_uuid] || 0) + 1;
         return await manage_session(fastify, request, true);
