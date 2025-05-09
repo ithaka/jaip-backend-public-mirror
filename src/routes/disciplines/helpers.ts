@@ -41,20 +41,17 @@ export const attach_bulk_approval = async (
       throw error;
     }
     if (response && response.length) {
+      fastify.log.info(`Checking journals and disciplines`);
       // Cycle through every discipline
       items.forEach((item) => {
-        fastify.log.info(`Checking Journal or Discipline: ${item}`);
         // Get an array of all statuses for this discipline
         const statuses = response.filter((status) => {
-          fastify.log.info(`Checking status ${status.jstor_item_id} against ${item} for ${status.status}`);
           if (status.status !== status_options.Approved) {
             return false;
           }
           if (type === jstor_types.discipline && "code" in item) {
-            fastify.log.info(`Checking found approved status for ${item.code}`);
             return status.jstor_item_id === item.code;
           } else if (type === jstor_types.headid && "headid" in item) {
-            fastify.log.info(`Checking found approved status for ${item.headid}`);
             return status.jstor_item_id === item.headid;
           }
         });
