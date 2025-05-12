@@ -56,7 +56,12 @@ export const disciplines_handler =
       if (processing_error) {
         throw processing_error;
       }
-      reply.send(items);
+
+      if (is_discipline_search) {
+        return (items.filter((item) => 'parent' in item && !item.parent));
+      } else {
+        reply.send(items);
+      }
 
       fastify.event_logger.pep_standard_log_complete(
         `${is_discipline_search ? "pep_disciplines_complete" : "pep_journals_complete"}`,
