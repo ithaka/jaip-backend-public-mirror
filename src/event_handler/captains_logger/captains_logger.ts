@@ -6,16 +6,16 @@ export class CaptainsLogger implements EventLogger {
   #base_log = {
     origin: "jaip-backend",
     dests: ["captains-log"],
-    requestid: uuidv4(),
-    eventid: uuidv4(),
     delivered_by: "labs",
   };
   _log(eventtype: string, payload: object) {
     console.log(
       JSON.stringify({
+        ...this.#base_log,
         eventtype: eventtype,
         tstamp_usec: Date.now() * 1000,
-        ...this.#base_log,
+        requestid: uuidv4(),
+        eventid: uuidv4(),
         ...payload,
       }),
     );
