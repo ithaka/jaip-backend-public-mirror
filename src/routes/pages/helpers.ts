@@ -115,8 +115,6 @@ export const extract_metadata = (
     const disc_codes = codes.concat(Object.keys(disciplines || {}));
 
     // Add metadata to log payload
-    log_payload.cedar_identity_block = cedar_identity_data;
-    log_payload.cedar_item_view = cedar_item_view_data;
     log_payload.doi = doi;
     log_payload.item_doi = doi;
     log_payload.stable_url = `stable/${doi}`;
