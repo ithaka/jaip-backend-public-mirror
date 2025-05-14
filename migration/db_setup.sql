@@ -1,0 +1,4 @@
+CREATE DATABASE jaip;
+
+CREATE USER jaip_writer WITH PASSWORD 'zVw99PkkcQMSeQvxg4TQEQHoe4y3';
+
