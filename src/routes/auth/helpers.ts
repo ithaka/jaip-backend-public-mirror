@@ -39,29 +39,46 @@ export const manage_session = async (
       headers["x-jstor-requestid"] = request.headers["x-jstor-requestid"]
     }
 
-    const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
+
+    let session_management_query =  `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
+  
+    if (session_uuid && !ignore_cookie) {
+      const find_session_query = `query { session(uuid: "${session_uuid}") ${session_query}}`;
+      const find_session_response = await axios.post(url, {
+        find_session_query,
+        }, {
+          headers: headers
+      });
+    
+      fastify.log.info(
+        `Existing session data retrieved: ${find_session_response.data?.data?.session?.uuid}`,
+      );
+      if (find_session_response.data?.data?.session?.uuid) {
+        session_management_query = `mutation { extendSession(uuid: ${ session_uuid ? `"${session_uuid}"` : null }, minutesFromNow: 120) ${session_query}}`;
+      }
+    }
 
     if (ignore_cookie) {
       fastify.log.info(`Ignoring cookie, attempting to get session without UUID, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session_uuid}`);
-      fastify.log.info(`Original UUID: ${request.cookies.uuid}, Query: ${query}`);
+      fastify.log.info(`Original UUID: ${request.cookies.uuid}, Query: ${session_management_query}`);
       fastify.log.info(`Original UUID: ${request.cookies.uuid}, Headers: ${headers}`);
     }
-    const response = await axios.post(url, {
-      query,
+    const session_http_headers_response = await axios.post(url, {
+      session_management_query,
     }, {
       headers: headers
     });
 
-    if (response.status !== 200) {
+    if (session_http_headers_response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
     }
-    if (!response.data?.data?.sessionHttpHeaders) {
+    if (!session_http_headers_response.data?.data?.sessionHttpHeaders) {
       throw new Error("session management failed: No session returned");
     }
     fastify.log.info(
-      `Session data retrieved: ${response.data?.data?.sessionHttpHeaders?.uuid}`,
+      `Session data retrieved: ${session_http_headers_response.data?.data?.sessionHttpHeaders?.uuid}`,
     );
-    session = response.data?.data?.sessionHttpHeaders;
+    session = session_http_headers_response.data?.data?.sessionHttpHeaders;
     if (!session.uuid) {
       throw new Error("session management failed: session has no UUID");
     }
