@@ -48,7 +48,7 @@ resources:
     cpu: 50m
   limits:
     memory: 12Gi
-    cpu: 500m
+    cpu: 800m
 
 # Opt in to the new Sirius sidecar container that ensures this application is discoverable in Capstan, and replaces ITHAKA's legacy sidecar container
 # https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml?ref_type=heads#L85
