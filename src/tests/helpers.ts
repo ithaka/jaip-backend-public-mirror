@@ -18,6 +18,7 @@ export const db_mock = {
   get_alerts: jest.fn().mockName("get_alerts"),
   get_statuses: jest.fn().mockName("get_statuses"),
   get_item_status: jest.fn().mockName("get_item_status"),
+  create_request_statuses: jest.fn().mockName("create_requests"),
   create_statuses: jest.fn().mockName("create_requests"),
   remove_bulk_approval: jest.fn().mockName("remove_bulk_approval"),
   create_bulk_statuses: jest.fn().mockName("create_bulk_statuses"),

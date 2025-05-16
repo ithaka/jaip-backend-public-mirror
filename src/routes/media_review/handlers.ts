@@ -211,7 +211,7 @@ export const request_handler =
       });
 
       fastify.log.info(`Creating requests for ${dois} in group ${group_id}`);
-      const error = await fastify.db.create_statuses(db_object, comments);
+      const error = await fastify.db.create_request_statuses(db_object, comments);
       if (error) throw error;
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,

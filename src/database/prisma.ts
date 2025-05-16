@@ -8,6 +8,7 @@ import {
   user_roles,
   features,
   ungrouped_features,
+  statuses,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -202,6 +203,63 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
 
+  async create_request_statuses(
+    data: Prisma.statusesCreateManyInput[],
+    comments: string = "",
+  ) {
+    try {
+      await this.client.$transaction(async (tx) => {
+        // First check for any existing statuses in the specified groups for the specified items
+        const existing_statuses: statuses[] = await tx.$queryRaw`
+          WITH max_ids AS (
+                SELECT MAX(id) AS id
+                FROM statuses
+                WHERE group_id = ANY(${data.map((status) => status.group_id)}::INT[]) 
+                  AND jstor_item_id = ANY(${data.map((status) => status.jstor_item_id)}::TEXT[])
+                GROUP BY jstor_item_id, group_id
+            )
+            SELECT statuses.id, statuses.jstor_item_id, statuses.group_id, statuses.jstor_item_type, statuses.status
+            FROM statuses
+            WHERE statuses.id = ANY(SELECT id FROM max_ids);
+        `;
+        // Filter out any existing Approved or Pending statuses. We don't want to add multiple
+        // pending statuses or allow a new Pending status for an already approved item.
+        const new_statuses = data.filter((status)=>{
+          return !existing_statuses.some((existing_status) => {
+            return (
+              existing_status.jstor_item_id === status.jstor_item_id &&
+              existing_status.group_id === status.group_id &&
+              (existing_status.status===status_options.Pending || existing_status.status===status_options.Approved)
+            );
+          });
+        })
+        if (new_statuses.length) {
+          const statuses = await tx.statuses.createManyAndReturn({
+            data: new_statuses,
+          });
+          if (statuses.length) {
+            if (comments !== "") {
+              await tx.status_details.createMany({
+                data: statuses.map((status) => {
+                  return {
+                    status_id: status.id,
+                    detail: comments,
+                    type: "comments",
+                  };
+                }),
+              });
+            }
+          } else {
+            throw new Error("Failed to create statuses");
+          }
+        }
+      });
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+    return null;
+  }
   // NOTE: Prisma is limited in its ability to handle bulk inserts. The createMany methods
   // don't allow simultaneously creating related records. This means that we can't create
   // a status and a status_detail in the same function call. We'll have to use a transaction

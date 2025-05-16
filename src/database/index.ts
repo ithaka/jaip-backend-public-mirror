@@ -74,6 +74,11 @@ export interface JAIPDatabase {
     comments: string,
     reason?: string,
   ) => Promise<Error | null>;
+  create_request_statuses: (
+    query: Prisma.statusesCreateManyInput[],
+    comments: string,
+    reason?: string,
+  ) => Promise<Error | null>;
   create_bulk_statuses: (
     query: Prisma.statusesCreateManyInput[],
   ) => Promise<Error | null>;
