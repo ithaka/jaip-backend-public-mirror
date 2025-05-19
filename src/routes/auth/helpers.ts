@@ -37,6 +37,13 @@ export const manage_session = async (
     }
     if (!ignore_cookie) {
       headers["x-jstor-requestid"] = request.headers["x-jstor-requestid"]
+    } else {
+      fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes_retry", request, {
+        log_made_by: "auth-api",
+        event_description: "attempting auth while ignoring original cookie",
+        sessionid: session_uuid,
+        original_uuid: request.cookies.uuid,
+      });
     }
 
     const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
@@ -73,7 +80,21 @@ export const manage_session = async (
     fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
 
     if (codes.length>1 && !emails.length) {
-      fastify.log.info(`Multiple Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+      fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes", request, {
+        log_made_by: "auth-api",
+        event_description: "multiple codes found in session",
+        sessionid: session.uuid,
+        sitecodes: codes,
+      });
+      if (ignore_cookie) {
+        fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes_retry_failed", request, {
+          log_made_by: "auth-api",
+          event_description: "multiple codes found in session, reattempt also returned multiple codes",
+          sessionid: session.uuid,
+          sitecodes: codes,
+          original_uuid: request.cookies.uuid,
+        });
+      }
       if (session_uuid) {
         fastify.log.info(`Counter: ${counter[session_uuid]}`);
       }
@@ -95,6 +116,14 @@ export const manage_session = async (
       }
     }
     if (codes.length===1 && ignore_cookie) {
+      fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes_retry_succeeded", request, {
+        log_made_by: "auth-api",
+        event_description: "multiple codes found in session, reattempt returned single code",
+        sessionid: session.uuid,
+        sitecodes: codes,
+        original_uuid: request.cookies.uuid,
+      });
+
       fastify.log.info(`Successfully got single code on retry, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session.uuid}`);
       counter = {}
       request.cookies.uuid = session.uuid;

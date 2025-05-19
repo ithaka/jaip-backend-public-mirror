@@ -8,7 +8,7 @@ export const auth_session_handler =
   async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "auth-api",
-      event_description: "user authenticated and authorized",
+      event_description: "attempting to authenticate user",
     };
     fastify.event_logger.pep_standard_log_start("pep_auth_start", request, {
       ...log_payload,

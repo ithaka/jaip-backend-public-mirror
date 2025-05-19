@@ -79,6 +79,8 @@ export interface CompleteLogPayload {
   is_duplicate: boolean;
   group_name: string;
   include_ungrouped: boolean;
+  sitecodes: string[];
+  original_uuid: string;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial
