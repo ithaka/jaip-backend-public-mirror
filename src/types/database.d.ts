@@ -11,6 +11,10 @@ export interface DBEntity {
   jstor_id: string;
   entities: Entities;
   uuid?: string;
+  subdomains_facilities?: {
+    sitecode: string;
+    subdomain: string;
+  }[];
 }
 export interface DBGroup {
   name: string;

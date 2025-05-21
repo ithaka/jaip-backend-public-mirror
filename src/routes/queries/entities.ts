@@ -196,5 +196,9 @@ export const map_entities = (user: DBEntity): User => {
   if (user.uuid) {
     entity.uuid = user.uuid;
   }
+  if (user.subdomains_facilities?.length) {
+    entity.primary_sitecode = user.subdomains_facilities[0].sitecode;
+    entity.subdomain = user.subdomains_facilities[0].subdomain;
+  }
   return entity;
 };

@@ -137,7 +137,15 @@ export const get_facilities = async (
         },
       },
       ...get_entities_where_clause(groups, user_roles.user, query),
-      select: get_many_entities_select_clause(user_roles.user, groups),
+      select: {
+       ...get_many_entities_select_clause(user_roles.user, groups),
+       subdomains_facilities: {
+          select: {
+            subdomain: true,
+            sitecode: true,
+          },
+        },
+      },
     } as Prisma.facilitiesFindManyArgs;
     const [count, facilities] = await db.get_facilities_and_count(
       count_query,

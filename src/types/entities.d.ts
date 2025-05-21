@@ -15,6 +15,8 @@ export interface User {
   contact?: string;
   groups: Array<Group>;
   uuid?: UUID;
+  subdomain?: string;
+  primary_sitecode?: string;
 }
 
 export interface Entity {
