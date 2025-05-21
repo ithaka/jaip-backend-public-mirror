@@ -12,7 +12,15 @@ export const get_facility_query = (
       in: arr,
     },
   },
-  select: get_entity_select_clause(user_roles.user),
+  select: {
+    ...get_entity_select_clause(user_roles.user),
+    subdomains_facilities: {
+      select: {
+        sitecode: true,
+        subdomain: true,
+      },
+    }
+  },
 });
 
 export const get_user_query = (arr: string[]): Prisma.usersFindFirstArgs => ({
