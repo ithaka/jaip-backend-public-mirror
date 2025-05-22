@@ -107,7 +107,7 @@ export const status_search_handler =
       let doi_filter = "(";
       const statuses = (status_results as Status[]) || [];
       for (const [index, status] of statuses.entries()) {
-        doi_filter += `doi:${status.jstor_item_id}`;
+        doi_filter += `doi:"${status.jstor_item_id}"`;
         if (index < statuses.length - 1) {
           doi_filter += " OR ";
         }
