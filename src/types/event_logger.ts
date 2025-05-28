@@ -23,6 +23,7 @@ export interface CaptainsLog {
 
 export interface CompleteLogPayload {
   log_made_by: string;
+  eventtype: string;
   event_description: string;
   user: User;
   sessionid: string;

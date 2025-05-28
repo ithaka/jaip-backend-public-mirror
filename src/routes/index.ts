@@ -10,7 +10,7 @@ import pages from "./pages/routes";
 import account_management from "./account_management/routes";
 import site_administration from "./site_administration";
 import environment from "./environment/routes";
-
+import logging from "./logging/routes";
 // Some of these routes are grouped, so we need to flatten the array
 // to avoid nested arrays in the final export. While the realistic depth
 // of the array won't likely exceed 3, we use 10 to be safe. Infinity seems like
@@ -28,4 +28,5 @@ export default [
   account_management,
   site_administration,
   environment,
+  logging,
 ].flat(10);
