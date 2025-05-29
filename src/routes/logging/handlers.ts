@@ -8,14 +8,6 @@ export const logging_handler =
     const log_payload: LogPayload = {
       log_made_by: "logging-api",
     };
-    fastify.event_logger.pep_standard_log_start(
-      "pep_frontend_log_start",
-      request,
-      {
-        ...log_payload,
-        event_description: "attempting to create a frontend log",
-      },
-    );
     try {
       const log = request.body as LogPayload;
       fastify.event_logger.pep_standard_log_start(
