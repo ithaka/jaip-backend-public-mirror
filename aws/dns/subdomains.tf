@@ -14,5 +14,8 @@ locals {
     "atlo-fl",
     "atlo-ks",
     "atlo-la",
+    "nucleos-wy",
+    "nucleos-hi",
+    "nucleos-oh",
   ]
 }
