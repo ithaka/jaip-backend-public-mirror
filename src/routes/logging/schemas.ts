@@ -7,7 +7,7 @@ export const route_schemas = {
     name: "logging",
     route: "/",
     description: `Creates new log`,
-    tags: [SWAGGER_TAGS.private],
+    tags: [SWAGGER_TAGS.public],
     response: {
       200: {
         type: "object",
