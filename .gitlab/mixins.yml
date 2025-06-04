@@ -28,7 +28,9 @@
 .ephemeral-env:
   variables:
     API_TARGET: test
-    APP_NAME: jaip-backend-$CI_MERGE_REQUEST_IID
+    # The ithaka/app label is used for cost allocation, so we should not dynamically generate it with a branch suffix in epehemeral like we do with the app name itself.
+    APP_NAME: jaip-backend
+    EUREKA_SERVICE_NAME: jaip-backend-$CI_MERGE_REQUEST_IID
     DEPLOY_JOB: ephemeral
     ENVIRONMENT: test
     PROMOTE_TO: release-candidate
@@ -43,6 +45,7 @@
   variables:
     API_TARGET: test
     APP_NAME: jaip-backend
+    EUREKA_SERVICE_NAME: jaip-backend
     ENVIRONMENT: test
     PROMOTE_TO: release-candidate
     TARGET_CLUSTER: integration
@@ -53,6 +56,7 @@
   variables:
     API_TARGET: prod
     APP_NAME: jaip-backend
+    EUREKA_SERVICE_NAME: jaip-backend
     DEPLOY_JOB: persistent
     ENVIRONMENT: prod
     PROMOTE_TO: stable
@@ -77,12 +81,12 @@
 # ---- CHECKS ------------------------------------------------------------------
 # Must stay synced with Dockerfile
 .test:
-  extends: 
+  extends:
     - .test-rules
     - .test-env
   stage: check
   image: $IMAGE_TAG
-  tags: 
+  tags:
     - test-runner
   dependencies:
     - build app image
