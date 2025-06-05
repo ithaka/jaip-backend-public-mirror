@@ -434,8 +434,6 @@ export const search_handler =
       })
         .filter((doc) => doc !== undefined) : return_docs;
 
-        console.log(request.body.dois)
-
       reply.code(200).send({
         docs: sorted_return_docs,
         total: updated_total,
