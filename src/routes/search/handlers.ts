@@ -430,10 +430,11 @@ export const search_handler =
       // they were returned from Search3.
       const sorted_return_docs = request.body.dois && request.body.dois.length ? 
       request.body.dois.map((doi) => {
-        return_docs.find((doc) => doc.doi === doi)
+        return return_docs.find((doc) => doc.doi === doi)
       })
         .filter((doc) => doc !== undefined) : return_docs;
 
+        console.log(request.body.dois)
 
       reply.code(200).send({
         docs: sorted_return_docs,
