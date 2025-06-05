@@ -338,3 +338,18 @@ export const search_status_results = [
     created_at: new Date("2023-10-01T00:00:00Z"),
   },
 ] as Status[];
+
+export const status_search_dois = search_status_results.map((status)=>status.jstor_item_id)
+export const processed_search_response_with_mixed_statuses_and_status_order = status_search_dois.map((doi) => {
+  const doc = processed_search_response.find((doc) => doc.doi === doi);
+  return {
+    ...doc,
+  };
+}).filter((doc) => doc !== undefined);
+export const processed_search_response_with_mixed_statuses_reviewer_and_status_order = status_search_dois.map((doi) => {
+  const doc = processed_search_response_with_mixed_statuses_reviewer.find((doc) => doc.doi === doi);
+  return {
+    ...doc,
+  };
+}
+).filter((doc) => doc !== undefined);

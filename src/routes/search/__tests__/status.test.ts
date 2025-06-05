@@ -9,8 +9,8 @@ import { route_schemas } from "../schemas";
 import {
   bulk_statuses,
   item_statuses,
-  processed_search_response_with_mixed_statuses,
-  processed_search_response_with_mixed_statuses_reviewer,
+  processed_search_response_with_mixed_statuses_and_status_order,
+  processed_search_response_with_mixed_statuses_reviewer_and_status_order,
   search3_results,
   search_status_results,
   status_search_request_invalid,
@@ -135,7 +135,7 @@ test(`requests the ${status_route_approved} route with a facility and valid body
   expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
   expect(db_mock.get_statuses).toHaveBeenCalledTimes(2);
   expect(res.json()).toEqual({
-    docs: processed_search_response_with_mixed_statuses,
+    docs: processed_search_response_with_mixed_statuses_and_status_order,
     total: search3_results.total,
   });
   expect(res.statusCode).toEqual(200);
@@ -179,7 +179,7 @@ test(`requests the ${status_route_approved} route with a reviewer and valid body
   expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
   expect(db_mock.get_statuses).toHaveBeenCalledTimes(2);
   expect(res.json()).toEqual({
-    docs: processed_search_response_with_mixed_statuses_reviewer,
+    docs: processed_search_response_with_mixed_statuses_reviewer_and_status_order,
     total: search3_results.total,
   });
   expect(res.statusCode).toEqual(200);
