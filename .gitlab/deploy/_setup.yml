@@ -22,7 +22,7 @@ variables:
   CONTEXT: .
   DOCKERFILE: Dockerfile
   DOCKER_REPOSITORY: $CI_PROJECT_PATH
-  EUREKA_SERVICE_NAME: $APP_NAME
+  EUREKA_SERVICE_NAME: $EUREKA_SERVICE_NAME
   FAIL_ON_SEVERITY: critical unknown
   GROUP_NAME: $ITHAKA_OWNER
   HELM_CHART_PATH: https://artifactory.acorn.cirrostratus.org/artifactory/helm/capstan-app/capstan-app.tgz:1.23.2
