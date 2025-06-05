@@ -425,8 +425,18 @@ export const search_handler =
         updated_total = count;
       }
 
+      // If we have a list of DOIs from the status search handler, we want the order of results
+      // to consistently match that order. Otherwise, we return the documents in the order
+      // they were returned from Search3.
+      const sorted_return_docs = request.body.dois && request.body.dois.length ? 
+      request.body.dois.map((doi) => {
+        return_docs.find((doc) => doc.doi === doi)
+      })
+        .filter((doc) => doc !== undefined) : return_docs;
+
+
       reply.code(200).send({
-        docs: return_docs,
+        docs: sorted_return_docs,
         total: updated_total,
       });
       fastify.event_logger.pep_standard_log_complete(
