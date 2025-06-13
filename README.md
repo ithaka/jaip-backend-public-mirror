@@ -6,7 +6,7 @@ This repository Capstan-deploys the JAIP Backend, so that it is service-locatabl
 
 ### Requirements
 1. We use yarn for dependency management. Install this tool before developing in this codebase.
-1. This project requires a postgres database. A Prisma schema is included.
+1. This project requires a postgres database. A Prisma schema is included. See the Database section of this guide for more information on identifying the appropriate `DATABASE_URL`. 
 1. Development in this project requires access to the [ITHAKA CLI tool](https://github.com/ithaka/ithaka-cli?tab=readme-ov-file) and the ITHAKA VPN in order to take advantage of the Polaris sidecar for service discovery.
 
 ### Install Dependencies
