@@ -6,7 +6,7 @@ This repository Capstan-deploys the JAIP Backend, so that it is service-locatabl
 
 ### Requirements
 1. We use yarn for dependency management. Install this tool before developing in this codebase.
-1. This project requires a postgres database. A dbml template is included, along with a setup script that will provide initial starting values.
+1. This project requires a postgres database. A Prisma schema is included.
 1. Development in this project requires access to the [ITHAKA CLI tool](https://github.com/ithaka/ithaka-cli?tab=readme-ov-file) and the ITHAKA VPN in order to take advantage of the Polaris sidecar for service discovery.
 
 ### Install Dependencies
@@ -15,15 +15,24 @@ $ yarn install
 ```
 
 ### Environment
-Check the example.env file to see the required environment variables used in local development (e.g., for a database connection). Add a `.env` file in the project's root directory containing appropriate values.
+Check the `example.env` file to see the required environment variables used in local development (e.g., for a database connection). Add a `.env` file in the project's root directory containing appropriate values, as described in the example.
+
+### Database
+The database URL is kept in AWS Parameter Store, and is used to connect to the database. The correct values are available at `/test/labs/jaip/jaip-backend/database_url` and `/prod/labs/jaip/jaip-backend/database_url`. Generally, you should only need to use the test database, but it is occasionally useful to use production data locally, especially when handling bug reports. In that case change the ENVIRONMENT to `prod` and the DATABASE_URL to the production database URL. Using production data will also require a change to the ITHAKA sidecar command used for service discovery (use `ithaka sidecar polaris --env prod`). Obviously, be extremely cautious when working with production data.
+
+There are only two databases for this application: `test` and `prod`. There is no development database at present. For most purposes, the `test` database should be fine for local development.
 
 ### Development
-1. Start the Polaris sidecar
-```
+1. Start the Polaris sidecar. Generally, use
+```sh
 ithaka sidecar polaris
 ```
-1. Start the local server
+If it is necessary to work with production data, use
+```sh
+ithaka sidecar polaris --env prod
 ```
+1. Start the local server
+```sh
 yarn dev
 ```
 1. Verify the server is running at `localhost:8080/api/v2/healthcheck`. This should confirm that the server, Polaris service discovery, and the database connection are all running. Expected response:
