@@ -69,7 +69,8 @@ spec:
   lifecycle: beta
   system: jaip
   definition:
-    $text: https://jaip-backend.apps.test.cirrostratus.org/docs/json
+    # This is an awkward bit. This will only be reflected in Backstage from the prod environment.
+    $text: https://jaip-backend.apps.prod.cirrostratus.org/docs/json
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource
