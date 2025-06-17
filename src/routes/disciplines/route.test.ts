@@ -10,6 +10,7 @@ import {
   bulk_approval_statuses_journals,
   disciplines_response,
   disciplines_response_with_approval,
+  disciplines_response_with_pseudodisciplines,
   journals_response,
   journals_response_with_approval,
 } from "../../tests/fixtures/disciplines/fixtures";
@@ -46,7 +47,7 @@ test(`requests the ${disciplines_route} route with a facility and no statuses`, 
     url: disciplines_route,
   });
   expect(discover_mock).toHaveBeenCalledTimes(2);
-  expect(res.json()).toEqual(disciplines_response);
+  expect(res.json()).toEqual(disciplines_response_with_pseudodisciplines);
   expect(res.statusCode).toEqual(200);
 });
 

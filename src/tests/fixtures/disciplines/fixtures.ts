@@ -1,3 +1,5 @@
+import { PSEUDO_DISCIPLINES } from "../../../consts";
+
 export const disciplines_response = [
   {
     parent: false,
@@ -1171,6 +1173,13 @@ export const disciplines_response = [
   (discipline) => !discipline.parent
 );
 
+export const disciplines_response_with_pseudodisciplines = [
+  ...disciplines_response,
+  ...PSEUDO_DISCIPLINES,
+].sort((a, b) =>
+  a.label.localeCompare(b.label)
+);
+
 // The dates are left out of this test data because checking for strict equality
 // on dates causes problems, even when specifying the time.
 export const bulk_approval_statuses_disciplines = [
@@ -1196,7 +1205,7 @@ export const bulk_approval_statuses_disciplines = [
 
 export const disciplines_response_with_approval = [
   {
-    ...disciplines_response[0],
+    ...disciplines_response_with_pseudodisciplines[0],
     bulk_approval: [
       {
         groupID: 1,
@@ -1208,7 +1217,7 @@ export const disciplines_response_with_approval = [
     ],
   },
   {
-    ...disciplines_response[1],
+    ...disciplines_response_with_pseudodisciplines[1],
     bulk_approval: [
       {
         groupID: 1,
@@ -1219,7 +1228,7 @@ export const disciplines_response_with_approval = [
       },
     ],
   },
-  ...disciplines_response.slice(2),
+  ...disciplines_response_with_pseudodisciplines.slice(2),
 ];
 
 export const journals_response = [
