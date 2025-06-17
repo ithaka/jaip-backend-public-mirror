@@ -318,15 +318,18 @@ export const get_status_keys = (search_result: AxiosResponse) => {
     // so we need to grab that here.
     ids.push(doc.id);
     dois.push(doc.doi);
-
+  
+    if (doc.additional_fields.cty && PSEUDO_DISCIPLINE_CODES.includes(doc.additional_fields.cty)) {
+      if (!doc.additional_fields.disc_str) {
+        doc.additional_fields.disc_str = [];
+      }
+      doc.additional_fields.disc_str.push(doc.additional_fields.cty);
+    }
+  
     if (Array.isArray(doc.additional_fields.disc_str)) {
       doc.additional_fields.disc_str.forEach((disc: string) => {
         if (!disc_codes.includes(disc)) {
           disc_codes.push(disc);
-        }
-        if (doc.additional_fields.cty && PSEUDO_DISCIPLINE_CODES.includes(doc.additional_fields.cty)) {
-          disc_codes.push(doc.additional_fields.cty);
-          doc.additional_fields.disc_str?.push(doc.additional_fields.cty);
         }
       });
     } else if (doc.additional_fields.disc_str) {
