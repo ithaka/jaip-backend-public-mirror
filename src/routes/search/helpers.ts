@@ -3,7 +3,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import axios, { AxiosResponse } from "axios";
 import { Search3Document, Search3Request, Snippet } from "../../types/search";
 import { ensure_error } from "../../utils";
-import { SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
+import { PSEUDO_DISCIPLINE_CODES, SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
 import { JAIPDatabase } from "../../database";
 import { status_options } from "@prisma/client";
 
@@ -323,6 +323,10 @@ export const get_status_keys = (search_result: AxiosResponse) => {
       doc.additional_fields.disc_str.forEach((disc: string) => {
         if (!disc_codes.includes(disc)) {
           disc_codes.push(disc);
+        }
+        if (doc.additional_fields.cty && PSEUDO_DISCIPLINE_CODES.includes(doc.additional_fields.cty)) {
+          disc_codes.push(doc.additional_fields.cty);
+          doc.additional_fields.disc_str?.push(doc.additional_fields.cty);
         }
       });
     } else if (doc.additional_fields.disc_str) {

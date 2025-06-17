@@ -1,3 +1,4 @@
+import { Discipline } from "../types/disciplines";
 import type { EntityType } from "../types/entities";
 import { HTTPMethods } from "fastify";
 
@@ -30,6 +31,19 @@ export const MESSAGES = {
   public_endpoint_disclaimer:
     "<strong>NOTE: The response from this endpoint can depend on certain cookies/headers that are provided with the request. This Swagger UI is NOT capable of providing such cookies/headers.</strong>",
 };
+export const PSEUDO_DISCIPLINES = [
+ {
+  code: "research_report",
+	counts: {
+		books:     0,
+		journals:  0,
+		pamphlets: 0,
+	},
+	label:  "Research Reports",
+	parent: false,
+ } as Discipline,
+];
+export const PSEUDO_DISCIPLINE_CODES = PSEUDO_DISCIPLINES.map(disc=>disc.code);
 export const SWAGGER_OPTS = {
   openapi: {
     info: {

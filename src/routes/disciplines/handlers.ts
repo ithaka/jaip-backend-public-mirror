@@ -1,11 +1,12 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SEARCH_SERVICE } from "../../consts";
+import { PSEUDO_DISCIPLINES, SEARCH_SERVICE } from "../../consts";
 import axios from "axios";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { attach_bulk_approval } from "./helpers";
 import { jstor_types } from "@prisma/client";
 import { DiscParams } from "../../types/routes";
+import { Discipline, Journal } from "../../types/disciplines";
 
 export const disciplines_handler =
   (fastify: FastifyInstance) =>
@@ -45,12 +46,20 @@ export const disciplines_handler =
           `${is_discipline_search ? "Disciplines" : "Journals"}  request failed: None returned`,
         );
       }
+
+      const disciplines: Discipline[] = is_discipline_search ? response.data.filter((item: Discipline) => !item.parent) : [];
+      const journals: Journal[] = is_discipline_search ? [] : response.data;
+      if (is_discipline_search) {
+        disciplines.push(...PSEUDO_DISCIPLINES);
+        disciplines.sort((a, b) => a.label.localeCompare(b.label));
+      } 
+    
       const groups = request.user.groups.map((group) => group.id);
       fastify.log.info(`Retrieved disciplines/journals, getting bulk approval statuses`);
       const [items, processing_error] = await attach_bulk_approval(
         fastify,
         is_discipline_search ? jstor_types.discipline : jstor_types.headid,
-        response.data,
+        is_discipline_search ? disciplines : journals,
         groups,
       );
       if (processing_error) {
@@ -58,7 +67,7 @@ export const disciplines_handler =
       }
 
       if (is_discipline_search) {
-        return (items.filter((item) => 'parent' in item && !item.parent));
+        reply.send(items) 
       } else {
         reply.send(items);
       }
