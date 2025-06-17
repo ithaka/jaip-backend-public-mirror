@@ -303,7 +303,7 @@ export const search_handler =
 
       // Iterate through the documents and add the statuses and snippets
       docs.forEach((doc: Search3Document) => {
-        
+
         const new_doc = map_document(doc);
         // Start with bulk approval, which will be overridden by individual statuses
         new_doc.mediaReviewStatuses = bulk_approval_statuses.reduce(
