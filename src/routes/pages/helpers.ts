@@ -7,7 +7,7 @@ import {
   CedarMetadataReturn,
   EntitlementMap,
 } from "../../types/routes";
-import { ALE_QUERY_SERVICE, CEDAR_DELIVERY_SERVICE } from "../../consts";
+import { ALE_QUERY_SERVICE, CEDAR_DELIVERY_SERVICE, PSEUDO_DISCIPLINE_CODES } from "../../consts";
 import axios, { AxiosResponse } from "axios";
 import { jstor_types, status_options } from "@prisma/client";
 import { ensure_error } from "../../utils";
@@ -111,9 +111,12 @@ export const extract_metadata = (
       })?.disc_code || [];
     const disciplines = cedar_item_view_data.find((item) => {
       return item.disciplines
-    })?.disciplines;
-    const disc_codes = codes.concat(Object.keys(disciplines || {}));
-
+    })?.disciplines || [];
+    const content_type = cedar_item_view_data.find((item) => item.content_type)?.content_type || "";  
+    const disc_codes = codes.concat(Object.keys(disciplines));
+    if (PSEUDO_DISCIPLINE_CODES.includes(content_type)) {
+      disc_codes.push(content_type);
+    }
     // Add metadata to log payload
     log_payload.doi = doi;
     log_payload.item_doi = doi;
