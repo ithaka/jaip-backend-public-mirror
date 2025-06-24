@@ -9,7 +9,7 @@ export const route_schemas = {
     tags: [SWAGGER_TAGS.private],
     requires: {
       any: {
-        ungrouped: [UNGROUPED_FEATURES.manage_blocks],
+        ungrouped: [UNGROUPED_FEATURES.manage_block_list],
       },
     },
     body: {
@@ -38,7 +38,7 @@ export const route_schemas = {
     tags: [SWAGGER_TAGS.private],
     requires: {
       any: {
-        ungrouped: [UNGROUPED_FEATURES.manage_blocks],
+        ungrouped: [UNGROUPED_FEATURES.manage_block_list],
       },
     },
     body: {

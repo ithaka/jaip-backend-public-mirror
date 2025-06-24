@@ -111,7 +111,7 @@ export const UNGROUPED_FEATURES = {
   edit_feature: "edit_feature",
   delete_feature: "delete_feature",
   add_feature: "add_feature",
-  manage_blocks: "manage_blocks",
+  manage_block_list: "manage_block_list",
 };
 
 export const SESSION_MANAGER = {
