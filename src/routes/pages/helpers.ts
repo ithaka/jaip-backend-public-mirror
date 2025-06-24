@@ -7,7 +7,11 @@ import {
   CedarMetadataReturn,
   EntitlementMap,
 } from "../../types/routes";
-import { ALE_QUERY_SERVICE, CEDAR_DELIVERY_SERVICE, PSEUDO_DISCIPLINE_CODES } from "../../consts";
+import {
+  ALE_QUERY_SERVICE,
+  CEDAR_DELIVERY_SERVICE,
+  PSEUDO_DISCIPLINE_CODES,
+} from "../../consts";
 import axios, { AxiosResponse } from "axios";
 import { jstor_types, status_options } from "@prisma/client";
 import { ensure_error } from "../../utils";
@@ -107,12 +111,15 @@ export const extract_metadata = (
 
     const codes =
       cedar_item_view_data.find((item) => {
-        return item.disc_code
+        return item.disc_code;
       })?.disc_code || [];
-    const disciplines = cedar_item_view_data.find((item) => {
-      return item.disciplines
-    })?.disciplines || [];
-    const content_type = cedar_item_view_data.find((item) => item.content_type)?.content_type || "";  
+    const disciplines =
+      cedar_item_view_data.find((item) => {
+        return item.disciplines;
+      })?.disciplines || [];
+    const content_type =
+      cedar_item_view_data.find((item) => item.content_type)?.content_type ||
+      "";
     const disc_codes = codes.concat(Object.keys(disciplines));
     if (PSEUDO_DISCIPLINE_CODES.includes(content_type)) {
       disc_codes.push(content_type);
@@ -169,7 +176,10 @@ export const get_cedar_metadata = async (
 
     // Wait for both requests to finish
     const [cedar_identity_response, cedar_item_view_response] =
-      await Promise.allSettled([cedar_identity_promise, cedar_item_view_promise]);
+      await Promise.allSettled([
+        cedar_identity_promise,
+        cedar_item_view_promise,
+      ]);
 
     if (cedar_identity_response.status === "rejected") {
       throw new Error(
@@ -194,7 +204,10 @@ export const get_cedar_metadata = async (
       );
     }
 
-    return [cedar_identity_response.value.data, cedar_item_view_response.value.data];
+    return [
+      cedar_identity_response.value.data,
+      cedar_item_view_response.value.data,
+    ];
   } catch (err) {
     const error = ensure_error(err);
     return error;

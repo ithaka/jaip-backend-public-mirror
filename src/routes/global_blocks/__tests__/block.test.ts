@@ -63,7 +63,9 @@ test(`requests the ${block_route} route with valid body and no permissions`, asy
 test(`requests the ${block_route} route with valid body and request permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_user_ungrouped_manage_blocks);
+  db_mock.get_first_user.mockResolvedValueOnce(
+    basic_user_ungrouped_manage_blocks,
+  );
 
   const res = await app.inject({
     method: "POST",
@@ -78,7 +80,7 @@ test(`requests the ${block_route} route with valid body and request permissions`
     block_valid.doi,
     block_valid.reason,
     basic_user_ungrouped_manage_blocks.entities.id,
-);
+  );
   expect(res.payload).toStrictEqual("");
   expect(res.statusCode).toEqual(201);
 });

@@ -51,7 +51,9 @@ export const denial_and_incomplete_handler = (
         entity_id: request.user.id!,
         group_id: group_id,
       }));
-      fastify.log.info(`Creating denial/incomplete for ${doi} in groups ${groups}`);
+      fastify.log.info(
+        `Creating denial/incomplete for ${doi} in groups ${groups}`,
+      );
       const error = await fastify.db.create_statuses(
         db_object,
         comments,
@@ -211,7 +213,10 @@ export const request_handler =
       });
 
       fastify.log.info(`Creating requests for ${dois} in group ${group_id}`);
-      const error = await fastify.db.create_request_statuses(db_object, comments);
+      const error = await fastify.db.create_request_statuses(
+        db_object,
+        comments,
+      );
       if (error) throw error;
       // This is somewhat unnecessary. The original version of this code in Go added the
       // requests individually and logged each success. Because of Prisma's CreateMany method,
@@ -341,9 +346,15 @@ export const bulk_approval_handler =
 
       const db_inserts = [...db_docs, ...db_disciplines, ...db_journals];
 
-      fastify.log.info(`Creating bulk approvals for ${db_docs} in groups ${groups}`);
-      fastify.log.info(`Creating bulk approvals for ${db_disciplines} in groups ${groups}`);
-      fastify.log.info(`Creating bulk approvals for ${db_journals} in groups ${groups}`);
+      fastify.log.info(
+        `Creating bulk approvals for ${db_docs} in groups ${groups}`,
+      );
+      fastify.log.info(
+        `Creating bulk approvals for ${db_disciplines} in groups ${groups}`,
+      );
+      fastify.log.info(
+        `Creating bulk approvals for ${db_journals} in groups ${groups}`,
+      );
       await fastify.db.create_bulk_statuses(db_inserts);
 
       // This is somewhat unnecessary. The original version of this code in Go added the
@@ -414,7 +425,9 @@ export const bulk_undo_handler =
       log_payload.code = code;
       const groups = full_groups.map((group) => group.id);
 
-      fastify.log.info(`Undoing bulk approvals for ${code} in groups ${groups}`);
+      fastify.log.info(
+        `Undoing bulk approvals for ${code} in groups ${groups}`,
+      );
       const [db_inserts, error] = await fastify.db.remove_bulk_approval(
         code,
         groups,

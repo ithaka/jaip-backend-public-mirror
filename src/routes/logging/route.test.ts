@@ -11,7 +11,6 @@ const prefix = route_settings.options.prefix;
 
 const route = `${prefix}${get_route(route_schemas.logging)}`;
 
-
 test(`requests the ${route} route with a facility and no body`, async () => {
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
@@ -40,4 +39,3 @@ test(`requests the ${route} route with a facility and request body`, async () =>
 
   expect(res.statusCode).toEqual(200);
 });
-

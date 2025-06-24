@@ -43,7 +43,7 @@ export const route_schemas = {
     },
     body: {
       type: "object",
-      required: ["doi",],
+      required: ["doi"],
       properties: {
         doi: {
           type: "string",

@@ -47,15 +47,19 @@ export const disciplines_handler =
         );
       }
 
-      const disciplines: Discipline[] = is_discipline_search ? response.data.filter((item: Discipline) => !item.parent) : [];
+      const disciplines: Discipline[] = is_discipline_search
+        ? response.data.filter((item: Discipline) => !item.parent)
+        : [];
       const journals: Journal[] = is_discipline_search ? [] : response.data;
       if (is_discipline_search) {
         disciplines.push(...PSEUDO_DISCIPLINES);
         disciplines.sort((a, b) => a.label.localeCompare(b.label));
-      } 
-    
+      }
+
       const groups = request.user.groups.map((group) => group.id);
-      fastify.log.info(`Retrieved disciplines/journals, getting bulk approval statuses`);
+      fastify.log.info(
+        `Retrieved disciplines/journals, getting bulk approval statuses`,
+      );
       const [items, processing_error] = await attach_bulk_approval(
         fastify,
         is_discipline_search ? jstor_types.discipline : jstor_types.headid,
@@ -67,7 +71,7 @@ export const disciplines_handler =
       }
 
       if (is_discipline_search) {
-        reply.send(items) 
+        reply.send(items);
       } else {
         reply.send(items);
       }

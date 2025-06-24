@@ -19,7 +19,7 @@ export const get_facility_query = (
         sitecode: true,
         subdomain: true,
       },
-    }
+    },
   },
 });
 

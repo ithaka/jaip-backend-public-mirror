@@ -50,6 +50,7 @@ export const db_mock = {
   update_ungrouped_feature: jest.fn().mockName("update_ungrouped_feature"),
   create_blocked_item: jest.fn().mockName("create_blocked_item"),
   remove_blocked_item: jest.fn().mockName("remove_blocked_item"),
+  get_blocked_items: jest.fn().mockName("get_blocked_items"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest

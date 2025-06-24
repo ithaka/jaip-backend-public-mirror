@@ -17,7 +17,7 @@ export const logging_handler =
           log_made_by: "jaip-frontend",
           ...log,
         },
-      )
+      );
     } catch (err) {
       const error = ensure_error(err);
       fastify.event_logger.pep_error(

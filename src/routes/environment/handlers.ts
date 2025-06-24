@@ -19,7 +19,7 @@ export const environment_handler =
     try {
       reply.send({
         environment: process.env.ENVIRONMENT,
-      })
+      });
       fastify.event_logger.pep_standard_log_complete(
         "pep_validate_subdomain_complete",
         request,

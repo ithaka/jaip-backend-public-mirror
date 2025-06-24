@@ -9,6 +9,7 @@ import {
   features,
   ungrouped_features,
   statuses,
+  globally_blocked_items,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -224,15 +225,16 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
         `;
         // Filter out any existing Approved or Pending statuses. We don't want to add multiple
         // pending statuses or allow a new Pending status for an already approved item.
-        const new_statuses = data.filter((status)=>{
+        const new_statuses = data.filter((status) => {
           return !existing_statuses.some((existing_status) => {
             return (
               existing_status.jstor_item_id === status.jstor_item_id &&
               existing_status.group_id === status.group_id &&
-              (existing_status.status===status_options.Pending || existing_status.status===status_options.Approved)
+              (existing_status.status === status_options.Pending ||
+                existing_status.status === status_options.Approved)
             );
           });
-        })
+        });
         if (new_statuses.length) {
           const statuses = await tx.statuses.createManyAndReturn({
             data: new_statuses,
@@ -261,11 +263,18 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return null;
   }
 
-  async create_blocked_item(
-    doi: string,
-    reason: string,
-    user_id: number,
-  ) {
+  async get_blocked_items(
+    query: Prisma.globally_blocked_itemsFindManyArgs,
+  ): Promise<[globally_blocked_items[], Error | null]> {
+    try {
+      const items = await this.client.globally_blocked_items.findMany(query);
+      return [items, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
+    }
+  }
+  async create_blocked_item(doi: string, reason: string, user_id: number) {
     try {
       await this.client.$transaction(async (tx) => {
         const item = await tx.globally_blocked_items.findFirst({
@@ -301,10 +310,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return null;
   }
 
-  async remove_blocked_item(
-    doi: string,
-    user_id: number,
-  ) {
+  async remove_blocked_item(doi: string, user_id: number) {
     try {
       await this.client.$transaction(async (tx) => {
         const item = await tx.globally_blocked_items.findFirst({
@@ -313,9 +319,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
           },
         });
         if (!item) {
-          throw new Error(
-            `No blocked item found for DOI: ${doi}`,
-          );
+          throw new Error(`No blocked item found for DOI: ${doi}`);
         } else {
           await tx.globally_blocked_items.update({
             where: {
@@ -499,14 +503,19 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
         async (tx) => {
           const max_ids_object: { max: number }[] =
             await tx.$queryRaw`SELECT MAX(id) FROM statuses WHERE group_id = ANY(${groups}::INT[]) GROUP BY jstor_item_id, group_id`;
-          const ids_object: { id: number }[] = sort === "new" ?
-            await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY statuses.id DESC` :
-            await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY statuses.id DESC`;
-          const partial_ids_object = paginated_array(ids_object, limit, limit * (page - 1))
-            .map((obj) => obj.id);
-          const statuses = sort === "new" ?
-            await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE group_id = ANY(${groups}::INT[]) AND statuses.id = ANY(${partial_ids_object}::INT[]) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) ORDER BY statuses.id DESC` :
-            await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE group_id = ANY(${groups}::INT[]) AND statuses.id = ANY(${partial_ids_object}::INT[]) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) ORDER BY statuses.id ASC` 
+          const ids_object: { id: number }[] =
+            sort === "new"
+              ? await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY statuses.id DESC`
+              : await tx.$queryRaw`SELECT statuses.id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY statuses.id DESC`;
+          const partial_ids_object = paginated_array(
+            ids_object,
+            limit,
+            limit * (page - 1),
+          ).map((obj) => obj.id);
+          const statuses =
+            sort === "new"
+              ? await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE group_id = ANY(${groups}::INT[]) AND statuses.id = ANY(${partial_ids_object}::INT[]) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) ORDER BY statuses.id DESC`
+              : await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE group_id = ANY(${groups}::INT[]) AND statuses.id = ANY(${partial_ids_object}::INT[]) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) ORDER BY statuses.id ASC`;
           return [statuses, (ids_object || []).length];
         },
         {
@@ -628,7 +637,10 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       return [[], 0, error];
     }
   }
-  async create_group(name: string, user_id: number): Promise<[groups, Error | null]> {
+  async create_group(
+    name: string,
+    user_id: number,
+  ): Promise<[groups, Error | null]> {
     try {
       const features = await this.client.features.findMany({
         where: {
@@ -650,7 +662,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
             entity_id: user_id,
             role: user_roles.admin,
           },
-        })
+        });
         await tx.features_groups_entities.createMany({
           data: features.map((feature) => {
             return {
@@ -660,9 +672,9 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
               enabled: true,
             };
           }),
-        })
+        });
         return group;
-      })
+      });
 
       return [group, null];
     } catch (err) {

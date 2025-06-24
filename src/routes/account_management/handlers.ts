@@ -85,7 +85,7 @@ export const get_entities_handler =
           ?.enabled && type === entity_types.users;
 
       if (type === entity_types.users) {
-        fastify.log.info(`Getting users ${query}`)
+        fastify.log.info(`Getting users ${query}`);
         const [response, user_query_error] = await get_users(
           fastify.db,
           query,
@@ -107,7 +107,7 @@ export const get_entities_handler =
           entities,
         });
       } else {
-        fastify.log.info(`Getting facilities ${query}`)
+        fastify.log.info(`Getting facilities ${query}`);
         const [response, facility_query_error] = await get_facilities(
           fastify.db,
           query,
@@ -326,7 +326,7 @@ export const add_or_edit_entities_handler =
             full_groups.filter((group) => {
               return group.features[FEATURES.manage_facilities];
             }).length === full_groups.length;
-        fastify.log.info(`Adding or editing facility ${new_user.id}`);
+          fastify.log.info(`Adding or editing facility ${new_user.id}`);
           const add_facility_error = await add_or_edit_entity(
             fastify.db,
             new_user,

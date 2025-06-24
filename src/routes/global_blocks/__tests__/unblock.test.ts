@@ -63,7 +63,9 @@ test(`requests the ${unblock_route} route with valid body and no permissions`, a
 test(`requests the ${unblock_route} route with valid body and request permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_user_ungrouped_manage_blocks);
+  db_mock.get_first_user.mockResolvedValueOnce(
+    basic_user_ungrouped_manage_blocks,
+  );
 
   const res = await app.inject({
     method: "POST",
@@ -73,11 +75,11 @@ test(`requests the ${unblock_route} route with valid body and request permission
       host: valid_admin_subdomain,
     },
   });
-//   expect(db_mock.remove_blocked_item).toHaveBeenCalledTimes(1);
-//   expect(db_mock.remove_blocked_item).toHaveBeenCalledWith(
-//     unblock_valid.doi,
-//     basic_user_ungrouped_manage_blocks.entities.id,
-// );
-//   expect(res.payload).toStrictEqual("");
+  //   expect(db_mock.remove_blocked_item).toHaveBeenCalledTimes(1);
+  //   expect(db_mock.remove_blocked_item).toHaveBeenCalledWith(
+  //     unblock_valid.doi,
+  //     basic_user_ungrouped_manage_blocks.entities.id,
+  // );
+  //   expect(res.payload).toStrictEqual("");
   expect(res.statusCode).toEqual(201);
 });

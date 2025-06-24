@@ -2,9 +2,7 @@ import { build_test_server, db_mock } from "../../tests/helpers";
 import route_settings from "./routes";
 import { route_schemas } from "./schemas";
 import { get_route } from "../../utils";
-import {
-  valid_student_subdomain,
-} from "../../tests/fixtures/auth/fixtures";
+import { valid_student_subdomain } from "../../tests/fixtures/auth/fixtures";
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 

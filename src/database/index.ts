@@ -5,6 +5,7 @@ import {
   Prisma,
   status_options,
   ungrouped_features,
+  globally_blocked_items,
 } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
@@ -69,15 +70,15 @@ export interface JAIPDatabase {
   get_item_status: (
     query: Prisma.statusesFindFirstArgs,
   ) => Promise<[Status | null, Error | null]>;
+  get_blocked_items: (
+    query: Prisma.globally_blocked_itemsFindManyArgs,
+  ) => Promise<[globally_blocked_items[], Error | null]>;
   create_blocked_item: (
     doi: string,
     reason: string,
     user_id: number,
   ) => Promise<Error | null>;
-  remove_blocked_item: (
-    doi: string,
-    user_id: number,
-  ) => Promise<Error | null>;
+  remove_blocked_item: (doi: string, user_id: number) => Promise<Error | null>;
   create_statuses: (
     query: Prisma.statusesCreateManyInput[],
     comments: string,
@@ -116,7 +117,7 @@ export interface JAIPDatabase {
   get_all_tokens: () => Promise<[string[], Error | null]>;
 
   // SITE ADMINISTRATION
-  
+
   // SUBDOMAINS
   get_subdomains_and_count: (
     count_query: Prisma.subdomainsCountArgs,
@@ -133,7 +134,10 @@ export interface JAIPDatabase {
     count_query: Prisma.groupsCountArgs,
     query: Prisma.groupsFindManyArgs,
   ) => Promise<[groups[], number, Error | null]>;
-  create_group: (name: string, user_id: number) => Promise<[groups, Error | null]>;
+  create_group: (
+    name: string,
+    user_id: number,
+  ) => Promise<[groups, Error | null]>;
   remove_group: (id: number) => Promise<Error | null>;
   update_group: (
     subdomains_query: Prisma.groupsUpdateArgs,

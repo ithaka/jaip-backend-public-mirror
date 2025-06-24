@@ -1,17 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
-import {
-  BlockItem,
-  UnblockItem,
-} from "../../types/routes";
+import { BlockItem, UnblockItem } from "../../types/routes";
 
-export const block_handler = (
-  fastify: FastifyInstance) => {
-  return async (
-    request: FastifyRequest<BlockItem>,
-    reply: FastifyReply,
-  ) => {
+export const block_handler = (fastify: FastifyInstance) => {
+  return async (request: FastifyRequest<BlockItem>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "global-blocks-api",
     };
@@ -70,20 +63,14 @@ export const unblock_handler =
     const log_payload: LogPayload = {
       log_made_by: "global-blocks-api",
     };
-    fastify.event_logger.pep_standard_log_start(
-      "pep_unblock_start",
-      request,
-      {
-        ...log_payload,
-        event_description: "attempting unblock item",
-      },
-    );
+    fastify.event_logger.pep_standard_log_start("pep_unblock_start", request, {
+      ...log_payload,
+      event_description: "attempting unblock item",
+    });
     try {
       const doi = request.body.doi;
       // Because requests come from facilities, we can assume that there is only one group
       log_payload.doi = doi;
-
-      
 
       fastify.log.info(`Unblocking item ${doi}`);
       const error = await fastify.db.remove_blocked_item(doi, request.user.id!);
@@ -114,4 +101,3 @@ export const unblock_handler =
       reply.code(500).send(error.message);
     }
   };
-

@@ -14,7 +14,7 @@ import { SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
 
-let counter: { [key: string]: number }= {};
+let counter: { [key: string]: number } = {};
 export const manage_session = async (
   fastify: FastifyInstance,
   request: FastifyRequest,
@@ -27,37 +27,53 @@ export const manage_session = async (
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
     if (error) throw error;
     const url = host + "v1/graphql";
-    
+
     // These headers are spelled out specifically because some headers properties
-    // will throw bad request errors from session service. 
-    const headers: { 
-      "fastly-client-ip": string | string[] | undefined, 
-      "x-jstor-requestid"?: string | string[] | undefined } = {
-      "fastly-client-ip": request.headers["fastly-client-ip"] || process.env.VPN_IP,
-    }
+    // will throw bad request errors from session service.
+    const headers: {
+      "fastly-client-ip": string | string[] | undefined;
+      "x-jstor-requestid"?: string | string[] | undefined;
+    } = {
+      "fastly-client-ip":
+        request.headers["fastly-client-ip"] || process.env.VPN_IP,
+    };
     if (!ignore_cookie) {
-      headers["x-jstor-requestid"] = request.headers["x-jstor-requestid"]
+      headers["x-jstor-requestid"] = request.headers["x-jstor-requestid"];
     } else {
-      fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes_retry", request, {
-        log_made_by: "auth-api",
-        event_description: "attempting auth while ignoring original cookie",
-        sessionid: session_uuid,
-        original_uuid: request.cookies.uuid,
-      });
+      fastify.event_logger.pep_standard_log_start(
+        "pep_auth_multiple_codes_retry",
+        request,
+        {
+          log_made_by: "auth-api",
+          event_description: "attempting auth while ignoring original cookie",
+          sessionid: session_uuid,
+          original_uuid: request.cookies.uuid,
+        },
+      );
     }
 
-    const query = `mutation { sessionHttpHeaders(uuid: ${ session_uuid ? `"${session_uuid}"` : null }) ${session_query}}`;
+    const query = `mutation { sessionHttpHeaders(uuid: ${session_uuid ? `"${session_uuid}"` : null}) ${session_query}}`;
 
     if (ignore_cookie) {
-      fastify.log.info(`Ignoring cookie, attempting to get session without UUID, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session_uuid}`);
-      fastify.log.info(`Original UUID: ${request.cookies.uuid}, Query: ${query}`);
-      fastify.log.info(`Original UUID: ${request.cookies.uuid}, Headers: ${headers}`);
+      fastify.log.info(
+        `Ignoring cookie, attempting to get session without UUID, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session_uuid}`,
+      );
+      fastify.log.info(
+        `Original UUID: ${request.cookies.uuid}, Query: ${query}`,
+      );
+      fastify.log.info(
+        `Original UUID: ${request.cookies.uuid}, Headers: ${headers}`,
+      );
     }
-    const response = await axios.post(url, {
-      query,
-    }, {
-      headers: headers
-    });
+    const response = await axios.post(
+      url,
+      {
+        query,
+      },
+      {
+        headers: headers,
+      },
+    );
 
     if (response.status !== 200) {
       throw new Error("session management failed: Status code not 200");
@@ -74,58 +90,91 @@ export const manage_session = async (
     }
 
     const emails = get_email_from_session(session);
-    fastify.log.info(`Emails found in session: ${emails}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+    fastify.log.info(
+      `Emails found in session: ${emails}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`,
+    );
 
     const codes = get_code_from_session(session);
-    fastify.log.info(`Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+    fastify.log.info(
+      `Codes found in session: ${codes}, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`,
+    );
 
-    if (codes.length>1 && !emails.length) {
-      fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes", request, {
-        log_made_by: "auth-api",
-        event_description: "multiple codes found in session",
-        sessionid: session.uuid,
-        sitecodes: codes,
-      });
-      if (ignore_cookie) {
-        fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes_retry_failed", request, {
+    if (codes.length > 1 && !emails.length) {
+      fastify.event_logger.pep_standard_log_start(
+        "pep_auth_multiple_codes",
+        request,
+        {
           log_made_by: "auth-api",
-          event_description: "multiple codes found in session, reattempt also returned multiple codes",
+          event_description: "multiple codes found in session",
           sessionid: session.uuid,
           sitecodes: codes,
-          original_uuid: request.cookies.uuid,
-        });
+        },
+      );
+      if (ignore_cookie) {
+        fastify.event_logger.pep_standard_log_start(
+          "pep_auth_multiple_codes_retry_failed",
+          request,
+          {
+            log_made_by: "auth-api",
+            event_description:
+              "multiple codes found in session, reattempt also returned multiple codes",
+            sessionid: session.uuid,
+            sitecodes: codes,
+            original_uuid: request.cookies.uuid,
+          },
+        );
       }
       if (session_uuid) {
         fastify.log.info(`Counter: ${counter[session_uuid]}`);
       }
-  
-      if (session_uuid && (!counter[session_uuid] || counter[session_uuid] < 5)) {
-        fastify.log.info(`Attempting to expire session with UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}}`);
-        const query = `mutation { expireSession(uuid: "${ session_uuid }") ${session_query}}`;
-        await axios.post(url, {
-          query,
-        }, {
-          headers: headers
-        });
+
+      if (
+        session_uuid &&
+        (!counter[session_uuid] || counter[session_uuid] < 5)
+      ) {
+        fastify.log.info(
+          `Attempting to expire session with UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}}`,
+        );
+        const query = `mutation { expireSession(uuid: "${session_uuid}") ${session_query}}`;
+        await axios.post(
+          url,
+          {
+            query,
+          },
+          {
+            headers: headers,
+          },
+        );
         counter[session_uuid] = (counter[session_uuid] || 0) + 1;
         return await manage_session(fastify, request, true);
       } else if (session_uuid && counter[session_uuid] >= 5) {
-        fastify.log.info(`Session with UUID ${session_uuid} has attempted ${counter[session_uuid]} times.`);
+        fastify.log.info(
+          `Session with UUID ${session_uuid} has attempted ${counter[session_uuid]} times.`,
+        );
       } else {
-        fastify.log.info(`Multiple Codes found, but no session UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`);
+        fastify.log.info(
+          `Multiple Codes found, but no session UUID, IP: ${request.headers["fastly-client-ip"]}, uuid: ${request.cookies.uuid}`,
+        );
       }
     }
-    if (codes.length===1 && ignore_cookie) {
-      fastify.event_logger.pep_standard_log_start("pep_auth_multiple_codes_retry_succeeded", request, {
-        log_made_by: "auth-api",
-        event_description: "multiple codes found in session, reattempt returned single code",
-        sessionid: session.uuid,
-        sitecodes: codes,
-        original_uuid: request.cookies.uuid,
-      });
+    if (codes.length === 1 && ignore_cookie) {
+      fastify.event_logger.pep_standard_log_start(
+        "pep_auth_multiple_codes_retry_succeeded",
+        request,
+        {
+          log_made_by: "auth-api",
+          event_description:
+            "multiple codes found in session, reattempt returned single code",
+          sessionid: session.uuid,
+          sitecodes: codes,
+          original_uuid: request.cookies.uuid,
+        },
+      );
 
-      fastify.log.info(`Successfully got single code on retry, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session.uuid}`);
-      counter = {}
+      fastify.log.info(
+        `Successfully got single code on retry, IP: ${request.headers["fastly-client-ip"]}, Original UUID: ${request.cookies.uuid}, new UUID: ${session.uuid}`,
+      );
+      counter = {};
       request.cookies.uuid = session.uuid;
     }
     return [session, null];
@@ -280,7 +329,7 @@ export const get_current_user = async (
   codes: string[],
 ): Promise<[User | null, Error | null]> => {
   let current_user: User | null = null;
-  try {   
+  try {
     // If there are emails, try to find a user with one of them
     if (emails.length) {
       const [result, error] = await get_user(fastify.db, emails);
@@ -296,7 +345,10 @@ export const get_current_user = async (
     if (codes.length) {
       const subdomain = request.subdomain;
       fastify.log.info(`Subdomain found in request: ${subdomain}`);
-      if (!SUBDOMAINS.student.includes(subdomain) && !SUBDOMAINS.admin.includes(subdomain)) {
+      if (
+        !SUBDOMAINS.student.includes(subdomain) &&
+        !SUBDOMAINS.admin.includes(subdomain)
+      ) {
         const [sitecode, error] = await get_sitecode_by_subdomain(
           fastify.db,
           subdomain,
@@ -305,7 +357,9 @@ export const get_current_user = async (
         if (error) {
           throw error;
         } else if (sitecode) {
-          fastify.log.info(`Sitecode found for subdomain ${subdomain}: ${sitecode}`)
+          fastify.log.info(
+            `Sitecode found for subdomain ${subdomain}: ${sitecode}`,
+          );
           codes.push(sitecode);
         } else {
           throw new Error(

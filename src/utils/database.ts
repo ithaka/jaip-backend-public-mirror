@@ -3,7 +3,11 @@ export const get_db_pagination = (page: number, limit: number) => ({
   take: limit,
 });
 
-export const paginated_array = <T>(arr: T[], limit: number, offset: number): T[] => {
+export const paginated_array = <T>(
+  arr: T[],
+  limit: number,
+  offset: number,
+): T[] => {
   if (!arr) return [];
 
   if (!arr.length) {
@@ -13,5 +17,8 @@ export const paginated_array = <T>(arr: T[], limit: number, offset: number): T[]
     return [];
   }
 
-  return arr.slice(Math.min(arr.length - 1, offset), Math.min(arr.length, offset + limit));
-}
+  return arr.slice(
+    Math.min(arr.length - 1, offset),
+    Math.min(arr.length, offset + limit),
+  );
+};
