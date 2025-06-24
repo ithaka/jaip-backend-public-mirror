@@ -69,6 +69,15 @@ export interface JAIPDatabase {
   get_item_status: (
     query: Prisma.statusesFindFirstArgs,
   ) => Promise<[Status | null, Error | null]>;
+  create_blocked_item: (
+    doi: string,
+    reason: string,
+    user_id: number,
+  ) => Promise<Error | null>;
+  remove_blocked_item: (
+    doi: string,
+    user_id: number,
+  ) => Promise<Error | null>;
   create_statuses: (
     query: Prisma.statusesCreateManyInput[],
     comments: string,

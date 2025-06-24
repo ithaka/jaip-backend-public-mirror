@@ -24,6 +24,7 @@ model entities {
   updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
   facilities                  facilities?
   features_groups_entities    features_groups_entities[]
+  globally_blocked_items      globally_blocked_items[]
   groups_entities             groups_entities[]
   statuses                    statuses[]
   ungrouped_features_entities ungrouped_features_entities[]
@@ -121,6 +122,19 @@ model statuses {
   groups          groups?          @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "statuses_group_fkey")
 
   @@index([id, jstor_item_id, jstor_item_type, status, group_id], map: "statuses_id_jstor_item_id_jstor_item_type_status_group_idx")
+}
+
+model globally_blocked_items {
+  id            Int      @id @default(autoincrement())
+  entity_id     Int
+  jstor_item_id String   @unique @db.VarChar
+  reason        String
+  is_blocked    Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamp(6)
+  updated_at    DateTime @default(now()) @db.Timestamp(6)
+  entities      entities @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, jstor_item_id, reason, is_blocked])
 }
 
 model subdomains {

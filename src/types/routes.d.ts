@@ -43,6 +43,19 @@ export interface MediaReviewApproval extends RouteGenericInterface {
   };
 }
 
+export interface UnblockItem extends RouteGenericInterface {
+  Body: {
+    doi: string;
+  };
+}
+
+export interface BlockItem extends RouteGenericInterface {
+  Body: {
+    doi: string;
+    reason: string;
+  };
+}
+
 export interface MediaReviewDenial extends RouteGenericInterface {
   Body: {
     doi: string;

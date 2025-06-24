@@ -260,6 +260,82 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
     return null;
   }
+
+  async create_blocked_item(
+    doi: string,
+    reason: string,
+    user_id: number,
+  ) {
+    try {
+      await this.client.$transaction(async (tx) => {
+        const item = await tx.globally_blocked_items.findFirst({
+          where: {
+            jstor_item_id: doi,
+          },
+        });
+        if (!item) {
+          await tx.globally_blocked_items.create({
+            data: {
+              jstor_item_id: doi,
+              reason: reason,
+              entity_id: user_id,
+            },
+          });
+        } else {
+          await tx.globally_blocked_items.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              reason: reason,
+              entity_id: user_id,
+              updated_at: new Date(),
+            },
+          });
+        }
+      });
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+    return null;
+  }
+
+  async remove_blocked_item(
+    doi: string,
+    user_id: number,
+  ) {
+    try {
+      await this.client.$transaction(async (tx) => {
+        const item = await tx.globally_blocked_items.findFirst({
+          where: {
+            jstor_item_id: doi,
+          },
+        });
+        if (!item) {
+          throw new Error(
+            `No blocked item found for DOI: ${doi}`,
+          );
+        } else {
+          await tx.globally_blocked_items.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              entity_id: user_id,
+              is_blocked: false,
+              updated_at: new Date(),
+            },
+          });
+        }
+      });
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+    return null;
+  }
+
   // NOTE: Prisma is limited in its ability to handle bulk inserts. The createMany methods
   // don't allow simultaneously creating related records. This means that we can't create
   // a status and a status_detail in the same function call. We'll have to use a transaction
