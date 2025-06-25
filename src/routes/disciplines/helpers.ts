@@ -32,7 +32,9 @@ export const attach_bulk_approval = async (
     .filter((code): code is RequiredCode => {
       return !!code;
     });
-  fastify.log.info(`Getting bulk approval statuses using ${codes.length} codes`);
+  fastify.log.info(
+    `Getting bulk approval statuses using ${codes.length} codes`,
+  );
   try {
     const [response, error] = await fastify.db.get_statuses(
       bulk_approval_query(type, codes, groups),

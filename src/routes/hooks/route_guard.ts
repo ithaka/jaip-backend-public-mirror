@@ -1,5 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { manage_session, get_current_user, get_email_from_session, get_code_from_session } from "../auth/helpers";
+import {
+  manage_session,
+  get_current_user,
+  get_email_from_session,
+  get_code_from_session,
+} from "../auth/helpers";
 import { ensure_error } from "../../utils";
 import { SUBDOMAINS } from "../../consts";
 

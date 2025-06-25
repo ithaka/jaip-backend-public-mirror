@@ -27,13 +27,9 @@ export const page_handler =
       iid,
       page,
     };
-    fastify.event_logger.pep_standard_log_start(
-      `pep_get_page_start`,
-      request,
-      {
-        ...log_payload,
-      },
-    );
+    fastify.event_logger.pep_standard_log_start(`pep_get_page_start`, request, {
+      ...log_payload,
+    });
 
     try {
       const group_ids = request.user.groups.map((group) => group.id);
@@ -48,7 +44,9 @@ export const page_handler =
       }
       const { doi, journal_iids, disc_codes, cedar_item_view_data } = extracts;
 
-      fastify.log.info(`Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`);
+      fastify.log.info(
+        `Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`,
+      );
       const is_forbidden = await get_is_forbidden(
         fastify.db,
         request.is_authenticated_student,
@@ -164,7 +162,9 @@ export const metadata_handler =
         status: 200,
       });
 
-      fastify.log.info(`Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`);
+      fastify.log.info(
+        `Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`,
+      );
       const is_forbidden = await get_is_forbidden(
         fastify.db,
         request.is_authenticated_student,

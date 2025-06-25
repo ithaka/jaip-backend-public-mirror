@@ -3,9 +3,13 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import axios, { AxiosResponse } from "axios";
 import { Search3Document, Search3Request, Snippet } from "../../types/search";
 import { ensure_error } from "../../utils";
-import { PSEUDO_DISCIPLINE_CODES, SEARCH3, SEARCH_SNIPPET_SERVICE } from "../../consts";
+import {
+  PSEUDO_DISCIPLINE_CODES,
+  SEARCH3,
+  SEARCH_SNIPPET_SERVICE,
+} from "../../consts";
 import { JAIPDatabase } from "../../database";
-import { status_options } from "@prisma/client";
+import { globally_blocked_items, status_options } from "@prisma/client";
 
 const status_select = {
   jstor_item_id: true,
@@ -87,23 +91,32 @@ export const filter_facility_statuses = (statuses: Status[]) => {
 export const filter_user_statuses = (statuses: Status[], groups: number[]) => {
   // Filter out the entity details for all statuses and status details for pending statuses
   // and return the rest of the statuses.
-  return statuses.map((status) => {
-    const { status_details, ...rest } = status;
-    if (status.status === status_options.Pending) {
+  return statuses
+    .map((status) => {
+      const { status_details, ...rest } = status;
+      if (status.status === status_options.Pending) {
+        return {
+          ...rest,
+          status_details: groups.includes(status.groups?.id || 0)
+            ? status_details
+            : [],
+          entities: groups.includes(status.groups?.id || 0)
+            ? status.entities
+            : null,
+        };
+      }
       return {
         ...rest,
-        status_details: groups.includes(status.groups?.id || 0) ? status_details : [],
-        entities: groups.includes(status.groups?.id || 0) ? status.entities : null,
+        status_details,
+        entities: null,
       };
-    }
-    return {
-      ...rest,
-      status_details,
-      entities: null,
-    };
-  }).filter((status) => {
-    return status.status !== status_options.Pending || groups.includes(status.groups?.id || 0);
-  });
+    })
+    .filter((status) => {
+      return (
+        status.status !== status_options.Pending ||
+        groups.includes(status.groups?.id || 0)
+      );
+    });
 };
 
 export const get_facility_statuses = async (
@@ -165,6 +178,42 @@ export const get_user_statuses = async (
   }
 };
 
+export const get_block_list_items = async (
+  db: JAIPDatabase,
+  dois: string[],
+): Promise<[{ [key: string]: globally_blocked_items }, Error | null]> => {
+  try {
+    const [results, error] = await db.get_blocked_items({
+      where: {
+        jstor_item_id: {
+          in: dois,
+        },
+        is_blocked: true,
+      },
+      select: {
+        jstor_item_id: true,
+        reason: true,
+        created_at: true,
+      },
+    });
+    if (error) {
+      throw error;
+    }
+    // Returning the results as a keyed object where the key is the doi
+    // will easier to associate with the search results.
+    const blocked_items = results.reduce(
+      (acc, item) => {
+        acc[item.jstor_item_id] = item;
+        return acc;
+      },
+      {} as { [key: string]: globally_blocked_items },
+    );
+    return [blocked_items, null];
+  } catch (err) {
+    const error = ensure_error(err);
+    return [{}, error];
+  }
+};
 export const get_bulk_statuses = async (
   db: JAIPDatabase,
   arr: string[],
@@ -209,7 +258,7 @@ export const get_snippets = async (
     }
 
     fastify.log.info(`Getting snippets for ids: ${ids}`);
-    
+
     const [host, search_error] = await fastify.discover(
       SEARCH_SNIPPET_SERVICE.name,
     );
@@ -255,7 +304,9 @@ export const get_tokens = async (
 ): Promise<[string[], Error | null]> => {
   const tokens: string[] = [];
   try {
-    request.log.info(`User is authenticated admin: ${request.is_authenticated_admin}`);
+    request.log.info(
+      `User is authenticated admin: ${request.is_authenticated_admin}`,
+    );
     if (request.is_authenticated_admin) {
       request.log.info(`Getting all tokens for admin user`);
       const [db_tokens, error] = await db.get_all_tokens();
@@ -318,14 +369,17 @@ export const get_status_keys = (search_result: AxiosResponse) => {
     // so we need to grab that here.
     ids.push(doc.id);
     dois.push(doc.doi);
-  
-    if (doc.additional_fields.cty && PSEUDO_DISCIPLINE_CODES.includes(doc.additional_fields.cty)) {
+
+    if (
+      doc.additional_fields.cty &&
+      PSEUDO_DISCIPLINE_CODES.includes(doc.additional_fields.cty)
+    ) {
       if (!doc.additional_fields.disc_str) {
         doc.additional_fields.disc_str = [];
       }
       doc.additional_fields.disc_str.push(doc.additional_fields.cty);
     }
-  
+
     if (Array.isArray(doc.additional_fields.disc_str)) {
       doc.additional_fields.disc_str.forEach((disc: string) => {
         if (!disc_codes.includes(disc)) {

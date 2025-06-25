@@ -1169,16 +1169,12 @@ export const disciplines_response = [
       pamphlets: 0,
     },
   },
-].filter(
-  (discipline) => !discipline.parent
-);
+].filter((discipline) => !discipline.parent);
 
 export const disciplines_response_with_pseudodisciplines = [
   ...disciplines_response,
   ...PSEUDO_DISCIPLINES,
-].sort((a, b) =>
-  a.label.localeCompare(b.label)
-);
+].sort((a, b) => a.label.localeCompare(b.label));
 
 // The dates are left out of this test data because checking for strict equality
 // on dates causes problems, even when specifying the time.

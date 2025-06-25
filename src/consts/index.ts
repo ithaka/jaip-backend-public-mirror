@@ -32,18 +32,20 @@ export const MESSAGES = {
     "<strong>NOTE: The response from this endpoint can depend on certain cookies/headers that are provided with the request. This Swagger UI is NOT capable of providing such cookies/headers.</strong>",
 };
 export const PSEUDO_DISCIPLINES = [
- {
-  code: "research_report",
-	counts: {
-		books:     0,
-		journals:  0,
-		pamphlets: 0,
-	},
-	label:  "Research Reports",
-	parent: false,
- } as Discipline,
+  {
+    code: "research_report",
+    counts: {
+      books: 0,
+      journals: 0,
+      pamphlets: 0,
+    },
+    label: "Research Reports",
+    parent: false,
+  } as Discipline,
 ];
-export const PSEUDO_DISCIPLINE_CODES = PSEUDO_DISCIPLINES.map(disc=>disc.code);
+export const PSEUDO_DISCIPLINE_CODES = PSEUDO_DISCIPLINES.map(
+  (disc) => disc.code,
+);
 export const SWAGGER_OPTS = {
   openapi: {
     info: {
@@ -91,6 +93,7 @@ export const FEATURES = {
   view_hidden_users: "view_hidden_users",
   view_pdf: "view_pdf",
   view_snippet: "view_snippet",
+  pre_denial_subscription: "pre_denial_subscription",
 };
 
 export const UNGROUPED_FEATURES = {
@@ -109,6 +112,7 @@ export const UNGROUPED_FEATURES = {
   edit_feature: "edit_feature",
   delete_feature: "delete_feature",
   add_feature: "add_feature",
+  manage_block_list: "manage_block_list",
 };
 
 export const SESSION_MANAGER = {

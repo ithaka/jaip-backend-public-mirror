@@ -138,8 +138,8 @@ export const get_facilities = async (
       },
       ...get_entities_where_clause(groups, user_roles.user, query),
       select: {
-       ...get_many_entities_select_clause(user_roles.user, groups),
-       subdomains_facilities: {
+        ...get_many_entities_select_clause(user_roles.user, groups),
+        subdomains_facilities: {
           select: {
             subdomain: true,
             sitecode: true,

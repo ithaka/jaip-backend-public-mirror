@@ -43,6 +43,19 @@ export interface MediaReviewApproval extends RouteGenericInterface {
   };
 }
 
+export interface UnblockItem extends RouteGenericInterface {
+  Body: {
+    doi: string;
+  };
+}
+
+export interface BlockItem extends RouteGenericInterface {
+  Body: {
+    doi: string;
+    reason: string;
+  };
+}
+
 export interface MediaReviewDenial extends RouteGenericInterface {
   Body: {
     doi: string;
@@ -89,6 +102,10 @@ export interface AddEntitiesBody extends RouteGenericInterface {
 
 export interface GetPaginatedBody extends RouteGenericInterface {
   Body: GetPaginatedRequest;
+}
+
+export interface GetBlockedItemsBody extends RouteGenericInterface {
+  Body: GetBlockedItemsRequest;
 }
 
 export interface AddGroupFeatureBody extends RouteGenericInterface {
@@ -154,7 +171,11 @@ export interface GetPaginatedRequest {
   limit: number;
   is_active: boolean;
 }
-
+export interface GetBlockedItemsRequest {
+  term: string;
+  page: number;
+  limit: number;
+}
 export interface AddEntitiesRequest {
   id: number;
   contact: string;
@@ -205,7 +226,7 @@ export interface CedarItemView {
   disc_code: string[];
   discipline: string[];
   page_count: string;
-  disciplines: { [ key: string]: string };
+  disciplines: { [key: string]: string };
 }
 
 export interface CedarIdentityBlock {

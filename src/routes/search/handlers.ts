@@ -6,13 +6,14 @@ import {
   StatusParams,
   StatusSearchRequestBody,
 } from "../../types/routes";
-import { SEARCH3 } from "../../consts";
+import { FEATURES, SEARCH3 } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
 import {
   do_search3,
   format_status_details,
+  get_block_list_items,
   get_bulk_statuses,
   get_facility_statuses,
   get_snippets,
@@ -47,7 +48,9 @@ export const status_search_handler =
       const end_date = request.body.statusEndDate;
       const query_statuses: status_options[] = [];
 
-      fastify.log.info(`Searching for statuses with status: ${status}, start_date: ${start_date}, end_date: ${end_date}`);
+      fastify.log.info(
+        `Searching for statuses with status: ${status}, start_date: ${start_date}, end_date: ${end_date}`,
+      );
       if (status === "completed") {
         query_statuses.push(status_options.Approved, status_options.Denied);
       } else {
@@ -175,8 +178,8 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
-      const { query, limit, pageNo, sort, facets, filters } =
-        request.body;
+
+      const { query, limit, pageNo, sort, facets, filters } = request.body;
       log_payload.search_request = request.body;
       const query_string = query || "";
       const page_mark = btoa(`pageMark=${pageNo}`);
@@ -187,7 +190,6 @@ export const search_handler =
         page_mark,
         ...SEARCH3.queries.defaults,
       };
-
       const full_groups = request.user.groups.filter((group) => {
         const groups =
           request.body.groups || request.user.groups.map((group) => group.id);
@@ -239,7 +241,6 @@ export const search_handler =
       if (error) {
         throw error;
       }
-
       fastify.log.info(`Attempting to retrieve status keys`);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
@@ -254,7 +255,13 @@ export const search_handler =
         groups,
       );
 
-      fastify.log.info(`Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`);
+      fastify.log.info(`Getting global block list items for ${dois}.`);
+      const block_list_promise = get_block_list_items(fastify.db, dois);
+
+      fastify.log.info(
+        `Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`,
+      );
+      
       const document_statuses_promise = request.is_authenticated_admin
         ? get_user_statuses(fastify.db, dois, groups)
         : get_facility_statuses(fastify.db, dois, groups);
@@ -271,6 +278,7 @@ export const search_handler =
         bulk_approval_promise,
         document_statuses_promise,
         snippets_promise,
+        block_list_promise,
       ]);
 
       if (all_requests[0].status === "rejected") {
@@ -282,10 +290,15 @@ export const search_handler =
       if (all_requests[2].status === "rejected") {
         throw all_requests[2].reason;
       }
+      if (all_requests[3].status === "rejected") {
+        throw all_requests[3].reason;
+      }
+
       const [bulk_approval_statuses, bulk_approval_status_error] =
         all_requests[0].value;
       const [document_statuses, document_status_error] = all_requests[1].value;
       const [snippets, snippets_error] = all_requests[2].value;
+      const [block_list_items, block_list_error] = all_requests[3].value;
 
       // Handle errors. We'll just take them one at a time. If multiple requests fail,
       // we'll only log the first one.
@@ -298,12 +311,14 @@ export const search_handler =
       if (snippets_error) {
         throw snippets_error;
       }
+      if (block_list_error) {
+        throw block_list_error;
+      }
 
       const return_docs: MediaRecord[] = [];
 
       // Iterate through the documents and add the statuses and snippets
       docs.forEach((doc: Search3Document) => {
-
         const new_doc = map_document(doc);
         // Start with bulk approval, which will be overridden by individual statuses
         new_doc.mediaReviewStatuses = bulk_approval_statuses.reduce(
@@ -350,6 +365,30 @@ export const search_handler =
           {} as { [key: string]: History },
         );
 
+        if (block_list_items[doc.doi]) {
+          new_doc.mediaReviewStatuses = request.user.groups.reduce(
+            (acc, group) => {
+              // If the user belongs to a group that has the pre-denial subscription feature,
+              // we add a blocked status for that group.
+              if (group.features[FEATURES.pre_denial_subscription]) {
+                acc[group.id] = {
+                  status: status_options.Denied,
+                  statusLabel: status_options.Denied,
+                  statusCreatedAt: block_list_items[doc.doi].created_at,
+                  groupID: group.id,
+                  groupName: group.name,
+                  statusDetails: {
+                    reason: block_list_items[doc.doi].reason || "",
+                  },
+                };
+              }
+              return acc;
+            },
+            {} as { [key: string]: History },
+          );
+          new_doc.is_blocked = true;
+          new_doc.blocked_reason = block_list_items[doc.doi].reason || "";
+        }
         // Add the individual statuses
         const mediaReviewStatuses = {} as { [key: string]: History };
         for (const status of document_statuses[new_doc.doi] || []) {
@@ -390,9 +429,9 @@ export const search_handler =
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.
         if (Object.keys(mediaReviewStatuses).length > 0) {
-          new_doc.mediaReviewStatuses = {
-            ...mediaReviewStatuses,
-          };
+          for (const [group_id, status] of Object.entries(mediaReviewStatuses)) {
+            new_doc.mediaReviewStatuses[group_id] = status;
+          }
         }
 
         // Attach the snippets, which are keyed by the id
@@ -428,11 +467,14 @@ export const search_handler =
       // If we have a list of DOIs from the status search handler, we want the order of results
       // to consistently match that order. Otherwise, we return the documents in the order
       // they were returned from Search3.
-      const sorted_return_docs = request.body.dois && request.body.dois.length ? 
-      request.body.dois.map((doi) => {
-        return return_docs.find((doc) => doc.doi === doi)
-      })
-        .filter((doc) => doc !== undefined) : return_docs;
+      const sorted_return_docs =
+        request.body.dois && request.body.dois.length
+          ? request.body.dois
+              .map((doi) => {
+                return return_docs.find((doc) => doc.doi === doi);
+              })
+              .filter((doc) => doc !== undefined)
+          : return_docs;
 
       reply.code(200).send({
         docs: sorted_return_docs,
