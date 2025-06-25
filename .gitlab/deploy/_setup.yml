@@ -18,6 +18,7 @@ variables:
   APP_IMAGE: $IMAGE_TAG
   API_TARGET: $API_TARGET
   APP_SERVICE_NAME: $APP_NAME
+  AUTOSCALING_ENABLED: "true"
   BASE_URL: $BASE_URL
   CONTEXT: .
   DOCKERFILE: Dockerfile
@@ -27,7 +28,7 @@ variables:
   GROUP_NAME: $ITHAKA_OWNER
   HELM_CHART_PATH: https://artifactory.acorn.cirrostratus.org/artifactory/helm/capstan-app/capstan-app.tgz:1.23.2
   BASIC_HELM_TEMPLATE_OPTIONS: '-f $CI_PROJECT_DIR/k8s/values.yml --set environment=$ENVIRONMENT'
-  EXTRA_HELM_TEMPLATE_OPTIONS: $BASIC_HELM_TEMPLATE_OPTIONS
+  EXTRA_HELM_TEMPLATE_OPTIONS: $BASIC_HELM_TEMPLATE_OPTIONS --set autoscaling.enabled=$AUTOSCALING_ENABLED
   INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
   ITHAKA_OWNER: jaip
   ITHAKA_BUSINESS_UNIT: labs
@@ -36,6 +37,8 @@ variables:
   SEVERITY: critical high unknown
   ENABLE_GLOO_ROUTING: "true"
   DEPLOYED_URL: https://$EUREKA_SERVICE_NAME.apps.$ENVIRONMENT.cirrostratus.org
+
+
 
 
 # JAIP Database Credentials

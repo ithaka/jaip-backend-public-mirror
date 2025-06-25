@@ -40,7 +40,8 @@
     K8S_ACTION: apply
     BASE_URL: https://jaip-backend-$CI_MERGE_REQUEST_IID.apps.test.cirrostratus.org/jaip/api
     DATABASE_SECRET_NAME: jaip-database-creds
-    EPHEMERAL_HELM_TEMPLATE_OPTIONS: "-f $CI_PROJECT_DIR/k8s/ephemeral-values.yml"
+    # Disable autoscaling for ephemeral environment. It is not permitted and deploys will fail if enabled.
+    AUTOSCALING_ENABLED: "false"
 
 .test-env:
   variables:
