@@ -6,7 +6,7 @@ import {
   StatusParams,
   StatusSearchRequestBody,
 } from "../../types/routes";
-import { SEARCH3 } from "../../consts";
+import { FEATURES, SEARCH3 } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
@@ -368,16 +368,20 @@ export const search_handler =
         if (block_list_items[doc.doi]) {
           new_doc.mediaReviewStatuses = request.user.groups.reduce(
             (acc, group) => {
-              acc[group.id] = {
-                status: status_options.Denied,
-                statusLabel: status_options.Denied,
-                statusCreatedAt: block_list_items[doc.doi].created_at,
-                groupID: group.id,
-                groupName: group.name,
-                statusDetails: {
-                  reason: block_list_items[doc.doi].reason || "",
-                },
-              };
+              // If the user belongs to a group that has the pre-denial subscription feature,
+              // we add a blocked status for that group.
+              if (group.features[FEATURES.pre_denial_subscription]) {
+                acc[group.id] = {
+                  status: status_options.Denied,
+                  statusLabel: status_options.Denied,
+                  statusCreatedAt: block_list_items[doc.doi].created_at,
+                  groupID: group.id,
+                  groupName: group.name,
+                  statusDetails: {
+                    reason: block_list_items[doc.doi].reason || "",
+                  },
+                };
+              }
               return acc;
             },
             {} as { [key: string]: History },

@@ -93,6 +93,7 @@ export const FEATURES = {
   view_hidden_users: "view_hidden_users",
   view_pdf: "view_pdf",
   view_snippet: "view_snippet",
+  pre_denial_subscription: "pre_denial_subscription",
 };
 
 export const UNGROUPED_FEATURES = {
