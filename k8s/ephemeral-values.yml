@@ -1,0 +1,74 @@
+# See the base values file at
+# https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml .
+# Values set here override those.
+
+# Variables set in the pipeline are available here.
+commitHash: $CI_COMMIT_SHA
+
+requiredTags:
+  owner: $ITHAKA_OWNER
+  app: $APP_NAME
+  environment: $ENVIRONMENT
+  businessUnit: $ITHAKA_BUSINESS_UNIT
+
+extraEnv:
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        key: JAIP_DB_URL
+        name: jaip-database-creds
+autoscaling:
+  enabled: false
+
+registerInEureka: true
+serviceLocatable: true
+eurekaServiceName: $EUREKA_SERVICE_NAME
+
+# We'll likely want to enable these in future, but there are things we need to
+# configure first.
+prometheus:
+  enable: false
+
+# The port that your application itself listens on.
+internalPort: 8080
+healthcheckPath: /api/v2/healthcheck
+
+spec:
+  template:
+    spec:
+      containers:
+        ports:
+          containerPort: 8080
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 50m
+  limits:
+    memory: 16Gi
+    cpu: "1"
+
+# Opt in to the new Sirius sidecar container that ensures this application is discoverable in Capstan, and replaces ITHAKA's legacy sidecar container
+# https://gitlab.com/capstan/pow/cicd-infrastructure/-/blob/master/helm-charts/capstan-app/values.yaml?ref_type=heads#L85
+sirius:
+  enabled: true
+
+# Polaris is the new service discovery sidecar. Set this to enabled if you
+# want to use this instead of the deprecated Sidecar.
+#
+# This will remove The Sidecar from the deployment if polaris.enabled is set
+# to true.
+#
+# For more information about Polaris, check out the documentation in Backstage:
+# https://capstan-backstage.apps.prod.cirrostratus.org/catalog/default/component/polaris/docs
+polaris:
+  enabled: true
+  debug: false
+  port: 8888
+
+# Never fall under 100% capacity when rolling updates are executed and ensure new replicas are
+# stood up before terminating old
+rollingUpdate:
+  maxSurge: 100%
+  maxUnavailable: 0
+
