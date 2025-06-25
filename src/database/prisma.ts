@@ -263,6 +263,41 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return null;
   }
 
+  async get_blocked_items_and_count(
+    term: string,
+    page: number,
+    limit: number,
+  ): Promise<[globally_blocked_items[], number, Error | null]> {
+    try {
+      const count_query: Prisma.globally_blocked_itemsFindManyArgs = {
+        where: {
+          reason: {
+            contains: term,
+            mode: "insensitive",
+          },
+          is_blocked: true,
+        },
+        orderBy: { created_at: "desc" },
+      };
+      const find_query: Prisma.globally_blocked_itemsFindManyArgs = {
+        ...count_query,
+        skip: (page - 1) * limit,
+        take: limit,
+      };
+      const [items, count] = await this.client.$transaction(async (tx) => {
+        const [items, count] = await Promise.all([
+          tx.globally_blocked_items.findMany(find_query),
+          tx.globally_blocked_items.count(count_query as Prisma.globally_blocked_itemsCountArgs),
+        ]);
+        return [items, count];
+      });
+      return [items, count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], 0, error];
+    }
+  }
+
   async get_blocked_items(
     query: Prisma.globally_blocked_itemsFindManyArgs,
   ): Promise<[globally_blocked_items[], Error | null]> {
@@ -299,6 +334,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
               reason: reason,
               entity_id: user_id,
               updated_at: new Date(),
+              is_blocked: true,
             },
           });
         }

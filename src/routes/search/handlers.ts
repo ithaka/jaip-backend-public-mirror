@@ -178,6 +178,7 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
+
       const { query, limit, pageNo, sort, facets, filters } = request.body;
       log_payload.search_request = request.body;
       const query_string = query || "";
@@ -189,7 +190,6 @@ export const search_handler =
         page_mark,
         ...SEARCH3.queries.defaults,
       };
-
       const full_groups = request.user.groups.filter((group) => {
         const groups =
           request.body.groups || request.user.groups.map((group) => group.id);
@@ -241,7 +241,6 @@ export const search_handler =
       if (error) {
         throw error;
       }
-
       fastify.log.info(`Attempting to retrieve status keys`);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
@@ -262,6 +261,7 @@ export const search_handler =
       fastify.log.info(
         `Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`,
       );
+      
       const document_statuses_promise = request.is_authenticated_admin
         ? get_user_statuses(fastify.db, dois, groups)
         : get_facility_statuses(fastify.db, dois, groups);
@@ -383,6 +383,7 @@ export const search_handler =
             {} as { [key: string]: History },
           );
           new_doc.is_blocked = true;
+          new_doc.blocked_reason = block_list_items[doc.doi].reason || "";
         }
         // Add the individual statuses
         const mediaReviewStatuses = {} as { [key: string]: History };
@@ -424,9 +425,9 @@ export const search_handler =
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.
         if (Object.keys(mediaReviewStatuses).length > 0) {
-          new_doc.mediaReviewStatuses = {
-            ...mediaReviewStatuses,
-          };
+          for (const [group_id, status] of Object.entries(mediaReviewStatuses)) {
+            new_doc.mediaReviewStatuses[group_id] = status;
+          }
         }
 
         // Attach the snippets, which are keyed by the id

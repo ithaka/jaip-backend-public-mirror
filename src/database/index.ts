@@ -70,15 +70,6 @@ export interface JAIPDatabase {
   get_item_status: (
     query: Prisma.statusesFindFirstArgs,
   ) => Promise<[Status | null, Error | null]>;
-  get_blocked_items: (
-    query: Prisma.globally_blocked_itemsFindManyArgs,
-  ) => Promise<[globally_blocked_items[], Error | null]>;
-  create_blocked_item: (
-    doi: string,
-    reason: string,
-    user_id: number,
-  ) => Promise<Error | null>;
-  remove_blocked_item: (doi: string, user_id: number) => Promise<Error | null>;
   create_statuses: (
     query: Prisma.statusesCreateManyInput[],
     comments: string,
@@ -112,6 +103,23 @@ export interface JAIPDatabase {
     limit: number,
     page: number,
   ) => Promise<[Status[] | null, number | null, Error | null]>;
+
+  // BLOCKED ITEMS
+  get_blocked_items_and_count: (
+    term: string,
+    page: number,
+    limit: number,
+  ) => Promise<[globally_blocked_items[], number, Error | null]>;
+
+  get_blocked_items: (
+    query: Prisma.globally_blocked_itemsFindManyArgs,
+  ) => Promise<[globally_blocked_items[], Error | null]>;
+  create_blocked_item: (
+    doi: string,
+    reason: string,
+    user_id: number,
+  ) => Promise<Error | null>;
+  remove_blocked_item: (doi: string, user_id: number) => Promise<Error | null>;
 
   // TOKENS
   get_all_tokens: () => Promise<[string[], Error | null]>;

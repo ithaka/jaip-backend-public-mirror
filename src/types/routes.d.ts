@@ -104,6 +104,10 @@ export interface GetPaginatedBody extends RouteGenericInterface {
   Body: GetPaginatedRequest;
 }
 
+export interface GetBlockedItemsBody extends RouteGenericInterface {
+  Body: GetBlockedItemsRequest;
+}
+
 export interface AddGroupFeatureBody extends RouteGenericInterface {
   Body: AddGroupFeatureRequest;
 }
@@ -167,7 +171,11 @@ export interface GetPaginatedRequest {
   limit: number;
   is_active: boolean;
 }
-
+export interface GetBlockedItemsRequest {
+  term: string;
+  page: number;
+  limit: number;
+}
 export interface AddEntitiesRequest {
   id: number;
   contact: string;
