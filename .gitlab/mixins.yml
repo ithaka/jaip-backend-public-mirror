@@ -30,7 +30,7 @@
     API_TARGET: test
     # The ithaka/app label is used for cost allocation, so we should not dynamically generate it with a branch suffix in epehemeral like we do with the app name itself.
     APP_NAME: jaip-backend
-    EUREKA_SERVICE_NAME: jaip-backend-$CI_MERGE_REQUEST_IID
+    EUREKA_SERVICE_NAME: jaip-backend-$CI_COMMIT_SHORT_SHA
     DEPLOY_JOB: ephemeral
     ENVIRONMENT: test
     PROMOTE_TO: release-candidate
@@ -38,7 +38,7 @@
     # Ephemeral only
     EKS_CLUSTER: ephemeral
     K8S_ACTION: apply
-    BASE_URL: https://jaip-backend-$CI_MERGE_REQUEST_IID.apps.test.cirrostratus.org/jaip/api
+    BASE_URL: https://jaip-backend-$CI_COMMIT_SHORT_SHA.apps.test.cirrostratus.org/jaip/api
     DATABASE_SECRET_NAME: jaip-database-creds
     # Disable autoscaling for ephemeral environment. It is not permitted and deploys will fail if enabled.
     AUTOSCALING_ENABLED: "false"
