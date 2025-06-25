@@ -191,7 +191,7 @@ const get_facility = async (
       get_facility_query(arr),
     );
     if (!result) {
-      throw new Error("No facility found with the provided emails");
+      return [null, null];
     }
     return [map_entities(result), null];
   } catch (err) {
