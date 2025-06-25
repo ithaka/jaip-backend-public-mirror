@@ -2,7 +2,7 @@
 # Mixins which govern when jobs run.
 .test-rules:
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH != 'main'
       when: always
 
 .staging-rules:
