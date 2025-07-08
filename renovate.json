@@ -4,6 +4,9 @@
     "github>ithaka/ithaka-renovate-presets//ithaka/base",
     "github>ithaka/ithaka-renovate-presets//ithaka/recommended"
   ],
+  "assignAutomerge": true,
+  "automerge": true,
+  "assigneesFromCodeOwners": true,
   "packageRules": [
     {
       "groupName": "NodeJS dependencies",
@@ -13,7 +16,9 @@
       ]
     },
     {
-      "matchDepNames": ["node"],
+      "matchDepNames": [
+        "node"
+      ],
       "allowedVersions": "<23"
     }
   ]
