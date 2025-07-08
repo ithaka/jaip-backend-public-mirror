@@ -1,0 +1,3 @@
+# ALPINE VULNERABILITIES
+# This occurs with the use of an -addreject option with openssl x509 in Alpine. We're not doing that.
+CVE-2025-4575 exp:2025-09-08
