@@ -20,10 +20,42 @@ Check the `example.env` file to see the required environment variables used in l
 ### Database
 The database URL is kept in AWS Parameter Store, and is used to connect to the database. The correct values are available at `/test/labs/jaip/jaip-backend/database/url` and `/prod/labs/jaip/jaip-backend/database/url`. Generally, you should only need to use the test database, but it is occasionally useful to use production data locally, especially when handling bug reports. In that case change the ENVIRONMENT to `prod` and the `DATABASE_URL` to the production database URL. Using production data will also require a change to the ITHAKA sidecar command used for service discovery (use `ithaka sidecar polaris --env prod`). Obviously, be extremely cautious when working with production data.
 
-There are only two databases for this application: `test` and `prod`. There is no development database at present. For most purposes, the `test` database should be fine for local development.
+There are two main RDS clusters for this application: one in `TEST` and one in `PROD`. In the `PROD` cluster, there is a single database, `jaip`.  In the `TEST` cluster, there is a `jaip` database, used in the test deployment. There is also a development database, `jaip_dev`. The URL for this database is available in AWS Parameter store at `/test/labs/jaip/jaip-backend/database/dev/url`. This can be used to make changes that would otherwise disrupt the primary `jaip` database in `TEST`. Conversely, it can be used for normal development purposes when a breaking change is in `TEST`. Note that this database is not created by the CloudFormation template, because CF does not currently support creating multiple databases during the creation process. 
+
+If the `jaip_dev` database should become damaged or excessively separated from the `jaip` database, it can be dropped and recreated with `jaip` as a template.
+
+````sql
+DROP DATABASE jaip_dev;
+-- Replace admin_user with the admin user specified in AWS Parameter Store.
+CREATE DATABASE jaip_dev WITH TEMPLATE jaip OWNER admin_user;
+````
+
+Note that this process will not work when there are open connections to `jaip`. There are two options for addressing this issue. One is to close down the `TEST` deployment of `jaip-backend`, which will terminate the existing connection. The other is to run the following command immediately prior to dropping the database and creating the new one:
+
+````sql
+SELECT
+    pg_terminate_backend(pid)
+FROM
+    pg_stat_activity
+WHERE
+    -- don't kill my own connection!
+    pid <> pg_backend_pid()
+    -- don't kill the connections to other databases
+    AND datname = 'jaip';
+````
+
+This will terminate any existing connections, but the backend will automatically reconnect. The interruption is minimal, but note that this is not a good strategy for `PROD`!
+
+If additional database instances become necessary (e.g., if multiple devs are working on projects with incompatible database states), then it is possible to create additional copies, preferably using the branch name.
+
+````sql
+CREATE DATABASE branch_name WITH TEMPLATE jaip OWNER admin_user;
+````
+
+If this turns into a regular occurrence, consider running local instances.
 
 ### Database Changes
-The `jaip` database configuration is defined in the `./prisma/schema.prisma`. Changes made there can be pushed to the database using `yarn dlx prisma db push`, as described in the Prisam docs.
+The `jaip` database configuration is defined in the `./prisma/schema.prisma`. Changes made there can be pushed to the database using `yarn dlx prisma db push`, as described in the Prisma docs.
 
 In order to manage the database using Prisma, it is necessary to set the `DATABASE_URL` in `.env` to use the admin username and password. Like the regular username and password, these URLs are defined in AWS Parameter Store at `/test/labs/jaip/jaip-backend/database/admin/url` and `/prod/labs/jaip/jaip-backend/database/admin/url` for test and prod respectively. 
 
