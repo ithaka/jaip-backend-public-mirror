@@ -2,6 +2,7 @@ import Fastify, { RequirementsSchema } from "fastify";
 import fastify_swagger from "@fastify/swagger";
 import fastify_swagger_ui from "@fastify/swagger-ui";
 import fastify_cookie from "@fastify/cookie";
+import fastify_cors from "@fastify/cors";
 
 import { SWAGGER_OPTS, VALIDATED_METHODS } from "./consts";
 
@@ -30,6 +31,10 @@ declare module "fastify" {
 
 function build(opts = {}, route_settings: RouteSettings[]) {
   const app = Fastify(opts);
+
+  app.register(fastify_cors, {
+    origin: [/\.jstor\.org$/, /\.cirrostratus\.org$/],
+  })
 
   app.addHook("onRoute", (routeOptions) => {
     app.log.info(`Adding route: ${routeOptions.url}`);

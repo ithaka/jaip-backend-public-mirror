@@ -1,5 +1,6 @@
 import { FastifySchema } from "fastify";
 import { FastifyRequest } from "fastify";
+import { EPHEMERAL_DOMAIN_ENDINGS } from "../consts";
 
 declare module "fastify" {
   interface FastifySchema {
@@ -29,9 +30,15 @@ export const ip_handler = (req: FastifyRequest): string[] => {
 };
 
 export const get_subdomain = (host: string): string => {
-  const split_host = host.split(".");
-  const ending = split_host[split_host.length - 1] === "localhost" ? -1 : -2;
-  return split_host.slice(0, ending).join(".");
+  if (host.endsWith(EPHEMERAL_DOMAIN_ENDINGS.admin)) {
+    return "admin.pep";
+  } else if (host.endsWith(EPHEMERAL_DOMAIN_ENDINGS.student)) {
+    return "pep";
+  } else {
+    const split_host = host.split(".");
+    const ending = split_host[split_host.length - 1] === "localhost" ? -1 : -2;
+    return split_host.slice(0, ending).join(".");  
+  }
 };
 
 export const server_error = {

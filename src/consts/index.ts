@@ -4,6 +4,10 @@ import { HTTPMethods } from "fastify";
 
 export const VALIDATED_METHODS = ["POST", "PUT", "DELETE"] as HTTPMethods[];
 
+export const EPHEMERAL_DOMAIN_ENDINGS = {
+  admin: "admin.apps.test.cirrostratus.org",
+  student: "student.apps.test.cirrostratus.org"
+}
 export const SUBDOMAINS = {
   admin: ["pep-admin", "admin.pep", "admin.test-pep"],
   student: ["pep", "www.pep", "test-pep", "www.test-pep"],
