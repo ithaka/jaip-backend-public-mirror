@@ -34,6 +34,7 @@ function build(opts = {}, route_settings: RouteSettings[]) {
 
   app.register(fastify_cors, {
     origin: [/\.jstor\.org$/, /\.cirrostratus\.org$/],
+    credentials: true,
   })
 
   app.addHook("onRoute", (routeOptions) => {
