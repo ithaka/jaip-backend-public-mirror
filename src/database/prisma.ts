@@ -9,7 +9,7 @@ import {
   features,
   ungrouped_features,
   statuses,
-  globally_blocked_items,
+  globally_restricted_items,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -263,31 +263,38 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return null;
   }
 
-  async get_blocked_items_and_count(
+  async get_restricted_items_and_count(
     term: string,
     page: number,
     limit: number,
-  ): Promise<[globally_blocked_items[], number, Error | null]> {
+    start_date: Date,
+    end_date: Date,
+    sort: string,
+  ): Promise<[globally_restricted_items[], number, Error | null]> {
     try {
-      const count_query: Prisma.globally_blocked_itemsFindManyArgs = {
+      const count_query: Prisma.globally_restricted_itemsFindManyArgs = {
         where: {
           reason: {
             contains: term,
             mode: "insensitive",
           },
-          is_blocked: true,
+          is_restricted: true,
+          updated_at: {
+            gte: start_date,
+            lte: end_date,
+          },
         },
-        orderBy: { created_at: "desc" },
+        orderBy: { updated_at: sort === "new" ? "desc" : "asc" },
       };
-      const find_query: Prisma.globally_blocked_itemsFindManyArgs = {
+      const find_query: Prisma.globally_restricted_itemsFindManyArgs = {
         ...count_query,
         skip: (page - 1) * limit,
         take: limit,
       };
       const [items, count] = await this.client.$transaction(async (tx) => {
         const [items, count] = await Promise.all([
-          tx.globally_blocked_items.findMany(find_query),
-          tx.globally_blocked_items.count(count_query as Prisma.globally_blocked_itemsCountArgs),
+          tx.globally_restricted_items.findMany(find_query),
+          tx.globally_restricted_items.count(count_query as Prisma.globally_restricted_itemsCountArgs),
         ]);
         return [items, count];
       });
@@ -298,27 +305,27 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
 
-  async get_blocked_items(
-    query: Prisma.globally_blocked_itemsFindManyArgs,
-  ): Promise<[globally_blocked_items[], Error | null]> {
+  async get_restricted_items(
+    query: Prisma.globally_restricted_itemsFindManyArgs,
+  ): Promise<[globally_restricted_items[], Error | null]> {
     try {
-      const items = await this.client.globally_blocked_items.findMany(query);
+      const items = await this.client.globally_restricted_items.findMany(query);
       return [items, null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], error];
     }
   }
-  async create_blocked_item(doi: string, reason: string, user_id: number) {
+  async create_restricted_item(doi: string, reason: string, user_id: number) {
     try {
       await this.client.$transaction(async (tx) => {
-        const item = await tx.globally_blocked_items.findFirst({
+        const item = await tx.globally_restricted_items.findFirst({
           where: {
             jstor_item_id: doi,
           },
         });
         if (!item) {
-          await tx.globally_blocked_items.create({
+          await tx.globally_restricted_items.create({
             data: {
               jstor_item_id: doi,
               reason: reason,
@@ -326,7 +333,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
             },
           });
         } else {
-          await tx.globally_blocked_items.update({
+          await tx.globally_restricted_items.update({
             where: {
               id: item.id,
             },
@@ -334,7 +341,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
               reason: reason,
               entity_id: user_id,
               updated_at: new Date(),
-              is_blocked: true,
+              is_restricted: true,
             },
           });
         }
@@ -346,24 +353,24 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return null;
   }
 
-  async remove_blocked_item(doi: string, user_id: number) {
+  async remove_restricted_item(doi: string, user_id: number) {
     try {
       await this.client.$transaction(async (tx) => {
-        const item = await tx.globally_blocked_items.findFirst({
+        const item = await tx.globally_restricted_items.findFirst({
           where: {
             jstor_item_id: doi,
           },
         });
         if (!item) {
-          throw new Error(`No blocked item found for DOI: ${doi}`);
+          throw new Error(`No restricted item found for DOI: ${doi}`);
         } else {
-          await tx.globally_blocked_items.update({
+          await tx.globally_restricted_items.update({
             where: {
               id: item.id,
             },
             data: {
               entity_id: user_id,
-              is_blocked: false,
+              is_restricted: false,
               updated_at: new Date(),
             },
           });

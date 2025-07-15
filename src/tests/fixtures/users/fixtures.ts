@@ -255,18 +255,18 @@ export const basic_user_ungrouped_create_group_admins = {
   },
 };
 
-export const basic_user_ungrouped_manage_blocks = {
+export const basic_user_ungrouped_manage_restricted_list = {
   ...basic_user_ungrouped,
   entities: {
     ...basic_user_ungrouped.entities,
-    name: "Basic User Ungrouped Manage Blocks",
+    name: "Basic User Ungrouped Manage Restricted List",
     ungrouped_features_entities: [
       {
         enabled: true,
         ungrouped_features: {
           // The values here don't matter and aren't being tested, with the exception of the name
           id: 34,
-          name: UNGROUPED_FEATURES.manage_block_list,
+          name: UNGROUPED_FEATURES.manage_restricted_list,
           display_name: "",
           category: "",
           description: "",

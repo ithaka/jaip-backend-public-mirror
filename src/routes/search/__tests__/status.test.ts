@@ -81,6 +81,7 @@ test.each(routes)(
       });
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
     db_mock.get_search_statuses.mockResolvedValueOnce([[], 0, null]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
     const res = await app.inject({
       method: "POST",
@@ -123,6 +124,7 @@ test(`requests the ${status_route_approved} route with a facility and valid body
   db_mock.get_statuses
     .mockResolvedValueOnce([bulk_statuses, null])
     .mockResolvedValueOnce([item_statuses, null]);
+  db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "POST",
@@ -163,6 +165,7 @@ test(`requests the ${status_route_approved} route with a reviewer and valid body
     .mockResolvedValueOnce([bulk_statuses, null])
     .mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
+  db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "POST",

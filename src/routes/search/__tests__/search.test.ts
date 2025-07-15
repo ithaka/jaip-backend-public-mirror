@@ -65,6 +65,7 @@ test(`requests the ${search_route} route with a facility and valid body and no s
   db_mock.get_statuses
     .mockResolvedValueOnce([[], null])
     .mockResolvedValueOnce([[], null]);
+  db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "POST",
@@ -95,6 +96,7 @@ test(`requests the ${search_route} route with a facility and valid body and bulk
   db_mock.get_statuses
     .mockResolvedValueOnce([bulk_statuses, null])
     .mockResolvedValueOnce([[], null]);
+  db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "POST",
@@ -126,6 +128,7 @@ test(`requests the ${search_route} route with a facility and valid body and both
   db_mock.get_statuses
     .mockResolvedValueOnce([bulk_statuses, null])
     .mockResolvedValueOnce([item_statuses, null]);
+  db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "POST",
@@ -157,6 +160,7 @@ test(`requests the ${search_route} route with a reviewer and valid body and both
     .mockResolvedValueOnce([bulk_statuses, null])
     .mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
+  db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "POST",

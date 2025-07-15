@@ -43,13 +43,13 @@ export interface MediaReviewApproval extends RouteGenericInterface {
   };
 }
 
-export interface UnblockItem extends RouteGenericInterface {
+export interface UnrestrictItem extends RouteGenericInterface {
   Body: {
     doi: string;
   };
 }
 
-export interface BlockItem extends RouteGenericInterface {
+export interface RestrictItem extends RouteGenericInterface {
   Body: {
     doi: string;
     reason: string;
@@ -104,8 +104,8 @@ export interface GetPaginatedBody extends RouteGenericInterface {
   Body: GetPaginatedRequest;
 }
 
-export interface GetBlockedItemsBody extends RouteGenericInterface {
-  Body: GetBlockedItemsRequest;
+export interface GetRestrictedItemsBody extends RouteGenericInterface {
+  Body: GetRestrictedItemsRequest;
 }
 
 export interface AddGroupFeatureBody extends RouteGenericInterface {
@@ -171,10 +171,13 @@ export interface GetPaginatedRequest {
   limit: number;
   is_active: boolean;
 }
-export interface GetBlockedItemsRequest {
-  term: string;
-  page: number;
+export interface GetRestrictedItemsRequest {
+  query: string;
+  pageNo: number;
   limit: number;
+  statusStartDate?: Date;
+  statusEndDate?: Date;
+  sort?: string;
 }
 export interface AddEntitiesRequest {
   id: number;

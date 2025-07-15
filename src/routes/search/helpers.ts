@@ -9,7 +9,7 @@ import {
   SEARCH_SNIPPET_SERVICE,
 } from "../../consts";
 import { JAIPDatabase } from "../../database";
-import { globally_blocked_items, status_options } from "@prisma/client";
+import { globally_restricted_items, status_options } from "@prisma/client";
 
 const status_select = {
   jstor_item_id: true,
@@ -181,14 +181,14 @@ export const get_user_statuses = async (
 export const get_block_list_items = async (
   db: JAIPDatabase,
   dois: string[],
-): Promise<[{ [key: string]: globally_blocked_items }, Error | null]> => {
+): Promise<[{ [key: string]: globally_restricted_items }, Error | null]> => {
   try {
-    const [results, error] = await db.get_blocked_items({
+    const [results, error] = await db.get_restricted_items({
       where: {
         jstor_item_id: {
           in: dois,
         },
-        is_blocked: true,
+        is_restricted: true,
       },
       select: {
         jstor_item_id: true,
@@ -206,7 +206,7 @@ export const get_block_list_items = async (
         acc[item.jstor_item_id] = item;
         return acc;
       },
-      {} as { [key: string]: globally_blocked_items },
+      {} as { [key: string]: globally_restricted_items },
     );
     return [blocked_items, null];
   } catch (err) {

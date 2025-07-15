@@ -2,23 +2,31 @@ import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../consts";
 import { standard_post_errors } from "../../utils";
 
 export const route_schemas = {
-  get_blocked_items: {
-    name: "get_blocked_items",
+  get_restricted_items: {
+    name: "get_restricted_items",
     route: "/get",
-    description: `Gets blocked items.`,
+    description: `Gets restricted items.`,
     tags: [SWAGGER_TAGS.private],
     requires: {
       any: {
-        ungrouped: [UNGROUPED_FEATURES.manage_block_list],
+        ungrouped: [UNGROUPED_FEATURES.manage_restricted_list],
       },
     },
     body: {
       type: "object",
       required: ["page", "limit"],
       properties: {
-        name: { type: "string" },
-        page: { type: "number" },
+        query: { type: "string" },
+        pageNo: { type: "number" },
         limit: { type: "number" },
+        statusStartDate: {
+          type: "string",
+          format: "date-time",
+        },
+        statusEndDate: {
+          type: "string",
+          format: "date-time",
+        },
       },
     },
     response: {
@@ -28,14 +36,14 @@ export const route_schemas = {
       ...standard_post_errors,
     },
   },
-  block: {
-    name: "block",
-    route: "/block",
-    description: `Submits a blocked item.`,
+  restrict: {
+    name: "restrict",
+    route: "/restrict",
+    description: `Submits a restricted item.`,
     tags: [SWAGGER_TAGS.private],
     requires: {
       any: {
-        ungrouped: [UNGROUPED_FEATURES.manage_block_list],
+        ungrouped: [UNGROUPED_FEATURES.manage_restricted_list],
       },
     },
     body: {
@@ -57,14 +65,14 @@ export const route_schemas = {
       ...standard_post_errors,
     },
   },
-  unblock: {
-    name: "unblock",
-    route: "/unblock",
-    description: `Removes an item from the blocked list.`,
+  unrestrict: {
+    name: "unrestrict",
+    route: "/unrestrict",
+    description: `Removes an item from the restricted list.`,
     tags: [SWAGGER_TAGS.private],
     requires: {
       any: {
-        ungrouped: [UNGROUPED_FEATURES.manage_block_list],
+        ungrouped: [UNGROUPED_FEATURES.manage_restricted_list],
       },
     },
     body: {

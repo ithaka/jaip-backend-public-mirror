@@ -5,7 +5,7 @@ import {
   Prisma,
   status_options,
   ungrouped_features,
-  globally_blocked_items,
+  globally_restricted_items,
 } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
@@ -104,22 +104,25 @@ export interface JAIPDatabase {
     page: number,
   ) => Promise<[Status[] | null, number | null, Error | null]>;
 
-  // BLOCKED ITEMS
-  get_blocked_items_and_count: (
+  // RESTRICTED ITEMS
+  get_restricted_items_and_count: (
     term: string,
     page: number,
     limit: number,
-  ) => Promise<[globally_blocked_items[], number, Error | null]>;
+    start_date: Date,
+    end_date: Date,
+    sort: string
+  ) => Promise<[globally_restricted_items[], number, Error | null]>;
 
-  get_blocked_items: (
-    query: Prisma.globally_blocked_itemsFindManyArgs,
-  ) => Promise<[globally_blocked_items[], Error | null]>;
-  create_blocked_item: (
+  get_restricted_items: (
+    query: Prisma.globally_restricted_itemsFindManyArgs,
+  ) => Promise<[globally_restricted_items[], Error | null]>;
+  create_restricted_item: (
     doi: string,
     reason: string,
     user_id: number,
   ) => Promise<Error | null>;
-  remove_blocked_item: (doi: string, user_id: number) => Promise<Error | null>;
+  remove_restricted_item: (doi: string, user_id: number) => Promise<Error | null>;
 
   // TOKENS
   get_all_tokens: () => Promise<[string[], Error | null]>;

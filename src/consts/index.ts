@@ -1,3 +1,4 @@
+import { status_options } from "@prisma/client";
 import { Discipline } from "../types/disciplines";
 import type { EntityType } from "../types/entities";
 import { HTTPMethods } from "fastify";
@@ -8,6 +9,12 @@ export const EPHEMERAL_DOMAIN_ENDINGS = {
   admin: "admin.apps.test.cirrostratus.org",
   student: "student.apps.test.cirrostratus.org"
 }
+
+export const STATUS_OPTIONS = {
+  ...status_options,
+  Restricted: "Restricted"
+};
+
 export const SUBDOMAINS = {
   admin: ["pep-admin", "admin.pep", "admin.test-pep"],
   student: ["pep", "www.pep", "test-pep", "www.test-pep"],
@@ -97,7 +104,7 @@ export const FEATURES = {
   view_hidden_users: "view_hidden_users",
   view_pdf: "view_pdf",
   view_snippet: "view_snippet",
-  pre_denial_subscription: "pre_denial_subscription",
+  restricted_items_subscription: "restricted_items_subscription",
 };
 
 export const UNGROUPED_FEATURES = {
@@ -116,7 +123,7 @@ export const UNGROUPED_FEATURES = {
   edit_feature: "edit_feature",
   delete_feature: "delete_feature",
   add_feature: "add_feature",
-  manage_block_list: "manage_block_list",
+  manage_restricted_list: "manage_restricted_list",
 };
 
 export const SESSION_MANAGER = {

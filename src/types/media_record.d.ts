@@ -22,8 +22,8 @@ export interface MediaRecord {
   tb: string;
   title: string;
   year: string | number;
-  is_blocked?: boolean;
-  blocked_reason?: string;
+  is_restricted?: boolean;
+  restricted_reason?: string;
 }
 
 export interface History {

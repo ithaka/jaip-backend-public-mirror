@@ -2,11 +2,12 @@ import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
+  GetRestrictedItemsBody,
   SearchRequestBody,
   StatusParams,
   StatusSearchRequestBody,
 } from "../../types/routes";
-import { FEATURES, SEARCH3 } from "../../consts";
+import { FEATURES, SEARCH3, STATUS_OPTIONS } from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
@@ -23,6 +24,7 @@ import {
 } from "./helpers";
 import { map_document } from "../queries/search";
 import { History, MediaRecord } from "../../types/media_record";
+import { get_restricted_items_handler } from "../global_restricted_list/handlers";
 
 export const status_search_handler =
   (fastify: FastifyInstance) =>
@@ -47,6 +49,13 @@ export const status_search_handler =
       const start_date = request.body.statusStartDate;
       const end_date = request.body.statusEndDate;
       const query_statuses: status_options[] = [];
+
+      // If the search is for restricted items, we handle it separately.
+      if (status === 'restricted') {
+        return get_restricted_items_handler(fastify)(
+          request as FastifyRequest<GetRestrictedItemsBody>, reply
+        );
+      }
 
       fastify.log.info(
         `Searching for statuses with status: ${status}, start_date: ${start_date}, end_date: ${end_date}`,
@@ -365,30 +374,6 @@ export const search_handler =
           {} as { [key: string]: History },
         );
 
-        if (block_list_items[doc.doi]) {
-          new_doc.mediaReviewStatuses = request.user.groups.reduce(
-            (acc, group) => {
-              // If the user belongs to a group that has the pre-denial subscription feature,
-              // we add a blocked status for that group.
-              if (group.features[FEATURES.pre_denial_subscription]) {
-                acc[group.id] = {
-                  status: status_options.Denied,
-                  statusLabel: status_options.Denied,
-                  statusCreatedAt: block_list_items[doc.doi].created_at,
-                  groupID: group.id,
-                  groupName: group.name,
-                  statusDetails: {
-                    reason: block_list_items[doc.doi].reason || "",
-                  },
-                };
-              }
-              return acc;
-            },
-            {} as { [key: string]: History },
-          );
-          new_doc.is_blocked = true;
-          new_doc.blocked_reason = block_list_items[doc.doi].reason || "";
-        }
         // Add the individual statuses
         const mediaReviewStatuses = {} as { [key: string]: History };
         for (const status of document_statuses[new_doc.doi] || []) {
@@ -425,13 +410,38 @@ export const search_handler =
             }
           }
         }
-
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.
         if (Object.keys(mediaReviewStatuses).length > 0) {
           for (const [group_id, status] of Object.entries(mediaReviewStatuses)) {
             new_doc.mediaReviewStatuses[group_id] = status;
           }
+        }
+
+        // This occurs last, as it should override any statuses, either bulk or individual.
+        if (block_list_items[doc.doi] && request.user.groups.some((group)=> group.features[FEATURES.restricted_items_subscription])) {
+          new_doc.mediaReviewStatuses = request.user.groups.reduce(
+            (acc, group) => {
+              // If the user belongs to a group that has the restricted items subscription feature,
+              // we add a blocked status for that group.
+              if (group.features[FEATURES.restricted_items_subscription]) {
+                acc[group.id] = {
+                  status: STATUS_OPTIONS.Restricted,
+                  statusLabel: STATUS_OPTIONS.Restricted,
+                  statusCreatedAt: block_list_items[doc.doi].created_at,
+                  groupID: group.id,
+                  groupName: group.name,
+                  statusDetails: {
+                    reason: block_list_items[doc.doi].reason || "",
+                  },
+                };
+              }
+              return acc;
+            },
+            {} as { [key: string]: History },
+          );
+          new_doc.is_restricted = true;
+          new_doc.restricted_reason = block_list_items[doc.doi].reason || "";
         }
 
         // Attach the snippets, which are keyed by the id

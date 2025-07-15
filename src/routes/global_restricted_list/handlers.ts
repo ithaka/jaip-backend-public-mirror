@@ -1,40 +1,46 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
-import { BlockItem, GetBlockedItemsBody, UnblockItem } from "../../types/routes";
+import { RestrictItem, GetRestrictedItemsBody, UnrestrictItem } from "../../types/routes";
 import { SearchRequest } from "../../types/search";
 import { search_handler } from "../search/handlers";
 
-export const get_blocked_items_handler =
+export const get_restricted_items_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<GetBlockedItemsBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest<GetRestrictedItemsBody>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "global-blocks-api",
+      log_made_by: "global-restricted-list-api",
     };
     fastify.event_logger.pep_standard_log_start(
-      "pep_get_blocked_items_start",
+      "pep_get_restricted_items_start",
       request,
       {
         ...log_payload,
-        event_description: "attempting to get blocked items",
+        event_description: "attempting to get restricted items",
       },
     );
 
-    const term = request.body.term || "";
-    const page = request.body.page;
+    const term = request.body.query || "";
+    const page = request.body.pageNo || 1;
     const limit = request.body.limit;
+    const start_date = request.body.statusStartDate || new Date("January 1, 2022");
+    const end_date = request.body.statusEndDate || new Date(new Date().setDate(new Date().getDate() + 1));
+    const sort = request.body.sort || "new";
 
     try {
-      const [blocked_items, count, error] = await fastify.db.get_blocked_items_and_count(
+      const [restricted_items, count, error] = await fastify.db.get_restricted_items_and_count(
         term,
         page,
         limit,
+        start_date,
+        end_date,
+        sort
       );
       if (error) {
         throw error;
       }
 
-      const dois = blocked_items.map((item) => item.jstor_item_id);
+      const dois = restricted_items.map((item) => item.jstor_item_id);
       let doi_filter = "(";
       dois.forEach((doi, index) => {
         doi_filter += `doi:"${doi}"`;
@@ -50,14 +56,14 @@ export const get_blocked_items_handler =
           total: 0,
         });
         fastify.event_logger.pep_standard_log_complete(
-          "pep_get_blocked_items_complete",
+          "pep_get_restricted_items_complete",
           request,
           reply,
           {
-            dois: blocked_items.map((item) => item.jstor_item_id),
+            dois: restricted_items.map((item) => item.jstor_item_id),
             total: count,
             ...log_payload,
-            event_description: "no blocked items found in db",
+            event_description: "no restricted items found in db",
           },
         );
         return
@@ -84,14 +90,14 @@ export const get_blocked_items_handler =
       await search_handler(fastify, count || 0)(new_request, reply);
       
       fastify.event_logger.pep_standard_log_complete(
-        "pep_get_blocked_items_complete",
+        "pep_get_restricted_items_complete",
         request,
         reply,
         {
-          dois: blocked_items.map((item) => item.jstor_item_id),
+          dois: restricted_items.map((item) => item.jstor_item_id),
           total: count,
           ...log_payload,
-          event_description: "returning blocked items from db",
+          event_description: "returning restricted items from db",
         },
       );
     } catch (err) {
@@ -101,26 +107,26 @@ export const get_blocked_items_handler =
         reply,
         {
           ...log_payload,
-          event_description: "failed to get blocked items",
+          event_description: "failed to get restricted items",
         },
-        "get_blocked_items",
+        "get_restricted_items",
         error,
       );
       reply.code(500).send(error.message);
     }
   };
 
-export const block_handler = (fastify: FastifyInstance) => {
-  return async (request: FastifyRequest<BlockItem>, reply: FastifyReply) => {
+export const restrict_handler = (fastify: FastifyInstance) => {
+  return async (request: FastifyRequest<RestrictItem>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "global-blocks-api",
+      log_made_by: "global-restricted-list-api",
     };
     fastify.event_logger.pep_standard_log_start(
-      `pep_global_block_start`,
+      `pep_global_restrict_start`,
       request,
       {
         ...log_payload,
-        event_description: `attempting to add a blocked item`,
+        event_description: `attempting to add a restricted item`,
       },
     );
     try {
@@ -129,8 +135,8 @@ export const block_handler = (fastify: FastifyInstance) => {
       log_payload.doi = doi;
       log_payload.reason = reason;
 
-      fastify.log.info(`Creating block for ${doi} with reason: ${reason}`);
-      const error = await fastify.db.create_blocked_item(
+      fastify.log.info(`Creating restricted item for ${doi} with reason: ${reason}`);
+      const error = await fastify.db.create_restricted_item(
         doi,
         reason,
         request.user.id!,
@@ -138,12 +144,12 @@ export const block_handler = (fastify: FastifyInstance) => {
       if (error) throw error;
 
       fastify.event_logger.pep_standard_log_complete(
-        `pep_global_block_complete`,
+        `pep_global_restrict_complete`,
         request,
         reply,
         {
           ...log_payload,
-          event_description: `completed blocking for doi: ${doi}`,
+          event_description: `completed restricting for doi: ${doi}`,
         },
       );
       reply.code(201);
@@ -154,9 +160,9 @@ export const block_handler = (fastify: FastifyInstance) => {
         reply,
         {
           ...log_payload,
-          event_description: `failed to block item`,
+          event_description: `failed to restrict item`,
         },
-        "block",
+        "restrict",
         error,
       );
       reply.code(500).send(error.message);
@@ -164,32 +170,32 @@ export const block_handler = (fastify: FastifyInstance) => {
   };
 };
 
-export const unblock_handler =
+export const unrestrict_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<UnblockItem>, reply: FastifyReply) => {
+  async (request: FastifyRequest<UnrestrictItem>, reply: FastifyReply) => {
     const log_payload: LogPayload = {
-      log_made_by: "global-blocks-api",
+      log_made_by: "global-restricted-items-api",
     };
-    fastify.event_logger.pep_standard_log_start("pep_unblock_start", request, {
+    fastify.event_logger.pep_standard_log_start("pep_unrestrict_start", request, {
       ...log_payload,
-      event_description: "attempting unblock item",
+      event_description: "attempting unrestrict item",
     });
     try {
       const doi = request.body.doi;
       // Because requests come from facilities, we can assume that there is only one group
       log_payload.doi = doi;
 
-      fastify.log.info(`Unblocking item ${doi}`);
-      const error = await fastify.db.remove_blocked_item(doi, request.user.id!);
+      fastify.log.info(`Unrestricting item ${doi}`);
+      const error = await fastify.db.remove_restricted_item(doi, request.user.id!);
       if (error) throw error;
 
       fastify.event_logger.pep_standard_log_complete(
-        "pep_unblock_complete",
+        "pep_unrestrict_complete",
         request,
         reply,
         {
           ...log_payload,
-          event_description: `unblock completed for doi: ${doi}`,
+          event_description: `unrestrict completed for doi: ${doi}`,
         },
       );
       reply.code(201);
@@ -200,9 +206,9 @@ export const unblock_handler =
         reply,
         {
           ...log_payload,
-          event_description: "failed to unblock item",
+          event_description: "failed to unrestrict item",
         },
-        "unblock",
+        "unrestrict",
         error,
       );
       reply.code(500).send(error.message);
