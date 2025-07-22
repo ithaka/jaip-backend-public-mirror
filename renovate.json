@@ -7,6 +7,9 @@
   "assignAutomerge": true,
   "automerge": true,
   "assigneesFromCodeOwners": true,
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "groupName": "NodeJS dependencies",
