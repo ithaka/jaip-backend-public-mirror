@@ -58,7 +58,7 @@
   },
   "resolutions": {
     "form-data": "^4.0.4",
-    "@eslint/plugin-kit": "^0.3.3"
+    "@eslint/plugin-kit": "^0.3.4"
   },
   "lint-staged": {
     "src": [
