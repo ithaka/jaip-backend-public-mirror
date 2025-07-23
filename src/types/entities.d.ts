@@ -17,6 +17,7 @@ export interface User {
   uuid?: UUID;
   subdomain?: string;
   primary_sitecode?: string;
+  facilities?: Entity[];
 }
 
 export interface Entity {

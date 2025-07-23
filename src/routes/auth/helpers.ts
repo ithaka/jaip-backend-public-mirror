@@ -1,18 +1,20 @@
 import type { Session } from "../../types/sessions";
-import type { User } from "../../types/entities";
+import type { Entity, User } from "../../types/entities";
 import { DBEntity } from "../../types/database";
 import {
   get_user_query,
   get_facility_query,
   map_entities,
+  get_many_entities_select_clause,
 } from "../queries/entities";
 import axios from "axios";
 import { session_query } from "../queries/session";
-import { ensure_error, ip_handler } from "../../utils";
+import { ensure_error, get_groups_with_any_features_enabled, ip_handler } from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
-import { SUBDOMAINS } from "../../consts";
+import { RESTRICTED_ITEMS_FEATURES, SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
 import { JAIPDatabase } from "../../database";
+import { user_roles } from "@prisma/client";
 
 let counter: { [key: string]: number } = {};
 export const manage_session = async (
@@ -327,6 +329,7 @@ export const get_current_user = async (
   request: FastifyRequest,
   emails: string[],
   codes: string[],
+  include_facilities: boolean,
 ): Promise<[User | null, Error | null]> => {
   let current_user: User | null = null;
   try {
@@ -336,8 +339,44 @@ export const get_current_user = async (
       current_user = result;
       if (error) {
         throw error;
-        // If a user is found, we don't need to look for anything else
+        // If a user is found, we don't need to check codes or IPS
       } else if (current_user) {
+          // If the user can access restricted items in any of their groups, we 
+          // want to get the facilities associated with those groups and add them
+          // to the user object. This makes it easier to access that information on
+          // the frontend without separate API calls.
+          const groups_with_restricted_items_access = get_groups_with_any_features_enabled(
+          current_user,
+          RESTRICTED_ITEMS_FEATURES,
+        );
+        if (groups_with_restricted_items_access.length && include_facilities) {
+          const [facilities, facilities_error] = await fastify.db.get_facilities({
+            where: {
+              entities: {
+                groups_entities: {
+                  some: {
+                    group_id: {
+                      in: groups_with_restricted_items_access,
+                    },
+                  },
+                }
+              }
+            },
+            select: {
+              ...get_many_entities_select_clause(
+                user_roles.user,
+                groups_with_restricted_items_access,
+              )
+            }
+          })
+          if (facilities_error) {
+            throw error;
+          } else if (facilities.length) {
+            current_user.facilities = facilities.map((facility) => {
+              return map_entities(facility) as Entity;
+            });
+          }
+        }
         return [current_user, null];
       }
     }

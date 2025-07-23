@@ -1,6 +1,7 @@
 // These are various facility and user objects for use across multiple tests.
 
 import { ENTITY_TYPES, FEATURES, UNGROUPED_FEATURES } from "../../../consts";
+import { DBEntity } from "../../../types/database";
 
 export const internal_ithaka_permissions = (enabled: boolean) =>
   structuredClone([
@@ -174,6 +175,277 @@ export const basic_admin = {
     ungrouped_features_entities: [],
   },
 };
+export const basic_admin_with_facilities = {
+  jstor_id: "test@test.com",
+  entities: {
+    name: "Test User Basic Admin",
+    id: 4,
+    entity_type: ENTITY_TYPES.USERS,
+    groups_entities: groups_entities.single_group,
+    features_groups_entities: [
+      ...search_result_permissions(true),
+      ...media_review_permissions(true),
+      ...user_permissions(true),
+      ...internal_ithaka_permissions(false),
+    ],
+    ungrouped_features_entities: [],
+  },
+};
+
+export const facilities_for_user: DBEntity[] = [
+  {
+    jstor_id: "test@test.com",
+    uuid: "uuid",
+    entities: {
+      name: "Test Facility",
+      id: 1,
+      entity_type: "facilities",
+      groups_entities: [
+        {
+          groups: {
+            id: 1,
+            name: "Ithaka"
+          },
+          role: "facility"
+        }
+      ],
+      features_groups_entities: [
+        {
+          enabled: true,
+          features: {
+            id: 41,
+            name: "print_pdf",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 34,
+            name: "view_abstract",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 36,
+            name: "view_book_description",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 40,
+            name: "download_pdf",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 35,
+            name: "view_snippet",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 232,
+            name: "submit_requests",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 166,
+            name: "view_document",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: true,
+          features: {
+            id: 133,
+            name: "view_pdf",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 73,
+            name: "approve_requests",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 74,
+            name: "deny_requests",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 75,
+            name: "bulk_approve",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 76,
+            name: "undo_bulk_approve",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 100,
+            name: "get_facilities",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 67,
+            name: "get_users",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 68,
+            name: "add_or_edit_users",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 102,
+            name: "edit_facilities",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 70,
+            name: "remove_users",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 106,
+            name: "use_protected_features",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 71,
+            name: "is_hidden_user",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 101,
+            name: "manage_facilities",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        },
+        {
+          enabled: false,
+          features: {
+            id: 72,
+            name: "view_hidden_users",
+            is_active: true
+          },
+          groups: {
+            id: 1
+          }
+        }
+      ],
+      ungrouped_features_entities: []
+    }
+  }
+]
 
 export const basic_reviewer = {
   jstor_id: "test@test.com",

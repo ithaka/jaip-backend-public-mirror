@@ -10,6 +10,7 @@ export const db_mock = {
   get_sitecode_by_subdomain: jest.fn().mockName("get_sitecode_by_subdomain"),
   get_users_and_count: jest.fn().mockName("get_users_and_count"),
   get_facilities_and_count: jest.fn().mockName("get_facilities_and_count"),
+  get_facilities: jest.fn().mockName("get_facilities"),
   remove_user: jest.fn().mockName("remove_user"),
   remove_facility: jest.fn().mockName("remove_facility"),
   get_user_id: jest.fn().mockName("get_user_id"),

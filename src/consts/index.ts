@@ -7,12 +7,12 @@ export const VALIDATED_METHODS = ["POST", "PUT", "DELETE"] as HTTPMethods[];
 
 export const EPHEMERAL_DOMAIN_ENDINGS = {
   admin: "admin.apps.test.cirrostratus.org",
-  student: "student.apps.test.cirrostratus.org"
-}
+  student: "student.apps.test.cirrostratus.org",
+};
 
 export const STATUS_OPTIONS = {
   ...status_options,
-  Restricted: "Restricted"
+  Restricted: "Restricted",
 };
 
 export const SUBDOMAINS = {
@@ -125,6 +125,18 @@ export const UNGROUPED_FEATURES = {
   add_feature: "add_feature",
   manage_restricted_list: "manage_restricted_list",
 };
+
+// Any of these features will allow some measure of access to the restricted items list.
+export const RESTRICTED_ITEMS_FEATURES = [
+  FEATURES.add_or_edit_users,
+  FEATURES.approve_requests,
+  FEATURES.deny_requests,
+  FEATURES.edit_facilities,
+  FEATURES.manage_facilities,
+  FEATURES.remove_users,
+  FEATURES.bulk_approve,
+  FEATURES.undo_bulk_approve,
+];
 
 export const SESSION_MANAGER = {
   name: "session-service",

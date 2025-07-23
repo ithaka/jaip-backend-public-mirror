@@ -45,6 +45,9 @@ export interface JAIPDatabase {
     count_query: Prisma.facilitiesCountArgs,
     query: Prisma.facilitiesFindManyArgs,
   ) => Promise<[number, DBEntity[]]>;
+  get_facilities: (
+    query: Prisma.facilitiesFindManyArgs,
+  ) => Promise<[DBEntity[], Error | null]>;
   remove_user: (query: Prisma.usersUpdateArgs) => void;
   remove_facility: (query: Prisma.facilitiesUpdateArgs) => void;
   get_user_id: (

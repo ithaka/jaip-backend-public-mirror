@@ -25,6 +25,7 @@ export const route_guard = async (
       request,
       get_email_from_session(session),
       get_code_from_session(session),
+      false // Do not include facilities in the user object
     );
     if (user_error) {
       throw user_error;

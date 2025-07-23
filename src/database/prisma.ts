@@ -111,7 +111,19 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     });
     return [count, facilities as unknown as DBEntity[]];
   }
-
+  // This function may become a problem for internal ITHAKA users when there are hundreds or thousands of facilities.
+  // If it does, we may need to move more of the frontend logic back here to select which facilities to return.
+  async get_facilities(
+    query: Prisma.facilitiesFindManyArgs,
+  ): Promise<[DBEntity[], Error | null]> {
+    try {
+      const facilities = await this.client.facilities.findMany(query);
+      return [facilities as unknown as DBEntity[] || [], null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
+    }
+  }
   async remove_user(query: Prisma.usersUpdateArgs) {
     await this.client.users.update(query);
   }

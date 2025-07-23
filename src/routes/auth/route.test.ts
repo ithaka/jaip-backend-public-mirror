@@ -13,8 +13,9 @@ import {
 } from "../../tests/fixtures/auth/fixtures";
 import axios from "axios";
 import { get_route } from "../../utils";
-import { basic_facility } from "../../tests/fixtures/users/fixtures";
+import { basic_admin, basic_facility } from "../../tests/fixtures/users/fixtures";
 import { map_entities } from "../queries/entities";
+import { Entity } from "../../types/entities";
 
 const app = build_test_server([route_settings]);
 
@@ -155,4 +156,32 @@ test(`requests the ${route} route with invalid email`, async () => {
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(0);
   expect(db_mock.get_ip_bypass).toHaveBeenCalledTimes(0);
   expect(res.statusCode).toEqual(500);
+});
+
+test(`requests the ${route} route with valid email and admin domain`, async () => {
+  discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
+  db_mock.get_facilities.mockResolvedValueOnce([[basic_facility], null]);
+
+  const res = await app.inject({
+    method: "GET",
+    url: route,
+    headers: {
+      host: "admin.test-pep.jstor.org",
+    },
+  });
+
+  expect(discover_mock).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_facilities).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_ip_bypass).toHaveBeenCalledTimes(0);
+  // Map the basic admin to an Entity type
+  const admin = map_entities(basic_admin);
+  // Set the uuid and facilities for the admin
+  admin.uuid = axios_session_data_with_email.data.data.sessionHttpHeaders.uuid;
+  admin.facilities = [map_entities(basic_facility)] as Entity[];
+  expect(res.json()).toStrictEqual(admin);
+  expect(res.statusCode).toEqual(200);
 });
