@@ -75,11 +75,11 @@ test(`requests the ${unrestrict_route} route with valid body and request permiss
       host: valid_admin_subdomain,
     },
   });
-    expect(db_mock.remove_restricted_item).toHaveBeenCalledTimes(1);
-    expect(db_mock.remove_restricted_item).toHaveBeenCalledWith(
-      unrestrict_valid.doi,
-      basic_user_ungrouped_manage_restricted_list.entities.id,
-    );
-    expect(res.payload).toStrictEqual("");
+  expect(db_mock.remove_restricted_item).toHaveBeenCalledTimes(1);
+  expect(db_mock.remove_restricted_item).toHaveBeenCalledWith(
+    unrestrict_valid.doi,
+    basic_user_ungrouped_manage_restricted_list.entities.id,
+  );
+  expect(res.payload).toStrictEqual("");
   expect(res.statusCode).toEqual(201);
 });

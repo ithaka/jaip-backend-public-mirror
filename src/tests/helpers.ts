@@ -52,7 +52,11 @@ export const db_mock = {
   create_restricted_item: jest.fn().mockName("create_restricted_item"),
   remove_restricted_item: jest.fn().mockName("remove_restricted_item"),
   get_restricted_items: jest.fn().mockName("get_restricted_items"),
-  get_restricted_items_and_count: jest.fn().mockName("get_restricted_items_and_count"),
+  get_restricted_items_and_count: jest
+    .fn()
+    .mockName("get_restricted_items_and_count"),
+  get_last_updated_restricted_item: jest
+    .fn().mockName("get_last_updated_restricted_item"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest

@@ -1,0 +1,63 @@
+// NOTE: This file also includes tests for incomplete statuses. Denial and incomplete
+// statuses currently use the same handler and have similar requirements.
+import {
+    build_test_server,
+    db_mock,
+    discover_mock,
+  } from "../../../tests/helpers";
+  import route_settings from "../routes";
+  import { route_schemas } from "../schemas";
+  import { get_route } from "../../../utils";
+  import axios from "axios";
+  import {
+    axios_session_data_with_email,
+    valid_admin_subdomain,
+  } from "../../../tests/fixtures/auth/fixtures";
+  import {
+    basic_user_ungrouped,
+    basic_user_ungrouped_manage_restricted_list,
+  } from "../../../tests/fixtures/users/fixtures";
+  
+  const app = build_test_server([route_settings]);
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+  
+  const get_last_updated_route = `${route_settings.options.prefix}${get_route(route_schemas.get_last_updated)}`;  
+  test(`requests the ${get_last_updated_route} route with no permissions`, async () => {
+    discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    db_mock.get_first_user.mockResolvedValueOnce(basic_user_ungrouped);
+    db_mock.manage_entity.mockClear();
+  
+    const res = await app.inject({
+      method: "GET",
+      url: get_last_updated_route,
+    });
+    expect(res.statusCode).toEqual(403);
+  });
+  
+  test(`requests the ${get_last_updated_route} route with permissions`, async () => {
+    discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    db_mock.get_first_user.mockResolvedValueOnce(
+      basic_user_ungrouped_manage_restricted_list,
+    );
+    const expected_date = new Date("2023-10-01T00:00:00Z")
+    db_mock.get_last_updated_restricted_item.mockResolvedValueOnce(
+        [expected_date, null],
+    );
+    
+    const res = await app.inject({
+      method: "GET",
+      url: `${get_last_updated_route}`,
+      headers: {
+        host: valid_admin_subdomain,
+      },
+    });
+    expect(db_mock.get_last_updated_restricted_item).toHaveBeenCalledTimes(1);
+    expect(res.json()).toStrictEqual( { last_updated: expected_date.toISOString() });
+    expect(res.statusCode).toEqual(200);
+  });
+  

@@ -306,7 +306,9 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       const [items, count] = await this.client.$transaction(async (tx) => {
         const [items, count] = await Promise.all([
           tx.globally_restricted_items.findMany(find_query),
-          tx.globally_restricted_items.count(count_query as Prisma.globally_restricted_itemsCountArgs),
+          tx.globally_restricted_items.count(
+            count_query as Prisma.globally_restricted_itemsCountArgs,
+          ),
         ]);
         return [items, count];
       });
@@ -326,6 +328,20 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return [[], error];
+    }
+  }
+  async get_last_updated_restricted_item(): Promise<
+    [Date | undefined, Error | null]
+  > {
+    try {
+      const item = await this.client.globally_restricted_items.findFirst({
+        orderBy: { updated_at: "desc" },
+        select: { updated_at: true },
+      });
+      return [item?.updated_at, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [undefined, error];
     }
   }
   async create_restricted_item(doi: string, reason: string, user_id: number) {

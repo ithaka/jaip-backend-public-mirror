@@ -1,7 +1,7 @@
 import { RouteGenericInterface } from "fastify";
 import { SearchRequest, StatusSearchRequest } from "./search";
 import { Entitlement } from "./accounts";
-import { entity_types } from "@prisma/client";
+import { entity_types, globally_restricted_items } from "@prisma/client";
 import { Group } from "./groups";
 
 export interface RouteSettings {
@@ -274,4 +274,19 @@ export interface Subdomain {
   // The duplicate property is only returned when a user attempts to create a duplicate
   // of an existing subdomain.
   duplicate?: boolean;
+}
+
+interface RestrictedItem extends globally_restricted_items {
+    entities?: {
+        name: string;
+    };
+}
+
+interface CSVRestrictedItem { 
+  "JSTOR Item ID": string; 
+  "JSTOR Item URL": string; 
+  "Reason": string; 
+  "Date Added to List": Date; 
+  "Date Updated": Date; 
+  "Restricted By"?: string;
 }

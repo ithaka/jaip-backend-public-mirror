@@ -114,18 +114,25 @@ export interface JAIPDatabase {
     limit: number,
     start_date: Date,
     end_date: Date,
-    sort: string
+    sort: string,
   ) => Promise<[globally_restricted_items[], number, Error | null]>;
 
   get_restricted_items: (
     query: Prisma.globally_restricted_itemsFindManyArgs,
   ) => Promise<[globally_restricted_items[], Error | null]>;
+  get_last_updated_restricted_item: () => Promise<
+    [Date | undefined, Error | null]
+  >;
+
   create_restricted_item: (
     doi: string,
     reason: string,
     user_id: number,
   ) => Promise<Error | null>;
-  remove_restricted_item: (doi: string, user_id: number) => Promise<Error | null>;
+  remove_restricted_item: (
+    doi: string,
+    user_id: number,
+  ) => Promise<Error | null>;
 
   // TOKENS
   get_all_tokens: () => Promise<[string[], Error | null]>;
