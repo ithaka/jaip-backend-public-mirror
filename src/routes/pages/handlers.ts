@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { PagesParams } from "../../types/routes";
 import { LogPayload } from "../../event_handler";
-import { ensure_error } from "../../utils";
+import { ensure_error, user_has_feature } from "../../utils";
 import {
   get_and_extract_metadata,
   get_entitlement_map,
@@ -11,6 +11,7 @@ import {
   get_s3_object,
 } from "./helpers";
 import { AxiosError } from "axios";
+import { FEATURES } from "../../consts";
 
 export const page_handler =
   (fastify: FastifyInstance) =>
@@ -47,14 +48,17 @@ export const page_handler =
       fastify.log.info(
         `Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`,
       );
-      const is_forbidden = await get_is_forbidden(
+      const is_forbidden = request.is_authenticated_student ? await get_is_forbidden(
         fastify.db,
-        request.is_authenticated_student,
+        user_has_feature(
+          request.user,
+          FEATURES.restricted_items_subscription
+        ),
         doi,
         journal_iids,
         disc_codes,
         group_ids,
-      );
+      ) : false;
 
       fastify.log.info("Is forbidden: ", is_forbidden);
       if (is_forbidden) {
@@ -165,14 +169,17 @@ export const metadata_handler =
       fastify.log.info(
         `Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`,
       );
-      const is_forbidden = await get_is_forbidden(
+      const is_forbidden = request.is_authenticated_student ? await get_is_forbidden(
         fastify.db,
-        request.is_authenticated_student,
+        user_has_feature(
+          request.user,
+          FEATURES.restricted_items_subscription
+        ),
         doi,
         journal_iids,
         disc_codes,
         group_ids,
-      );
+      ) : false;
 
       fastify.log.info("Is forbidden: ", is_forbidden);
       if (is_forbidden) {

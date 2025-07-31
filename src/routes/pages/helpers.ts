@@ -216,17 +216,31 @@ export const get_cedar_metadata = async (
 
 export const get_is_forbidden = async (
   db: JAIPDatabase,
-  is_authenticated_student: boolean,
+  has_restricted_items_subscription: boolean,
   doi: string,
   journal_iids: string[],
   disc_codes: string[],
   group_ids: number[],
 ): Promise<boolean> => {
-  if (!is_authenticated_student) {
-    return false;
+  let is_forbidden = true;
+
+  // If the request is from a facility that's subscribed to the restricted list, 
+  // we need to check if it's on the restricted list first.
+  if (has_restricted_items_subscription) {
+    const [restricted_items, error] = await db.get_restricted_items({
+      where: {
+        jstor_item_id: doi,
+        is_restricted: true,
+      },
+    });
+    if (error) {
+      throw error;
+    }
+    if (restricted_items.length > 0) {
+      return true;
+    }
   }
 
-  let is_forbidden = true;
   // Check if the item is approved individually
   const [item_status, error] = await db.get_item_status({
     where: {
