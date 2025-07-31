@@ -23,7 +23,11 @@ export const manage_session = async (
   ignore_cookie: boolean = false,
 ): Promise<[Session, Error | null]> => {
   let session: Session = {} as Session;
-  const session_uuid = ignore_cookie ? "" : request.cookies.uuid;
+  const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
+  // We can't use the frontend UUID cookie on a student subdomain, because we
+  // can't trust the cookie from the frontend alone. This means we will fall back to
+  // creating a new session UUID based on the frontend request IP.
+  const session_uuid = ignore_cookie || !is_admin_subdomain ? "" : request.cookies.uuid;
   try {
     fastify.log.info(`Attempting to manage session: ${session_uuid}`);
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
