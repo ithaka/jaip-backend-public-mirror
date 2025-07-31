@@ -6,10 +6,23 @@ This repository Capstan-deploys the JAIP Backend, so that it is service-locatabl
 
 ### Requirements
 1. We use yarn for dependency management. Install this tool before developing in this codebase.
-1. This project requires a postgres database. A Prisma schema is included. See the Database section of this guide for more information on identifying the appropriate `DATABASE_URL`. 
+1. This project requires a postgres database. A Prisma schema is included. See the Database section of this guide for more information on identifying the appropriate `DATABASE_URL`.
 1. Development in this project requires access to the [ITHAKA CLI tool](https://github.com/ithaka/ithaka-cli?tab=readme-ov-file) and the ITHAKA VPN in order to take advantage of the Polaris sidecar for service discovery.
 
 ### Install Dependencies
+
+[Install `nvm` for managing the project node version.](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
+
+Activate the pinned node version based on this project's `.nvmrc` file.
+
+```
+$ nvm use
+```
+
+If you do not have that node version on your local machine, `nvm` will say so. Use `nvm install` to install the pinned version.
+
+Finally, install project depdendencies:
+
 ```
 $ yarn install
 ```
@@ -20,7 +33,7 @@ Check the `example.env` file to see the required environment variables used in l
 ### Database
 The database URL is kept in AWS Parameter Store, and is used to connect to the database. The correct values are available at `/test/labs/jaip/jaip-backend/database/url` and `/prod/labs/jaip/jaip-backend/database/url`. Generally, you should only need to use the test database, but it is occasionally useful to use production data locally, especially when handling bug reports. In that case change the ENVIRONMENT to `prod` and the `DATABASE_URL` to the production database URL. Using production data will also require a change to the ITHAKA sidecar command used for service discovery (use `ithaka sidecar polaris --env prod`). Obviously, be extremely cautious when working with production data.
 
-There are two main RDS clusters for this application: one in `TEST` and one in `PROD`. In the `PROD` cluster, there is a single database, `jaip`.  In the `TEST` cluster, there is a `jaip` database, used in the test deployment. There is also a development database, `jaip_dev`. The URL for this database is available in AWS Parameter store at `/test/labs/jaip/jaip-backend/database/dev/url`. This can be used to make changes that would otherwise disrupt the primary `jaip` database in `TEST`. Conversely, it can be used for normal development purposes when a breaking change is in `TEST`. Note that this database is not created by the CloudFormation template, because CF does not currently support creating multiple databases during the creation process. 
+There are two main RDS clusters for this application: one in `TEST` and one in `PROD`. In the `PROD` cluster, there is a single database, `jaip`.  In the `TEST` cluster, there is a `jaip` database, used in the test deployment. There is also a development database, `jaip_dev`. The URL for this database is available in AWS Parameter store at `/test/labs/jaip/jaip-backend/database/dev/url`. This can be used to make changes that would otherwise disrupt the primary `jaip` database in `TEST`. Conversely, it can be used for normal development purposes when a breaking change is in `TEST`. Note that this database is not created by the CloudFormation template, because CF does not currently support creating multiple databases during the creation process.
 
 If the `jaip_dev` database should become damaged or excessively separated from the `jaip` database, it can be dropped and recreated with `jaip` as a template.
 
@@ -57,7 +70,7 @@ If this turns into a regular occurrence, consider running local instances.
 ### Database Changes
 The `jaip` database configuration is defined in the `./prisma/schema.prisma`. Changes made there can be pushed to the database using `yarn dlx prisma db push`, as described in the Prisma docs.
 
-In order to manage the database using Prisma, it is necessary to set the `DATABASE_URL` in `.env` to use the admin username and password. Like the regular username and password, these URLs are defined in AWS Parameter Store at `/test/labs/jaip/jaip-backend/database/admin/url` and `/prod/labs/jaip/jaip-backend/database/admin/url` for test and prod respectively. 
+In order to manage the database using Prisma, it is necessary to set the `DATABASE_URL` in `.env` to use the admin username and password. Like the regular username and password, these URLs are defined in AWS Parameter Store at `/test/labs/jaip/jaip-backend/database/admin/url` and `/prod/labs/jaip/jaip-backend/database/admin/url` for test and prod respectively.
 
 ### Development
 1. Start the Polaris sidecar. Generally, use
@@ -82,7 +95,7 @@ yarn dev
 ```
 
 ## Routes
-Routes in this application are built with a consistent structure. Within the `./routes` directory, each category of routes has its own directory. For example, there are directories for `auth`, `search`, and `media_review`. In some cases, where there are more complex sets of routes, there may be further subdirectories. For example, `site_administration` includes subdirectories for `features` and `groups`, and the features subdirectory itself includes subdirectories for `grouped` and `ungrouped` features. 
+Routes in this application are built with a consistent structure. Within the `./routes` directory, each category of routes has its own directory. For example, there are directories for `auth`, `search`, and `media_review`. In some cases, where there are more complex sets of routes, there may be further subdirectories. For example, `site_administration` includes subdirectories for `features` and `groups`, and the features subdirectory itself includes subdirectories for `grouped` and `ungrouped` features.
 
 Every route directory includes the following:
 * `schemas.ts`
@@ -93,7 +106,7 @@ Every route directory includes the following:
 * Optionally, a `helpers.ts` file including functions that may be reused or otherwise abstracted from the route handlers
 
 ## Testing
-Jest unit tests are run in Gitlab as part of the CI/CD pipeline with the command `yarn test:ci`. To test locally, use `yarn test`. 
+Jest unit tests are run in Gitlab as part of the CI/CD pipeline with the command `yarn test:ci`. To test locally, use `yarn test`.
 
 ## Building & Deployment
 Deployment is handled by [Gitlab](https://gitlab.com/capstan/platform-apps/labs/constellate-backend) CI. There are test, deploy, and undeploy jobs defined in the `.gitlab-ci.yml` file, found in the project root.
