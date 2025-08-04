@@ -81,6 +81,16 @@ export const media_review_permissions = (enabled: boolean) =>
       groups: { id: 1 },
     },
   ]);
+
+export const restricted_item_subscription = (enabled: boolean) => 
+  structuredClone([
+    {
+      enabled,
+      features: { id: 77, name: FEATURES.restricted_items_subscription, is_active: true },
+      groups: { id: 1 },
+    },
+  ]);
+
 export const search_result_permissions = (enabled: boolean) =>
   structuredClone([
     {
@@ -569,6 +579,26 @@ export const basic_facility = {
     ungrouped_features_entities: [],
   },
 };
+
+export const basic_facility_with_restricted_items_subscription = {
+  jstor_id: "test@test.com",
+  uuid: "uuid",
+  entities: {
+    name: "Test Facility",
+    id: 1,
+    entity_type: ENTITY_TYPES.FACILITIES,
+    groups_entities: groups_entities.facility,
+    features_groups_entities: [
+      ...search_result_permissions(true),
+      ...restricted_item_subscription(true),
+      ...media_review_permissions(false),
+      ...user_permissions(false),
+      ...internal_ithaka_permissions(false),
+    ],
+    ungrouped_features_entities: [],
+  },
+};
+
 
 export const basic_facility_without_permissions = {
   jstor_id: "test@test.com",

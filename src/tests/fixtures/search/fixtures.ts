@@ -376,3 +376,34 @@ export const processed_search_response_with_mixed_statuses_reviewer_and_status_o
       }
     })
     .filter((doc) => doc !== undefined);
+
+    export const status_selections = [
+  {
+    id: 2755,
+    status: 'Denied',
+    jstor_item_id: '10.2307/23006127',
+    jstor_item_type: 'doi',
+    group_id: 1
+  },
+  {
+    id: 2755,
+    status: 'Denied',
+    jstor_item_id: '10.2307/23006127',
+    jstor_item_type: 'doi',
+    group_id: 1
+  },
+  {
+    id: 2745,
+    status: 'Approved',
+    jstor_item_id: '10.2307/1260890',
+    jstor_item_type: 'doi',
+    group_id: 1
+  },
+  {
+    id: 2743,
+    status: 'Pending',
+    jstor_item_id: '10.2979/jfemistudreli.33.1.25',
+    jstor_item_type: 'doi',
+    group_id: 1
+  },
+]

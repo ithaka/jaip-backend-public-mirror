@@ -15,6 +15,7 @@ import {
   search_status_results,
   status_search_request_invalid,
   status_search_request_valid,
+  status_selections,
   tokens,
 } from "../../../tests/fixtures/search/fixtures";
 import {
@@ -23,6 +24,7 @@ import {
 } from "../../../tests/fixtures/auth/fixtures";
 import {
   basic_facility,
+  basic_facility_with_restricted_items_subscription,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures";
 import axios from "axios";
@@ -34,40 +36,133 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
+const statuses = [
+  status_options.Approved,
+  status_options.Denied,
+  status_options.Pending,
+  status_options.Incomplete,
+  'completed',
+]
 const base_route = `${route_settings.options.prefix}${get_route(route_schemas.search)}`;
-const status_route_approved = `${base_route}${status_options.Approved}`;
-const status_route_denied = `${base_route}${status_options.Denied}`;
-const status_route_pending = `${base_route}${status_options.Pending}`;
-const status_route_incomplete = `${base_route}${status_options.Incomplete}`;
-const status_route_completed = `${base_route}completed`;
+const route_options = statuses.map((status) => {
+  return {
+    route: `${base_route}${status}`,
+    status,
+  }
+});
 
-const routes = [
-  status_route_approved,
-  status_route_denied,
-  status_route_pending,
-  status_route_incomplete,
-  status_route_completed,
-];
-test.each(routes)(`requests the %s route with no body`, async (route) => {
+test.each(route_options)(`requests the %s route with no body`, async (opt) => {
   const res = await app.inject({
     method: "POST",
-    url: route,
+    url: opt.route,
   });
   expect(res.statusCode).toEqual(400);
 });
 
-test.each(routes)(`requests the %s route with invalid body`, async (route) => {
+test.each(route_options)(`requests the %s route with invalid body`, async (opt) => {
   const res = await app.inject({
     method: "POST",
-    url: `${route}`,
+    url: opt.route,
     payload: status_search_request_invalid,
   });
   expect(res.statusCode).toEqual(400);
 });
 
-test.each(routes)(
+test.each(route_options)(
+  `requests the %s route with a facility and valid body and no restricted items`,
+  async (opt) => {
+    discover_mock
+      .mockName("discover")
+      .mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = jest
+      .fn()
+      .mockName("axios_post")
+      .mockResolvedValueOnce(axios_session_data_with_email)
+      .mockResolvedValueOnce({
+        status: 200,
+        data: search3_results,
+      });
+    db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
+    db_mock.get_search_statuses.mockResolvedValueOnce([status_selections, 4, null]);
+    db_mock.get_statuses
+      .mockResolvedValueOnce([bulk_statuses, null])
+      .mockResolvedValueOnce([item_statuses, null]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: opt.route,
+      payload: status_search_request_valid,
+      headers: {
+        host: "test-pep.jstor.org",
+      },
+    });
+
+
+
+    expect(discover_mock).toHaveBeenCalledTimes(2);
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
+    const arr = opt.status==='completed' ? [status_options.Approved, status_options.Denied] : [opt.status];
+    expect(db_mock.get_search_statuses).toHaveBeenCalledWith(false, "Approved", [1], arr, "2023-10-01T00:00:00.000Z", "2023-10-01T00:00:00.000Z", "new", 25, 1);
+    expect(db_mock.get_restricted_items).toHaveBeenCalledTimes(1);
+    expect(res.json()).toEqual({
+      docs: [],
+      total: 4,
+    });
+    expect(res.statusCode).toEqual(200);
+  },
+);
+
+test.each(route_options)(
+  `requests the %s route with a facility and valid body and restricted items`,
+  async (opt) => {
+    discover_mock
+      .mockName("discover")
+      .mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = jest
+      .fn()
+      .mockName("axios_post")
+      .mockResolvedValueOnce(axios_session_data_with_email)
+      .mockResolvedValueOnce({
+        status: 200,
+        data: search3_results,
+      });
+    db_mock.get_first_user.mockResolvedValueOnce(basic_facility_with_restricted_items_subscription);
+    db_mock.get_search_statuses.mockResolvedValueOnce([status_selections, 4, null]);
+    db_mock.get_statuses
+      .mockResolvedValueOnce([bulk_statuses, null])
+      .mockResolvedValueOnce([item_statuses, null]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: opt.route,
+      payload: status_search_request_valid,
+        headers: {
+        host: "test-pep.jstor.org",
+      }
+    });
+
+    expect(discover_mock).toHaveBeenCalledTimes(2);
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    
+    const arr = opt.status==='completed' ? [status_options.Approved, status_options.Denied] : [opt.status];
+    expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_search_statuses).toHaveBeenCalledWith(true, "Approved", [1], arr, "2023-10-01T00:00:00.000Z", "2023-10-01T00:00:00.000Z", "new", 25,1);
+    expect(db_mock.get_restricted_items).toHaveBeenCalledTimes(1);
+    expect(res.json()).toEqual({
+      docs: [],
+      total: 4,
+    });
+    expect(res.statusCode).toEqual(200);
+  },
+);
+
+
+test.each(route_options)(
   `requests the %s route with a facility and valid body and no statuses to find`,
-  async (route) => {
+  async (opt) => {
     discover_mock
       .mockName("discover")
       .mockResolvedValue(["this text doesn't matter", null]);
@@ -85,7 +180,7 @@ test.each(routes)(
 
     const res = await app.inject({
       method: "POST",
-      url: `${route}`,
+      url: opt.route,
       payload: status_search_request_valid,
     });
 
@@ -103,7 +198,7 @@ test.each(routes)(
 // This only needs to be checked once, because we're providing the same request and response data and the flow should
 // be identical for all the routes. This is basically just verifying that the search handler is working,
 // which is already tested in the search.test.ts file.
-test(`requests the ${status_route_approved} route with a facility and valid body and statuses`, async () => {
+test(`requests the ${route_options[0].route} route with a facility and valid body and statuses`, async () => {
   discover_mock
     .mockName("discover")
     .mockResolvedValue(["this text doesn't matter", null]);
@@ -128,7 +223,7 @@ test(`requests the ${status_route_approved} route with a facility and valid body
 
   const res = await app.inject({
     method: "POST",
-    url: `${status_route_approved}`,
+    url: route_options[0].route,
     payload: status_search_request_valid,
   });
 
@@ -143,7 +238,7 @@ test(`requests the ${status_route_approved} route with a facility and valid body
   expect(res.statusCode).toEqual(200);
 });
 
-test(`requests the ${status_route_approved} route with a reviewer and valid body and statuses`, async () => {
+test(`requests the ${route_options[0].route} route with a reviewer and valid body and statuses`, async () => {
   discover_mock
     .mockName("discover")
     .mockResolvedValue(["this text doesn't matter", null]);
@@ -169,7 +264,7 @@ test(`requests the ${status_route_approved} route with a reviewer and valid body
 
   const res = await app.inject({
     method: "POST",
-    url: `${status_route_approved}`,
+    url: `${route_options[0].route}`,
     payload: status_search_request_valid,
     headers: {
       host: valid_admin_subdomain,
@@ -187,3 +282,4 @@ test(`requests the ${status_route_approved} route with a reviewer and valid body
   });
   expect(res.statusCode).toEqual(200);
 });
+

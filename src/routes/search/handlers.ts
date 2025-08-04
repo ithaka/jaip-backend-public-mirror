@@ -1,4 +1,4 @@
-import { ensure_error } from "../../utils";
+import { ensure_error, user_has_feature } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
@@ -85,6 +85,10 @@ export const status_search_handler =
       fastify.log.info(`Getting search statuses with query: ${query_string}`);
       const [status_results, count, error] =
         await fastify.db.get_search_statuses(
+          user_has_feature(
+            request.user,
+            FEATURES.restricted_items_subscription
+          ) && request.is_authenticated_student,
           query_string,
           groups,
           query_statuses,
@@ -115,12 +119,12 @@ export const status_search_handler =
         return;
       }
 
-      const dois = status_results.map((status) => status.jstor_item_id!);
+      // We only need to add unique DOIs to the filter
+      const dois = [...new Set(status_results.map((status) => status.jstor_item_id!))];
       let doi_filter = "(";
-      const statuses = (status_results as Status[]) || [];
-      for (const [index, status] of statuses.entries()) {
-        doi_filter += `doi:"${status.jstor_item_id}"`;
-        if (index < statuses.length - 1) {
+      for (let i=0; i<dois.length; i++) {
+        doi_filter += `doi:"${dois[i]}"`;
+        if (i < dois.length - 1) {
           doi_filter += " OR ";
         }
       }

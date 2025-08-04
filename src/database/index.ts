@@ -97,6 +97,7 @@ export interface JAIPDatabase {
     user_id: number,
   ) => Promise<Error | null>;
   get_search_statuses: (
+    has_restricted_items_subscription: boolean,
     query_string: string,
     groups: number[],
     query_statuses: status_options[],
