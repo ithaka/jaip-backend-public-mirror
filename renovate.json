@@ -16,6 +16,11 @@
       "matchPackageNames": [
         "node",
         "docker-virtual.artifactory.acorn.cirrostratus.org/node"
+      ],
+      "matchFileNames": [
+        ".nvmrc",
+        "Dockerfile",
+        ".gitlab-ci.yml"
       ]
     },
     {
