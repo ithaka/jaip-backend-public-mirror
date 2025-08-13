@@ -104,7 +104,7 @@ export const route_schemas = {
         },
         comments: {
           type: "string",
-          minLength: 4,
+          minLength: 2,
         },
       },
     },
