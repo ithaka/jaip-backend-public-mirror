@@ -9,7 +9,7 @@ import {
   SEARCH_SNIPPET_SERVICE,
 } from "../../consts";
 import { JAIPDatabase } from "../../database";
-import { globally_restricted_items, status_options } from "@prisma/client";
+import { globally_restricted_items, jstor_types, status_options } from "@prisma/client";
 
 const status_select = {
   jstor_item_id: true,
@@ -222,6 +222,9 @@ export const get_bulk_statuses = async (
   try {
     const [results, error] = await db.get_statuses({
       where: {
+        jstor_item_type: {
+          in: [jstor_types.discipline, jstor_types.headid],
+        },
         jstor_item_id: {
           in: arr,
         },

@@ -67,6 +67,7 @@ test.each(routes)(
         data: cedar_item_view_response,
       });
     db_mock.get_item_status.mockResolvedValue([null, null]);
+    db_mock.get_statuses.mockResolvedValue([[], null]);
 
     const res = await app.inject({
       method: "GET",
@@ -78,7 +79,8 @@ test.each(routes)(
 
     expect(res.payload).toStrictEqual("");
     expect(axios.get).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_item_status).toHaveBeenCalledTimes(3);
+    expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(403);
   },
 );
@@ -149,7 +151,7 @@ test.each(routes)(
 
     db_mock.get_item_status
       .mockResolvedValueOnce([null, null])
-      .mockResolvedValueOnce([approved_discipline_response, null]);
+    db_mock.get_statuses.mockResolvedValueOnce([[approved_discipline_response], null]);
 
     const res = await app.inject({
       method: "GET",
@@ -161,7 +163,8 @@ test.each(routes)(
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
     expect(axios.get).toHaveBeenCalledTimes(4);
-    expect(db_mock.get_item_status).toHaveBeenCalledTimes(2);
+    expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
   },
 );
@@ -190,8 +193,7 @@ test.each(routes)(
 
     db_mock.get_item_status
       .mockResolvedValueOnce([null, null])
-      .mockResolvedValueOnce([null, null])
-      .mockResolvedValueOnce([approved_journal_response, null]);
+    db_mock.get_statuses.mockResolvedValueOnce([[approved_journal_response], null]);
 
     const res = await app.inject({
       method: "GET",
@@ -203,7 +205,8 @@ test.each(routes)(
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
     expect(axios.get).toHaveBeenCalledTimes(4);
-    expect(db_mock.get_item_status).toHaveBeenCalledTimes(3);
+    expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
   },
 );

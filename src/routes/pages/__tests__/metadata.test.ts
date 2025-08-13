@@ -58,6 +58,7 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
       data: cedar_item_view_response,
     });
   db_mock.get_item_status.mockResolvedValue([null, null]);
+  db_mock.get_statuses.mockResolvedValue([[], null]);
 
   const res = await app.inject({
     method: "GET",
@@ -69,7 +70,8 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
 
   expect(res.json()).toStrictEqual(metadata_response_forbidden);
   expect(axios.get).toHaveBeenCalledTimes(2);
-  expect(db_mock.get_item_status).toHaveBeenCalledTimes(3);
+  expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
 });
 
@@ -127,7 +129,7 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
     });
   db_mock.get_item_status
     .mockResolvedValueOnce([null, null])
-    .mockResolvedValueOnce([approved_discipline_response, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([[approved_discipline_response], null]);
 
   const res = await app.inject({
     method: "GET",
@@ -139,7 +141,8 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
   expect(axios.get).toHaveBeenCalledTimes(3);
-  expect(db_mock.get_item_status).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
 
@@ -163,8 +166,7 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
     });
   db_mock.get_item_status
     .mockResolvedValueOnce([null, null])
-    .mockResolvedValueOnce([null, null])
-    .mockResolvedValueOnce([approved_journal_response, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([[approved_journal_response], null]);
 
   const res = await app.inject({
     method: "GET",
@@ -176,7 +178,8 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
   expect(axios.get).toHaveBeenCalledTimes(3);
-  expect(db_mock.get_item_status).toHaveBeenCalledTimes(3);
+  expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
 

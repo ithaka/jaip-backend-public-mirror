@@ -13,12 +13,13 @@ import {
   PSEUDO_DISCIPLINE_CODES,
 } from "../../consts";
 import axios, { AxiosResponse } from "axios";
-import { jstor_types, status_options } from "@prisma/client";
+import { status_options } from "@prisma/client";
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { JAIPDatabase } from "../../database";
+import { get_bulk_statuses } from "../search/helpers";
 
 export const get_s3_object = async (
   str: string,
@@ -259,50 +260,19 @@ export const get_is_forbidden = async (
   // If the item is approved, we can allow access
   if (item_status?.status === status_options.Approved) {
     is_forbidden = false;
+  // If it is denied, we can jump directly to denying access
   } else if (item_status?.status !== status_options.Denied) {
-    // If the item is not denied, we need to check the journal and discipline statuses
-    // If it is denied, we can jump directly to denying access
-    const [journal_status, error] = await db.get_item_status({
-      where: {
-        jstor_item_type: jstor_types.headid,
-        jstor_item_id: {
-          in: journal_iids,
-        },
-        group_id: {
-          in: group_ids,
-        },
-      },
-      orderBy: {
-        created_at: "desc",
-      },
-    });
+    // If the item is neither denied nor approved, we need to check the journal and discipline statuses.
+      const [bulk_statuses, error] = await get_bulk_statuses(db, [...journal_iids, ...disc_codes], group_ids);
     if (error) {
       throw error;
     }
-    // If it's approved by journal, we don't need to check the discipline
-    if (journal_status?.status === status_options.Approved) {
+
+    // Because there are no bulk denials by journal or discipline, we can check if any of the statuses are approved.
+    // We cannot search only for approved statuses, because an approval may have been subsequently revoked (marking the 
+    // journal or discipline as denied). So we retrieve all the most recent statuses and then check if any of them are approved.
+    if (bulk_statuses && bulk_statuses.some((status) => status.status === status_options.Approved)) {
       is_forbidden = false;
-    } else {
-      const [discipline_status, error] = await db.get_item_status({
-        where: {
-          jstor_item_type: jstor_types.discipline,
-          jstor_item_id: {
-            in: disc_codes,
-          },
-          group_id: {
-            in: group_ids,
-          },
-        },
-        orderBy: {
-          created_at: "desc",
-        },
-      });
-      if (error) {
-        throw error;
-      }
-      if (discipline_status?.status === status_options.Approved) {
-        is_forbidden = false;
-      }
     }
   }
   return is_forbidden;
