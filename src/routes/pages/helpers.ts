@@ -107,7 +107,7 @@ export const extract_metadata = (
     const [cedar_identity_data, cedar_item_view_data] = metadata;
 
     // Extract search terms from cedar metadata
-    const journal_iids = cedar_identity_data.journal_iid;
+    const journal_iids = cedar_identity_data.journal_iid || [];
     const doi = cedar_item_view_data.find((item) => item.doi)?.doi;
 
     const codes =
@@ -219,8 +219,8 @@ export const get_is_forbidden = async (
   db: JAIPDatabase,
   has_restricted_items_subscription: boolean,
   doi: string,
-  journal_iids: string[],
-  disc_codes: string[],
+  journal_iids: string[] = [],
+  disc_codes: string[] = [],
   group_ids: number[],
 ): Promise<boolean> => {
   let is_forbidden = true;
