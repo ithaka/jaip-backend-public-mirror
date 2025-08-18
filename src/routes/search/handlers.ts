@@ -254,6 +254,27 @@ export const search_handler =
       if (error) {
         throw error;
       }
+
+      // If there are no documents in the results from Search3, we can return early.
+      if (!search_result?.data.total) {
+        reply.send({
+          docs: [],
+          total: 0,
+        });
+        fastify.event_logger.pep_standard_log_complete(
+          "pep_search_complete",
+          request,
+          reply,
+          {
+            ...log_payload,
+            event_description:
+              "search for documents complete. No documents found.",
+          },
+        );
+        return;
+      }
+
+
       fastify.log.info(`Attempting to retrieve status keys`);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
