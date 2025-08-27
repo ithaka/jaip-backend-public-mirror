@@ -12,6 +12,8 @@ import site_administration from "./site_administration";
 import environment from "./environment/routes";
 import logging from "./logging/routes";
 import global_restricted_list from "./global_restricted_list/routes";
+// import downloads from "./downloads/routes";
+
 // Some of these routes are grouped, so we need to flatten the array
 // to avoid nested arrays in the final export. While the realistic depth
 // of the array won't likely exceed 3, we use 10 to be safe. Infinity seems like
@@ -31,4 +33,6 @@ export default [
   environment,
   logging,
   global_restricted_list,
+  // TODO: Once the route is ready, this can be uncommented.
+  // downloads
 ].flat(10);

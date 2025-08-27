@@ -82,6 +82,7 @@ export interface CompleteLogPayload {
   include_ungrouped: boolean;
   sitecodes: string[];
   original_uuid: string;
+  download_path: string;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

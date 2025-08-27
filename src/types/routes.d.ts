@@ -3,6 +3,7 @@ import { SearchRequest, StatusSearchRequest } from "./search";
 import { Entitlement } from "./accounts";
 import { entity_types, globally_restricted_items } from "@prisma/client";
 import { Group } from "./groups";
+import { OFFLINE_INDICES } from "../consts";
 
 export interface RouteSettings {
   routes: (
@@ -29,6 +30,9 @@ export interface EntityParams {
   type: entity_types;
 }
 
+export interface OfflineIndexParams {
+  index_id: keyof typeof OFFLINE_INDICES;
+}
 export interface MediaReviewRequest extends RouteGenericInterface {
   Body: {
     dois: string[];
