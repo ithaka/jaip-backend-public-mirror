@@ -8,7 +8,7 @@ metadata:
 spec:
   routes:
     - matchers:
-        - prefix: /api/v2
+        - prefix: /api
       routeAction:
         single:
           upstream:
