@@ -2,7 +2,6 @@ import { FastifyInstance } from "fastify";
 import { Entitlement } from "../../types/accounts";
 import {
   ALEResponse,
-  CedarIdentityBlock,
   CedarItemView,
   CedarMetadataReturn,
   EntitlementMap,
@@ -100,31 +99,30 @@ export const get_and_extract_metadata = async (
 };
 
 export const extract_metadata = (
-  metadata: [CedarIdentityBlock, CedarItemView[]],
+  metadata: CedarItemView[],
   log_payload: LogPayload,
 ) => {
   try {
-    const [cedar_identity_data, cedar_item_view_data] = metadata;
-
     // Extract search terms from cedar metadata
-    const journal_iids = cedar_identity_data.journal_iid || [];
-    const doi = cedar_item_view_data.find((item) => item.doi)?.doi;
+    const journal_iids = metadata.find((item) => item.identity_block.journal_iid)?.identity_block.journal_iid || [];
+    const doi = metadata.find((item) => item.doi)?.doi;
 
     const codes =
-      cedar_item_view_data.find((item) => {
+      metadata.find((item) => {
         return item.disc_code;
       })?.disc_code || [];
     const disciplines =
-      cedar_item_view_data.find((item) => {
+      metadata.find((item) => {
         return item.disciplines;
       })?.disciplines || [];
     const content_type =
-      cedar_item_view_data.find((item) => item.content_type)?.content_type ||
+      metadata.find((item) => item.content_type)?.content_type ||
       "";
     const disc_codes = codes.concat(Object.keys(disciplines));
     if (PSEUDO_DISCIPLINE_CODES.includes(content_type)) {
       disc_codes.push(content_type);
     }
+
     // Add metadata to log payload
     log_payload.doi = doi;
     log_payload.item_doi = doi;
@@ -139,7 +137,7 @@ export const extract_metadata = (
       doi,
       journal_iids,
       disc_codes,
-      cedar_item_view_data,
+      cedar_item_view_data: metadata,
     };
   } catch (err) {
     const error = ensure_error(err);
@@ -150,7 +148,7 @@ export const extract_metadata = (
 export const get_cedar_metadata = async (
   fastify: FastifyInstance,
   iid: string,
-): Promise<[CedarIdentityBlock, CedarItemView[]] | Error> => {
+): Promise< CedarItemView[] | Error > => {
   try {
     const [cedar_host, cedar_error] = await fastify.discover(
       CEDAR_DELIVERY_SERVICE.name,
@@ -158,57 +156,21 @@ export const get_cedar_metadata = async (
     if (cedar_error) {
       throw cedar_error;
     }
-
-    // Get both the identity block and item view metadata
     const url = `${cedar_host}${CEDAR_DELIVERY_SERVICE.path}`;
-    fastify.log.info(`Cedar metadata URL: ${url}`);
-    const cedar_identity_promise = axios.get(url, {
-      params: {
-        ...CEDAR_DELIVERY_SERVICE.queries.params.identity_block,
-        iid,
-      },
-    });
-    const cedar_item_view_promise = axios.get(url, {
+    const cedar_item_view = await axios.get(url, {
       params: {
         ...CEDAR_DELIVERY_SERVICE.queries.params.item_view,
         iid,
       },
     });
 
-    // Wait for both requests to finish
-    const [cedar_identity_response, cedar_item_view_response] =
-      await Promise.allSettled([
-        cedar_identity_promise,
-        cedar_item_view_promise,
-      ]);
-
-    if (cedar_identity_response.status === "rejected") {
-      throw new Error(
-        `Cedar identity metadata request failed: ${cedar_identity_response.reason}`,
-      );
-    }
-    if (cedar_item_view_response.status === "rejected") {
-      throw new Error(
-        `Cedar item view metadata request failed: ${cedar_item_view_response.reason}`,
-      );
-    }
-
-    // Check if the requests were successful
-    if (cedar_identity_response.value.status !== 200) {
-      throw new Error(
-        `Cedar identity metadata request failed: Status code not 200`,
-      );
-    }
-    if (cedar_item_view_response.value.status !== 200) {
+    if (cedar_item_view.status !== 200) {
       throw new Error(
         `Cedar item view metadata request failed: Status code not 200`,
       );
     }
 
-    return [
-      cedar_identity_response.value.data,
-      cedar_item_view_response.value.data,
-    ];
+    return cedar_item_view.data;
   } catch (err) {
     const error = ensure_error(err);
     return error;
@@ -358,7 +320,7 @@ export const get_md_from_cedar = (
     if (item.bidirectional_category && md.isRightToLeft === null) {
       md.isRightToLeft = item.bidirectional_category === "right_to_left";
     }
-    if (item.page_images.length > 0 && md.pageCount === 0) {
+    if ((item.page_images?.length || item.iiif_links?.length || 0) > 0 && md.pageCount === 0) {
       md.pageCount = parseInt(item.page_count, 10);
     }
     if (

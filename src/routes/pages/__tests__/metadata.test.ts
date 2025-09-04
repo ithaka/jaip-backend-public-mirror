@@ -10,7 +10,6 @@ import {
   approved_discipline_response,
   approved_item_response,
   approved_journal_response,
-  cedar_identity_response,
   cedar_item_view_response,
   denied_item_response,
   iid_path,
@@ -51,10 +50,6 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
     .fn()
     .mockResolvedValueOnce({
       status: 200,
-      data: cedar_identity_response,
-    })
-    .mockResolvedValueOnce({
-      status: 200,
       data: cedar_item_view_response,
     });
   db_mock.get_item_status.mockResolvedValue([null, null]);
@@ -69,7 +64,7 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
   });
 
   expect(res.json()).toStrictEqual(metadata_response_forbidden);
-  expect(axios.get).toHaveBeenCalledTimes(2);
+  expect(axios.get).toHaveBeenCalledTimes(1);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
@@ -81,10 +76,6 @@ test(`requests the ${metadata_route} route with a facility and item approval`, a
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
   axios.get = jest
     .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_identity_response,
-    })
     .mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
@@ -104,7 +95,7 @@ test(`requests the ${metadata_route} route with a facility and item approval`, a
   });
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
-  expect(axios.get).toHaveBeenCalledTimes(3);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
@@ -115,10 +106,6 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
   axios.get = jest
     .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_identity_response,
-    })
     .mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
@@ -140,7 +127,7 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
   });
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
-  expect(axios.get).toHaveBeenCalledTimes(3);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
@@ -152,10 +139,6 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
   axios.get = jest
     .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_identity_response,
-    })
     .mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
@@ -177,7 +160,7 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
   });
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
-  expect(axios.get).toHaveBeenCalledTimes(3);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
@@ -189,10 +172,6 @@ test(`requests the ${metadata_route} route with a facility and denied status`, a
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
   axios.get = jest
     .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_identity_response,
-    })
     .mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
@@ -209,7 +188,7 @@ test(`requests the ${metadata_route} route with a facility and denied status`, a
   });
 
   expect(res.json()).toStrictEqual(metadata_response_forbidden);
-  expect(axios.get).toHaveBeenCalledTimes(2);
+  expect(axios.get).toHaveBeenCalledTimes(1);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
 });
@@ -220,10 +199,6 @@ test(`requests the ${metadata_route} route with an admin and item approval`, asy
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
   axios.get = jest
     .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_identity_response,
-    })
     .mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
@@ -242,7 +217,7 @@ test(`requests the ${metadata_route} route with an admin and item approval`, asy
   });
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
-  expect(axios.get).toHaveBeenCalledTimes(3);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(0);
   expect(res.statusCode).toEqual(200);
 });

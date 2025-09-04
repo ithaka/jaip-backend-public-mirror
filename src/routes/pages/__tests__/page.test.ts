@@ -10,7 +10,6 @@ import {
   approved_discipline_response,
   approved_item_response,
   approved_journal_response,
-  cedar_identity_response,
   cedar_item_view_response,
   denied_item_response,
   iid_path,
@@ -60,10 +59,6 @@ test.each(routes)(
       .fn()
       .mockResolvedValueOnce({
         status: 200,
-        data: cedar_identity_response,
-      })
-      .mockResolvedValueOnce({
-        status: 200,
         data: cedar_item_view_response,
       });
     db_mock.get_item_status.mockResolvedValue([null, null]);
@@ -78,7 +73,7 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual("");
-    expect(axios.get).toHaveBeenCalledTimes(2);
+    expect(axios.get).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(403);
@@ -93,10 +88,6 @@ test.each(routes)(
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
     axios.get = jest
       .fn()
-      .mockResolvedValueOnce({
-        status: 200,
-        data: cedar_identity_response,
-      })
       .mockResolvedValueOnce({
         status: 200,
         data: cedar_item_view_response,
@@ -121,7 +112,7 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(4);
+    expect(axios.get).toHaveBeenCalledTimes(3);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
   },
@@ -135,10 +126,6 @@ test.each(routes)(
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
     axios.get = jest
       .fn()
-      .mockResolvedValueOnce({
-        status: 200,
-        data: cedar_identity_response,
-      })
       .mockResolvedValueOnce({
         status: 200,
         data: cedar_item_view_response,
@@ -162,7 +149,7 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(4);
+    expect(axios.get).toHaveBeenCalledTimes(3);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
@@ -177,10 +164,6 @@ test.each(routes)(
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
     axios.get = jest
       .fn()
-      .mockResolvedValueOnce({
-        status: 200,
-        data: cedar_identity_response,
-      })
       .mockResolvedValueOnce({
         status: 200,
         data: cedar_item_view_response,
@@ -204,7 +187,7 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(4);
+    expect(axios.get).toHaveBeenCalledTimes(3);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
@@ -221,10 +204,6 @@ test.each(routes)(
       .fn()
       .mockResolvedValueOnce({
         status: 200,
-        data: cedar_identity_response,
-      })
-      .mockResolvedValueOnce({
-        status: 200,
         data: cedar_item_view_response,
       });
 
@@ -239,7 +218,7 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual("");
-    expect(axios.get).toHaveBeenCalledTimes(2);
+    expect(axios.get).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(403);
   },
@@ -253,10 +232,6 @@ test.each(routes)(
     db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
     axios.get = jest
       .fn()
-      .mockResolvedValueOnce({
-        status: 200,
-        data: cedar_identity_response,
-      })
       .mockResolvedValueOnce({
         status: 200,
         data: cedar_item_view_response,
@@ -276,7 +251,7 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(4);
+    expect(axios.get).toHaveBeenCalledTimes(3);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(0);
     expect(res.statusCode).toEqual(200);
   },

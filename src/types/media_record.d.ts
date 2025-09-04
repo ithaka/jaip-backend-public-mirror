@@ -3,6 +3,7 @@ export interface MediaRecord {
   score: number;
   abstract: string | string[];
   authors: string[];
+  primary_agents?: string[];
   book_description: string;
   book_publisher: string;
   citation_line: string;
@@ -24,6 +25,8 @@ export interface MediaRecord {
   year: string | number;
   is_restricted?: boolean;
   restricted_reason?: string;
+  collection_titles?: string[];
+  cc_compilation_titles?: string[];
 }
 
 export interface History {

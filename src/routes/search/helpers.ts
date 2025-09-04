@@ -277,7 +277,7 @@ export const get_snippets = async (
       query: `(${query})`,
     };
 
-    const url = host + "v2/snippets";
+    const url = host + SEARCH_SNIPPET_SERVICE.path;
 
     fastify.log.info(`Getting snippets from ${url}`);
     const search_result = await axios({

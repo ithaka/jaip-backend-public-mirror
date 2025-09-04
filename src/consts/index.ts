@@ -207,6 +207,11 @@ export const SEARCH3 = {
     } as { [key: string]: string },
   },
 };
+// This needs to be isolated from the default search3 query because it can
+// only be included in searches when we're looking for contributed content.
+// As of 09-03-2025, that means only in v3 of the search route, which will
+// only be available in the ephemeral environment.
+export const CONTRIBUTED_CONTENT_FLAG = "contributed_content_v1";
 
 export const SEARCH_SNIPPET_SERVICE = {
   name: "search-snippet-service",

@@ -1,20 +1,32 @@
 import { MediaRecord } from "../../types/media_record";
 import { Search3Document } from "../../types/search";
 
+const find_title = (document: Search3Document): string => {
+  if (Array.isArray(document.title)) {
+    return document.title[0] || "";
+  }
+  if (document.title) {
+    return document.title || "";
+  }
+  if (document.item_title) {
+    return document.item_title || "";
+  }
+  return "";
+};
+
 export const map_document = (document: Search3Document): MediaRecord => {
   return {
     _id: document.doi,
     doi: document.doi,
     iid: document.id,
     authors: document.authors || [],
+    primary_agents: document.primary_agents || [],
     score: document.score,
     contentType: document.human_readable_type || "",
-    title: Array.isArray(document.title)
-      ? document.title[0]
-      : document.title
-        ? document.title
-        : "",
+    title: find_title(document),
     subtitle: document.subtitle || "",
+    collection_titles: document.collection_titles || [],
+    cc_compilation_titles: document.cc_compilation_titles || [],
     citation_line: document.citation_line || "",
     book_publisher: document.additional_fields.book_publisher || "",
     cty: document.additional_fields.cty || "",

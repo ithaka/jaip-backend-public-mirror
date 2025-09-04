@@ -12,6 +12,7 @@ import site_administration from "./site_administration";
 import environment from "./environment/routes";
 import logging from "./logging/routes";
 import global_restricted_list from "./global_restricted_list/routes";
+import search_v3 from "./search_v3/routes";
 // import downloads from "./downloads/routes";
 
 // Some of these routes are grouped, so we need to flatten the array
@@ -33,6 +34,7 @@ export default [
   environment,
   logging,
   global_restricted_list,
+  search_v3,
   // TODO: Once the route is ready, this can be uncommented.
   // downloads
 ].flat(10);

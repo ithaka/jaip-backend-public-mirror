@@ -10,6 +10,7 @@ export interface SearchRequest {
   statusStartDate?: Date;
   statusEndDate?: Date;
   dois?: string[];
+  contentTypes?: string[];
 }
 
 export interface StatusSearchRequest extends SearchRequest {
@@ -32,8 +33,8 @@ export interface Search3Request {
 
 export interface MsFacetFields {
   field: string;
-  minCount: number;
-  limit: number;
+  minCount?: number;
+  limit?: number;
   alias?: string;
   efq?: string[];
 }
@@ -98,6 +99,9 @@ export interface Search3Document {
   cc_repository?: string[];
   cc_reuse_license?: string[];
   cc_work_type?: string[];
+  collection_ids?: string[];
+  collection_titles?: string[];
+  collection_urls?: string[];
   display_date?: date;
   external_link?: string;
   identifiers?: string[];

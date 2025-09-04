@@ -13,7 +13,7 @@ export interface RouteSettings {
   options: { prefix?: string };
 }
 
-export interface DiscParams {
+export interface DiscParams { 
   code: string;
 }
 
@@ -233,7 +233,9 @@ export interface CedarItemView {
   disc_code: string[];
   discipline: string[];
   page_count: string;
+  iiif_links?: string[];
   disciplines: { [key: string]: string };
+  identity_block: CedarIdentityBlock;
 }
 
 export interface CedarIdentityBlock {
