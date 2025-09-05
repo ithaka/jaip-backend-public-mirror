@@ -9,11 +9,11 @@ datasource db {
 }
 
 model alerts {
-  id         Int       @id @default(autoincrement())
+  id         Int            @id @default(autoincrement())
   text       String
-  status     String    @db.VarChar
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  expires_at DateTime? @default(dbgenerated("(CURRENT_DATE + '7 days'::interval)")) @db.Timestamp(6)
+  status     alert_statuses
+  created_at DateTime?      @default(now()) @db.Timestamp(6)
+  expires_at DateTime?      @default(dbgenerated("(CURRENT_DATE + '7 days'::interval)")) @db.Timestamp(6)
 }
 
 model entities {
@@ -29,6 +29,50 @@ model entities {
   statuses                    statuses[]
   ungrouped_features_entities ungrouped_features_entities[]
   users                       users?
+  targeted_alerts             targeted_alerts[]
+}
+
+model targeted_alerts {
+  id                Int                 @id @default(autoincrement())
+  text              String
+  status            alert_statuses
+  start_date        DateTime
+  end_date          DateTime
+  is_active         Boolean
+  entity_id         Int
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  updated_at        DateTime            @default(now()) @db.Timestamp(6)
+  alerts_facilities alerts_facilities[]
+  alerts_groups     alerts_groups[]
+  alerts_subdomains alerts_subdomains[]
+  entities          entities            @relation(fields: [entity_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model alerts_facilities {
+  alert_id        Int
+  facility_id     Int
+  targeted_alerts targeted_alerts @relation(fields: [alert_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  facilities      facilities      @relation(fields: [facility_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([alert_id, facility_id])
+}
+
+model alerts_groups {
+  alert_id        Int
+  group_id        Int
+  targeted_alerts targeted_alerts @relation(fields: [alert_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  groups          groups          @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([alert_id, group_id])
+}
+
+model alerts_subdomains {
+  alert_id        Int
+  subdomain       String          @db.VarChar
+  targeted_alerts targeted_alerts @relation(fields: [alert_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subdomains      subdomains      @relation(fields: [subdomain], references: [subdomain], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([alert_id, subdomain])
 }
 
 model facilities {
@@ -38,6 +82,7 @@ model facilities {
   entities              entities                @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   ip_bypass             ip_bypass[]
   subdomains_facilities subdomains_facilities[]
+  alerts_facilities     alerts_facilities[]
 }
 
 model features {
@@ -77,6 +122,7 @@ model groups {
   features_groups_entities features_groups_entities[]
   groups_entities          groups_entities[]
   statuses                 statuses[]
+  alerts_groups            alerts_groups[]
 }
 
 model groups_entities {
@@ -145,6 +191,7 @@ model subdomains {
   created_at            DateTime                @default(now()) @db.Timestamp(6)
   updated_at            DateTime                @default(now()) @db.Timestamp(6)
   subdomains_facilities subdomains_facilities[]
+  alerts_subdomains     alerts_subdomains[]
 }
 
 model subdomains_facilities {
@@ -223,4 +270,11 @@ enum user_roles {
   admin
   user
   removed
+}
+
+enum alert_statuses {
+  info
+  warning
+  error
+  success
 }
