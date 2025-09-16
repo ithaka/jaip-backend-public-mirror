@@ -56,7 +56,14 @@ export const db_mock = {
     .fn()
     .mockName("get_restricted_items_and_count"),
   get_last_updated_restricted_item: jest
-    .fn().mockName("get_last_updated_restricted_item"),
+    .fn()
+    .mockName("get_last_updated_restricted_item"),
+  get_targeted_alerts_and_count: jest
+    .fn()
+    .mockName("get_targeted_alerts_and_count"),
+  create_targeted_alert: jest.fn().mockName("create_targeted_alert"),
+  update_targeted_alert: jest.fn().mockName("update_targeted_alert"),
+  remove_targeted_alert: jest.fn().mockName("remove_targeted_alert"),
 } as jest.Mocked<JAIPDatabase>;
 
 export const discover_mock = jest

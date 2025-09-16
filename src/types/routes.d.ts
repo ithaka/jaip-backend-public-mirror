@@ -1,7 +1,11 @@
 import { RouteGenericInterface } from "fastify";
 import { SearchRequest, StatusSearchRequest } from "./search";
 import { Entitlement } from "./accounts";
-import { entity_types, globally_restricted_items } from "@prisma/client";
+import {
+  alert_statuses,
+  entity_types,
+  globally_restricted_items,
+} from "@prisma/client";
 import { Group } from "./groups";
 import { OFFLINE_INDICES } from "../consts";
 
@@ -85,6 +89,13 @@ export interface MediaReviewBulUndo extends RouteGenericInterface {
   };
 }
 
+export interface AddAlertBody extends RouteGenericInterface {
+  Body: AddAlertRequest;
+}
+export interface EditAlertBody extends RouteGenericInterface {
+  Body: EditAlertRequest;
+}
+
 export interface SearchRequestBody extends RouteGenericInterface {
   Body: SearchRequest;
 }
@@ -106,6 +117,10 @@ export interface AddEntitiesBody extends RouteGenericInterface {
 
 export interface GetPaginatedBody extends RouteGenericInterface {
   Body: GetPaginatedRequest;
+}
+
+export interface GetPaginatedGroupedBody extends RouteGenericInterface {
+  Body: GetPaginatedGroupedRequest;
 }
 
 export interface GetRestrictedItemsBody extends RouteGenericInterface {
@@ -174,6 +189,13 @@ export interface GetPaginatedRequest {
   page: number;
   limit: number;
   is_active: boolean;
+}
+export interface GetPaginatedGroupedRequest {
+  name: string;
+  page: number;
+  limit: number;
+  is_active: boolean;
+  groups: number[];
 }
 export interface GetRestrictedItemsRequest {
   query: string;
@@ -280,6 +302,21 @@ export interface Subdomain {
   // The duplicate property is only returned when a user attempts to create a duplicate
   // of an existing subdomain.
   duplicate?: boolean;
+}
+
+export interface AddAlertRequest {
+  text: string;
+  status: alert_statuses;
+  is_active: boolean;
+  start_date: Date;
+  end_date: Date;
+  subdomains?: string[];
+  groups?: number[];
+  facilities?: number[];
+}
+
+export interface EditAlertRequest extends AddAlertRequest {
+  id: number;
 }
 
 interface RestrictedItem extends globally_restricted_items {

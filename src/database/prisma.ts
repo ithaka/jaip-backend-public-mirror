@@ -10,6 +10,7 @@ import {
   ungrouped_features,
   statuses,
   globally_restricted_items,
+  targeted_alerts,
 } from "@prisma/client";
 import { JAIPDatabase } from ".";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
@@ -118,7 +119,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   ): Promise<[DBEntity[], Error | null]> {
     try {
       const facilities = await this.client.facilities.findMany(query);
-      return [facilities as unknown as DBEntity[] || [], null];
+      return [(facilities as unknown as DBEntity[]) || [], null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], error];
@@ -200,6 +201,137 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       const error = ensure_error(err);
       return [null, error];
     }
+  }
+
+  async get_targeted_alerts_and_count(
+    count_query: Prisma.targeted_alertsCountArgs,
+    query: Prisma.targeted_alertsFindManyArgs,
+  ): Promise<[targeted_alerts[], number, Error | null]> {
+    try {
+      const [count, alerts] = await this.client.$transaction(async (tx) => {
+        const count = await tx.targeted_alerts.count(count_query);
+        const alerts = (await tx.targeted_alerts.findMany(query)) || [];
+        return [count, alerts];
+      });
+      return [(alerts as targeted_alerts[]) || [], count, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], 0, error];
+    }
+  }
+
+  async create_targeted_alert(
+    query: Prisma.targeted_alertsCreateArgs,
+    subdomains: string[],
+    groups: number[],
+    facilities: number[],
+  ): Promise<[targeted_alerts | null, Error | null]> {
+    try {
+      const alert = await this.client.$transaction(async (tx) => {
+        const alert = await tx.targeted_alerts.create(query);
+        await tx.alerts_subdomains.createMany({
+          data: subdomains.map((subdomain) => ({
+            alert_id: alert.id,
+            subdomain,
+          })),
+        });
+        await tx.alerts_groups.createMany({
+          data: groups.map((id) => ({
+            alert_id: alert.id,
+            group_id: id,
+          })),
+        });
+        await tx.alerts_facilities.createMany({
+          data: facilities.map((id) => ({
+            alert_id: alert.id,
+            facility_id: id,
+          })),
+        });
+        return alert;
+      });
+      return [alert, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [null, error];
+    }
+  }
+
+  async remove_targeted_alert(id: number): Promise<Error | null> {
+    try {
+      await this.client.targeted_alerts.update({
+        where: {
+          id,
+        },
+        data: {
+          is_active: false,
+          updated_at: new Date(),
+        },
+      });
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+    return null;
+  }
+
+  async update_targeted_alert(
+    query: Prisma.targeted_alertsUpdateArgs,
+    subdomains: string[],
+    groups: number[],
+    facilities: number[],
+  ): Promise<[targeted_alerts | null, Error | null]> {
+    try {
+      const alert = await this.client.$transaction(async (tx) => {
+        const alert = await tx.targeted_alerts.update(query);
+        await tx.alerts_subdomains.deleteMany({
+          where: {
+            alert_id: alert.id,
+            NOT: { subdomain: { in: subdomains } },
+          },
+        });
+        await tx.alerts_subdomains.createMany({
+          data: subdomains.map((subdomain) => ({
+            alert_id: alert.id,
+            subdomain,
+          })),
+        });
+
+        await tx.alerts_groups.deleteMany({
+          where: {
+            alert_id: alert.id,
+            NOT: { group_id: { in: groups } },
+          },
+        });
+        await tx.alerts_groups.createMany({
+          data: groups.map((group_id) => ({
+            alert_id: alert.id,
+            group_id,
+          })),
+        });
+
+        await tx.alerts_facilities.deleteMany({
+          where: {
+            alert_id: alert.id,
+            NOT: { facility_id: { in: facilities } },
+          },
+        });
+        await tx.alerts_facilities.createMany({
+          data: facilities.map((facility_id) => ({
+            alert_id: alert.id,
+            facility_id,
+          })),
+        });
+
+        return alert;
+      });
+      if (!alert) {
+        throw new Error("No alert found with the provided ID");
+      }
+    } catch (err) {
+      const error = ensure_error(err);
+      return [null, error];
+    }
+    return [null, null];
   }
 
   async get_statuses(
