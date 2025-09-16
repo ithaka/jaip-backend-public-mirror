@@ -31,6 +31,8 @@ export const SUBDOMAINS = {
 export const GLOBAL_ROUTE_PREFIX = "/api";
 export const GLOBAL_VERSION = "v2";
 export const GLOBAL_ROUTE_PREFIX_VERSIONED = `${GLOBAL_ROUTE_PREFIX}/${GLOBAL_VERSION}`;
+export const AUTH_ROUTE_PREFIX = "/auth";
+export const SUBDOMAINS_VALIDATION_ROUTE_PREFIX = "/subdomains/validate";
 
 export const ENTITY_TYPES: { [key: string]: EntityType } = {
   USERS: "users" as EntityType.users,

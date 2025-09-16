@@ -6,6 +6,7 @@ import {
   status_options,
   ungrouped_features,
   globally_restricted_items,
+  targeted_alerts,
 } from "@prisma/client";
 import { DBEntity, IPBypassResult, Status } from "../types/database";
 import { User } from "../types/entities";
@@ -65,6 +66,25 @@ export interface JAIPDatabase {
 
   // ALERTS
   get_alerts: () => Promise<[Alert | null, Error | null]>;
+
+  // TARGETED ALERTS
+  get_targeted_alerts_and_count: (
+    count_query: Prisma.targeted_alertsCountArgs,
+    query: Prisma.targeted_alertsFindManyArgs,
+  ) => Promise<[targeted_alerts[], number, Error | null]>;
+  create_targeted_alert: (
+    alert: Prisma.targeted_alertsCreateArgs,
+    subdomains: string[],
+    groups: number[],
+    facilities: number[],
+  ) => Promise<[targeted_alerts | null, Error | null]>;
+  remove_targeted_alert: (id: number) => Promise<Error | null>;
+  update_targeted_alert: (
+    query: Prisma.targeted_alertsUpdateArgs,
+    subdomains: string[],
+    groups: number[],
+    facilities: number[],
+  ) => Promise<[targeted_alerts | null, Error | null]>;
 
   // STATUSES
   get_statuses: (

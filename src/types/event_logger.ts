@@ -10,6 +10,7 @@ import {
 } from "./routes";
 import { Feature } from "./features";
 import { DBGroup } from "./database";
+import { targeted_alerts } from "@prisma/client";
 
 export interface CaptainsLog {
   origin: string;
@@ -83,6 +84,8 @@ export interface CompleteLogPayload {
   sitecodes: string[];
   original_uuid: string;
   download_path: string;
+  alerts: targeted_alerts[];
+  alert_id: number;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial
