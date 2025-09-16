@@ -1,0 +1,36 @@
+name: Push to Mirror
+on: 
+  push:
+    branches:
+      - main
+jobs:
+  push-to-mirror:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      # Because these variables will not be set on the public mirror repo, we don't need to worry about this action running in a loop.
+      # It will simply fail to find the variables and the action will fail in the public mirror repo.
+      - name: Push to Mirror Repository
+        env:
+          MIRROR_REPO: ${{ vars.MIRROR_REPO }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          # Use the standard x-access-token format for GitHub Actions
+          git remote add mirror https://x-access-token:$ACCESS_TOKEN@github.com/$MIRROR_REPO
+          
+          # Verify remote was added
+          git remote -v
+          
+          # Push to mirror
+          git push mirror main --force
