@@ -294,6 +294,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
             alert_id: alert.id,
             subdomain,
           })),
+          skipDuplicates: true
         });
 
         await tx.alerts_groups.deleteMany({
@@ -307,6 +308,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
             alert_id: alert.id,
             group_id,
           })),
+          skipDuplicates: true
         });
 
         await tx.alerts_facilities.deleteMany({
@@ -320,6 +322,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
             alert_id: alert.id,
             facility_id,
           })),
+          skipDuplicates: true
         });
 
         return alert;

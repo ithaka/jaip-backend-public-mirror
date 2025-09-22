@@ -8,7 +8,7 @@ import type {
   EditAlertBody,
 } from "../../types/routes.d.ts";
 import { Prisma } from "@prisma/client";
-import { FEATURES, UNGROUPED_FEATURES } from "../../consts/index";
+import { ENTITY_TYPES, FEATURES, UNGROUPED_FEATURES } from "../../consts/index";
 import { is_target_valid } from "./helpers";
 
 export const get_alerts_handler =
@@ -56,7 +56,10 @@ export const get_alerts_handler =
               alerts_facilities: {
                 some: {
                   facility_id: {
-                    in: request.user?.facilities?.map((f) => f.id!) || [],
+                    // If the request is coming from a facility, then we only need the single facility id. If
+                    // the request is coming from an admin user, then we aren't getting facility-specific alerts for
+                    // display, so we can just use an empty array.
+                    in: request.user?.type===ENTITY_TYPES.FACILITIES ? [request.user.id!] : [],
                   },
                 },
               },
@@ -160,32 +163,65 @@ export const get_paginated_alerts_handler =
     });
 
     log_payload.full_groups = full_groups;
-
     try {
       // This is the default where clause when getting active alerts for display.
-      const query: Prisma.targeted_alertsFindManyArgs = {
+      const count_query: Prisma.targeted_alertsCountArgs = {
         where: {
           text: { contains: name, mode: Prisma.QueryMode.insensitive },
           // // We only want to retrieve active alerts. From the user perspective, a deleted alert is gone.
           is_active: true,
-
-          alerts_groups: {
-            // In order to allow edit access, the user must have edit access for
-            // every group attached to the alert.
-            every: { group_id: { in: full_groups.map((g) => g.id) } },
+          // We only want to retrieve alerts for facilities that the user has permission to edit or manage.
+          alerts_facilities: {
+            every: { 
+              facilities: {
+                entities: {
+                  groups_entities: {
+                    every: {
+                      group_id: { in: full_groups.map((g) => g.id) }
+                    }
+                  }
+                }
+              }
+             },
           },
         },
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: {
-          created_at: "desc",
-        },
       };
+
+      // If the user does not have the ability to manage facilities, we 
+      // want to exclude any alerts at the subdomain or group level.
+      const canManage = request.user.groups.some((group) =>
+        group.features[FEATURES.manage_facilities]
+      );
+      if (!canManage) {
+        count_query.where!.alerts_subdomains = {
+          none: {
+            alert_id: {
+              gt: 0
+            }
+          }
+        }
+        count_query.where!.alerts_groups = {
+          none: {
+            group_id: {
+              gt: 0
+            }
+          }
+        }
+      // If the user can manage facilities, we want to ensure that they receive
+      // only those alerts for groups where they have permissions. For subdomains
+      // we can show all, since the user has ITHAKA admin permissions.
+      } else {
+        count_query.where!.alerts_groups = {
+          every: {
+            group_id: { in: full_groups.map((g) => g.id) }
+          }
+        }
+      }
       if (is_active) {
-        query!.where!.start_date = {
+        count_query!.where!.start_date = {
           lte: new Date(),
         };
-        query!.where!.end_date = {
+        count_query!.where!.end_date = {
           gte: new Date(),
         };
       }
@@ -231,11 +267,19 @@ export const get_paginated_alerts_handler =
           },
         },
       }
-  
+      const query: Prisma.targeted_alertsFindManyArgs = {
+        ...count_query,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          created_at: "desc",
+        },
+        ...select_clause
+      }
       const [alerts, count, error] =
         await fastify.db.get_targeted_alerts_and_count(
           {
-            ...(query as Prisma.targeted_alertsCountArgs),
+            ...count_query,
           },
           {
             ...query,
