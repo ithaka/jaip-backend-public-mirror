@@ -17,7 +17,7 @@ export interface RouteSettings {
   options: { prefix?: string };
 }
 
-export interface DiscParams { 
+export interface DiscParams {
   code: string;
 }
 
@@ -320,16 +320,16 @@ export interface EditAlertRequest extends AddAlertRequest {
 }
 
 interface RestrictedItem extends globally_restricted_items {
-    entities?: {
-        name: string;
-    };
+  entities?: {
+    name: string;
+  };
 }
 
-interface CSVRestrictedItem { 
-  "JSTOR Item ID": string; 
-  "JSTOR Item URL": string; 
-  "Reason": string; 
-  "Date Added to List": Date; 
-  "Date Updated": Date; 
+interface CSVRestrictedItem {
+  "JSTOR Item ID": string;
+  "JSTOR Item URL": string;
+  Reason: string;
+  "Date Added to List": Date;
+  "Date Updated": Date;
   "Restricted By"?: string;
 }

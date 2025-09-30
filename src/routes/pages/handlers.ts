@@ -48,17 +48,19 @@ export const page_handler =
       fastify.log.info(
         `Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`,
       );
-      const is_forbidden = request.is_authenticated_student ? await get_is_forbidden(
-        fastify.db,
-        user_has_feature(
-          request.user,
-          FEATURES.restricted_items_subscription
-        ),
-        doi,
-        journal_iids,
-        disc_codes,
-        group_ids,
-      ) : false;
+      const is_forbidden = request.is_authenticated_student
+        ? await get_is_forbidden(
+            fastify.db,
+            user_has_feature(
+              request.user,
+              FEATURES.restricted_items_subscription,
+            ),
+            doi,
+            journal_iids,
+            disc_codes,
+            group_ids,
+          )
+        : false;
 
       fastify.log.info("Is forbidden: ", is_forbidden);
       if (is_forbidden) {
@@ -169,17 +171,19 @@ export const metadata_handler =
       fastify.log.info(
         `Getting forbidden status for ${iid}. Is student: ${request.is_authenticated_student}`,
       );
-      const is_forbidden = request.is_authenticated_student ? await get_is_forbidden(
-        fastify.db,
-        user_has_feature(
-          request.user,
-          FEATURES.restricted_items_subscription
-        ),
-        doi,
-        journal_iids,
-        disc_codes,
-        group_ids,
-      ) : false;
+      const is_forbidden = request.is_authenticated_student
+        ? await get_is_forbidden(
+            fastify.db,
+            user_has_feature(
+              request.user,
+              FEATURES.restricted_items_subscription,
+            ),
+            doi,
+            journal_iids,
+            disc_codes,
+            group_ids,
+          )
+        : false;
 
       fastify.log.info("Is forbidden: ", is_forbidden);
       if (is_forbidden) {

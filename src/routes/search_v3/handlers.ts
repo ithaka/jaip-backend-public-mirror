@@ -1,11 +1,13 @@
 import { ensure_error } from "../../utils";
 import { LogPayload } from "../../event_handler";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { SearchRequestBody, StatusSearchRequestBody } from "../../types/routes";
 import {
-  SearchRequestBody,
-  StatusSearchRequestBody,
-} from "../../types/routes";
-import { CONTRIBUTED_CONTENT_FLAG, FEATURES, SEARCH3, STATUS_OPTIONS } from "../../consts";
+  CONTRIBUTED_CONTENT_FLAG,
+  FEATURES,
+  SEARCH3,
+  STATUS_OPTIONS,
+} from "../../consts";
 import { Search3Document, Search3Request } from "../../types/search";
 import { jstor_types, status_options } from "@prisma/client";
 import { Status } from "../../types/database";
@@ -46,13 +48,13 @@ export const search_handler =
           reply,
           {
             ...log_payload,
-            event_description:
-              "search v3 is not permitted in production",
+            event_description: "search v3 is not permitted in production",
           },
         );
         return;
       }
-      const { query, limit, pageNo, sort, facets, filters, contentTypes } = request.body;
+      const { query, limit, pageNo, sort, facets, filters, contentTypes } =
+        request.body;
       log_payload.search_request = request.body;
       const query_string = query || "";
       const page_mark = btoa(`pageMark=${pageNo}`);
@@ -87,20 +89,24 @@ export const search_handler =
 
       search3_request.ms_facet_fields = [];
       if (facets.length) {
-        search3_request.ms_facet_fields.push(...facets.map((facet) => {
-          return {
-            field: SEARCH3.queries.maps[facet],
-            minCount: 1,
-            limit: 10,
-          };
-        }));
+        search3_request.ms_facet_fields.push(
+          ...facets.map((facet) => {
+            return {
+              field: SEARCH3.queries.maps[facet],
+              minCount: 1,
+              limit: 10,
+            };
+          }),
+        );
       }
 
       if (contentTypes?.length) {
-        search3_request.ms_facet_fields = [{
-          field: "cty",
-          efq: contentTypes.map((ct) => Buffer.from(ct).toString('base64')),
-        }];
+        search3_request.ms_facet_fields = [
+          {
+            field: "cty",
+            efq: contentTypes.map((ct) => Buffer.from(ct).toString("base64")),
+          },
+        ];
       }
 
       const [tokens, token_error] = await get_tokens(fastify.db, request);
@@ -146,7 +152,6 @@ export const search_handler =
         return;
       }
 
-
       fastify.log.info(`Attempting to retrieve status keys`);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
@@ -167,7 +172,7 @@ export const search_handler =
       fastify.log.info(
         `Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`,
       );
-      
+
       const document_statuses_promise = request.is_authenticated_admin
         ? get_user_statuses(fastify.db, dois, groups)
         : get_facility_statuses(fastify.db, dois, groups);
@@ -310,13 +315,20 @@ export const search_handler =
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.
         if (Object.keys(mediaReviewStatuses).length > 0) {
-          for (const [group_id, status] of Object.entries(mediaReviewStatuses)) {
+          for (const [group_id, status] of Object.entries(
+            mediaReviewStatuses,
+          )) {
             new_doc.mediaReviewStatuses[group_id] = status;
           }
         }
 
         // This occurs last, as it should override any statuses, either bulk or individual.
-        if (block_list_items[doc.doi] && request.user.groups.some((group)=> group.features[FEATURES.restricted_items_subscription])) {
+        if (
+          block_list_items[doc.doi] &&
+          request.user.groups.some(
+            (group) => group.features[FEATURES.restricted_items_subscription],
+          )
+        ) {
           new_doc.mediaReviewStatuses = request.user.groups.reduce(
             (acc, group) => {
               // If the user belongs to a group that has the restricted items subscription feature,

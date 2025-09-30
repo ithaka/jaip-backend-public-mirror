@@ -9,7 +9,11 @@ import {
 } from "../queries/entities";
 import axios from "axios";
 import { session_query } from "../queries/session";
-import { ensure_error, get_groups_with_any_features_enabled, ip_handler } from "../../utils";
+import {
+  ensure_error,
+  get_groups_with_any_features_enabled,
+  ip_handler,
+} from "../../utils";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { RESTRICTED_ITEMS_FEATURES, SUBDOMAINS } from "../../consts";
 import { SESSION_MANAGER } from "../../consts";
@@ -27,7 +31,8 @@ export const manage_session = async (
   // We can't use the frontend UUID cookie on a student subdomain, because we
   // can't trust the cookie from the frontend alone. This means we will fall back to
   // creating a new session UUID based on the frontend request IP.
-  const session_uuid = ignore_cookie || !is_admin_subdomain ? "" : request.cookies.uuid;
+  const session_uuid =
+    ignore_cookie || !is_admin_subdomain ? "" : request.cookies.uuid;
   try {
     fastify.log.info(`Attempting to manage session: ${session_uuid}`);
     const [host, error] = await fastify.discover(SESSION_MANAGER.name);
@@ -345,34 +350,36 @@ export const get_current_user = async (
         throw error;
         // If a user is found, we don't need to check codes or IPS
       } else if (current_user) {
-          // If the user can access restricted items in any of their groups, we 
-          // want to get the facilities associated with those groups and add them
-          // to the user object. This makes it easier to access that information on
-          // the frontend without separate API calls.
-          const groups_with_restricted_items_access = get_groups_with_any_features_enabled(
-          current_user,
-          RESTRICTED_ITEMS_FEATURES,
-        );
+        // If the user can access restricted items in any of their groups, we
+        // want to get the facilities associated with those groups and add them
+        // to the user object. This makes it easier to access that information on
+        // the frontend without separate API calls.
+        const groups_with_restricted_items_access =
+          get_groups_with_any_features_enabled(
+            current_user,
+            RESTRICTED_ITEMS_FEATURES,
+          );
         if (groups_with_restricted_items_access.length && include_facilities) {
-          const [facilities, facilities_error] = await fastify.db.get_facilities({
-            where: {
-              entities: {
-                groups_entities: {
-                  some: {
-                    group_id: {
-                      in: groups_with_restricted_items_access,
+          const [facilities, facilities_error] =
+            await fastify.db.get_facilities({
+              where: {
+                entities: {
+                  groups_entities: {
+                    some: {
+                      group_id: {
+                        in: groups_with_restricted_items_access,
+                      },
                     },
                   },
-                }
-              }
-            },
-            select: {
-              ...get_many_entities_select_clause(
-                user_roles.user,
-                groups_with_restricted_items_access,
-              )
-            }
-          })
+                },
+              },
+              select: {
+                ...get_many_entities_select_clause(
+                  user_roles.user,
+                  groups_with_restricted_items_access,
+                ),
+              },
+            });
           if (facilities_error) {
             throw error;
           } else if (facilities.length) {

@@ -17,6 +17,4 @@ test(`requests the ${route} route with invalid request body`, async () => {
   // });
 });
 
-test(`requests the ${route} route with valid request body`, async () => {
-});
-
+test(`requests the ${route} route with valid request body`, async () => {});

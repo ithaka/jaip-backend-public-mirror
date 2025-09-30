@@ -13,7 +13,10 @@ import {
 } from "../../tests/fixtures/auth/fixtures";
 import axios from "axios";
 import { get_route } from "../../utils";
-import { basic_admin, basic_facility } from "../../tests/fixtures/users/fixtures";
+import {
+  basic_admin,
+  basic_facility,
+} from "../../tests/fixtures/users/fixtures";
 import { map_entities } from "../queries/entities";
 import { Entity } from "../../types/entities";
 

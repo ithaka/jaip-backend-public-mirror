@@ -7,9 +7,7 @@ import {
 import { get_route } from "../../../utils/index";
 import route_settings from "../routes";
 import { route_schemas } from "../schemas";
-import {
-  full_targeted_alert,
-} from "../../../tests/fixtures/alerts/fixtures";
+import { full_targeted_alert } from "../../../tests/fixtures/alerts/fixtures";
 import axios from "axios";
 import {
   axios_session_data_with_email,
@@ -45,7 +43,6 @@ test(`requests the ${route} route invalid body id`, async () => {
   expect(res.statusCode).toEqual(400);
 });
 
-
 test(`requests the ${route} route with valid body and no permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest
@@ -61,7 +58,6 @@ test(`requests the ${route} route with valid body and no permissions`, async () 
 
   expect(res.statusCode).toEqual(403);
 });
-
 
 test(`requests the ${route} route with valid body and edit facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);

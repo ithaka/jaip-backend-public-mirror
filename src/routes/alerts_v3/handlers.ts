@@ -49,7 +49,9 @@ export const get_alerts_handler =
               alerts_groups: {
                 // To view active alerts, the user need only have access to one of the
                 // groups attached to the alert.
-                some: { group_id: { in: request.user?.groups.map((g) => g.id)  || [] } },
+                some: {
+                  group_id: { in: request.user?.groups.map((g) => g.id) || [] },
+                },
               },
             },
             {
@@ -59,7 +61,10 @@ export const get_alerts_handler =
                     // If the request is coming from a facility, then we only need the single facility id. If
                     // the request is coming from an admin user, then we aren't getting facility-specific alerts for
                     // display, so we can just use an empty array.
-                    in: request.user?.type===ENTITY_TYPES.FACILITIES ? [request.user.id!] : [],
+                    in:
+                      request.user?.type === ENTITY_TYPES.FACILITIES
+                        ? [request.user.id!]
+                        : [],
                   },
                 },
               },
@@ -72,7 +77,6 @@ export const get_alerts_handler =
           ],
         },
       };
-
 
       const [alerts, count, error] =
         await fastify.db.get_targeted_alerts_and_count(
@@ -172,50 +176,50 @@ export const get_paginated_alerts_handler =
           is_active: true,
           // We only want to retrieve alerts for facilities that the user has permission to edit or manage.
           alerts_facilities: {
-            every: { 
+            every: {
               facilities: {
                 entities: {
                   groups_entities: {
                     every: {
-                      group_id: { in: full_groups.map((g) => g.id) }
-                    }
-                  }
-                }
-              }
-             },
+                      group_id: { in: full_groups.map((g) => g.id) },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       };
 
-      // If the user does not have the ability to manage facilities, we 
+      // If the user does not have the ability to manage facilities, we
       // want to exclude any alerts at the subdomain or group level.
-      const canManage = request.user.groups.some((group) =>
-        group.features[FEATURES.manage_facilities]
+      const canManage = request.user.groups.some(
+        (group) => group.features[FEATURES.manage_facilities],
       );
       if (!canManage) {
         count_query.where!.alerts_subdomains = {
           none: {
             alert_id: {
-              gt: 0
-            }
-          }
-        }
+              gt: 0,
+            },
+          },
+        };
         count_query.where!.alerts_groups = {
           none: {
             group_id: {
-              gt: 0
-            }
-          }
-        }
-      // If the user can manage facilities, we want to ensure that they receive
-      // only those alerts for groups where they have permissions. For subdomains
-      // we can show all, since the user has ITHAKA admin permissions.
+              gt: 0,
+            },
+          },
+        };
+        // If the user can manage facilities, we want to ensure that they receive
+        // only those alerts for groups where they have permissions. For subdomains
+        // we can show all, since the user has ITHAKA admin permissions.
       } else {
         count_query.where!.alerts_groups = {
           every: {
-            group_id: { in: full_groups.map((g) => g.id) }
-          }
-        }
+            group_id: { in: full_groups.map((g) => g.id) },
+          },
+        };
       }
       if (is_active) {
         count_query!.where!.start_date = {
@@ -266,7 +270,7 @@ export const get_paginated_alerts_handler =
             },
           },
         },
-      }
+      };
       const query: Prisma.targeted_alertsFindManyArgs = {
         ...count_query,
         skip: (page - 1) * limit,
@@ -274,8 +278,8 @@ export const get_paginated_alerts_handler =
         orderBy: {
           created_at: "desc",
         },
-        ...select_clause
-      }
+        ...select_clause,
+      };
       const [alerts, count, error] =
         await fastify.db.get_targeted_alerts_and_count(
           {
@@ -283,7 +287,7 @@ export const get_paginated_alerts_handler =
           },
           {
             ...query,
-            ...select_clause, 
+            ...select_clause,
           },
         );
 

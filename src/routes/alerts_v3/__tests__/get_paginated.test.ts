@@ -19,8 +19,11 @@ import {
   basic_facility,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures";
-import { full_targeted_alert_with_facilities, full_targeted_alert_with_facilities_and_string_dates, valid_get_alerts_query } from "../../../tests/fixtures/alerts/fixtures";
-
+import {
+  full_targeted_alert_with_facilities,
+  full_targeted_alert_with_facilities_and_string_dates,
+  valid_get_alerts_query,
+} from "../../../tests/fixtures/alerts/fixtures";
 
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
@@ -28,7 +31,6 @@ afterEach(() => {
   jest.clearAllMocks();
   jest.resetAllMocks();
 });
-
 
 const route = `${prefix}${get_route(route_schemas.get_paginated_alerts)}`;
 test(`requests the ${route} route`, async () => {
@@ -90,7 +92,6 @@ test(`requests the ${route} route with valid body and no permissions`, async () 
   expect(res.statusCode).toEqual(403);
 });
 
-
 test(`requests the ${route} route with valid body and admin permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest
@@ -110,7 +111,7 @@ test(`requests the ${route} route with valid body and admin permissions`, async 
 
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
   expect(db_mock.get_targeted_alerts_and_count).toHaveBeenCalledTimes(1);
-  expect(res.json()).toStrictEqual({alerts: [], total: 0});
+  expect(res.json()).toStrictEqual({ alerts: [], total: 0 });
   expect(res.statusCode).toEqual(200);
 });
 
@@ -120,7 +121,11 @@ test(`requests the ${route} route with valid body and admin permissions with res
     .fn()
     .mockReturnValue(axios_session_data_with_email) as typeof axios.post;
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
-  db_mock.get_targeted_alerts_and_count.mockResolvedValueOnce([[full_targeted_alert_with_facilities], 1, null]);
+  db_mock.get_targeted_alerts_and_count.mockResolvedValueOnce([
+    [full_targeted_alert_with_facilities],
+    1,
+    null,
+  ]);
 
   const res = await app.inject({
     method: "POST",
@@ -133,6 +138,9 @@ test(`requests the ${route} route with valid body and admin permissions with res
 
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
   expect(db_mock.get_targeted_alerts_and_count).toHaveBeenCalledTimes(1);
-  expect(res.json()).toStrictEqual({alerts: [full_targeted_alert_with_facilities_and_string_dates], total: 1});
+  expect(res.json()).toStrictEqual({
+    alerts: [full_targeted_alert_with_facilities_and_string_dates],
+    total: 1,
+  });
   expect(res.statusCode).toEqual(200);
 });

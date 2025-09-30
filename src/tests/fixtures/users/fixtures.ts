@@ -82,11 +82,15 @@ export const media_review_permissions = (enabled: boolean) =>
     },
   ]);
 
-export const restricted_item_subscription = (enabled: boolean) => 
+export const restricted_item_subscription = (enabled: boolean) =>
   structuredClone([
     {
       enabled,
-      features: { id: 77, name: FEATURES.restricted_items_subscription, is_active: true },
+      features: {
+        id: 77,
+        name: FEATURES.restricted_items_subscription,
+        is_active: true,
+      },
       groups: { id: 1 },
     },
   ]);
@@ -214,10 +218,10 @@ export const facilities_for_user: DBEntity[] = [
         {
           groups: {
             id: 1,
-            name: "Ithaka"
+            name: "Ithaka",
           },
-          role: "facility"
-        }
+          role: "facility",
+        },
       ],
       features_groups_entities: [
         {
@@ -225,237 +229,237 @@ export const facilities_for_user: DBEntity[] = [
           features: {
             id: 41,
             name: "print_pdf",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 34,
             name: "view_abstract",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 36,
             name: "view_book_description",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 40,
             name: "download_pdf",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 35,
             name: "view_snippet",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 232,
             name: "submit_requests",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 166,
             name: "view_document",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: true,
           features: {
             id: 133,
             name: "view_pdf",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 73,
             name: "approve_requests",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 74,
             name: "deny_requests",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 75,
             name: "bulk_approve",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 76,
             name: "undo_bulk_approve",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 100,
             name: "get_facilities",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 67,
             name: "get_users",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 68,
             name: "add_or_edit_users",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 102,
             name: "edit_facilities",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 70,
             name: "remove_users",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 106,
             name: "use_protected_features",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 71,
             name: "is_hidden_user",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 101,
             name: "manage_facilities",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
+            id: 1,
+          },
         },
         {
           enabled: false,
           features: {
             id: 72,
             name: "view_hidden_users",
-            is_active: true
+            is_active: true,
           },
           groups: {
-            id: 1
-          }
-        }
+            id: 1,
+          },
+        },
       ],
-      ungrouped_features_entities: []
-    }
-  }
-]
+      ungrouped_features_entities: [],
+    },
+  },
+];
 
 export const basic_reviewer = {
   jstor_id: "test@test.com",
@@ -598,7 +602,6 @@ export const basic_facility_with_restricted_items_subscription = {
     ungrouped_features_entities: [],
   },
 };
-
 
 export const basic_facility_without_permissions = {
   jstor_id: "test@test.com",

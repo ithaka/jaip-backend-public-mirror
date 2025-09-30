@@ -20,9 +20,9 @@ export const download_offline_index_handler =
     );
 
     const params = request.params as OfflineIndexParams;
-    const index_id = params.index_id
+    const index_id = params.index_id;
     const path = OFFLINE_INDICES[index_id];
-    log_payload.download_path = path
+    log_payload.download_path = path;
     // TODO: Implement the download function
 
     try {

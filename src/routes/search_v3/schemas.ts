@@ -46,7 +46,7 @@ export const route_schemas = {
           items: {
             type: "string",
           },
-        }
+        },
       },
     },
     response: {

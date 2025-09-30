@@ -46,12 +46,10 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = jest
-    .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_item_view_response,
-    });
+  axios.get = jest.fn().mockResolvedValueOnce({
+    status: 200,
+    data: cedar_item_view_response,
+  });
   db_mock.get_item_status.mockResolvedValue([null, null]);
   db_mock.get_statuses.mockResolvedValue([[], null]);
 
@@ -114,9 +112,11 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
       status: 200,
       data: ale_response,
     });
-  db_mock.get_item_status
-    .mockResolvedValueOnce([null, null])
-  db_mock.get_statuses.mockResolvedValueOnce([[approved_discipline_response], null]);
+  db_mock.get_item_status.mockResolvedValueOnce([null, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([
+    [approved_discipline_response],
+    null,
+  ]);
 
   const res = await app.inject({
     method: "GET",
@@ -147,9 +147,11 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
       status: 200,
       data: ale_response,
     });
-  db_mock.get_item_status
-    .mockResolvedValueOnce([null, null])
-  db_mock.get_statuses.mockResolvedValueOnce([[approved_journal_response], null]);
+  db_mock.get_item_status.mockResolvedValueOnce([null, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([
+    [approved_journal_response],
+    null,
+  ]);
 
   const res = await app.inject({
     method: "GET",
@@ -170,12 +172,10 @@ test(`requests the ${metadata_route} route with a facility and denied status`, a
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = jest
-    .fn()
-    .mockResolvedValueOnce({
-      status: 200,
-      data: cedar_item_view_response,
-    });
+  axios.get = jest.fn().mockResolvedValueOnce({
+    status: 200,
+    data: cedar_item_view_response,
+  });
 
   db_mock.get_item_status.mockResolvedValueOnce([denied_item_response, null]);
 

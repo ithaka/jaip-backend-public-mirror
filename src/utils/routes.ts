@@ -19,7 +19,7 @@ export const get_route = (schema: FastifySchema): string => {
 
 export const ip_handler = (req: FastifyRequest): string[] => {
   if (process.env.ENVIRONMENT === "development") {
-    req.headers["fastly-client-ip"] = process.env.VPN_IP
+    req.headers["fastly-client-ip"] = process.env.VPN_IP;
   }
   const ips = req.headers["fastly-client-ip"]
     ? [req.headers["fastly-client-ip"] as string]
@@ -37,7 +37,7 @@ export const get_subdomain = (host: string): string => {
   } else {
     const split_host = host.split(".");
     const ending = split_host[split_host.length - 1] === "localhost" ? -1 : -2;
-    return split_host.slice(0, ending).join(".");  
+    return split_host.slice(0, ending).join(".");
   }
 };
 

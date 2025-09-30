@@ -104,7 +104,9 @@ export const extract_metadata = (
 ) => {
   try {
     // Extract search terms from cedar metadata
-    const journal_iids = metadata.find((item) => item.identity_block.journal_iid)?.identity_block.journal_iid || [];
+    const journal_iids =
+      metadata.find((item) => item.identity_block.journal_iid)?.identity_block
+        .journal_iid || [];
     const doi = metadata.find((item) => item.doi)?.doi;
 
     const codes =
@@ -116,8 +118,7 @@ export const extract_metadata = (
         return item.disciplines;
       })?.disciplines || [];
     const content_type =
-      metadata.find((item) => item.content_type)?.content_type ||
-      "";
+      metadata.find((item) => item.content_type)?.content_type || "";
     const disc_codes = codes.concat(Object.keys(disciplines));
     if (PSEUDO_DISCIPLINE_CODES.includes(content_type)) {
       disc_codes.push(content_type);
@@ -148,7 +149,7 @@ export const extract_metadata = (
 export const get_cedar_metadata = async (
   fastify: FastifyInstance,
   iid: string,
-): Promise< CedarItemView[] | Error > => {
+): Promise<CedarItemView[] | Error> => {
   try {
     const [cedar_host, cedar_error] = await fastify.discover(
       CEDAR_DELIVERY_SERVICE.name,
@@ -187,7 +188,7 @@ export const get_is_forbidden = async (
 ): Promise<boolean> => {
   let is_forbidden = true;
 
-  // If the request is from a facility that's subscribed to the restricted list, 
+  // If the request is from a facility that's subscribed to the restricted list,
   // we need to check if it's on the restricted list first.
   if (has_restricted_items_subscription) {
     const [restricted_items, error] = await db.get_restricted_items({
@@ -222,18 +223,25 @@ export const get_is_forbidden = async (
   // If the item is approved, we can allow access
   if (item_status?.status === status_options.Approved) {
     is_forbidden = false;
-  // If it is denied, we can jump directly to denying access
+    // If it is denied, we can jump directly to denying access
   } else if (item_status?.status !== status_options.Denied) {
     // If the item is neither denied nor approved, we need to check the journal and discipline statuses.
-      const [bulk_statuses, error] = await get_bulk_statuses(db, [...journal_iids, ...disc_codes], group_ids);
+    const [bulk_statuses, error] = await get_bulk_statuses(
+      db,
+      [...journal_iids, ...disc_codes],
+      group_ids,
+    );
     if (error) {
       throw error;
     }
 
     // Because there are no bulk denials by journal or discipline, we can check if any of the statuses are approved.
-    // We cannot search only for approved statuses, because an approval may have been subsequently revoked (marking the 
+    // We cannot search only for approved statuses, because an approval may have been subsequently revoked (marking the
     // journal or discipline as denied). So we retrieve all the most recent statuses and then check if any of them are approved.
-    if (bulk_statuses && bulk_statuses.some((status) => status.status === status_options.Approved)) {
+    if (
+      bulk_statuses &&
+      bulk_statuses.some((status) => status.status === status_options.Approved)
+    ) {
       is_forbidden = false;
     }
   }
@@ -320,7 +328,10 @@ export const get_md_from_cedar = (
     if (item.bidirectional_category && md.isRightToLeft === null) {
       md.isRightToLeft = item.bidirectional_category === "right_to_left";
     }
-    if ((item.page_images?.length || item.iiif_links?.length || 0) > 0 && md.pageCount === 0) {
+    if (
+      (item.page_images?.length || item.iiif_links?.length || 0) > 0 &&
+      md.pageCount === 0
+    ) {
       md.pageCount = parseInt(item.page_count, 10);
     }
     if (

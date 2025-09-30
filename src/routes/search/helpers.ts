@@ -9,7 +9,11 @@ import {
   SEARCH_SNIPPET_SERVICE,
 } from "../../consts";
 import { JAIPDatabase } from "../../database";
-import { globally_restricted_items, jstor_types, status_options } from "@prisma/client";
+import {
+  globally_restricted_items,
+  jstor_types,
+  status_options,
+} from "@prisma/client";
 
 const status_select = {
   jstor_item_id: true,

@@ -15,7 +15,11 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   fastify.get(get_route(opts.schema), opts, get_alerts_handler(fastify));
 
   opts.schema = route_schemas.get_paginated_alerts;
-  fastify.post(get_route(opts.schema), opts, get_paginated_alerts_handler(fastify));
+  fastify.post(
+    get_route(opts.schema),
+    opts,
+    get_paginated_alerts_handler(fastify),
+  );
 
   opts.schema = route_schemas.add_alert;
   fastify.post(get_route(opts.schema), opts, add_alert_handler(fastify));

@@ -1,5 +1,10 @@
 import { entity_types } from "@prisma/client";
-import { SWAGGER_TAGS, FEATURES, UNGROUPED_FEATURES, RESTRICTED_ITEMS_FEATURES } from "../../consts";
+import {
+  SWAGGER_TAGS,
+  FEATURES,
+  UNGROUPED_FEATURES,
+  RESTRICTED_ITEMS_FEATURES,
+} from "../../consts";
 import { User } from "../../types/entities";
 import { server_error, standard_errors } from "../../utils";
 
@@ -173,7 +178,11 @@ export const route_schemas = {
         grouped: {
           // Because getting facilities is important for the frontend to understand how to display restricted items, we allow
           // any of these permissions to access this route.
-          any: [FEATURES.get_facilities, FEATURES.get_users, ...RESTRICTED_ITEMS_FEATURES],
+          any: [
+            FEATURES.get_facilities,
+            FEATURES.get_users,
+            ...RESTRICTED_ITEMS_FEATURES,
+          ],
         },
         ungrouped: [
           UNGROUPED_FEATURES.manage_superusers,

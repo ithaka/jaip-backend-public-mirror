@@ -4,11 +4,15 @@ import type { EntityType } from "../types/entities";
 import { HTTPMethods } from "fastify";
 
 export const OFFLINE_INDICES = {
-  "content_mac": "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Mac.zip",
-  "content_windows": "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Windows.zip",
-  "content_chromebook": "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Chromebook.zip",
-  "no_content_windows": "ithaka-jaip/offline_drive_downloads/without_content/JSTOR-Windows.zip",
-  "no_content_chromebook": "ithaka-jaip/offline_drive_downloads/without_content/JSTOR-Chromebook.zip",
+  content_mac: "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Mac.zip",
+  content_windows:
+    "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Windows.zip",
+  content_chromebook:
+    "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Chromebook.zip",
+  no_content_windows:
+    "ithaka-jaip/offline_drive_downloads/without_content/JSTOR-Windows.zip",
+  no_content_chromebook:
+    "ithaka-jaip/offline_drive_downloads/without_content/JSTOR-Chromebook.zip",
 };
 
 export const VALIDATED_METHODS = ["POST", "PUT", "DELETE"] as HTTPMethods[];

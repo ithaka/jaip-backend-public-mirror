@@ -41,14 +41,14 @@ const statuses = [
   status_options.Denied,
   status_options.Pending,
   status_options.Incomplete,
-  'completed',
-]
+  "completed",
+];
 const base_route = `${route_settings.options.prefix}${get_route(route_schemas.search)}`;
 const route_options = statuses.map((status) => {
   return {
     route: `${base_route}${status}`,
     status,
-  }
+  };
 });
 
 test.each(route_options)(`requests the %s route with no body`, async (opt) => {
@@ -59,14 +59,17 @@ test.each(route_options)(`requests the %s route with no body`, async (opt) => {
   expect(res.statusCode).toEqual(400);
 });
 
-test.each(route_options)(`requests the %s route with invalid body`, async (opt) => {
-  const res = await app.inject({
-    method: "POST",
-    url: opt.route,
-    payload: status_search_request_invalid,
-  });
-  expect(res.statusCode).toEqual(400);
-});
+test.each(route_options)(
+  `requests the %s route with invalid body`,
+  async (opt) => {
+    const res = await app.inject({
+      method: "POST",
+      url: opt.route,
+      payload: status_search_request_invalid,
+    });
+    expect(res.statusCode).toEqual(400);
+  },
+);
 
 test.each(route_options)(
   `requests the %s route with a facility and valid body and no restricted items`,
@@ -83,7 +86,11 @@ test.each(route_options)(
         data: search3_results,
       });
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-    db_mock.get_search_statuses.mockResolvedValueOnce([status_selections, 4, null]);
+    db_mock.get_search_statuses.mockResolvedValueOnce([
+      status_selections,
+      4,
+      null,
+    ]);
     db_mock.get_statuses
       .mockResolvedValueOnce([bulk_statuses, null])
       .mockResolvedValueOnce([item_statuses, null]);
@@ -98,13 +105,24 @@ test.each(route_options)(
       },
     });
 
-
-
     expect(discover_mock).toHaveBeenCalledTimes(2);
     expect(axios.post).toHaveBeenCalledTimes(2);
     expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
-    const arr = opt.status==='completed' ? [status_options.Approved, status_options.Denied] : [opt.status];
-    expect(db_mock.get_search_statuses).toHaveBeenCalledWith(false, "Approved", [1], arr, "2023-10-01T00:00:00.000Z", "2023-10-01T00:00:00.000Z", "new", 25, 1);
+    const arr =
+      opt.status === "completed"
+        ? [status_options.Approved, status_options.Denied]
+        : [opt.status];
+    expect(db_mock.get_search_statuses).toHaveBeenCalledWith(
+      false,
+      "Approved",
+      [1],
+      arr,
+      "2023-10-01T00:00:00.000Z",
+      "2023-10-01T00:00:00.000Z",
+      "new",
+      25,
+      1,
+    );
     expect(db_mock.get_restricted_items).toHaveBeenCalledTimes(1);
     expect(res.json()).toEqual({
       docs: [],
@@ -128,8 +146,14 @@ test.each(route_options)(
         status: 200,
         data: search3_results,
       });
-    db_mock.get_first_user.mockResolvedValueOnce(basic_facility_with_restricted_items_subscription);
-    db_mock.get_search_statuses.mockResolvedValueOnce([status_selections, 4, null]);
+    db_mock.get_first_user.mockResolvedValueOnce(
+      basic_facility_with_restricted_items_subscription,
+    );
+    db_mock.get_search_statuses.mockResolvedValueOnce([
+      status_selections,
+      4,
+      null,
+    ]);
     db_mock.get_statuses
       .mockResolvedValueOnce([bulk_statuses, null])
       .mockResolvedValueOnce([item_statuses, null]);
@@ -139,17 +163,30 @@ test.each(route_options)(
       method: "POST",
       url: opt.route,
       payload: status_search_request_valid,
-        headers: {
+      headers: {
         host: "test-pep.jstor.org",
-      }
+      },
     });
 
     expect(discover_mock).toHaveBeenCalledTimes(2);
     expect(axios.post).toHaveBeenCalledTimes(2);
-    
-    const arr = opt.status==='completed' ? [status_options.Approved, status_options.Denied] : [opt.status];
+
+    const arr =
+      opt.status === "completed"
+        ? [status_options.Approved, status_options.Denied]
+        : [opt.status];
     expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
-    expect(db_mock.get_search_statuses).toHaveBeenCalledWith(true, "Approved", [1], arr, "2023-10-01T00:00:00.000Z", "2023-10-01T00:00:00.000Z", "new", 25,1);
+    expect(db_mock.get_search_statuses).toHaveBeenCalledWith(
+      true,
+      "Approved",
+      [1],
+      arr,
+      "2023-10-01T00:00:00.000Z",
+      "2023-10-01T00:00:00.000Z",
+      "new",
+      25,
+      1,
+    );
     expect(db_mock.get_restricted_items).toHaveBeenCalledTimes(1);
     expect(res.json()).toEqual({
       docs: [],
@@ -158,7 +195,6 @@ test.each(route_options)(
     expect(res.statusCode).toEqual(200);
   },
 );
-
 
 test.each(route_options)(
   `requests the %s route with a facility and valid body and no statuses to find`,
@@ -282,4 +318,3 @@ test(`requests the ${route_options[0].route} route with a reviewer and valid bod
   });
   expect(res.statusCode).toEqual(200);
 });
-

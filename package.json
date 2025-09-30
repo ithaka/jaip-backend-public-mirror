@@ -62,7 +62,7 @@
     "@eslint/plugin-kit": "^0.4.0"
   },
   "lint-staged": {
-    "src": [
+    "*": [
       "prettier --write",
       "eslint --fix"
     ]

@@ -3,7 +3,7 @@ import { FEATURES, SWAGGER_TAGS } from "../../consts/index";
 import { standard_post_errors } from "../../utils/index";
 
 export const route_schemas = {
-    get_alerts: {
+  get_alerts: {
     name: "get_alerts",
     description: `Returns all active/unexpired alerts or a paginated list of alerts.`,
     route: "/",

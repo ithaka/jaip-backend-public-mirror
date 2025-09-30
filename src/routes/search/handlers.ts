@@ -51,9 +51,10 @@ export const status_search_handler =
       const query_statuses: status_options[] = [];
 
       // If the search is for restricted items, we handle it separately.
-      if (status === 'restricted') {
+      if (status === "restricted") {
         return get_restricted_items_handler(fastify)(
-          request as FastifyRequest<GetRestrictedItemsBody>, reply
+          request as FastifyRequest<GetRestrictedItemsBody>,
+          reply,
         );
       }
 
@@ -87,7 +88,7 @@ export const status_search_handler =
         await fastify.db.get_search_statuses(
           user_has_feature(
             request.user,
-            FEATURES.restricted_items_subscription
+            FEATURES.restricted_items_subscription,
           ) && request.is_authenticated_student,
           query_string,
           groups,
@@ -120,9 +121,11 @@ export const status_search_handler =
       }
 
       // We only need to add unique DOIs to the filter
-      const dois = [...new Set(status_results.map((status) => status.jstor_item_id!))];
+      const dois = [
+        ...new Set(status_results.map((status) => status.jstor_item_id!)),
+      ];
       let doi_filter = "(";
-      for (let i=0; i<dois.length; i++) {
+      for (let i = 0; i < dois.length; i++) {
         doi_filter += `doi:"${dois[i]}"`;
         if (i < dois.length - 1) {
           doi_filter += " OR ";
@@ -191,7 +194,6 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
-
       const { query, limit, pageNo, sort, facets, filters } = request.body;
       log_payload.search_request = request.body;
       const query_string = query || "";
@@ -274,7 +276,6 @@ export const search_handler =
         return;
       }
 
-
       fastify.log.info(`Attempting to retrieve status keys`);
       const { docs, dois, disc_and_journal_ids, ids, total } = get_status_keys(
         search_result!,
@@ -295,7 +296,7 @@ export const search_handler =
       fastify.log.info(
         `Getting document statuses for ${dois} in groups ${groups}. Is admin: ${request.is_authenticated_admin}`,
       );
-      
+
       const document_statuses_promise = request.is_authenticated_admin
         ? get_user_statuses(fastify.db, dois, groups)
         : get_facility_statuses(fastify.db, dois, groups);
@@ -438,13 +439,20 @@ export const search_handler =
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.
         if (Object.keys(mediaReviewStatuses).length > 0) {
-          for (const [group_id, status] of Object.entries(mediaReviewStatuses)) {
+          for (const [group_id, status] of Object.entries(
+            mediaReviewStatuses,
+          )) {
             new_doc.mediaReviewStatuses[group_id] = status;
           }
         }
 
         // This occurs last, as it should override any statuses, either bulk or individual.
-        if (block_list_items[doc.doi] && request.user.groups.some((group)=> group.features[FEATURES.restricted_items_subscription])) {
+        if (
+          block_list_items[doc.doi] &&
+          request.user.groups.some(
+            (group) => group.features[FEATURES.restricted_items_subscription],
+          )
+        ) {
           new_doc.mediaReviewStatuses = request.user.groups.reduce(
             (acc, group) => {
               // If the user belongs to a group that has the restricted items subscription feature,

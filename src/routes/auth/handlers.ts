@@ -30,7 +30,7 @@ export const auth_session_handler =
       request,
       get_email_from_session(session),
       get_code_from_session(session),
-      true // Include facilities in the user object
+      true, // Include facilities in the user object
     );
     if (current_user) {
       current_user.uuid = session.uuid;

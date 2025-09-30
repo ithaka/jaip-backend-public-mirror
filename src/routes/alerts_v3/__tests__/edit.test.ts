@@ -59,7 +59,6 @@ test(`requests the ${route} route with valid alert but no id`, async () => {
   expect(res.statusCode).toEqual(400);
 });
 
-
 test(`requests the ${route} route with valid alert and no permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = jest

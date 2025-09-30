@@ -4,7 +4,7 @@ export const valid_get_alerts_query = {
   page: 1,
   limit: 10,
   groups: [1, 2],
-}
+};
 export const alerts_fixture = {
   text: "This is a test alert",
   status: "info",
