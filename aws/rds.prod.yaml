@@ -18,7 +18,7 @@ Resources:
       MasterUsername: !Ref MasterUsername
       MasterUserPassword: !Ref MasterUserPassword
       ServerlessV2ScalingConfiguration:
-        MaxCapacity: 8
+        MaxCapacity: 64
         MinCapacity: 0.5
       NetworkType: IPV4
       StorageEncrypted: true
