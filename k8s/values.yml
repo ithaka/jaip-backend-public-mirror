@@ -33,8 +33,31 @@ prometheus:
 
 # The port that your application itself listens on.
 internalPort: 8080
-healthcheckPath: /api/v2/healthcheck
-
+healthcheckPath: /api/v2/healthcheck/liveness
+# The custom probes below override the defaults that capstan-app would normally
+# apply. We increase the failureThreshold and initialDelaySeconds to give the
+# app more time to start up, allowing time for the database connections and the
+# polaris sidecar to initialize before the readiness check. The liveness check
+# only requires the fastify server to be up and running.
+probes:
+  useDefault: false
+  customProbes:
+    readinessProbe:
+      httpGet:
+        path: /api/v2/healthcheck/liveness
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 15
+    livenessProbe:
+      httpGet:
+        path: /api/v2/healthcheck/readiness
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 20
 spec:
   template:
     spec:
@@ -73,4 +96,3 @@ polaris:
 rollingUpdate:
   maxSurge: 100%
   maxUnavailable: 0
-

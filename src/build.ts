@@ -4,13 +4,7 @@ import fastify_swagger_ui from "@fastify/swagger-ui";
 import fastify_cookie from "@fastify/cookie";
 import fastify_cors from "@fastify/cors";
 
-import {
-  AUTH_ROUTE_PREFIX,
-  GLOBAL_ROUTE_PREFIX_VERSIONED,
-  SUBDOMAINS_VALIDATION_ROUTE_PREFIX,
-  SWAGGER_OPTS,
-  VALIDATED_METHODS,
-} from "./consts";
+import { SWAGGER_OPTS, UNGUARDED_ROUTES, VALIDATED_METHODS } from "./consts";
 
 import plugins from "./plugins";
 
@@ -55,13 +49,9 @@ function build(opts = {}, route_settings: RouteSettings[]) {
     const is_private = !!routeOptions.schema?.tags?.includes(
       SWAGGER_TAGS.private,
     );
-    app.log.info(`Adding route guard to ${routeOptions.url}`);
-    if (
-      routeOptions.url !==
-        `${GLOBAL_ROUTE_PREFIX_VERSIONED}${AUTH_ROUTE_PREFIX}` &&
-      routeOptions.url !==
-        `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SUBDOMAINS_VALIDATION_ROUTE_PREFIX}`
-    ) {
+
+    if (!UNGUARDED_ROUTES.includes(routeOptions.url)) {
+      app.log.info(`Adding route guard to ${routeOptions.url}`);
       routeOptions.preHandler.push(route_guard(is_private));
     }
 

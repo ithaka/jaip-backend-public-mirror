@@ -37,7 +37,13 @@ export const GLOBAL_VERSION = "v2";
 export const GLOBAL_ROUTE_PREFIX_VERSIONED = `${GLOBAL_ROUTE_PREFIX}/${GLOBAL_VERSION}`;
 export const AUTH_ROUTE_PREFIX = "/auth";
 export const SUBDOMAINS_VALIDATION_ROUTE_PREFIX = "/subdomains/validate";
-
+export const HEALTHCHECK_ROUTE_PREFIX = "/healthcheck";
+export const UNGUARDED_ROUTES = [
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${AUTH_ROUTE_PREFIX}`,
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SUBDOMAINS_VALIDATION_ROUTE_PREFIX}`,
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${HEALTHCHECK_ROUTE_PREFIX}/liveness`,
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${HEALTHCHECK_ROUTE_PREFIX}/readiness`,
+];
 export const ENTITY_TYPES: { [key: string]: EntityType } = {
   USERS: "users" as EntityType.users,
   FACILITIES: "facilities" as EntityType.facilities,
