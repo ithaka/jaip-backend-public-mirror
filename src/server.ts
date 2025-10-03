@@ -6,7 +6,9 @@ const server = build(
   {
     logger: true,
     trustProxy: true,
-    ignoreTrailingSlash: true,
+    routerOptions: {
+      ignoreTrailingSlash: true,
+    },
     genReqId: () => {
       return uuidv4();
     },
