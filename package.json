@@ -62,8 +62,10 @@
     "@eslint/plugin-kit": "^0.4.0"
   },
   "lint-staged": {
-    "*": [
-      "prettier --write",
+    "*.{js,ts,json,css,scss,md}": [
+      "prettier --write"
+    ],
+    "*.{js,ts}": [
       "eslint --fix"
     ]
   }
