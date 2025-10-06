@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -30,8 +31,8 @@ import axios from "axios";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const search_route = `${route_settings.options.prefix}${get_route(route_schemas.search)}`;
@@ -54,7 +55,7 @@ test(`requests the ${search_route} route with invalid body`, async () => {
 
 test(`requests the ${search_route} route with a facility and valid body and no statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockResolvedValueOnce(axios_session_data_with_email)
     .mockResolvedValueOnce({
@@ -85,7 +86,7 @@ test(`requests the ${search_route} route with a facility and valid body and no s
 
 test(`requests the ${search_route} route with a facility and valid body and bulk statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockResolvedValueOnce(axios_session_data_with_email)
     .mockResolvedValueOnce({
@@ -117,7 +118,7 @@ test(`requests the ${search_route} route with a facility and valid body and bulk
 // NOTE: This test also verifies that a bulk approval status is overridden by an item status.
 test(`requests the ${search_route} route with a facility and valid body and both bulk and item status`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockResolvedValueOnce(axios_session_data_with_email)
     .mockResolvedValueOnce({
@@ -148,7 +149,7 @@ test(`requests the ${search_route} route with a facility and valid body and both
 
 test(`requests the ${search_route} route with a reviewer and valid body and both bulk and item statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockResolvedValueOnce(axios_session_data_with_email)
     .mockResolvedValueOnce({

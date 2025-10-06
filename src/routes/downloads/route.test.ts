@@ -1,4 +1,5 @@
 // import { build_test_server } from "../../tests/helpers";
+import { test } from "vitest";
 import route_settings from "./routes";
 import { route_schemas } from "./schemas";
 import { get_route } from "../../utils";

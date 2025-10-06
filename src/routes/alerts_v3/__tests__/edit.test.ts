@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -28,8 +28,8 @@ import {
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const route = `${prefix}${get_route(route_schemas.edit_alert)}`;
@@ -61,7 +61,7 @@ test(`requests the ${route} route with valid alert but no id`, async () => {
 
 test(`requests the ${route} route with valid alert and no permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_email) as typeof axios.post;
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
@@ -77,7 +77,7 @@ test(`requests the ${route} route with valid alert and no permissions`, async ()
 
 test(`requests the ${route} route with valid alert but invalid target and edit facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_email) as typeof axios.post;
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
@@ -96,7 +96,7 @@ test(`requests the ${route} route with valid alert but invalid target and edit f
 
 test(`requests the ${route} route with valid alert but no target and edit facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_email) as typeof axios.post;
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
@@ -115,7 +115,7 @@ test(`requests the ${route} route with valid alert but no target and edit facili
 
 test(`requests the ${route} route with valid body and edit facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_email) as typeof axios.post;
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);

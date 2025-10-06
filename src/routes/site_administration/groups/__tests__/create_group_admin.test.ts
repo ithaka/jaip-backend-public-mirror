@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -21,8 +22,8 @@ import {
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const route = `${prefix}${get_route(route_schemas.create_group_admin)}`;
@@ -45,7 +46,7 @@ test(`requests the ${route} route with invalid body`, async () => {
 
 test(`requests the ${route} route with valid body and no group permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
 
   const res = await app.inject({
@@ -59,7 +60,7 @@ test(`requests the ${route} route with valid body and no group permissions`, asy
 
 test(`requests the ${route} route with valid body and add group permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
     basic_user_ungrouped_create_group_admins,
   );

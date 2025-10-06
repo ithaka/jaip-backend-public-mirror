@@ -1,3 +1,4 @@
+import { expect, test, vi } from "vitest";
 import { build_test_server, discover_mock, db_mock } from "../../tests/helpers";
 import route_settings from "./routes";
 import { route_schemas } from "./schemas";
@@ -12,7 +13,7 @@ const prefix = route_settings.options.prefix;
 const route = `${prefix}${get_route(route_schemas.logging)}`;
 
 test(`requests the ${route} route with a facility and no body`, async () => {
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({
@@ -25,7 +26,7 @@ test(`requests the ${route} route with a facility and no body`, async () => {
 
 test(`requests the ${route} route with a facility and request body`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({

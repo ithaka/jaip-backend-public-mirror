@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -28,8 +29,8 @@ import {
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 // NOTE: The tests for the page route and the pdf route are the same, because we're supplying
@@ -53,9 +54,9 @@ test.each(routes)(
   `requests the %s route with a facility and no status`,
   async (route) => {
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-    axios.get = jest.fn().mockResolvedValueOnce({
+    axios.get = vi.fn().mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
     });
@@ -82,9 +83,9 @@ test.each(routes)(
   `requests the $%s route with a facility and item approval`,
   async (route) => {
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-    axios.get = jest
+    axios.get = vi
       .fn()
       .mockResolvedValueOnce({
         status: 200,
@@ -120,9 +121,9 @@ test.each(routes)(
   `requests the %s route with a facility and discipline approval`,
   async (route) => {
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-    axios.get = jest
+    axios.get = vi
       .fn()
       .mockResolvedValueOnce({
         status: 200,
@@ -160,9 +161,9 @@ test.each(routes)(
   `requests the %s route with a facility and journal approval`,
   async (route) => {
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-    axios.get = jest
+    axios.get = vi
       .fn()
       .mockResolvedValueOnce({
         status: 200,
@@ -200,9 +201,9 @@ test.each(routes)(
   `requests the %s route with a facility and denied status`,
   async (route) => {
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-    axios.get = jest.fn().mockResolvedValueOnce({
+    axios.get = vi.fn().mockResolvedValueOnce({
       status: 200,
       data: cedar_item_view_response,
     });
@@ -228,9 +229,9 @@ test.each(routes)(
   `requests the %s route with an admin and item approval`,
   async (route) => {
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
-    axios.get = jest
+    axios.get = vi
       .fn()
       .mockResolvedValueOnce({
         status: 200,

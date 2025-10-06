@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { build_test_server, db_mock } from "../../tests/helpers";
 import route_settings from "./routes";
 import { route_schemas } from "./schemas";

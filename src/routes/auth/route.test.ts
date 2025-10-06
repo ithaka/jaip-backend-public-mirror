@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
 import route_settings from "./routes";
 import { route_schemas } from "./schemas";
@@ -24,7 +25,7 @@ const app = build_test_server([route_settings]);
 
 const route = `${route_settings.options.prefix}${get_route(route_schemas.auth)}`;
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 test(`requests the ${route} route with no service discovery`, async () => {
@@ -38,7 +39,7 @@ test(`requests the ${route} route with no service discovery`, async () => {
 
 test(`requests the ${route} route with no session data`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(new Error("error"));
+  axios.post = vi.fn().mockResolvedValue(new Error("error"));
 
   const res = await app.inject({
     method: "GET",
@@ -49,7 +50,7 @@ test(`requests the ${route} route with no session data`, async () => {
 
 test(`requests the ${route} route with ip bypass`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_no_email_or_code);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_no_email_or_code);
   db_mock.get_first_facility.mockResolvedValueOnce(
     get_first_facility_resolved_value,
   );
@@ -73,7 +74,7 @@ test(`requests the ${route} route with ip bypass`, async () => {
 
 test(`requests the ${route} route with valid sitecode and invalid domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_sitecode_by_subdomain.mockResolvedValueOnce(null);
   db_mock.get_first_facility.mockResolvedValueOnce(
     get_first_facility_resolved_value,
@@ -98,7 +99,7 @@ test(`requests the ${route} route with valid sitecode and invalid domain`, async
 
 test(`requests the ${route} route with valid sitecode and valid domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_sitecode_by_subdomain.mockResolvedValueOnce(
     get_sitecode_by_subdomain_resolved_value,
   );
@@ -121,7 +122,7 @@ test(`requests the ${route} route with valid sitecode and valid domain`, async (
 
 test(`requests the ${route} route with valid sitecode and standard domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({
@@ -142,7 +143,7 @@ test(`requests the ${route} route with valid sitecode and standard domain`, asyn
 
 test(`requests the ${route} route with invalid email`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(null);
 
   const res = await app.inject({
@@ -163,7 +164,7 @@ test(`requests the ${route} route with invalid email`, async () => {
 
 test(`requests the ${route} route with valid email and admin domain`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
   db_mock.get_facilities.mockResolvedValueOnce([[basic_facility], null]);
 

@@ -1,3 +1,4 @@
+import { expect, test, vi } from "vitest";
 import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
 import route_settings from "./routes";
 import { route_schemas } from "./schemas";
@@ -13,7 +14,7 @@ const prefix = route_settings.options.prefix;
 const route = `${prefix}${get_route(route_schemas.get_environment)}`;
 test(`requests the ${route} route`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
   db_mock.get_first_facility.mockResolvedValueOnce(null);

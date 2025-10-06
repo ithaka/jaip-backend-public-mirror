@@ -1,3 +1,4 @@
+import { expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -42,7 +43,7 @@ test(`requests the ${add_facilities_route} route with invalid body`, async () =>
 
 test(`requests the ${add_facilities_route} route with valid body and no add facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
   db_mock.manage_entity.mockClear();
@@ -59,7 +60,7 @@ test(`requests the ${add_facilities_route} route with valid body and no add faci
 
 test(`requests the ${add_facilities_route} route with valid body and edit facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
 
   db_mock.manage_entity.mockClear();
@@ -76,7 +77,7 @@ test(`requests the ${add_facilities_route} route with valid body and edit facili
 
 test(`requests the ${add_facilities_route} route with valid body and manage facility permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_ithaka_admin);
 
   db_mock.manage_entity.mockClear();

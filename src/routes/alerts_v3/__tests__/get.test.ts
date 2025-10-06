@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -22,14 +22,14 @@ import {
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const route = `${prefix}${get_route(route_schemas.get_alerts)}`;
 test(`requests the ${route} route from standard student subdomain with no facility`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
   db_mock.get_first_facility.mockResolvedValueOnce(null);
@@ -49,7 +49,7 @@ test(`requests the ${route} route from standard student subdomain with no facili
 
 test(`requests the ${route} route from standard student subdomain with valid facility`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
@@ -69,7 +69,7 @@ test(`requests the ${route} route from standard student subdomain with valid fac
 
 test(`requests the ${route} route from standard student subdomain with valid facility`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockReturnValue(axios_session_data_with_email) as typeof axios.post;
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);

@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -32,8 +33,8 @@ import { status_options } from "@prisma/client";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const statuses = [
@@ -77,7 +78,7 @@ test.each(route_options)(
     discover_mock
       .mockName("discover")
       .mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest
+    axios.post = vi
       .fn()
       .mockName("axios_post")
       .mockResolvedValueOnce(axios_session_data_with_email)
@@ -138,7 +139,7 @@ test.each(route_options)(
     discover_mock
       .mockName("discover")
       .mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest
+    axios.post = vi
       .fn()
       .mockName("axios_post")
       .mockResolvedValueOnce(axios_session_data_with_email)
@@ -202,7 +203,7 @@ test.each(route_options)(
     discover_mock
       .mockName("discover")
       .mockResolvedValue(["this text doesn't matter", null]);
-    axios.post = jest
+    axios.post = vi
       .fn()
       .mockName("axios_post")
       .mockResolvedValueOnce(axios_session_data_with_email)
@@ -238,7 +239,7 @@ test(`requests the ${route_options[0].route} route with a facility and valid bod
   discover_mock
     .mockName("discover")
     .mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockName("axios_post")
     .mockResolvedValueOnce(axios_session_data_with_email)
@@ -278,7 +279,7 @@ test(`requests the ${route_options[0].route} route with a reviewer and valid bod
   discover_mock
     .mockName("discover")
     .mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest
+  axios.post = vi
     .fn()
     .mockName("axios_post")
     .mockResolvedValueOnce(axios_session_data_with_email)

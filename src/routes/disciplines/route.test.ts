@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
 import { get_route } from "../../utils";
 import { route_schemas } from "./schemas";
@@ -17,14 +18,14 @@ import {
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const disciplines_route = `${route_settings.options.prefix}${get_route(route_schemas.disciplines)}`;
 test(`requests the ${disciplines_route} route without a user or facility`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   const res = await app.inject({
     method: "GET",
     url: disciplines_route,
@@ -34,9 +35,9 @@ test(`requests the ${disciplines_route} route without a user or facility`, async
 
 test(`requests the ${disciplines_route} route with a facility and no statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = jest.fn().mockResolvedValue({
+  axios.get = vi.fn().mockResolvedValue({
     status: 200,
     data: disciplines_response,
   });
@@ -53,9 +54,9 @@ test(`requests the ${disciplines_route} route with a facility and no statuses`, 
 
 test(`requests the ${disciplines_route} route with a facility and statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = jest.fn().mockResolvedValue({
+  axios.get = vi.fn().mockResolvedValue({
     status: 200,
     data: disciplines_response,
   });
@@ -77,7 +78,7 @@ test(`requests the ${disciplines_route} route with a facility and statuses`, asy
 const journals_route = `${route_settings.options.prefix}${get_route(route_schemas.disciplines)}africanamericanstudies-discipline`;
 test(`requests the ${journals_route} route without a user or facility`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   const res = await app.inject({
     method: "GET",
     url: journals_route,
@@ -87,9 +88,9 @@ test(`requests the ${journals_route} route without a user or facility`, async ()
 
 test(`requests the ${journals_route} route with a facility and no statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = jest.fn().mockResolvedValue({
+  axios.get = vi.fn().mockResolvedValue({
     status: 200,
     data: journals_response,
   });
@@ -106,9 +107,9 @@ test(`requests the ${journals_route} route with a facility and no statuses`, asy
 
 test(`requests the ${journals_route} route with a facility and statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = jest.fn().mockResolvedValue({
+  axios.get = vi.fn().mockResolvedValue({
     status: 200,
     data: journals_response,
   });

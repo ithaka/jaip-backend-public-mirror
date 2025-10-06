@@ -1,3 +1,4 @@
+import { expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -41,7 +42,7 @@ test(`requests the ${remove_users_route} route with invalid body`, async () => {
 
 test(`requests the ${remove_users_route} route with valid body and no remove user permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
   db_mock.remove_user.mockClear();
@@ -58,7 +59,7 @@ test(`requests the ${remove_users_route} route with valid body and no remove use
 
 test(`requests the ${remove_users_route} route with valid body and remove user permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
 
   db_mock.remove_user.mockClear();

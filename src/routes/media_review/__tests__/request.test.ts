@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -22,8 +23,8 @@ import {
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const request_route = `${route_settings.options.prefix}${get_route(route_schemas.request)}`;
@@ -46,7 +47,7 @@ test(`requests the ${request_route} route with invalid body`, async () => {
 
 test(`requests the ${request_route} route with valid body and no permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
     basic_facility_without_permissions,
   );
@@ -63,7 +64,7 @@ test(`requests the ${request_route} route with valid body and no permissions`, a
 
 test(`requests the ${request_route} route with valid body and request permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({

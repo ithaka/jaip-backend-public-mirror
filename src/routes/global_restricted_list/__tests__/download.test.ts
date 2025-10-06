@@ -1,5 +1,6 @@
 // NOTE: This file also includes tests for incomplete statuses. Denial and incomplete
 // statuses currently use the same handler and have similar requirements.
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -23,14 +24,14 @@ import { map_restricted_items_list } from "../helpers";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const download_route = `${route_settings.options.prefix}${get_route(route_schemas.download_restricted_items)}`;
 test(`requests the ${download_route} route with no permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_user_ungrouped);
   db_mock.manage_entity.mockClear();
 
@@ -43,7 +44,7 @@ test(`requests the ${download_route} route with no permissions`, async () => {
 
 test(`requests the ${download_route} route with permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
     basic_user_ungrouped_manage_restricted_list,
   );
@@ -61,7 +62,6 @@ test(`requests the ${download_route} route with permissions`, async () => {
   });
   expect(db_mock.get_restricted_items).toHaveBeenCalledTimes(1);
   const csv = await json2csv(map_restricted_items_list(restricted_items_list));
-
   expect(res.payload).toStrictEqual(csv);
   expect(res.statusCode).toEqual(200);
 });

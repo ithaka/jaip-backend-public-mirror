@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -23,8 +24,8 @@ import { features, Prisma } from "@prisma/client";
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 const route = `${prefix}${get_route(route_schemas.add_group_feature)}`;
@@ -47,7 +48,7 @@ test(`requests the ${route} route with invalid body`, async () => {
 
 test(`requests the ${route} route with valid body and no grouped feature permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
 
   const res = await app.inject({
@@ -61,7 +62,7 @@ test(`requests the ${route} route with valid body and no grouped feature permiss
 
 test(`requests the ${route} route with valid body and add grouped feature permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
     basic_user_ungrouped_add_grouped_feature,
   );
@@ -91,7 +92,7 @@ test(`requests the ${route} route with valid body and add grouped feature permis
 
 test(`requests the ${route} route with valid body, add grouped feature permissions, but a duplicate name`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
     basic_user_ungrouped_add_grouped_feature,
   );

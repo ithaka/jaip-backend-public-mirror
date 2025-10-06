@@ -11,10 +11,18 @@
     "moduleResolution": "node",
     "noImplicitOverride": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": [
+      "node",
+      "vitest"
+    ]
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./src/**/*.test.ts"],
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "./src/**/*.test.ts"
+  ],
   "ts-node": {
     "files": true
   }

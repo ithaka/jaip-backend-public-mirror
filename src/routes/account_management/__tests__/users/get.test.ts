@@ -1,3 +1,4 @@
+import { afterEach, expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -26,7 +27,7 @@ const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // USERS
@@ -51,7 +52,7 @@ test(`requests the ${get_users_route} route with invalid body`, async () => {
 
 test(`requests the ${get_users_route} route with valid body and no account management permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
   const res = await app.inject({
@@ -65,7 +66,7 @@ test(`requests the ${get_users_route} route with valid body and no account manag
 
 test(`requests the ${get_users_route} route with valid body and account management permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
   db_mock.get_users_and_count.mockResolvedValueOnce([
     2,
@@ -92,7 +93,7 @@ test(`requests the ${get_users_route} route with valid body and account manageme
 
 test(`requests the ${get_users_route} route with valid body and superuser permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = jest.fn().mockResolvedValue(axios_session_data_with_email);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(
     basic_user_ungrouped_manage_superusers,
   );
