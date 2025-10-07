@@ -11,6 +11,7 @@ export interface SearchRequest {
   statusEndDate?: Date;
   dois?: string[];
   contentTypes?: string[];
+  isReentry?: boolean;
 }
 
 export interface StatusSearchRequest extends SearchRequest {
@@ -26,6 +27,7 @@ export interface Search3Request {
   page_mark: string;
   additional_fields: string[];
   filter_queries: string[];
+  limited_visibility_tokens?: string[];
   content_set_flags: string[];
   ms_facet_fields?: MsFacetFields[];
   tokens: string[];

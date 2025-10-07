@@ -308,35 +308,47 @@ export const get_snippets = async (
 export const get_tokens = async (
   db: JAIPDatabase,
   request: FastifyRequest,
-): Promise<[string[], Error | null]> => {
+): Promise<[string[], string[], Error | null]> => {
   const tokens: string[] = [];
+  const limited_visibility_tokens: string[] = [];
   try {
     request.log.info(
       `User is authenticated admin: ${request.is_authenticated_admin}`,
     );
     if (request.is_authenticated_admin) {
       request.log.info(`Getting all tokens for admin user`);
-      const token_response = await db.get_all_tokens();
-      const error = token_response[2];
+      const [db_tokens, lv_tokens, error] = await db.get_all_tokens();
       if (error) {
         throw error;
       }
-      const db_tokens = token_response[0];
       db_tokens.forEach((t) => {
         tokens.push(t);
+      });
+      lv_tokens.forEach((t) => {
+        limited_visibility_tokens.push(t);
       });
     } else {
       request.log.info(`Using tokens from session`);
       for (const license of request.session.licenses) {
         tokens.push(license.entitlement.id);
       }
+
+      // TODO: If we get access properly sorted, this should be removed in favor of pulling the
+      // tokens from the session.
+      const token_response = await db.get_all_tokens();
+      if (token_response[2]) {
+        throw token_response[2];
+      }
+      token_response[1].forEach((t) => {
+        limited_visibility_tokens.push(t);
+      });
     }
   } catch (err) {
     const error = ensure_error(err);
-    return [[], error];
+    return [[], [], error];
   }
 
-  return [tokens, null];
+  return [tokens, limited_visibility_tokens, null];
 };
 
 export const do_search3 = async (

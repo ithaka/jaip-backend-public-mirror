@@ -21,7 +21,7 @@ import {
   get_status_keys,
   get_tokens,
   get_user_statuses,
-} from "../search/helpers";
+} from "./helpers";
 import { map_document } from "../queries/search";
 import { History, MediaRecord } from "../../types/media_record";
 
@@ -40,21 +40,16 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
-      if (process.env.ENVIRONMENT === "prod") {
-        reply.code(403);
-        fastify.event_logger.pep_standard_log_complete(
-          "pep_search_v3_forbidden",
-          request,
-          reply,
-          {
-            ...log_payload,
-            event_description: "search v3 is not permitted in production",
-          },
-        );
-        return;
-      }
-      const { query, limit, pageNo, sort, facets, filters, contentTypes } =
-        request.body;
+      const {
+        query,
+        limit,
+        pageNo,
+        sort,
+        facets,
+        filters,
+        contentTypes,
+        isReentry,
+      } = request.body;
       log_payload.search_request = request.body;
       const query_string = query || "";
       const page_mark = btoa(`pageMark=${pageNo}`);
@@ -65,8 +60,25 @@ export const search_handler =
         page_mark,
         ...SEARCH3.queries.defaults,
       };
-      // Add the contributed content flag so we can retrieve contributed content
-      search3_request.content_set_flags.push(CONTRIBUTED_CONTENT_FLAG);
+
+      // TODO: When this endpoint is ready for production, we will no longer want to
+      // distinguish between prod and non-prod
+      const is_prod = process.env.NODE_ENV === "production";
+
+      if (isReentry && !is_prod) {
+        // Add the contributed content flag so we can retrieve contributed content
+        search3_request.content_set_flags.push(CONTRIBUTED_CONTENT_FLAG);
+        const [collection_ids, collection_id_error] =
+          await fastify.db.get_collection_ids();
+        if (collection_id_error) {
+          throw collection_id_error;
+        }
+        // If there are collection IDs, we add them to the filter queries
+        if (collection_ids.length) {
+          const collection_id_filter = `collection_ids:(${collection_ids.join(" OR ")})`;
+          search3_request.filter_queries.push(collection_id_filter);
+        }
+      }
 
       const full_groups = request.user.groups.filter((group) => {
         const groups =
@@ -109,11 +121,21 @@ export const search_handler =
         ];
       }
 
-      const [tokens, token_error] = await get_tokens(fastify.db, request);
+      const [tokens, lv_tokens, token_error] = await get_tokens(
+        fastify.db,
+        request,
+      );
       if (token_error) {
         throw token_error;
       }
       search3_request.tokens = tokens;
+      // If this is a reentry search, we also add the limited visibility tokens
+      if (isReentry && !is_prod) {
+        search3_request.limited_visibility_tokens = lv_tokens;
+        // TODO: The date filter is being temporarily removed until we can set up
+        // metadata correctly for contributed content.
+        search3_request.filter_queries.pop();
+      }
 
       log_payload.search3_request = search3_request;
 
@@ -123,7 +145,9 @@ export const search_handler =
         throw search_error;
       }
 
-      fastify.log.info(`Doing search3 request: ${search3_request}`);
+      fastify.log.info(
+        `Doing search3 request: ${JSON.stringify(search3_request)}`,
+      );
       const [search_result, error] = await do_search3(
         host,
         search3_request,

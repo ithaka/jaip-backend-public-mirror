@@ -1,7 +1,7 @@
-import {afterAll, beforeAll, Mock, vi } from "vitest";
+import { afterAll, beforeAll, Mock, vi } from "vitest";
 import build from "../build";
-import {RouteSettings} from "../types/routes";
-import type {JAIPDatabase} from "../database";
+import { RouteSettings } from "../types/routes";
+import type { JAIPDatabase } from "../database";
 import { FastifyInstance } from "fastify";
 
 export const db_mock = {
@@ -39,28 +39,37 @@ export const db_mock = {
   update_group: vi.fn().mockName("update_group"),
   clear_history: vi.fn().mockName("clear_history"),
   create_group_admin: vi.fn().mockName("create_group_admin"),
-  get_grouped_features_and_count: vi.fn().mockName("get_grouped_features_and_count"),
+  get_grouped_features_and_count: vi
+    .fn()
+    .mockName("get_grouped_features_and_count"),
   create_grouped_feature: vi.fn().mockName("create_grouped_feature"),
   remove_grouped_feature: vi.fn().mockName("remove_grouped_feature"),
   update_grouped_feature: vi.fn().mockName("update_grouped_feature"),
-  get_ungrouped_features_and_count: vi.fn().mockName("get_ungrouped_features_and_count"),
+  get_ungrouped_features_and_count: vi
+    .fn()
+    .mockName("get_ungrouped_features_and_count"),
   create_ungrouped_feature: vi.fn().mockName("create_ungrouped_feature"),
   remove_ungrouped_feature: vi.fn().mockName("remove_ungrouped_feature"),
   update_ungrouped_feature: vi.fn().mockName("update_ungrouped_feature"),
   create_restricted_item: vi.fn().mockName("create_restricted_item"),
   remove_restricted_item: vi.fn().mockName("remove_restricted_item"),
   get_restricted_items: vi.fn().mockName("get_restricted_items"),
-  get_restricted_items_and_count: vi.fn().mockName("get_restricted_items_and_count"),
-  get_last_updated_restricted_item: vi.fn().mockName("get_last_updated_restricted_item"),
-  get_targeted_alerts_and_count: vi.fn().mockName("get_targeted_alerts_and_count"),
+  get_restricted_items_and_count: vi
+    .fn()
+    .mockName("get_restricted_items_and_count"),
+  get_last_updated_restricted_item: vi
+    .fn()
+    .mockName("get_last_updated_restricted_item"),
+  get_targeted_alerts_and_count: vi
+    .fn()
+    .mockName("get_targeted_alerts_and_count"),
   create_targeted_alert: vi.fn().mockName("create_targeted_alert"),
   update_targeted_alert: vi.fn().mockName("update_targeted_alert"),
   remove_targeted_alert: vi.fn().mockName("remove_targeted_alert"),
+  get_collection_ids: vi.fn().mockName("get_collection_ids"),
 } as JAIPDatabase as Record<keyof JAIPDatabase, Mock>;
 
-export const discover_mock = vi
-  .fn()
-  .mockName("discover");
+export const discover_mock = vi.fn().mockName("discover");
 
 export function build_test_server(route_settings: RouteSettings[]) {
   const app = build(

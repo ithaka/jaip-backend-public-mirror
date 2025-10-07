@@ -214,6 +214,25 @@ model tokens {
   updated_at DateTime? @default(now()) @db.Timestamp(6)
 }
 
+model limited_visibility_tokens {
+  token      String     @unique @db.VarChar
+  is_active  Boolean
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  @@id([token])
+  @@index([token, is_active])
+
+}
+
+model collection_ids {
+  collection_id String    @unique @db.VarChar
+  is_active     Boolean
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+  @@id([collection_id])
+  @@index([collection_id, is_active])
+}
+
 model ungrouped_features {
   id                          Int                           @id @default(autoincrement())
   name                        String                        @unique @db.VarChar

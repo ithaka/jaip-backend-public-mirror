@@ -757,14 +757,44 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
 
-  async get_all_tokens(): Promise<[string[], Error | null]> {
+  // NOTE: This function returns first standard and then limited visibility tokens.
+  // Limited visibility tokens are used for content that requires
+  // additional permissions.
+  async get_all_tokens(): Promise<[string[], string[], Error | null]> {
     try {
       const tokens = await this.client.tokens.findMany({
         select: {
           token: true,
         },
       });
-      return [tokens.map((token) => token.token), null];
+      const limited_visibility_tokens =
+        await this.client.limited_visibility_tokens.findMany({
+          select: {
+            token: true,
+          },
+        });
+      return [
+        tokens.map((token) => token.token),
+        limited_visibility_tokens.map((token) => token.token),
+        null,
+      ];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], [], error];
+    }
+  }
+
+  async get_collection_ids(): Promise<[string[], Error | null]> {
+    try {
+      const collections = await this.client.collection_ids.findMany({
+        where: {
+          is_active: true,
+        },
+        select: {
+          collection_id: true,
+        },
+      });
+      return [collections.map((collection) => collection.collection_id), null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], error];

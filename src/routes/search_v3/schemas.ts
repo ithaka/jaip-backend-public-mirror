@@ -47,6 +47,10 @@ export const route_schemas = {
             type: "string",
           },
         },
+        isReentry: {
+          type: "boolean",
+          default: false,
+        },
       },
     },
     response: {

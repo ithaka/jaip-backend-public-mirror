@@ -296,7 +296,7 @@ test(`requests the ${route_options[0].route} route with a reviewer and valid bod
   db_mock.get_statuses
     .mockResolvedValueOnce([bulk_statuses, null])
     .mockResolvedValueOnce([item_statuses, null]);
-  db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
+  db_mock.get_all_tokens.mockResolvedValueOnce([tokens, [], null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
