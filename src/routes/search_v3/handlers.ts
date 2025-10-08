@@ -65,8 +65,7 @@ export const search_handler =
 
       // TODO: When this endpoint is ready for production, we will no longer want to
       // distinguish between prod and non-prod
-      const is_prod = process.env.NODE_ENV === "production";
-
+      const is_prod = process.env.ENVIRONMENT === "prod";
       if (isReentry && !is_prod) {
         // Add the contributed content flag so we can retrieve contributed content
         search3_request.content_set_flags.push(CONTRIBUTED_CONTENT_FLAG);

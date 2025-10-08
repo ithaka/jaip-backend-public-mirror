@@ -80,18 +80,14 @@ test(`requests the ${search_route} route with a facility and valid body and no s
     payload: search_request_valid,
   });
 
-  if (process.env.ENVIRONMENT !== "prod") {
-    expect(discover_mock).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(res.json()).toEqual({
-      docs: processed_search_response,
-      total: search3_results.total,
-    });
-    expect(res.statusCode).toEqual(200);
-  } else {
-    expect(res.statusCode).toEqual(403);
-  }
+  expect(discover_mock).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(res.json()).toEqual({
+    docs: processed_search_response,
+    total: search3_results.total,
+  });
+  expect(res.statusCode).toEqual(200);
 });
 
 test(`requests the ${search_route} route with a facility and valid body and bulk statuses`, async () => {
@@ -116,18 +112,14 @@ test(`requests the ${search_route} route with a facility and valid body and bulk
     payload: search_request_valid,
   });
 
-  if (process.env.ENVIRONMENT !== "prod") {
-    expect(discover_mock).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(res.json()).toEqual({
-      docs: processed_search_response_with_bulk_statuses,
-      total: search3_results.total,
-    });
-    expect(res.statusCode).toEqual(200);
-  } else {
-    expect(res.statusCode).toEqual(403);
-  }
+  expect(discover_mock).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(res.json()).toEqual({
+    docs: processed_search_response_with_bulk_statuses,
+    total: search3_results.total,
+  });
+  expect(res.statusCode).toEqual(200);
 });
 
 // NOTE: This test also verifies that a bulk approval status is overridden by an item status.
@@ -153,18 +145,14 @@ test(`requests the ${search_route} route with a facility and valid body and both
     payload: search_request_valid,
   });
 
-  if (process.env.ENVIRONMENT !== "prod") {
-    expect(discover_mock).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(res.json()).toEqual({
-      docs: processed_search_response_with_mixed_statuses,
-      total: search3_results.total,
-    });
-    expect(res.statusCode).toEqual(200);
-  } else {
-    expect(res.statusCode).toEqual(403);
-  }
+  expect(discover_mock).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(res.json()).toEqual({
+    docs: processed_search_response_with_mixed_statuses,
+    total: search3_results.total,
+  });
+  expect(res.statusCode).toEqual(200);
 });
 
 test(`requests the ${search_route} route with a reviewer and valid body and both bulk and item statuses`, async () => {
@@ -192,18 +180,14 @@ test(`requests the ${search_route} route with a reviewer and valid body and both
     },
   });
 
-  if (process.env.ENVIRONMENT !== "prod") {
-    expect(discover_mock).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(res.json()).toEqual({
-      docs: processed_search_response_with_mixed_statuses_reviewer,
-      total: search3_results.total,
-    });
-    expect(res.statusCode).toEqual(200);
-  } else {
-    expect(res.statusCode).toEqual(403);
-  }
+  expect(discover_mock).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(res.json()).toEqual({
+    docs: processed_search_response_with_mixed_statuses_reviewer,
+    total: search3_results.total,
+  });
+  expect(res.statusCode).toEqual(200);
 });
 
 test(`requests the ${search_route} route in reentry mode for a facility`, async () => {
@@ -237,14 +221,25 @@ test(`requests the ${search_route} route in reentry mode for a facility`, async 
     payload: reentry_payload,
   });
 
+  const axiosPostMock = axios.post as MockedFunction<typeof axios.post>;
+  const search_request = axiosPostMock.mock.calls[1][1] as Search3Request;
+  const session_tokens =
+    axios_session_data_with_email.data.data.sessionHttpHeaders.licenses.map(
+      (license) => license.entitlement.id,
+    );
+
+  expect(discover_mock).toHaveBeenCalledTimes(2);
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(res.statusCode).toEqual(200);
+  expect(search_request.filter_queries).not.toContain(
+    reentry_payload.filters[0],
+  );
+  expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
+
+  expect(search_request.tokens).toEqual(session_tokens);
+
   if (process.env.ENVIRONMENT !== "prod") {
-    expect(res.statusCode).toEqual(200);
-    expect(discover_mock).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
     expect(db_mock.get_collection_ids).toHaveBeenCalledTimes(1);
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    const axiosPostMock = axios.post as MockedFunction<typeof axios.post>;
-    const search_request = axiosPostMock.mock.calls[1][1] as Search3Request;
     expect(search_request.content_set_flags).toContain(
       CONTRIBUTED_CONTENT_FLAG,
     );
@@ -252,16 +247,17 @@ test(`requests the ${search_route} route in reentry mode for a facility`, async 
     expect(search_request.filter_queries).toContain(
       `collection_ids:(${collection_ids.join(" OR ")})`,
     );
-    expect(search_request.filter_queries).not.toContain(
-      reentry_payload.filters[0],
-    );
-    const session_tokens =
-      axios_session_data_with_email.data.data.sessionHttpHeaders.licenses.map(
-        (license) => license.entitlement.id,
-      );
-    expect(search_request.tokens).toEqual(session_tokens);
   } else {
-    expect(res.statusCode).toEqual(403);
+    expect(db_mock.get_collection_ids).not.toHaveBeenCalled();
+    expect(search_request.content_set_flags).not.toContain(
+      CONTRIBUTED_CONTENT_FLAG,
+    );
+    expect(
+      search_request.filter_queries.some((fq) =>
+        fq.startsWith("collection_ids:"),
+      ),
+    ).toBe(false);
+    expect(search_request.limited_visibility_tokens).toBeUndefined();
   }
 });
 
@@ -299,14 +295,19 @@ test(`requests the ${search_route} route in reentry mode for a reviewer`, async 
     },
   });
 
+  const axiosPostMock = axios.post as MockedFunction<typeof axios.post>;
+  const search_request = axiosPostMock.mock.calls[1][1] as Search3Request;
+
+  expect(res.statusCode).toEqual(200);
+  expect(discover_mock).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(search_request.filter_queries).not.toContain(
+    reentry_payload.filters[0],
+  );
+  expect(search_request.tokens).toEqual(tokens);
+
   if (process.env.ENVIRONMENT !== "prod") {
-    expect(res.statusCode).toEqual(200);
-    expect(discover_mock).toHaveBeenCalledTimes(2);
-    expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
-    expect(db_mock.get_collection_ids).toHaveBeenCalledTimes(1);
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    const axiosPostMock = axios.post as MockedFunction<typeof axios.post>;
-    const search_request = axiosPostMock.mock.calls[1][1] as Search3Request;
     expect(search_request.content_set_flags).toContain(
       CONTRIBUTED_CONTENT_FLAG,
     );
@@ -314,15 +315,21 @@ test(`requests the ${search_route} route in reentry mode for a reviewer`, async 
     expect(search_request.filter_queries).toContain(
       `collection_ids:(${collection_ids.join(" OR ")})`,
     );
-    expect(search_request.filter_queries).not.toContain(
-      reentry_payload.filters[0],
-    );
-    expect(search_request.tokens).toEqual(tokens);
+
     expect(res.json()).toEqual({
       docs: processed_search_response_with_mixed_statuses_reviewer,
       total: search3_results.total,
     });
   } else {
-    expect(res.statusCode).toEqual(403);
+    expect(search_request.content_set_flags).not.toContain(
+      CONTRIBUTED_CONTENT_FLAG,
+    );
+
+    expect(
+      search_request.filter_queries.some((fq) =>
+        fq.startsWith("collection_ids:"),
+      ),
+    ).toBe(false);
+    expect(search_request.limited_visibility_tokens).toBeUndefined();
   }
 });
