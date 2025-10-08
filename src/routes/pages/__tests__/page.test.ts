@@ -12,6 +12,7 @@ import {
   approved_item_response,
   approved_journal_response,
   cedar_item_view_response,
+  cedar_item_view_without_page_images,
   denied_item_response,
   iid_path,
   mock_image_response,
@@ -257,3 +258,26 @@ test.each(routes)(
     expect(res.statusCode).toEqual(200);
   },
 );
+
+test(`requests the ${page_route} route when metadata lacks page images`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  axios.get = vi.fn().mockResolvedValueOnce({
+    status: 200,
+    data: cedar_item_view_without_page_images,
+  });
+
+  const res = await app.inject({
+    method: "GET",
+    url: page_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
+  });
+
+  expect(res.statusCode).toEqual(500);
+  expect(axios.get).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_item_status).not.toHaveBeenCalled();
+  expect(res.payload).toContain("Page 0 not found");
+});

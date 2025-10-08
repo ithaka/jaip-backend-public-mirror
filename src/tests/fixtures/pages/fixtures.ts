@@ -939,3 +939,10 @@ export const mock_image_response = {
   status: 200,
   data: "This would be an image",
 };
+
+export const cedar_item_view_without_page_images = cedar_item_view_response.map(
+  (item) => ({
+    ...item,
+    page_images: [],
+  }),
+);

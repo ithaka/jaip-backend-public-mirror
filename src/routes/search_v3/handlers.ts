@@ -59,6 +59,8 @@ export const search_handler =
         sort,
         page_mark,
         ...SEARCH3.queries.defaults,
+        filter_queries: [...SEARCH3.queries.defaults.filter_queries],
+        content_set_flags: [...SEARCH3.queries.defaults.content_set_flags],
       };
 
       // TODO: When this endpoint is ready for production, we will no longer want to
@@ -90,6 +92,9 @@ export const search_handler =
       log_payload.full_groups = full_groups;
 
       search3_request.filter_queries = [...search3_request.filter_queries];
+      // TODO: We're temporarily removing the date filter until we can
+      // get the metadata for these items to work with search3 queries.
+      filters.shift();
       for (const [i, filter] of filters.entries()) {
         for (const [key, value] of Object.entries(SEARCH3.queries.maps)) {
           if (filter.startsWith(key)) {
@@ -132,9 +137,6 @@ export const search_handler =
       // If this is a reentry search, we also add the limited visibility tokens
       if (isReentry && !is_prod) {
         search3_request.limited_visibility_tokens = lv_tokens;
-        // TODO: The date filter is being temporarily removed until we can set up
-        // metadata correctly for contributed content.
-        search3_request.filter_queries.pop();
       }
 
       log_payload.search3_request = search3_request;

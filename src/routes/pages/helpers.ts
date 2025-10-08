@@ -64,7 +64,7 @@ export const get_page_url = (
   for (const item of cedar) {
     if (!page_index && item.pdf) {
       return [item.pdf, 0];
-    } else if (page_index && item.page_images.length > 0) {
+    } else if (page_index && item.page_images?.length > 0) {
       const page_images = item.page_images;
       const pi = get_page_index(page_index, 0, page_images.length);
       return [page_images[pi], pi];
