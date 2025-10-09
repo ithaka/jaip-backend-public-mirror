@@ -30,7 +30,7 @@
     "fastify-plugin": "^5.1.0",
     "json-2-csv": "^5.5.9",
     "pg": "^8.16.3",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
