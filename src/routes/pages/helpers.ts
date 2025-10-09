@@ -1,24 +1,24 @@
 import { FastifyInstance } from "fastify";
-import { Entitlement } from "../../types/accounts";
+import { Entitlement } from "../../types/accounts.js";
 import {
   ALEResponse,
   CedarItemView,
   CedarMetadataReturn,
   EntitlementMap,
-} from "../../types/routes";
+} from "../../types/routes.js";
 import {
   ALE_QUERY_SERVICE,
   CEDAR_DELIVERY_SERVICE,
   PSEUDO_DISCIPLINE_CODES,
-} from "../../consts";
+} from "../../consts/index.js";
 import axios, { AxiosResponse } from "axios";
 import { status_options } from "@prisma/client";
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { JAIPDatabase } from "../../database";
-import { get_bulk_statuses } from "../search/helpers";
+import { JAIPDatabase } from "../../database/index.js";
+import { get_bulk_statuses } from "../search/helpers.js";
 
 export const get_s3_object = async (
   str: string,

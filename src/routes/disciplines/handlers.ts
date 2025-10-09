@@ -1,12 +1,12 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { PSEUDO_DISCIPLINES, SEARCH_SERVICE } from "../../consts";
+import { PSEUDO_DISCIPLINES, SEARCH_SERVICE } from "../../consts/index.js";
 import axios from "axios";
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
-import { attach_bulk_approval } from "./helpers";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
+import { attach_bulk_approval } from "./helpers.js";
 import { jstor_types } from "@prisma/client";
-import { DiscParams } from "../../types/routes";
-import { Discipline, Journal } from "../../types/disciplines";
+import { DiscParams } from "../../types/routes.js";
+import { Discipline, Journal } from "../../types/disciplines.js";
 
 export const disciplines_handler =
   (fastify: FastifyInstance) =>

@@ -1,16 +1,19 @@
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SearchRequestBody, StatusSearchRequestBody } from "../../types/routes";
+import {
+  SearchRequestBody,
+  StatusSearchRequestBody,
+} from "../../types/routes.js";
 import {
   CONTRIBUTED_CONTENT_FLAG,
   FEATURES,
   SEARCH3,
   STATUS_OPTIONS,
-} from "../../consts";
-import { Search3Document, Search3Request } from "../../types/search";
+} from "../../consts/index.js";
+import { Search3Document, Search3Request } from "../../types/search.js";
 import { jstor_types, status_options } from "@prisma/client";
-import { Status } from "../../types/database";
+import { Status } from "../../types/database.js";
 import {
   do_search3,
   format_status_details,
@@ -21,9 +24,9 @@ import {
   get_status_keys,
   get_tokens,
   get_user_statuses,
-} from "./helpers";
-import { map_document } from "../queries/search";
-import { History, MediaRecord } from "../../types/media_record";
+} from "./helpers.js";
+import { map_document } from "../queries/search.js";
+import { History, MediaRecord } from "../../types/media_record.js";
 
 export const search_handler =
   (fastify: FastifyInstance, count: number) =>
@@ -340,6 +343,9 @@ export const search_handler =
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.
         if (Object.keys(mediaReviewStatuses).length > 0) {
+          if (!new_doc.mediaReviewStatuses) {
+            new_doc.mediaReviewStatuses = {};
+          }
           for (const [group_id, status] of Object.entries(
             mediaReviewStatuses,
           )) {

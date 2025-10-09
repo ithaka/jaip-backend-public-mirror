@@ -1,4 +1,4 @@
-import { StatusOptions } from "./media_record";
+import { StatusOptions } from "./media_record.js";
 
 export interface IPBypassResult {
   facilities: {

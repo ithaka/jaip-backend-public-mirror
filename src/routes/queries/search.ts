@@ -1,5 +1,5 @@
-import { MediaRecord } from "../../types/media_record";
-import { Search3Document } from "../../types/search";
+import { MediaRecord } from "../../types/media_record.js";
+import { Search3Document } from "../../types/search.js";
 
 const find_title = (document: Search3Document): string => {
   if (Array.isArray(document.title)) {

@@ -1,13 +1,13 @@
 import { entity_types, Prisma, user_roles } from "@prisma/client";
-import { get_db_pagination } from "../../utils";
+import { get_db_pagination } from "../../utils/index.js";
 import {
   get_many_entities_select_clause,
   map_entities,
-} from "../queries/entities";
-import { User } from "../../types/entities";
-import { ensure_error } from "../../utils";
-import { Group } from "../../types/groups";
-import { JAIPDatabase } from "../../database";
+} from "../queries/entities.js";
+import { User } from "../../types/entities.js";
+import { ensure_error } from "../../utils/index.js";
+import { Group } from "../../types/groups.js";
+import { JAIPDatabase } from "../../database/index.js";
 
 const get_entities_where_clause = (
   groups: number[],

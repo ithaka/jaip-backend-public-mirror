@@ -1,5 +1,5 @@
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 export const logging_handler =

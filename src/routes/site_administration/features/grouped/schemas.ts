@@ -1,6 +1,6 @@
-import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../../consts";
-import { Feature } from "../../../../types/features";
-import { standard_post_errors } from "../../../../utils";
+import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../../consts/index.js";
+import { Feature } from "../../../../types/features.js";
+import { standard_post_errors } from "../../../../utils/index.js";
 
 export const route_schemas = {
   // This endpoint is used to get all group feature details,

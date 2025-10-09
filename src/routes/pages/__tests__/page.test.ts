@@ -3,9 +3,9 @@ import {
   build_test_server,
   db_mock,
   discover_mock,
-} from "../../../tests/helpers";
-import route_settings from "../routes";
-import { page_prefix } from "../schemas";
+} from "../../../tests/helpers.js";
+import route_settings from "../routes.js";
+import { page_prefix } from "../schemas.js";
 import {
   ale_response,
   approved_discipline_response,
@@ -16,17 +16,17 @@ import {
   denied_item_response,
   iid_path,
   mock_image_response,
-} from "../../../tests/fixtures/pages/fixtures";
+} from "../../../tests/fixtures/pages/fixtures.js";
 import axios from "axios";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,
   valid_student_subdomain,
-} from "../../../tests/fixtures/auth/fixtures";
+} from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
   basic_reviewer,
-} from "../../../tests/fixtures/users/fixtures";
+} from "../../../tests/fixtures/users/fixtures.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {

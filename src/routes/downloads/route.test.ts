@@ -1,8 +1,8 @@
 // import { build_test_server } from "../../tests/helpers";
 import { test } from "vitest";
-import route_settings from "./routes";
-import { route_schemas } from "./schemas";
-import { get_route } from "../../utils";
+import route_settings from "./routes.js";
+import { route_schemas } from "./schemas.js";
+import { get_route } from "../../utils/index.js";
 // const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 

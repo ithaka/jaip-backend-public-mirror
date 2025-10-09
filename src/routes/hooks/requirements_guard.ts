@@ -3,7 +3,7 @@ import {
   user_has_feature,
   user_has_feature_in_all_groups,
   user_has_ungrouped_feature,
-} from "../../utils";
+} from "../../utils/index.js";
 
 export const requirements_guard = async (
   request: FastifyRequest,

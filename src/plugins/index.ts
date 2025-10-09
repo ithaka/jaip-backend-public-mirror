@@ -1,9 +1,9 @@
-import logging from "./logging";
-import errorHandlerPlugin from "./error_handling";
+import logging from "./logging.js";
+import errorHandlerPlugin from "./error_handling.js";
 import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
-import database from "./database";
-import service_discovery from "./service_discovery";
-import db from "./db";
+import database from "./database.js";
+import service_discovery from "./service_discovery.js";
+import db from "./db.js";
 
 const plugins: {
   [key: string]: {

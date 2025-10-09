@@ -1,19 +1,19 @@
 // Import individual routes
-import auth from "./auth/routes";
-import subdomains from "./subdomains/routes";
-import disciplines from "./disciplines/routes";
-import healthcheck from "./healthchecks/routes";
-import alerts from "./alerts/routes";
-import media_review from "./media_review/routes";
-import search from "./search/routes";
-import pages from "./pages/routes";
-import account_management from "./account_management/routes";
-import site_administration from "./site_administration";
-import environment from "./environment/routes";
-import logging from "./logging/routes";
-import global_restricted_list from "./global_restricted_list/routes";
-import search_v3 from "./search_v3/routes";
-import alerts_v3 from "./alerts_v3/routes";
+import auth from "./auth/routes.js";
+import subdomains from "./subdomains/routes.js";
+import disciplines from "./disciplines/routes.js";
+import healthcheck from "./healthchecks/routes.js";
+import alerts from "./alerts/routes.js";
+import media_review from "./media_review/routes.js";
+import search from "./search/routes.js";
+import pages from "./pages/routes.js";
+import account_management from "./account_management/routes.js";
+import site_administration from "./site_administration/index.js";
+import environment from "./environment/routes.js";
+import logging from "./logging/routes.js";
+import global_restricted_list from "./global_restricted_list/routes.js";
+import search_v3 from "./search_v3/routes.js";
+import alerts_v3 from "./alerts_v3/routes.js";
 
 // import downloads from "./downloads/routes";
 

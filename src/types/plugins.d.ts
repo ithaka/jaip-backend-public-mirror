@@ -1,5 +1,5 @@
 import { FastifyPluginOptions } from "fastify";
-import { JAIPDatabase } from "../database";
+import { JAIPDatabase } from "../database/index.js";
 export interface EventLoggerPluginOptions extends FastifyPluginOptions {
   event_logger: EventLogger;
 }

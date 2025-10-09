@@ -1,14 +1,14 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { route_schemas } from "./schemas";
+import { route_schemas } from "./schemas.js";
 import {
   add_ungrouped_feature_handler,
   delete_ungrouped_feature_handler,
   edit_ungrouped_feature_handler,
   get_ungrouped_features_handler,
   reactivate_ungrouped_feature_handler,
-} from "./handlers";
-import { ungrouped_features_prefix } from "./options";
-import { get_route } from "../../../../utils";
+} from "./handlers.js";
+import { ungrouped_features_prefix } from "./options.js";
+import { get_route } from "../../../../utils/index.js";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_ungrouped_features;

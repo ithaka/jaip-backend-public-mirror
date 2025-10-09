@@ -1,6 +1,6 @@
 import {
   GLOBAL_ROUTE_PREFIX_VERSIONED,
   SUBDOMAINS_VALIDATION_ROUTE_PREFIX,
-} from "../../consts";
+} from "../../consts/index.js";
 
 export const subdomains_prefix = `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SUBDOMAINS_VALIDATION_ROUTE_PREFIX}`;

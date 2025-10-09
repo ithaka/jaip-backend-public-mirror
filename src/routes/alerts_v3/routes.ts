@@ -1,14 +1,14 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { route_schemas } from "./schemas";
+import { route_schemas } from "./schemas.js";
 import {
   add_alert_handler,
   delete_alert_handler,
   edit_alert_handler,
   get_alerts_handler,
   get_paginated_alerts_handler,
-} from "./handlers";
-import { groups_prefix } from "./options";
-import { get_route } from "../../utils/index";
+} from "./handlers.js";
+import { groups_prefix } from "./options.js";
+import { get_route } from "../../utils/index.js";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_alerts;

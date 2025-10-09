@@ -1,6 +1,6 @@
-import { User } from "../../types/entities";
-import { SWAGGER_TAGS, MESSAGES } from "../../consts";
-import { standard_errors } from "../../utils";
+import { User } from "../../types/entities.js";
+import { SWAGGER_TAGS, MESSAGES } from "../../consts/index.js";
+import { standard_errors } from "../../utils/index.js";
 
 export const route_schemas = {
   auth: {

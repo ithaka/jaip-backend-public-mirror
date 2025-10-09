@@ -1,4 +1,4 @@
-import { SWAGGER_TAGS } from "../../consts";
+import { SWAGGER_TAGS } from "../../consts/index.js";
 
 export const route_schemas = {
   readiness: {

@@ -1,11 +1,15 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
-import { get_route } from "../../utils";
-import { route_schemas } from "./schemas";
-import route_settings from "./routes";
+import {
+  build_test_server,
+  db_mock,
+  discover_mock,
+} from "../../tests/helpers.js";
+import { get_route } from "../../utils/index.js";
+import { route_schemas } from "./schemas.js";
+import route_settings from "./routes.js";
 import axios from "axios";
-import { axios_session_data_with_email } from "../../tests/fixtures/auth/fixtures";
-import { basic_facility } from "../../tests/fixtures/users/fixtures";
+import { axios_session_data_with_email } from "../../tests/fixtures/auth/fixtures.js";
+import { basic_facility } from "../../tests/fixtures/users/fixtures.js";
 import {
   bulk_approval_statuses_disciplines,
   bulk_approval_statuses_journals,
@@ -14,7 +18,7 @@ import {
   disciplines_response_with_pseudodisciplines,
   journals_response,
   journals_response_with_approval,
-} from "../../tests/fixtures/disciplines/fixtures";
+} from "../../tests/fixtures/disciplines/fixtures.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {

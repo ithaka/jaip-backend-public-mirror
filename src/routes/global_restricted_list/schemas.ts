@@ -3,8 +3,8 @@ import {
   RESTRICTED_ITEMS_FEATURES,
   SWAGGER_TAGS,
   UNGROUPED_FEATURES,
-} from "../../consts";
-import { standard_errors, standard_post_errors } from "../../utils";
+} from "../../consts/index.js";
+import { standard_errors, standard_post_errors } from "../../utils/index.js";
 
 export const route_schemas = {
   get_restricted_items: {

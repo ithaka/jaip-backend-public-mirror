@@ -1,5 +1,5 @@
-import { ensure_error } from "../../../../utils";
-import { LogPayload } from "../../../../event_handler";
+import { ensure_error } from "../../../../utils/index.js";
+import { LogPayload } from "../../../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
   AddGroupFeatureBody,
@@ -7,10 +7,10 @@ import {
   GetPaginatedBody,
   GetPaginatedRequest,
   IdOnlyBody,
-} from "../../../../types/routes";
+} from "../../../../types/routes.js";
 import { Prisma } from "@prisma/client";
-import { FEATURES, UNGROUPED_FEATURES } from "../../../../consts";
-import { check_trimmed_strings } from "../../../../utils";
+import { FEATURES, UNGROUPED_FEATURES } from "../../../../consts/index.js";
+import { check_trimmed_strings } from "../../../../utils/index.js";
 
 export const get_group_features_handler =
   (fastify: FastifyInstance) =>

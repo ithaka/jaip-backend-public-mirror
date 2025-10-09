@@ -1,15 +1,19 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { User } from "./entities";
-import { Group } from "./groups";
-import { Search3Request, SearchRequest, StatusSearchRequest } from "./search";
+import { User } from "./entities.js";
+import { Group } from "./groups.js";
+import {
+  Search3Request,
+  SearchRequest,
+  StatusSearchRequest,
+} from "./search.js";
 import {
   CedarIdentityBlock,
   CedarItemView,
   EntitlementMap,
   Subdomain,
-} from "./routes";
-import { Feature } from "./features";
-import { DBGroup } from "./database";
+} from "./routes.js";
+import { Feature } from "./features.js";
+import { DBGroup } from "./database.js";
 import { targeted_alerts } from "@prisma/client";
 
 export interface CaptainsLog {

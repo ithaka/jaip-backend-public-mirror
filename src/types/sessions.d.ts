@@ -5,7 +5,7 @@ import type {
   AuthenticatedAccount,
   AuthenticatedProfile,
   Entitlement,
-} from "./accounts";
+} from "./accounts.js";
 export interface Session {
   uuid: uuidv4;
   sessionId: string;

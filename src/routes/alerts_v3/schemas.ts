@@ -1,6 +1,6 @@
 import { targeted_alerts } from "@prisma/client";
-import { FEATURES, SWAGGER_TAGS } from "../../consts/index";
-import { standard_post_errors } from "../../utils/index";
+import { FEATURES, SWAGGER_TAGS } from "../../consts/index.js";
+import { standard_post_errors } from "../../utils/index.js";
 
 export const route_schemas = {
   get_alerts: {

@@ -1,4 +1,4 @@
-import { User } from "../types/entities";
+import { User } from "../types/entities.js";
 
 // NOTE: This function will return true if the user is associated with any
 // group that has the feature enabled.

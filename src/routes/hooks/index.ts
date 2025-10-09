@@ -1,5 +1,5 @@
-import { User } from "../../types/entities";
-import { Session } from "../../types/sessions";
+import { User } from "../../types/entities.js";
+import { Session } from "../../types/sessions.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -11,6 +11,6 @@ declare module "fastify" {
   }
 }
 
-export * from "./requirements_guard";
-export * from "./validate";
-export * from "./route_guard";
+export * from "./requirements_guard.js";
+export * from "./validate.js";
+export * from "./route_guard.js";

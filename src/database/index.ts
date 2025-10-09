@@ -8,11 +8,11 @@ import {
   globally_restricted_items,
   targeted_alerts,
 } from "@prisma/client";
-import { DBEntity, IPBypassResult, Status } from "../types/database";
-import { User } from "../types/entities";
-import { Alert } from "../types/alerts";
-import { Feature } from "../types/features";
-import { Subdomain } from "../types/routes";
+import { DBEntity, IPBypassResult, Status } from "../types/database.js";
+import { User } from "../types/entities.js";
+import { Alert } from "../types/alerts.js";
+import { Feature } from "../types/features.js";
+import { Subdomain } from "../types/routes.js";
 
 export interface JAIPDatabase {
   // HEALTHCHECK

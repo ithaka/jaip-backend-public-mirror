@@ -1,6 +1,10 @@
-import { FEATURES, SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../consts";
-import { Subdomain } from "../../../types/routes";
-import { standard_post_errors } from "../../../utils";
+import {
+  FEATURES,
+  SWAGGER_TAGS,
+  UNGROUPED_FEATURES,
+} from "../../../consts/index.js";
+import { Subdomain } from "../../../types/routes.js";
+import { standard_post_errors } from "../../../utils/index.js";
 
 export const route_schemas = {
   get_subdomains: {

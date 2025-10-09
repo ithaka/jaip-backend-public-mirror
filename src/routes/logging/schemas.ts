@@ -1,6 +1,6 @@
-import { SWAGGER_TAGS } from "../../consts";
-import { LogPayload } from "../../event_handler";
-import { server_error } from "../../utils";
+import { SWAGGER_TAGS } from "../../consts/index.js";
+import { LogPayload } from "../../event_handler/index.js";
+import { server_error } from "../../utils/index.js";
 
 export const route_schemas = {
   logging: {

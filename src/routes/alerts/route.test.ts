@@ -1,14 +1,18 @@
 import { expect, test, vi } from "vitest";
-import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
-import route_settings from "./routes";
-import { route_schemas } from "./schemas";
-import { get_route } from "../../utils";
-import { alerts_fixture } from "../../tests/fixtures/alerts/fixtures";
+import {
+  build_test_server,
+  db_mock,
+  discover_mock,
+} from "../../tests/helpers.js";
+import route_settings from "./routes.js";
+import { route_schemas } from "./schemas.js";
+import { get_route } from "../../utils/index.js";
+import { alerts_fixture } from "../../tests/fixtures/alerts/fixtures.js";
 import axios from "axios";
 import {
   axios_session_data_with_code,
   valid_student_subdomain,
-} from "../../tests/fixtures/auth/fixtures";
+} from "../../tests/fixtures/auth/fixtures.js";
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 

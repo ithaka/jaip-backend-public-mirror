@@ -1,5 +1,5 @@
-import { FeatureDetails } from "./features";
-import { Group } from "./groups";
+import { FeatureDetails } from "./features.js";
+import { Group } from "./groups.js";
 
 export interface User {
   name: string;

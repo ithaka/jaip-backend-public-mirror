@@ -4,9 +4,9 @@ import {
   FEATURES,
   UNGROUPED_FEATURES,
   RESTRICTED_ITEMS_FEATURES,
-} from "../../consts";
-import { User } from "../../types/entities";
-import { server_error, standard_errors } from "../../utils";
+} from "../../consts/index.js";
+import { User } from "../../types/entities.js";
+import { server_error, standard_errors } from "../../utils/index.js";
 
 const get_entities_body = {
   body: {

@@ -12,12 +12,12 @@ import {
   globally_restricted_items,
   targeted_alerts,
 } from "@prisma/client";
-import { JAIPDatabase } from ".";
-import { DBEntity, IPBypassResult, Status } from "../types/database";
-import { User } from "../types/entities";
-import { ensure_error, paginated_array } from "../utils";
-import { Alert } from "../types/alerts";
-import { Subdomain } from "../types/routes";
+import { JAIPDatabase } from "./index.js";
+import { DBEntity, IPBypassResult, Status } from "../types/database.js";
+import { User } from "../types/entities.js";
+import { ensure_error, paginated_array } from "../utils/index.js";
+import { Alert } from "../types/alerts.js";
+import { Subdomain } from "../types/routes.js";
 
 export class PrismaJAIPDatabase implements JAIPDatabase {
   client: PrismaClient;

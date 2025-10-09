@@ -1,16 +1,16 @@
-import { ensure_error, user_has_feature } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error, user_has_feature } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
   GetRestrictedItemsBody,
   SearchRequestBody,
   StatusParams,
   StatusSearchRequestBody,
-} from "../../types/routes";
-import { FEATURES, SEARCH3, STATUS_OPTIONS } from "../../consts";
-import { Search3Document, Search3Request } from "../../types/search";
+} from "../../types/routes.js";
+import { FEATURES, SEARCH3, STATUS_OPTIONS } from "../../consts/index.js";
+import { Search3Document, Search3Request } from "../../types/search.js";
 import { jstor_types, status_options } from "@prisma/client";
-import { Status } from "../../types/database";
+import { Status } from "../../types/database.js";
 import {
   do_search3,
   format_status_details,
@@ -21,10 +21,10 @@ import {
   get_status_keys,
   get_tokens,
   get_user_statuses,
-} from "./helpers";
-import { map_document } from "../queries/search";
-import { History, MediaRecord } from "../../types/media_record";
-import { get_restricted_items_handler } from "../global_restricted_list/handlers";
+} from "./helpers.js";
+import { map_document } from "../queries/search.js";
+import { History, MediaRecord } from "../../types/media_record.js";
+import { get_restricted_items_handler } from "../global_restricted_list/handlers.js";
 
 export const status_search_handler =
   (fastify: FastifyInstance) =>

@@ -1,14 +1,18 @@
-import { Status } from "../../types/database";
+import { Status } from "../../types/database.js";
 import { FastifyInstance, FastifyRequest } from "fastify";
 import axios, { AxiosResponse } from "axios";
-import { Search3Document, Search3Request, Snippet } from "../../types/search";
-import { ensure_error } from "../../utils";
+import {
+  Search3Document,
+  Search3Request,
+  Snippet,
+} from "../../types/search.js";
+import { ensure_error } from "../../utils/index.js";
 import {
   PSEUDO_DISCIPLINE_CODES,
   SEARCH3,
   SEARCH_SNIPPET_SERVICE,
-} from "../../consts";
-import { JAIPDatabase } from "../../database";
+} from "../../consts/index.js";
+import { JAIPDatabase } from "../../database/index.js";
 import {
   globally_restricted_items,
   jstor_types,

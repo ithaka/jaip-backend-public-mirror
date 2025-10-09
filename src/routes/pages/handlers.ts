@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { PagesParams } from "../../types/routes";
-import { LogPayload } from "../../event_handler";
-import { ensure_error, user_has_feature } from "../../utils";
+import { PagesParams } from "../../types/routes.js";
+import { LogPayload } from "../../event_handler/index.js";
+import { ensure_error, user_has_feature } from "../../utils/index.js";
 import {
   get_and_extract_metadata,
   get_entitlement_map,
@@ -9,9 +9,9 @@ import {
   get_md_from_cedar,
   get_page_url,
   get_s3_object,
-} from "./helpers";
+} from "./helpers.js";
 import { AxiosError } from "axios";
-import { FEATURES } from "../../consts";
+import { FEATURES } from "../../consts/index.js";
 
 export const page_handler =
   (fastify: FastifyInstance) =>

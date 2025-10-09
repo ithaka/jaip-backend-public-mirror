@@ -1,6 +1,6 @@
-import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../consts";
-import { Group } from "../../../types/groups";
-import { standard_post_errors } from "../../../utils";
+import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../consts/index.js";
+import { Group } from "../../../types/groups.js";
+import { standard_post_errors } from "../../../utils/index.js";
 
 export const route_schemas = {
   get_groups: {

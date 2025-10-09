@@ -1,14 +1,14 @@
-import { ensure_error } from "../../../../utils";
-import { LogPayload } from "../../../../event_handler";
+import { ensure_error } from "../../../../utils/index.js";
+import { LogPayload } from "../../../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
   AddUngroupedFeatureBody,
   EditUngroupedFeatureBody,
   GetPaginatedBody,
   IdOnlyBody,
-} from "../../../../types/routes";
+} from "../../../../types/routes.js";
 import { Prisma } from "@prisma/client";
-import { check_trimmed_strings } from "../../../../utils";
+import { check_trimmed_strings } from "../../../../utils/index.js";
 
 export const get_ungrouped_features_handler =
   (fastify: FastifyInstance) =>

@@ -1,21 +1,21 @@
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { entity_types, user_roles } from "@prisma/client";
 import {
   AddEntitiesBody,
   GetEntitiesBody,
   RemoveEntitiesBody,
-} from "../../types/routes";
+} from "../../types/routes.js";
 import {
   add_or_edit_entity,
   get_facilities,
   get_users,
   remove_facility,
   remove_user,
-} from "./helpers";
-import { FEATURES, UNGROUPED_FEATURES } from "../../consts";
-import { User } from "../../types/entities";
+} from "./helpers.js";
+import { FEATURES, UNGROUPED_FEATURES } from "../../consts/index.js";
+import { User } from "../../types/entities.js";
 
 export const get_entities_handler =
   (fastify: FastifyInstance, type: entity_types) =>

@@ -4,9 +4,9 @@ import {
   get_current_user,
   get_email_from_session,
   get_code_from_session,
-} from "../auth/helpers";
-import { ensure_error } from "../../utils";
-import { SUBDOMAINS } from "../../consts";
+} from "../auth/helpers.js";
+import { ensure_error } from "../../utils/index.js";
+import { SUBDOMAINS } from "../../consts/index.js";
 
 export const route_guard =
   (is_private: boolean) =>

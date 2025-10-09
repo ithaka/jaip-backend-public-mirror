@@ -1,8 +1,8 @@
 import { Prisma, user_roles } from "@prisma/client";
-import { DBEntity } from "../../types/database";
-import { User } from "../../types/entities";
-import { Group } from "../../types/groups";
-import { UngroupedFeatureDetails } from "../../types/features";
+import { DBEntity } from "../../types/database.js";
+import { User } from "../../types/entities.js";
+import { Group } from "../../types/groups.js";
+import { UngroupedFeatureDetails } from "../../types/features.js";
 
 export const get_facility_query = (
   arr: string[],

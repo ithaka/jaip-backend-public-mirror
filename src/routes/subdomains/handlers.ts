@@ -1,7 +1,7 @@
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SUBDOMAINS } from "../../consts";
+import { SUBDOMAINS } from "../../consts/index.js";
 
 export const subdomain_validation_handler =
   (fastify: FastifyInstance) =>

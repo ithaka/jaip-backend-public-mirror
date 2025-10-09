@@ -1,14 +1,14 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { route_schemas } from "./schemas";
+import { route_schemas } from "./schemas.js";
 import {
   add_subdomain_handler,
   delete_subdomain_handler,
   edit_subdomain_handler,
   get_subdomains_handler,
   reactivate_subdomain_handler,
-} from "./handlers";
-import { subdomains_prefix } from "./options";
-import { get_route } from "../../../utils";
+} from "./handlers.js";
+import { subdomains_prefix } from "./options.js";
+import { get_route } from "../../../utils/index.js";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_subdomains;

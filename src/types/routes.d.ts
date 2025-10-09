@@ -1,13 +1,13 @@
 import { RouteGenericInterface } from "fastify";
-import { SearchRequest, StatusSearchRequest } from "./search";
-import { Entitlement } from "./accounts";
+import { SearchRequest, StatusSearchRequest } from "./search.js";
+import { Entitlement } from "./accounts.js";
 import {
   alert_statuses,
   entity_types,
   globally_restricted_items,
 } from "@prisma/client";
-import { Group } from "./groups";
-import { OFFLINE_INDICES } from "../consts";
+import { Group } from "./groups.js";
+import { OFFLINE_INDICES } from "../consts/index.js";
 
 export interface RouteSettings {
   routes: (

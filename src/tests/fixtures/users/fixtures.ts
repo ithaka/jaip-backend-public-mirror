@@ -1,7 +1,11 @@
 // These are various facility and user objects for use across multiple tests.
 
-import { ENTITY_TYPES, FEATURES, UNGROUPED_FEATURES } from "../../../consts";
-import { DBEntity } from "../../../types/database";
+import {
+  ENTITY_TYPES,
+  FEATURES,
+  UNGROUPED_FEATURES,
+} from "../../../consts/index.js";
+import { DBEntity } from "../../../types/database.js";
 
 export const internal_ithaka_permissions = (enabled: boolean) =>
   structuredClone([

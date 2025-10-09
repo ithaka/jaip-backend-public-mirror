@@ -5,22 +5,22 @@ import {
   build_test_server,
   db_mock,
   discover_mock,
-} from "../../../tests/helpers";
-import route_settings from "../routes";
-import { route_schemas } from "../schemas";
-import { get_route } from "../../../utils";
-import { restricted_items_list } from "../../../tests/fixtures/global_restricted_list/fixtures";
+} from "../../../tests/helpers.js";
+import route_settings from "../routes.js";
+import { route_schemas } from "../schemas.js";
+import { get_route } from "../../../utils/index.js";
+import { restricted_items_list } from "../../../tests/fixtures/global_restricted_list/fixtures.js";
 import axios from "axios";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,
-} from "../../../tests/fixtures/auth/fixtures";
+} from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_user_ungrouped,
   basic_user_ungrouped_manage_restricted_list,
-} from "../../../tests/fixtures/users/fixtures";
+} from "../../../tests/fixtures/users/fixtures.js";
 import { json2csv } from "json-2-csv";
-import { map_restricted_items_list } from "../helpers";
+import { map_restricted_items_list } from "../helpers.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {

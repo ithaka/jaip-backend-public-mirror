@@ -1,6 +1,6 @@
-import { SWAGGER_TAGS } from "../../consts";
-import { CedarMetadataReturn } from "../../types/routes";
-import { standard_errors } from "../../utils";
+import { SWAGGER_TAGS } from "../../consts/index.js";
+import { CedarMetadataReturn } from "../../types/routes.js";
+import { standard_errors } from "../../utils/index.js";
 
 export const page_prefix = "/page";
 export const metadata_prefix = "/metadata";

@@ -1,16 +1,16 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { ensure_error, user_has_ungrouped_feature } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error, user_has_ungrouped_feature } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import {
   RestrictItem,
   GetRestrictedItemsBody,
   UnrestrictItem,
-} from "../../types/routes";
-import { SearchRequest } from "../../types/search";
-import { search_handler } from "../search/handlers";
+} from "../../types/routes.js";
+import { SearchRequest } from "../../types/search.js";
+import { search_handler } from "../search/handlers.js";
 import { json2csv } from "json-2-csv";
-import { map_restricted_items_list } from "./helpers";
-import { UNGROUPED_FEATURES } from "../../consts";
+import { map_restricted_items_list } from "./helpers.js";
+import { UNGROUPED_FEATURES } from "../../consts/index.js";
 import { Prisma } from "@prisma/client";
 
 export const get_restricted_items_handler =

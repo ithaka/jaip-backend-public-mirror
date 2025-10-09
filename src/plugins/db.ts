@@ -1,11 +1,11 @@
-import type { JAIPDatabase } from "../database";
+import type { JAIPDatabase } from "../database/index.js";
 import fp from "fastify-plugin";
 import {
   FastifyInstance,
   FastifyPluginAsync,
   FastifyPluginOptions,
 } from "fastify";
-import { PrismaJAIPDatabase } from "../database/prisma";
+import { PrismaJAIPDatabase } from "../database/prisma.js";
 import { PrismaClient } from "@prisma/client";
 
 // Use TypeScript module augmentation to declare the type of server.prisma to be PrismaClient

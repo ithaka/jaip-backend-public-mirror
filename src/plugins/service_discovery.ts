@@ -4,10 +4,10 @@ import {
   FastifyPluginAsync,
   FastifyPluginOptions,
 } from "fastify";
-import { ServiceDiscoveryPluginOptions } from "../types/plugins";
-import { JSTORInstance, JSTORInstanceError } from "../types/services";
+import { ServiceDiscoveryPluginOptions } from "../types/plugins.js";
+import { JSTORInstance, JSTORInstanceError } from "../types/services.js";
 import axios from "axios";
-import { ensure_error } from "../utils";
+import { ensure_error } from "../utils/index.js";
 
 declare module "fastify" {
   interface FastifyInstance {

@@ -3,23 +3,23 @@ import {
   build_test_server,
   db_mock,
   discover_mock,
-} from "../../../tests/helpers";
-import route_settings from "../routes";
-import { route_schemas } from "../schemas";
-import { get_route } from "../../../utils";
+} from "../../../tests/helpers.js";
+import route_settings from "../routes.js";
+import { route_schemas } from "../schemas.js";
+import { get_route } from "../../../utils/index.js";
 import {
   submit_request_invalid,
   submit_request_valid,
-} from "../../../tests/fixtures/media_review/requests/fixtures";
+} from "../../../tests/fixtures/media_review/requests/fixtures.js";
 import axios from "axios";
 import {
   axios_session_data_with_email,
   valid_student_subdomain,
-} from "../../../tests/fixtures/auth/fixtures";
+} from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
   basic_facility_without_permissions,
-} from "../../../tests/fixtures/users/fixtures";
+} from "../../../tests/fixtures/users/fixtures.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {

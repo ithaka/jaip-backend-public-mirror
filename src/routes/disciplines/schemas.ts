@@ -1,6 +1,6 @@
-import { SWAGGER_TAGS } from "../../consts";
-import { Discipline, Journal } from "../../types/disciplines";
-import { standard_errors } from "../../utils";
+import { SWAGGER_TAGS } from "../../consts/index.js";
+import { Discipline, Journal } from "../../types/disciplines.js";
+import { standard_errors } from "../../utils/index.js";
 
 export const route_schemas = {
   disciplines: {

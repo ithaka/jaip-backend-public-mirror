@@ -1,4 +1,4 @@
-import { CSVRestrictedItem, RestrictedItem } from "../../types/routes";
+import { CSVRestrictedItem, RestrictedItem } from "../../types/routes.js";
 
 export const map_restricted_items_list = (
   restricted_items: RestrictedItem[],

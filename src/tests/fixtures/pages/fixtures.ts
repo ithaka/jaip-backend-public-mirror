@@ -2,7 +2,7 @@
 // Delivery Service. If it should fail, first verify that this iid is still there
 
 import { jstor_types, status_options } from "@prisma/client";
-import { basic_facility, basic_reviewer } from "../users/fixtures";
+import { basic_facility, basic_reviewer } from "../users/fixtures.js";
 
 // in TEST.
 export const iid = "06d158e4-d18e-3ba8-acd3-edea68f9f863";

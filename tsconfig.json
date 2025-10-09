@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "moduleResolution": "node",
     "noImplicitOverride": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -24,6 +24,11 @@
     "./src/**/*.test.ts"
   ],
   "ts-node": {
-    "files": true
+    "files": true,
+    "esm": true,
+    "compilerOptions": {
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext"
+    }
   }
 }

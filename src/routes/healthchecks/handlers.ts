@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { polaris_healthcheck, db_healthcheck } from "./helpers";
-import { ensure_error } from "../../utils";
+import { polaris_healthcheck, db_healthcheck } from "./helpers.js";
+import { ensure_error } from "../../utils/index.js";
 
 // This is a very simple handler to confirm that the server is running.
 export const liveness_handler =

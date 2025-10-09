@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import axios from "axios";
-import { ensure_error } from "../../utils";
+import { ensure_error } from "../../utils/index.js";
 
 export const polaris_healthcheck = async (
   fastify: FastifyInstance,

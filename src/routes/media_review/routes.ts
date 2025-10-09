@@ -1,5 +1,5 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { route_schemas } from "./schemas";
+import { route_schemas } from "./schemas.js";
 import { status_options } from "@prisma/client";
 import {
   approval_handler,
@@ -7,9 +7,9 @@ import {
   bulk_undo_handler,
   denial_and_incomplete_handler,
   request_handler,
-} from "./handlers";
-import { media_review_prefix } from "./options";
-import { get_route } from "../../utils";
+} from "./handlers.js";
+import { media_review_prefix } from "./options.js";
+import { get_route } from "../../utils/index.js";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.request;

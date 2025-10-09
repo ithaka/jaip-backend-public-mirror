@@ -1,6 +1,6 @@
 import { status_options } from "@prisma/client";
-import { Discipline } from "../types/disciplines";
-import type { EntityType } from "../types/entities";
+import { Discipline } from "../types/disciplines.js";
+import type { EntityType } from "../types/entities.js";
 import { HTTPMethods } from "fastify";
 
 export const OFFLINE_INDICES = {

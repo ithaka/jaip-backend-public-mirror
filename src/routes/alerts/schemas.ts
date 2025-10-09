@@ -1,5 +1,5 @@
-import { SWAGGER_TAGS, MESSAGES } from "../../consts";
-import { server_error } from "../../utils";
+import { SWAGGER_TAGS, MESSAGES } from "../../consts/index.js";
+import { server_error } from "../../utils/index.js";
 
 export const route_schemas = {
   alerts: {

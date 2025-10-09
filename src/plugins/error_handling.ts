@@ -1,6 +1,6 @@
 import fastify_plugin from "fastify-plugin";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
-import type { ErrorHandlerPluginOptions } from "../types/plugins";
+import type { ErrorHandlerPluginOptions } from "../types/plugins.js";
 
 const error_handler_plugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
   fastify_plugin(async (fastify: FastifyInstance) => {

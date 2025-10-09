@@ -4,15 +4,23 @@ import fastify_swagger_ui from "@fastify/swagger-ui";
 import fastify_cookie from "@fastify/cookie";
 import fastify_cors from "@fastify/cors";
 
-import { SWAGGER_OPTS, UNGUARDED_ROUTES, VALIDATED_METHODS } from "./consts";
+import {
+  SWAGGER_OPTS,
+  UNGUARDED_ROUTES,
+  VALIDATED_METHODS,
+} from "./consts/index.js";
 
-import plugins from "./plugins";
+import plugins from "./plugins/index.js";
 
 import "dotenv/config";
-import { requirements_guard, route_guard, validate } from "./routes/hooks";
-import { SWAGGER_TAGS } from "./consts";
-import { add_subdomain } from "./routes/hooks/add_subdomain";
-import { RouteSettings } from "./types/routes";
+import {
+  requirements_guard,
+  route_guard,
+  validate,
+} from "./routes/hooks/index.js";
+import { SWAGGER_TAGS } from "./consts/index.js";
+import { add_subdomain } from "./routes/hooks/add_subdomain.js";
+import { RouteSettings } from "./types/routes.js";
 
 // This modification allows us to extend the fastify schema with an
 declare module "fastify" {

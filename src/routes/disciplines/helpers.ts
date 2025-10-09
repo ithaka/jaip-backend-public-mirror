@@ -1,10 +1,10 @@
-import { Discipline, Journal } from "../../types/disciplines";
+import { Discipline, Journal } from "../../types/disciplines.js";
 import {
   bulk_approval_query,
   map_bulk_approval_status,
-} from "../queries/bulk_approval";
+} from "../queries/bulk_approval.js";
 import { FastifyInstance } from "fastify";
-import { ensure_error } from "../../utils";
+import { ensure_error } from "../../utils/index.js";
 import { jstor_types, status_options } from "@prisma/client";
 
 type RequiredCode = Required<string>;

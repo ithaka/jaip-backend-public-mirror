@@ -1,7 +1,7 @@
 // The request body is invalid because it is missing the "query" property, which is
 
-import { map_entities } from "../../../routes/queries/entities";
-import { basic_admin, basic_reviewer } from "../users/fixtures";
+import { map_entities } from "../../../routes/queries/entities.js";
+import { basic_admin, basic_reviewer } from "../users/fixtures.js";
 
 // required by the schema.
 export const get_entities_body_invalid = {

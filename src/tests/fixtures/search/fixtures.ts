@@ -1,6 +1,6 @@
-import { map_document } from "../../../routes/queries/search";
-import { Status } from "../../../types/database";
-import { MediaRecord } from "../../../types/media_record";
+import { map_document } from "../../../routes/queries/search.js";
+import { Status } from "../../../types/database.js";
+import { MediaRecord } from "../../../types/media_record.js";
 
 export const search_request_invalid = {
   query: "test",

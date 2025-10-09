@@ -3,21 +3,21 @@ import {
   build_test_server,
   db_mock,
   discover_mock,
-} from "../../../../tests/helpers";
-import route_settings from "../routes";
-import { route_schemas } from "../schemas";
-import { get_route } from "../../../../utils";
+} from "../../../../tests/helpers.js";
+import route_settings from "../routes.js";
+import { route_schemas } from "../schemas.js";
+import { get_route } from "../../../../utils/index.js";
 import axios from "axios";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,
-} from "../../../../tests/fixtures/auth/fixtures";
+} from "../../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_user_ungrouped_edit_subdomains,
   basic_user_ungrouped_remove_subdomains,
   delete_subdomain_body_invalid,
   delete_subdomain_body_valid,
-} from "../../../../tests/fixtures/site_administration/subdomains/fixtures";
+} from "../../../../tests/fixtures/site_administration/subdomains/fixtures.js";
 
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;

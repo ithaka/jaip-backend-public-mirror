@@ -1,13 +1,13 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { route_schemas } from "./schemas";
+import { route_schemas } from "./schemas.js";
 import {
   add_or_edit_entities_handler,
   get_entities_handler,
   remove_entities_handler,
-} from "./handlers";
+} from "./handlers.js";
 import { entity_types } from "@prisma/client";
-import { route_prefix } from "./options";
-import { get_route } from "../../utils";
+import { route_prefix } from "./options.js";
+import { get_route } from "../../utils/index.js";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   // USERS

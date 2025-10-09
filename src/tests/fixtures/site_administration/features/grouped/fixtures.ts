@@ -1,5 +1,5 @@
-import { UNGROUPED_FEATURES } from "../../../../../consts";
-import { basic_user_ungrouped } from "../../../users/fixtures";
+import { UNGROUPED_FEATURES } from "../../../../../consts/index.js";
+import { basic_user_ungrouped } from "../../../users/fixtures.js";
 
 export const get_grouped_feature_body_invalid = {
   page: 1,

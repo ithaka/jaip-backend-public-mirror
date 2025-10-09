@@ -3,10 +3,10 @@ import {
   build_test_server,
   db_mock,
   discover_mock,
-} from "../../../tests/helpers";
-import { get_route } from "../../../utils";
-import route_settings from "../routes";
-import { route_schemas } from "../schemas";
+} from "../../../tests/helpers.js";
+import { get_route } from "../../../utils/index.js";
+import route_settings from "../routes.js";
+import { route_schemas } from "../schemas.js";
 import {
   bulk_statuses,
   item_statuses,
@@ -17,16 +17,16 @@ import {
   search_request_invalid,
   search_request_valid,
   tokens,
-} from "../../../tests/fixtures/search/fixtures";
+} from "../../../tests/fixtures/search/fixtures.js";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,
-} from "../../../tests/fixtures/auth/fixtures";
+} from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
   basic_reviewer,
-} from "../../../tests/fixtures/users/fixtures";
-import { processed_search_response } from "../../../tests/fixtures/search/fixtures";
+} from "../../../tests/fixtures/users/fixtures.js";
+import { processed_search_response } from "../../../tests/fixtures/search/fixtures.js";
 import axios from "axios";
 
 const app = build_test_server([route_settings]);

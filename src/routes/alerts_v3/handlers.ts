@@ -1,15 +1,19 @@
-import { ensure_error } from "../../utils/index";
-import { LogPayload } from "../../event_handler/index";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type {
   AddAlertBody,
   GetPaginatedGroupedBody,
   IdOnlyBody,
   EditAlertBody,
-} from "../../types/routes.d.ts";
+} from "../../types/routes.js";
 import { Prisma } from "@prisma/client";
-import { ENTITY_TYPES, FEATURES, UNGROUPED_FEATURES } from "../../consts/index";
-import { is_target_valid } from "./helpers";
+import {
+  ENTITY_TYPES,
+  FEATURES,
+  UNGROUPED_FEATURES,
+} from "../../consts/index.js";
+import { is_target_valid } from "./helpers.js";
 
 export const get_alerts_handler =
   (fastify: FastifyInstance) =>

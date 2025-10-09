@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, Mock, vi } from "vitest";
-import build from "../build";
-import { RouteSettings } from "../types/routes";
-import type { JAIPDatabase } from "../database";
+import build from "../build.js";
+import { RouteSettings } from "../types/routes.js";
+import type { JAIPDatabase } from "../database/index.js";
 import { FastifyInstance } from "fastify";
 
 export const db_mock = {

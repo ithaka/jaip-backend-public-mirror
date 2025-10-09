@@ -1,4 +1,4 @@
-import { PSEUDO_DISCIPLINES } from "../../../consts";
+import { PSEUDO_DISCIPLINES } from "../../../consts/index.js";
 
 export const disciplines_response = [
   {

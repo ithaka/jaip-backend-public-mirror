@@ -1,6 +1,6 @@
-import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../../consts";
-import { UngroupedFeature } from "../../../../types/features";
-import { standard_post_errors } from "../../../../utils";
+import { SWAGGER_TAGS, UNGROUPED_FEATURES } from "../../../../consts/index.js";
+import { UngroupedFeature } from "../../../../types/features.js";
+import { standard_post_errors } from "../../../../utils/index.js";
 
 export const route_schemas = {
   get_ungrouped_features: {

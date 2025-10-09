@@ -1,5 +1,5 @@
-import { FEATURES, SWAGGER_TAGS } from "../../consts";
-import { standard_post_errors } from "../../utils";
+import { FEATURES, SWAGGER_TAGS } from "../../consts/index.js";
+import { standard_post_errors } from "../../utils/index.js";
 
 export const route_schemas = {
   request: {

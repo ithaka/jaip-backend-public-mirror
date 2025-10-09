@@ -1,23 +1,23 @@
-import type { Session } from "../../types/sessions";
-import type { Entity, User } from "../../types/entities";
-import { DBEntity } from "../../types/database";
+import type { Session } from "../../types/sessions.js";
+import type { Entity, User } from "../../types/entities.js";
+import { DBEntity } from "../../types/database.js";
 import {
   get_user_query,
   get_facility_query,
   map_entities,
   get_many_entities_select_clause,
-} from "../queries/entities";
+} from "../queries/entities.js";
 import axios from "axios";
-import { session_query } from "../queries/session";
+import { session_query } from "../queries/session.js";
 import {
   ensure_error,
   get_groups_with_any_features_enabled,
   ip_handler,
-} from "../../utils";
+} from "../../utils/index.js";
 import { FastifyInstance, FastifyRequest } from "fastify";
-import { RESTRICTED_ITEMS_FEATURES, SUBDOMAINS } from "../../consts";
-import { SESSION_MANAGER } from "../../consts";
-import { JAIPDatabase } from "../../database";
+import { RESTRICTED_ITEMS_FEATURES, SUBDOMAINS } from "../../consts/index.js";
+import { SESSION_MANAGER } from "../../consts/index.js";
+import { JAIPDatabase } from "../../database/index.js";
 import { user_roles } from "@prisma/client";
 
 let counter: { [key: string]: number } = {};

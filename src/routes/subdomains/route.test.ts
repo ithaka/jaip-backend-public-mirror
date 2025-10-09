@@ -1,13 +1,13 @@
 import { expect, test } from "vitest";
-import { build_test_server, db_mock } from "../../tests/helpers";
-import route_settings from "./routes";
-import { route_schemas } from "./schemas";
-import { get_route, get_subdomain } from "../../utils";
-import { alerts_fixture } from "../../tests/fixtures/alerts/fixtures";
+import { build_test_server, db_mock } from "../../tests/helpers.js";
+import route_settings from "./routes.js";
+import { route_schemas } from "./schemas.js";
+import { get_route, get_subdomain } from "../../utils/index.js";
+import { alerts_fixture } from "../../tests/fixtures/alerts/fixtures.js";
 import {
   valid_admin_subdomain,
   valid_student_subdomain,
-} from "../../tests/fixtures/auth/fixtures";
+} from "../../tests/fixtures/auth/fixtures.js";
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 

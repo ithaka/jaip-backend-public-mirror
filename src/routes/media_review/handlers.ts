@@ -1,14 +1,14 @@
 import { jstor_types, Prisma, status_options } from "@prisma/client";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import {
   MediaReviewApproval,
   MediaReviewBulk,
   MediaReviewBulUndo,
   MediaReviewDenial,
   MediaReviewRequest,
-} from "../../types/routes";
+} from "../../types/routes.js";
 
 export const denial_and_incomplete_handler = (
   fastify: FastifyInstance,

@@ -1,8 +1,8 @@
-import { ensure_error } from "../../utils";
-import { LogPayload } from "../../event_handler";
+import { ensure_error } from "../../utils/index.js";
+import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { OfflineIndexParams } from "../../types/routes";
-import { OFFLINE_INDICES } from "../../consts";
+import { OfflineIndexParams } from "../../types/routes.js";
+import { OFFLINE_INDICES } from "../../consts/index.js";
 
 export const download_offline_index_handler =
   (fastify: FastifyInstance) =>

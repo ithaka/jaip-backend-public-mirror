@@ -1,5 +1,5 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { route_schemas } from "./schemas";
+import { route_schemas } from "./schemas.js";
 import {
   add_group_handler,
   clear_history_handler,
@@ -8,9 +8,9 @@ import {
   edit_group_handler,
   get_groups_handler,
   reactivate_group_handler,
-} from "./handlers";
-import { groups_prefix } from "./options";
-import { get_route } from "../../../utils";
+} from "./handlers.js";
+import { groups_prefix } from "./options.js";
+import { get_route } from "../../../utils/index.js";
 
 async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
   opts.schema = route_schemas.get_groups;

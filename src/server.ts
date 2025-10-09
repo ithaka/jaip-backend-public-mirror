@@ -1,6 +1,6 @@
-import build from "./build";
+import build from "./build.js";
 import { v4 as uuidv4 } from "uuid";
-import route_settings from "./routes";
+import route_settings from "./routes/index.js";
 
 const server = build(
   {

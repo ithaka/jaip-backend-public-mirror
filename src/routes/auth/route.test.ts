@@ -1,7 +1,11 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { build_test_server, db_mock, discover_mock } from "../../tests/helpers";
-import route_settings from "./routes";
-import { route_schemas } from "./schemas";
+import {
+  build_test_server,
+  db_mock,
+  discover_mock,
+} from "../../tests/helpers.js";
+import route_settings from "./routes.js";
+import { route_schemas } from "./schemas.js";
 import {
   axios_session_data_no_email_or_code,
   axios_session_data_with_code,
@@ -11,15 +15,15 @@ import {
   get_ip_bypass_resolved_value,
   get_sitecode_by_subdomain_resolved_value,
   valid_provider_subdomain,
-} from "../../tests/fixtures/auth/fixtures";
+} from "../../tests/fixtures/auth/fixtures.js";
 import axios from "axios";
-import { get_route } from "../../utils";
+import { get_route } from "../../utils/index.js";
 import {
   basic_admin,
   basic_facility,
-} from "../../tests/fixtures/users/fixtures";
-import { map_entities } from "../queries/entities";
-import { Entity } from "../../types/entities";
+} from "../../tests/fixtures/users/fixtures.js";
+import { map_entities } from "../queries/entities.js";
+import { Entity } from "../../types/entities.js";
 
 const app = build_test_server([route_settings]);
 
