@@ -320,15 +320,11 @@ export const get_tokens = async (
     );
     if (request.is_authenticated_admin) {
       request.log.info(`Getting all tokens for admin user`);
-      const token_response = await db.get_all_tokens();
-      const error = token_response[2];
+      const [tokens, error] = await db.get_all_tokens();
       if (error) {
         throw error;
       }
-      const db_tokens = token_response[0];
-      db_tokens.forEach((t) => {
-        tokens.push(t);
-      });
+      return [tokens, null];
     } else {
       request.log.info(`Using tokens from session`);
       for (const license of request.session.licenses) {

@@ -66,7 +66,6 @@ export const db_mock = {
   create_targeted_alert: vi.fn().mockName("create_targeted_alert"),
   update_targeted_alert: vi.fn().mockName("update_targeted_alert"),
   remove_targeted_alert: vi.fn().mockName("remove_targeted_alert"),
-  get_collection_ids: vi.fn().mockName("get_collection_ids"),
 } as JAIPDatabase as Record<keyof JAIPDatabase, Mock>;
 
 export const discover_mock = vi.fn().mockName("discover");

@@ -12,7 +12,6 @@ import site_administration from "./site_administration/index.js";
 import environment from "./environment/routes.js";
 import logging from "./logging/routes.js";
 import global_restricted_list from "./global_restricted_list/routes.js";
-import search_v3 from "./search_v3/routes.js";
 import alerts_v3 from "./alerts_v3/routes.js";
 
 // import downloads from "./downloads/routes";
@@ -36,7 +35,6 @@ export default [
   environment,
   logging,
   global_restricted_list,
-  search_v3,
   alerts_v3,
   // TODO: Once the route is ready, this can be uncommented.
   // downloads

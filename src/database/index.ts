@@ -156,10 +156,7 @@ export interface JAIPDatabase {
   ) => Promise<Error | null>;
 
   // TOKENS
-  get_all_tokens: () => Promise<[string[], string[], Error | null]>;
-
-  // COLLECTIONS
-  get_collection_ids: () => Promise<[string[], Error | null]>;
+  get_all_tokens: () => Promise<[string[], Error | null]>;
 
   // SITE ADMINISTRATION
 
