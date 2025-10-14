@@ -1,5 +1,5 @@
 import { status_options } from "@prisma/client";
-import { Discipline } from "../types/disciplines.js";
+import { AlternateDiscipline, Discipline } from "../types/disciplines.js";
 import type { EntityType } from "../types/entities.js";
 import { HTTPMethods } from "fastify";
 
@@ -62,6 +62,9 @@ export const MESSAGES = {
   public_endpoint_disclaimer:
     "<strong>NOTE: The response from this endpoint can depend on certain cookies/headers that are provided with the request. This Swagger UI is NOT capable of providing such cookies/headers.</strong>",
 };
+// These are content types that we'll treat as disciplines for purposes of approvals. They are listed
+// both in the disciplines endpoint and as content types, and can be selected as disciplines for purposes
+// of approvals.
 export const PSEUDO_DISCIPLINES = [
   {
     code: "research_report",
@@ -74,9 +77,24 @@ export const PSEUDO_DISCIPLINES = [
     parent: false,
   } as Discipline,
 ];
-export const PSEUDO_DISCIPLINE_CODES = PSEUDO_DISCIPLINES.map(
-  (disc) => disc.code,
-);
+// These are content types that we'll treat as disciplines for purposes of approvals, but that
+// should not be listed in the disciplines endpoint. They still need to be recognized when they
+// appear as content types in the metadata for an item. Example: "mp_research_report" is a
+// content type that can appear in the metadata for an item that is otherwise treated as a
+// "research_report" (including by Search3) and it should be treated as a pseudo-discipline
+// for approval purposes, but it should not be listed in the disciplines endpoint.
+export const UNLISTED_PSEUDO_DISCIPLINES: {
+  [key: string]: AlternateDiscipline;
+} = {
+  mp_research_report: {
+    code: "mp_research_report",
+    label: "MP Research Report",
+    alternate_codes: ["research_report"],
+  },
+};
+export const PSEUDO_DISCIPLINE_CODES = [
+  ...PSEUDO_DISCIPLINES.map((disc) => disc.code),
+];
 export const SWAGGER_OPTS = {
   openapi: {
     info: {

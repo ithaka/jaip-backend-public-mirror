@@ -21,6 +21,11 @@ export interface Discipline {
   titles: string;
 }
 
+export interface AlternateDiscipline {
+  code: string;
+  label: string;
+  alternate_codes: string[];
+}
 export interface DisciplineObject {
   [key: string]: Discipline;
 }

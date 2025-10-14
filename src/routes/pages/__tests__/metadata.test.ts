@@ -11,10 +11,13 @@ import {
   approved_discipline_response,
   approved_item_response,
   approved_journal_response,
+  approved_pseudo_discipline_response,
   cedar_item_view_response,
+  cedar_item_view_unlisted_pseudo_response,
   denied_item_response,
   iid_path,
   metadata_response_allowed,
+  metadata_response_allowed_pseudo,
   metadata_response_forbidden,
 } from "../../../tests/fixtures/pages/fixtures.js";
 import axios from "axios";
@@ -128,6 +131,41 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
   });
 
   expect(res.json()).toStrictEqual(metadata_response_allowed);
+  expect(axios.get).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+  expect(res.statusCode).toEqual(200);
+});
+
+test(`requests the ${metadata_route} route with a facility and unlisted pseudo discipline approval`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
+  axios.get = vi
+    .fn()
+    .mockResolvedValueOnce({
+      status: 200,
+      data: cedar_item_view_unlisted_pseudo_response,
+    })
+    .mockResolvedValue({
+      status: 200,
+      data: ale_response,
+    });
+  db_mock.get_item_status.mockResolvedValueOnce([null, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([
+    [approved_pseudo_discipline_response],
+    null,
+  ]);
+
+  const res = await app.inject({
+    method: "GET",
+    url: metadata_route,
+    headers: {
+      host: valid_student_subdomain,
+    },
+  });
+
+  expect(res.json()).toStrictEqual(metadata_response_allowed_pseudo);
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
   expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);

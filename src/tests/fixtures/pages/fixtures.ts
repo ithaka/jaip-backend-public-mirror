@@ -842,6 +842,13 @@ export const metadata_response_allowed = {
   pageCount: 8,
   status: 200,
 };
+export const metadata_response_allowed_pseudo = {
+  itemType: "mp_research_report_part",
+  contentType: "mp_research_report",
+  isRightToLeft: false,
+  pageCount: 8,
+  status: 200,
+};
 const basic_item_response = {
   created_at: new Date("2023-10-01T00:00:00Z"),
   entities: {
@@ -868,6 +875,12 @@ export const approved_item_response = {
 
 export const approved_discipline_response = {
   jstor_item_id: cedar_item_view_response[0].disc_code[0],
+  jstor_item_type: jstor_types.discipline,
+  status: status_options.Approved,
+  ...basic_item_response,
+};
+export const approved_pseudo_discipline_response = {
+  jstor_item_id: "research_report",
   jstor_item_type: jstor_types.discipline,
   status: status_options.Approved,
   ...basic_item_response,
@@ -946,3 +959,19 @@ export const cedar_item_view_without_page_images = cedar_item_view_response.map(
     page_images: [],
   }),
 );
+export const cedar_item_view_unlisted_pseudo_response =
+  cedar_item_view_response.map((item, index) => {
+    if (index === 0) {
+      return {
+        ...item,
+        item_type: "mp_research_report_part",
+        content_type: "mp_research_report",
+        disc_code: [],
+        discipline: [],
+        disciplines: {},
+      };
+    }
+    return {
+      ...item,
+    };
+  });

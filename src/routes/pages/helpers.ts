@@ -10,6 +10,7 @@ import {
   ALE_QUERY_SERVICE,
   CEDAR_DELIVERY_SERVICE,
   PSEUDO_DISCIPLINE_CODES,
+  UNLISTED_PSEUDO_DISCIPLINES,
 } from "../../consts/index.js";
 import axios, { AxiosResponse } from "axios";
 import { status_options } from "@prisma/client";
@@ -122,6 +123,11 @@ export const extract_metadata = (
     const disc_codes = codes.concat(Object.keys(disciplines));
     if (PSEUDO_DISCIPLINE_CODES.includes(content_type)) {
       disc_codes.push(content_type);
+    }
+    if (UNLISTED_PSEUDO_DISCIPLINES[content_type]) {
+      disc_codes.push(
+        ...UNLISTED_PSEUDO_DISCIPLINES[content_type].alternate_codes,
+      );
     }
 
     // Add metadata to log payload
