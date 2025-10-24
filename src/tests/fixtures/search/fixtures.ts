@@ -52,6 +52,7 @@ export const search3_results = {
       additional_fields: {
         year: 2024,
         cty: "research_report",
+        author: ["This isn't really a name", "Another fake name"],
         cty_str: "research_report",
         disc_str: ["astronomy-discipline", "sciencemathematics-discipline"],
         book_description:

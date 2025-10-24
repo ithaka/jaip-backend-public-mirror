@@ -19,7 +19,7 @@ export const map_document = (document: Search3Document): MediaRecord => {
     _id: document.doi,
     doi: document.doi,
     iid: document.id,
-    authors: document.authors || [],
+    authors: document.author || [],
     primary_agents: document.primary_agents || [],
     score: document.score,
     contentType: document.human_readable_type || "",

@@ -54,7 +54,7 @@ export interface Search3Document {
   title?: string[];
   subtitle?: string[];
   translated_title?: string[];
-  authors?: string[];
+  author?: string[];
   citation_line?: string;
   is_review?: string | null;
   reviewed_works?: string[];
