@@ -1,3 +1,12 @@
-# ALPINE VULNERABILITIES
-# This occurs with the use of an -addreject option with openssl x509 in Alpine. We're not doing that.
-CVE-2025-4575 exp:2025-09-08
+# ESBUILD VULNERABILITIES
+# This set of vulnerabilities is in Go 1.23.12, which is used by esbuild, which is a dependency of vite, which is a dependency of vitest. Fortunately, that means esbuild is not used in our production build, and these vulnerabilities are not relevant, to the extent that they're relevant to esbuild at all. See https://github.com/evanw/esbuild/issues/4311#issuecomment-3474941120 for more.
+CVE-2025-47912 exp:2026-03-01
+CVE-2025-58183 exp:2026-03-01
+CVE-2025-58185 exp:2026-03-01
+CVE-2025-58186 exp:2026-03-01
+CVE-2025-58187 exp:2026-03-01
+CVE-2025-58188 exp:2026-03-01
+CVE-2025-58189 exp:2026-03-01
+CVE-2025-61723 exp:2026-03-01
+CVE-2025-61724 exp:2026-03-01
+CVE-2025-61725 exp:2026-03-01
