@@ -90,6 +90,8 @@ export interface CompleteLogPayload {
   download_path: string;
   alerts: targeted_alerts[];
   alert_id: number;
+  collection: string;
+  filename: string;
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

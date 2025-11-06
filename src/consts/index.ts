@@ -2,6 +2,7 @@ import { status_options } from "@prisma/client";
 import { AlternateDiscipline, Discipline } from "../types/disciplines.js";
 import type { EntityType } from "../types/entities.js";
 import { HTTPMethods } from "fastify";
+import { reentry_metadata } from "./metadata/index.js";
 
 export const OFFLINE_INDICES = {
   content_mac: "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Mac.zip",
@@ -143,6 +144,7 @@ export const FEATURES = {
   view_pdf: "view_pdf",
   view_snippet: "view_snippet",
   restricted_items_subscription: "restricted_items_subscription",
+  include_reentry_content: "include_reentry_content",
 };
 
 export const UNGROUPED_FEATURES = {
@@ -251,4 +253,9 @@ export const SEARCH_SNIPPET_SERVICE = {
 export const ALE_QUERY_SERVICE = {
   name: "ale-query-service",
   path: "v3/authz/bySessionAndContents",
+};
+
+export const CUSTOM_CONTENT_BUCKET = "ithaka-jaip/jaip-collections";
+export const CUSTOM_CONTENT_METADATA = {
+  reentry: reentry_metadata,
 };

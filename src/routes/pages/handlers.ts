@@ -86,7 +86,8 @@ export const page_handler =
       if (s3_error) {
         throw s3_error;
       }
-      reply.send(stream);
+
+      await reply.type("application/pdf").send(stream);
 
       fastify.log.info(`Getting entitlement map for ${iid}`);
       const entitlement_map = await get_entitlement_map(

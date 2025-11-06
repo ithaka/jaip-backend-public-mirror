@@ -30,6 +30,14 @@ export interface PagesParams {
   page?: string;
 }
 
+const enum CustomContentCollections {
+  reentry = "reentry",
+}
+export interface CustomContentParams {
+  collection: CustomContentCollections;
+  filename?: string;
+}
+
 export interface EntityParams {
   type: entity_types;
 }
