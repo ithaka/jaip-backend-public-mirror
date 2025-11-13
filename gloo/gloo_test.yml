@@ -16,5 +16,32 @@ spec:
             namespace: sequoia
       options:
         timeout: "30s"
+    - matchers:
+        - prefix: /api/v2/get_pdf
+      routeAction:
+        single:
+          upstream:
+            name: jaip-backend
+            namespace: sequoia
+      options:
+        timeout: "3m"
+    - matchers:
+        - prefix: /api/v2/custom_content/pdf
+      routeAction:
+        single:
+          upstream:
+            name: jaip-backend
+            namespace: sequoia
+      options:
+        timeout: "3m"
+    - matchers:
+        - prefix: /api/v2/download/offline
+      routeAction:
+        single:
+          upstream:
+            name: jaip-backend
+            namespace: sequoia
+      options:
+        timeout: "30m"
   weight: 0
 
