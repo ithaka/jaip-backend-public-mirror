@@ -5,15 +5,11 @@ import { HTTPMethods } from "fastify";
 import { reentry_metadata } from "./metadata/index.js";
 
 export const OFFLINE_INDICES = {
-  content_mac: "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Mac.zip",
-  content_windows:
-    "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Windows.zip",
-  content_chromebook:
-    "ithaka-jaip/offline_drive_downloads/with_content/JSTOR-Chromebook.zip",
-  no_content_windows:
-    "ithaka-jaip/offline_drive_downloads/without_content/JSTOR-Windows.zip",
-  no_content_chromebook:
-    "ithaka-jaip/offline_drive_downloads/without_content/JSTOR-Chromebook.zip",
+  content_mac: `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Mac.zip`,
+  content_windows: `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Windows.zip`,
+  content_chromebook: `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Chromebook.zip`,
+  no_content_windows: `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/without_content/JSTOR-Windows.zip`,
+  no_content_chromebook: `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/without_content/JSTOR-Chromebook.zip`,
 };
 
 export const VALIDATED_METHODS = ["POST", "PUT", "DELETE"] as HTTPMethods[];
@@ -255,7 +251,7 @@ export const ALE_QUERY_SERVICE = {
   path: "v3/authz/bySessionAndContents",
 };
 
-export const CUSTOM_CONTENT_BUCKET = "ithaka-jaip/jaip-collections";
+export const CUSTOM_CONTENT_BUCKET = `ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/jaip-collections`;
 export const CUSTOM_CONTENT_METADATA = {
   reentry: reentry_metadata,
 };

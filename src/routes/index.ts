@@ -13,8 +13,8 @@ import environment from "./environment/routes.js";
 import logging from "./logging/routes.js";
 import global_restricted_list from "./global_restricted_list/routes.js";
 import alerts_v3 from "./alerts_v3/routes.js";
+import downloads from "./downloads/routes.js";
 import custom_content from "./custom_content/routes.js";
-// import downloads from "./downloads/routes";
 
 // Some of these routes are grouped, so we need to flatten the array
 // to avoid nested arrays in the final export. While the realistic depth
@@ -36,7 +36,6 @@ export default [
   logging,
   global_restricted_list,
   alerts_v3,
+  downloads,
   custom_content,
-  // TODO: Once the route is ready, this can be uncommented.
-  // downloads
 ].flat(10);

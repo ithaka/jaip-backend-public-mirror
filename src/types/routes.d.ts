@@ -45,6 +45,7 @@ export interface EntityParams {
 export interface OfflineIndexParams {
   index_id: keyof typeof OFFLINE_INDICES;
 }
+
 export interface MediaReviewRequest extends RouteGenericInterface {
   Body: {
     dois: string[];

@@ -1,33 +1,28 @@
-import { SWAGGER_TAGS, MESSAGES, OFFLINE_INDICES } from "../../consts/index.js";
-import { server_error } from "../../utils/index.js";
+import { SWAGGER_TAGS, OFFLINE_INDICES } from "../../consts/index.js";
+import { standard_errors } from "../../utils/index.js";
 
 export const route_schemas = {
   download_offline_index: {
-    name: "download_offline_index",
-    route: "/offline/:index_id",
-    description: `Returns offline download index. ${MESSAGES.public_endpoint_disclaimer}`,
+    description: `Returns a pre-signed S3 URL for downloading offline index zip files. The returned download_url can be used directly to fetch large zip files without server memory limitations. <strong>Use the download_url in a new request to download the actual file.</strong>`,
     tags: [SWAGGER_TAGS.public],
-    body: {
+    route: `/offline/:index_id`,
+    params: {
       type: "object",
       required: ["index_id"],
       properties: {
         index_id: {
-          type: "enum",
+          type: "string",
           enum: Object.keys(OFFLINE_INDICES),
+          description: "The ID of the offline index to download.",
         },
       },
     },
     response: {
-      302: {
-        description: "Redirects to the offline download index.",
-        headers: {
-          Location: {
-            description: "The URL of the offline download index.",
-            type: "string",
-          },
-        },
+      200: {
+        type: "object",
+        required: ["download_url", "filename", "expires_in"],
       },
-      ...server_error,
+      ...standard_errors,
     },
   },
 };

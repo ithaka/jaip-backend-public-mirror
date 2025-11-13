@@ -26,6 +26,9 @@ registerInEureka: true
 serviceLocatable: true
 eurekaServiceName: $EUREKA_SERVICE_NAME
 
+# Service account for accessing AWS resources. This is required for the application to access S3 buckets.
+serviceAccountName: $SERVICE_ACCOUNT_NAME
+
 # We'll likely want to enable these in future, but there are things we need to
 # configure first.
 prometheus:
