@@ -52,8 +52,8 @@ export const download_offline_index_handler =
         },
       );
     } catch (err) {
-      fastify.log.error("⛑️ Error in download_offline_index_handler:", err);
       const error = ensure_error(err);
+      fastify.log.error("⛑️ Error in download_offline_index_handler:", error);
 
       fastify.event_logger.pep_error(
         request,
