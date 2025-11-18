@@ -62,7 +62,7 @@ export const page_handler =
           )
         : false;
 
-      fastify.log.info("Is forbidden: ", is_forbidden);
+      fastify.log.info(`Is forbidden: ${is_forbidden}`);
       if (is_forbidden) {
         reply.code(403);
         fastify.event_logger.pep_forbidden_error(request, reply, {
@@ -186,7 +186,7 @@ export const metadata_handler =
           )
         : false;
 
-      fastify.log.info("Is forbidden: ", is_forbidden);
+      fastify.log.info(`Is forbidden: ${is_forbidden}`);
       if (is_forbidden) {
         reply.code(403).send({ status: 403 });
         return_metadata.status = 403;

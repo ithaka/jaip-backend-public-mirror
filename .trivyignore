@@ -10,3 +10,8 @@ CVE-2025-58189 exp:2026-03-01
 CVE-2025-61723 exp:2026-03-01
 CVE-2025-61724 exp:2026-03-01
 CVE-2025-61725 exp:2026-03-01
+
+
+# GLOB VULNERABILITIES
+# This vulnerability is in glob@10.4.5. It's a fairly deep transitive dependency in some build packages (rollup and vite) for the glob CLI, so it is unlikely to be relevant to our actual use. The version used directly by Fastify is fixed. Leaving an expiration date on there to revisit this in a few months.
+CVE-2025-64756 exp:2026-03-01
