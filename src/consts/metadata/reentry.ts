@@ -5,6 +5,7 @@ export const reentry_metadata = [
     description:
       "Annual reentry resource guide for people returning to New York City after incarceration. Provides a comprehensive directory of organizations and services including housing, employment, education, health care, substance use treatment, legal aid, and financial support. Includes practical guidance on preparing for release, securing identification, navigating job searches, and understanding rights. Special sections address the needs of immigrants, veterans, women, LGBTQI+ individuals, and caregivers.",
     filename: "NYPL_JPS_Connections_2025.pdf",
+    thumbnail: "NYPL_JPS_Connections_2025.png",
     creator: "New York Public Library, Jail & Prison Services",
     contributor: "Kate Heenan (Editor)",
     publisher: "The New York Public Library",
@@ -39,6 +40,7 @@ export const reentry_metadata = [
     description:
       "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York. Incluye información práctica sobre vivienda, empleo, educación, salud, tratamiento de abuso de sustancias, asistencia legal y beneficios públicos. Presenta consejos paso a paso para prepararse antes de la liberación, obtener identificación y acceder a servicios comunitarios. Incluye recursos dirigidos a poblaciones específicas como inmigrantes, veteranos, mujeres, personas LGBTQ+, padres y cuidadores.",
     filename: "NYPL_JPS_Conexiones_2025.pdf",
+    thumbnail: "NYPL_JPS_Conexiones_2025.png",
     creator: "New York Public Library, Jail & Prison Services",
     contributor: "Kate Heenan (Editor)",
     publisher: "The New York Public Library",
@@ -73,6 +75,7 @@ export const reentry_metadata = [
     description:
       "Annual Illinois-focused reentry guide providing step-by-step preparation for release, actions after release, and a directory of statewide resources (housing, work, education, health, finances, treatment, legal help). Developed and published by the Education Justice Project to support successful community reintegration.",
     filename: "Mapping-Your-Future-2025-Edition.pdf",
+    thumbnail: "Mapping-Your-Future-2025-Edition.png",
     creator: "Education Justice Project",
     contributor:
       "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
@@ -113,6 +116,7 @@ export const reentry_metadata = [
     description:
       "Guía de reingreso enfocada en Illinois con indicaciones prácticas para prepararse antes de la liberación, pasos inmediatos después de la salida y un directorio de recursos estatales en vivienda, empleo, educación, salud, finanzas, tratamiento y apoyo legal. Publicada por el Education Justice Project para apoyar una reintegración comunitaria exitosa.",
     filename: "Mapping-Your-Future-Spanish-Edition-2024-Interactive.pdf",
+    thumbnail: "Mapping-Your-Future-Spanish-Edition-2024-Interactive.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -153,6 +157,7 @@ export const reentry_metadata = [
     description:
       "A national reentry guide designed to help people across the United States prepare for and navigate successful reentry after incarceration. Includes pre-release planning tools, nationwide resource directories, and information on housing, employment, healthcare, education, and legal rights.",
     filename: "Mapping-Your-Future-National-Edition-2024-Interactive.pdf",
+    thumbnail: "Mapping-Your-Future-National-Edition-2024-Interactive.png",
     creator: "Education Justice Project",
     contributor:
       "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
@@ -193,6 +198,7 @@ export const reentry_metadata = [
     description:
       "Guía nacional de reingreso diseñada para ayudar a las personas en los Estados Unidos a prepararse y navegar con éxito la reintegración después del encarcelamiento. Incluye herramientas de planificación previa a la liberación, directorios de recursos nacionales e información sobre vivienda, empleo, atención médica, educación y derechos legales.",
     filename: "MYF-N24_Sp_Int_Color_FINAL.pdf",
+    thumbnail: "MYF-N24_Sp_Int_Color_FINAL.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -233,6 +239,7 @@ export const reentry_metadata = [
     description:
       "A practical guide designed for people living with the threat of deportation to Mexico or Central America. Offers information on legal rights, finding legal representation, preparing for possible deportation, and connecting with advocacy organizations. Emphasizes planning, safety, and community support.",
     filename: "ANP_2023-24_En_Int_Web.pdf",
+    thumbnail: "ANP_2023-24_En_Int_Web.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -270,6 +277,7 @@ export const reentry_metadata = [
     description:
       "Guía práctica diseñada para personas que viven con la amenaza de deportación a México o América Central. Ofrece información sobre derechos legales, cómo obtener representación, prepararse para una posible deportación y conectar con organizaciones de defensa y apoyo comunitario. Destaca la planificación, la seguridad y la solidaridad.",
     filename: "A-New-Path-2024-Spanish-Edition.pdf",
+    thumbnail: "A-New-Path-2024-Spanish-Edition.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -307,6 +315,7 @@ export const reentry_metadata = [
     description:
       "A guide to tools and resources available for individuals who are transitioning from incarceration to communities in Tennessee.",
     filename: "Moving+Forward+Guide_2024+updated+photos.pdf",
+    thumbnail: "Moving+Forward+Guide_2024+updated+photos.png",
     creator: "Tennessee Higher Education Initiative (THEI)",
     contributor: "Tennessee Higher Education Initiative (THEI)",
     publisher: "Tennessee Higher Education Initiative (THEI)",
