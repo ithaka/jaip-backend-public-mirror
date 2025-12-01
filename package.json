@@ -1,7 +1,7 @@
 {
   "name": "jaip-backend",
   "type": "module",
-  "packageManager": "yarn@4.11.0",
+  "packageManager": "yarn@4.12.0",
   "scripts": {
     "build": "tsc",
     "dev": "LOG_LEVEL=info nodemon  --inspect src/server.ts",
@@ -16,8 +16,8 @@
     "format": "yarn format:ci --write"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.937.0",
-    "@aws-sdk/s3-request-presigner": "^3.937.0",
+    "@aws-sdk/client-s3": "^3.940.0",
+    "@aws-sdk/s3-request-presigner": "^3.940.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.1.0",
     "@fastify/postgres": "^6.0.2",
@@ -42,12 +42,12 @@
     "lint-staged": "^16.2.7",
     "nodemon": "^3.1.11",
     "pino-pretty": "^13.1.2",
-    "prettier": "^3.6.2",
+    "prettier": "^3.7.1",
     "prisma": "^6.19.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.47.0",
-    "vitest": "^4.0.12"
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^4.0.14"
   },
   "resolutions": {
     "form-data": "^4.0.5",
