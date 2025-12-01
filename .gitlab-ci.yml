@@ -7,7 +7,7 @@
 # Expected dev workflow:
 # Update _setup.yml with the latest $TAG and create a merge request.
 
-image: docker-virtual.artifactory.acorn.cirrostratus.org/node:22.21.1-alpine
+image: docker-virtual.artifactory.acorn.cirrostratus.org/node:24.11.1-alpine
 
 stages:
   - test
