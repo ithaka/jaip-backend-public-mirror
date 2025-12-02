@@ -3,7 +3,7 @@ import {
   RESTRICTED_ITEMS_FEATURES,
   SWAGGER_TAGS,
 } from "../../consts/index.js";
-import { ReentryMetadata } from "../../types/custom_content.js";
+import { CollectionMetadata } from "../../types/custom_content.js";
 import { standard_errors } from "../../utils/index.js";
 
 export const route_schemas = {
@@ -25,7 +25,7 @@ export const route_schemas = {
         type: "array",
         items: {
           type: "object",
-          additionalProperties: {} as ReentryMetadata,
+          additionalProperties: {} as CollectionMetadata,
         },
       },
       ...standard_errors,

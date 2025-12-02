@@ -1,11 +1,15 @@
+/**
+ * Reentry guides collection metadata.
+ * @type {CollectionMetadata[]}
+ */
 export const reentry_metadata = [
   {
     title:
       "Connections 2025: A Free Guide for Formerly Incarcerated People in New York City",
     description:
-      "Annual reentry resource guide for people returning to New York City after incarceration. Provides a comprehensive directory of organizations and services including housing, employment, education, health care, substance use treatment, legal aid, and financial support. Includes practical guidance on preparing for release, securing identification, navigating job searches, and understanding rights. Special sections address the needs of immigrants, veterans, women, LGBTQI+ individuals, and caregivers.",
-    filename: "NYPL_JPS_Connections_2025.pdf",
-    thumbnail: "NYPL_JPS_Connections_2025.png",
+      "Annual reentry resource guide for people returning to New York City after incarceration.",
+    filename: "connections-2025-ny-en.pdf",
+    thumbnail: "connections-2025-ny-en.png",
     creator: "New York Public Library, Jail & Prison Services",
     contributor: "Kate Heenan (Editor)",
     publisher: "The New York Public Library",
@@ -15,7 +19,7 @@ export const reentry_metadata = [
     page_count: 473,
     alternate_versions: [
       {
-        filename: "NYPL_JPS_Conexiones_2025.pdf",
+        filename: "connections-2025-ny-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },
@@ -25,7 +29,7 @@ export const reentry_metadata = [
     location: "New York City",
     language: "English",
     jurisdiction: "New York State, with emphasis on New York City",
-    national: false,
+    is_national: false,
     state_code: "NY",
     subject_arr: [
       "Prisoners—Services for—New York (State)—New York",
@@ -38,9 +42,9 @@ export const reentry_metadata = [
     title:
       "Conexiones 2025: Una guía gratuita para personas anteriormente encarceladas en la ciudad de Nueva York",
     description:
-      "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York. Incluye información práctica sobre vivienda, empleo, educación, salud, tratamiento de abuso de sustancias, asistencia legal y beneficios públicos. Presenta consejos paso a paso para prepararse antes de la liberación, obtener identificación y acceder a servicios comunitarios. Incluye recursos dirigidos a poblaciones específicas como inmigrantes, veteranos, mujeres, personas LGBTQ+, padres y cuidadores.",
-    filename: "NYPL_JPS_Conexiones_2025.pdf",
-    thumbnail: "NYPL_JPS_Conexiones_2025.png",
+      "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York.",
+    filename: "conexiones-2025-ny-es.pdf",
+    thumbnail: "conexiones-2025-ny-es.png",
     creator: "New York Public Library, Jail & Prison Services",
     contributor: "Kate Heenan (Editor)",
     publisher: "The New York Public Library",
@@ -50,7 +54,7 @@ export const reentry_metadata = [
     page_count: 473,
     alternate_versions: [
       {
-        filename: "NYPL_JPS_Connections_2025.pdf",
+        filename: "connections-2025-ny-en.pdf",
         language: "English",
         label: "View in English",
       },
@@ -60,7 +64,7 @@ export const reentry_metadata = [
     location: "New York City",
     language: "Español",
     jurisdiction: "New York State, with emphasis on New York City",
-    national: false,
+    is_national: false,
     state_code: "NY",
     subject_arr: [
       "Prisioneros — Servicios sociales — Nueva York (Estado) — Nueva York",
@@ -73,9 +77,9 @@ export const reentry_metadata = [
     title:
       "Mapping Your Future: A Guide to Successful Reentry in Illinois (2025 Illinois Edition)",
     description:
-      "Annual Illinois-focused reentry guide providing step-by-step preparation for release, actions after release, and a directory of statewide resources (housing, work, education, health, finances, treatment, legal help). Developed and published by the Education Justice Project to support successful community reintegration.",
-    filename: "Mapping-Your-Future-2025-Edition.pdf",
-    thumbnail: "Mapping-Your-Future-2025-Edition.png",
+      "Annual Illinois-focused reentry guide providing step-by-step preparation for release, actions after release, and a directory of statewide resources.",
+    filename: "mapping-your-future-2025-il-en.pdf",
+    thumbnail: "mapping-your-future-2025-il-en.png",
     creator: "Education Justice Project",
     contributor:
       "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
@@ -86,7 +90,7 @@ export const reentry_metadata = [
     page_count: 100,
     alternate_versions: [
       {
-        filename: "Mapping-Your-Future-Spanish-Edition-2024-Interactive.pdf",
+        filename: "construyendo-tu-futuro-2024-il-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },
@@ -97,7 +101,7 @@ export const reentry_metadata = [
     state_code: "IL",
     location: "Illinois",
     jurisdiction: "Illinois, United States",
-    national: false,
+    is_national: false,
     subject_arr: [
       "Prisoner reentry—Illinois",
       "Social services directories—Illinois",
@@ -114,9 +118,9 @@ export const reentry_metadata = [
     title:
       "Construyendo tu futuro: Una guía para la reintegración exitosa (Edición 2024)",
     description:
-      "Guía de reingreso enfocada en Illinois con indicaciones prácticas para prepararse antes de la liberación, pasos inmediatos después de la salida y un directorio de recursos estatales en vivienda, empleo, educación, salud, finanzas, tratamiento y apoyo legal. Publicada por el Education Justice Project para apoyar una reintegración comunitaria exitosa.",
-    filename: "Mapping-Your-Future-Spanish-Edition-2024-Interactive.pdf",
-    thumbnail: "Mapping-Your-Future-Spanish-Edition-2024-Interactive.png",
+      "Guía de reingreso enfocada en Illinois con indicaciones prácticas para prepararse antes de la liberación, pasos inmediatos después de la salida y un directorio de recursos estatales.",
+    filename: "construyendo-tu-futuro-2024-il-es.pdf",
+    thumbnail: "construyendo-tu-futuro-2024-il-es.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -127,7 +131,7 @@ export const reentry_metadata = [
     page_count: 99,
     alternate_versions: [
       {
-        filename: "Mapping-Your-Future-2025-Edition.pdf",
+        filename: "mapping-your-future-2025-il-en.pdf",
         language: "English",
         label: "View in English",
       },
@@ -138,7 +142,7 @@ export const reentry_metadata = [
     state_code: "IL",
     location: "Illinois",
     jurisdiction: "Illinois, Estados Unidos",
-    national: false,
+    is_national: false,
     subject_arr: [
       "Reinserción de personas ex-presas—Illinois",
       "Directorios de servicios sociales—Illinois",
@@ -155,9 +159,9 @@ export const reentry_metadata = [
     title:
       "Mapping Your Future: A Guide to Successful Reentry (National Edition, 2025)",
     description:
-      "A national reentry guide designed to help people across the United States prepare for and navigate successful reentry after incarceration. Includes pre-release planning tools, nationwide resource directories, and information on housing, employment, healthcare, education, and legal rights.",
-    filename: "Mapping-Your-Future-National-Edition-2024-Interactive.pdf",
-    thumbnail: "Mapping-Your-Future-National-Edition-2024-Interactive.png",
+      "A national reentry guide designed to help people across the United States prepare for and navigate successful reentry after incarceration.",
+    filename: "mapping-your-future-2025-usa-en.pdf",
+    thumbnail: "mapping-your-future-2025-usa-en.png",
     creator: "Education Justice Project",
     contributor:
       "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
@@ -168,7 +172,7 @@ export const reentry_metadata = [
     page_count: 84,
     alternate_versions: [
       {
-        filename: "MYF-N24_Sp_Int_Color_FINAL.pdf",
+        filename: "construyendo-tu-futuro-2025-usa-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },
@@ -179,7 +183,7 @@ export const reentry_metadata = [
     state_code: "USA",
     location: "Illinois",
     jurisdiction: "United States",
-    national: true,
+    is_national: true,
     subject_arr: [
       "Prisoner reentry—United States",
       "Social services directories—United States",
@@ -196,9 +200,9 @@ export const reentry_metadata = [
     title:
       "Construyendo tu futuro: Una guía para la reintegración exitosa (Edición Nacional 2025)",
     description:
-      "Guía nacional de reingreso diseñada para ayudar a las personas en los Estados Unidos a prepararse y navegar con éxito la reintegración después del encarcelamiento. Incluye herramientas de planificación previa a la liberación, directorios de recursos nacionales e información sobre vivienda, empleo, atención médica, educación y derechos legales.",
-    filename: "MYF-N24_Sp_Int_Color_FINAL.pdf",
-    thumbnail: "MYF-N24_Sp_Int_Color_FINAL.png",
+      "Guía nacional de reingreso diseñada para ayudar a las personas en los Estados Unidos a prepararse y navegar con éxito la reintegración después del encarcelamiento.",
+    filename: "construyendo-tu-futuro-2025-usa-es.pdf",
+    thumbnail: "construyendo-tu-futuro-2025-usa-es.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -209,7 +213,7 @@ export const reentry_metadata = [
     page_count: 86,
     alternate_versions: [
       {
-        filename: "Mapping-Your-Future-National-Edition-2024-Interactive.pdf",
+        filename: "mapping-your-future-2025-usa-en.pdf",
         language: "English",
         label: "View in English",
       },
@@ -220,7 +224,7 @@ export const reentry_metadata = [
     state_code: "USA",
     location: "Illinois",
     jurisdiction: "Estados Unidos",
-    national: true,
+    is_national: true,
     subject_arr: [
       "Reinserción de personas ex-presas—Estados Unidos",
       "Directorios de servicios sociales—Estados Unidos",
@@ -237,9 +241,9 @@ export const reentry_metadata = [
     title:
       "A New Path: A Guide to the Challenges & Opportunities After Deportation",
     description:
-      "A practical guide designed for people living with the threat of deportation to Mexico or Central America. Offers information on legal rights, finding legal representation, preparing for possible deportation, and connecting with advocacy organizations. Emphasizes planning, safety, and community support.",
-    filename: "ANP_2023-24_En_Int_Web.pdf",
-    thumbnail: "ANP_2023-24_En_Int_Web.png",
+      "A practical guide designed for people living with the threat of deportation to Mexico or Central America.",
+    filename: "new-path-2025-usa-en.pdf",
+    thumbnail: "new-path-2025-usa-en.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -250,7 +254,7 @@ export const reentry_metadata = [
     page_count: 88,
     alternate_versions: [
       {
-        filename: "A-New-Path-2024-Spanish-Edition.pdf",
+        filename: "nuevo-camino-2025-usa-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },
@@ -261,7 +265,7 @@ export const reentry_metadata = [
     state_code: "USA",
     location: "Illinois",
     jurisdiction: "United States, Mexico, Central America",
-    national: true,
+    is_national: true,
     subject_arr: [
       "Deportation",
       "Reentry",
@@ -275,9 +279,9 @@ export const reentry_metadata = [
     title:
       "Un Nuevo Camino: Una guía sobre los desafíos y oportunidades después de la deportación",
     description:
-      "Guía práctica diseñada para personas que viven con la amenaza de deportación a México o América Central. Ofrece información sobre derechos legales, cómo obtener representación, prepararse para una posible deportación y conectar con organizaciones de defensa y apoyo comunitario. Destaca la planificación, la seguridad y la solidaridad.",
-    filename: "A-New-Path-2024-Spanish-Edition.pdf",
-    thumbnail: "A-New-Path-2024-Spanish-Edition.png",
+      "Guía práctica diseñada para personas que viven con la amenaza de deportación a México o América Central.",
+    filename: "nuevo-camino-2025-usa-es.pdf",
+    thumbnail: "nuevo-camino-2025-usa-es.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -288,7 +292,7 @@ export const reentry_metadata = [
     page_count: 172,
     alternate_versions: [
       {
-        filename: "ANP_2023-24_En_Int_Web.pdf",
+        filename: "new-path-2025-usa-en.pdf",
         language: "English",
         label: "View in English",
       },
@@ -299,7 +303,7 @@ export const reentry_metadata = [
     state_code: "USA",
     location: "Illinois",
     jurisdiction: "Estados Unidos, México, América Central",
-    national: true,
+    is_national: true,
     subject_arr: [
       "Deportación",
       "Reintegración",
@@ -313,9 +317,9 @@ export const reentry_metadata = [
     title:
       "Moving Forward: Resources and Tools for Tennesseans Transitioning from Incarceration",
     description:
-      "A guide to tools and resources available for individuals who are transitioning from incarceration to communities in Tennessee.",
-    filename: "Moving+Forward+Guide_2024+updated+photos.pdf",
-    thumbnail: "Moving+Forward+Guide_2024+updated+photos.png",
+      "A comprehensive statewide resource to support Tennesseans transitioning from incarceration.",
+    filename: "moving-forward-2025-tn-en.pdf",
+    thumbnail: "moving-forward-2025-tn-en.png",
     creator: "Tennessee Higher Education Initiative (THEI)",
     contributor: "Tennessee Higher Education Initiative (THEI)",
     publisher: "Tennessee Higher Education Initiative (THEI)",
@@ -323,13 +327,14 @@ export const reentry_metadata = [
     type: "Text",
     format: "PDF, 86 pages, illustrated",
     page_count: 86,
+    alternate_versions: [],
     subject:
       "Prisoner reentry—Tennessee; Social services directories—Tennessee; Housing; Employment; Education; Health care; Finances; Substance use treatment; Legal aid",
     language: "English",
     state_code: "TN",
     location: "Tennessee",
     jurisdiction: "Tennessee",
-    national: false,
+    is_national: false,
     subject_arr: [
       "Prisoner reentry—Tennessee",
       "Social services directories—Tennessee",
