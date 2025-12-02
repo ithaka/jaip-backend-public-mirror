@@ -1,6 +1,6 @@
 import { FastifyInstance, RouteShorthandOptions } from "fastify";
 import { route_schemas } from "./schemas.js";
-import { status_options } from "@prisma/client";
+import { status_options } from "../../database/prisma/client.js";
 import {
   approval_handler,
   bulk_approval_handler,

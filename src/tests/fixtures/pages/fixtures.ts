@@ -1,7 +1,10 @@
 // NOTE: For use in the TEST environment, this iid is currently available in Cedar
 // Delivery Service. If it should fail, first verify that this iid is still there
 
-import { jstor_types, status_options } from "@prisma/client";
+import {
+  jstor_types,
+  status_options,
+} from "../../../database/prisma/client.js";
 import { basic_facility, basic_reviewer } from "../users/fixtures.js";
 
 // in TEST.

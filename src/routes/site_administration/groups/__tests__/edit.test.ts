@@ -19,7 +19,7 @@ import {
   edit_group_body_valid,
   group_response,
 } from "../../../../tests/fixtures/site_administration/groups/fixtures.js";
-import { groups, Prisma } from "@prisma/client";
+import { groups, Prisma } from "../../../../database/prisma/client.js";
 
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;

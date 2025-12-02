@@ -18,7 +18,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { RESTRICTED_ITEMS_FEATURES, SUBDOMAINS } from "../../consts/index.js";
 import { SESSION_MANAGER } from "../../consts/index.js";
 import { JAIPDatabase } from "../../database/index.js";
-import { user_roles } from "@prisma/client";
+import { user_roles } from "../../database/prisma/client.js";
 
 let counter: { [key: string]: number } = {};
 export const manage_session = async (

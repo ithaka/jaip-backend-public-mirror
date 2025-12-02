@@ -6,7 +6,8 @@ import {
   FastifyPluginOptions,
 } from "fastify";
 import { PrismaJAIPDatabase } from "../database/prisma.js";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../database/prisma/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 // Use TypeScript module augmentation to declare the type of server.prisma to be PrismaClient
 declare module "fastify" {
@@ -28,6 +29,9 @@ const plugin: FastifyPluginAsync<JAIPDatabasePluginOptions> = fp(
 const options = {
   db: new PrismaJAIPDatabase(
     new PrismaClient({
+      adapter: new PrismaPg({
+        connectionString: process.env.DATABASE_URL,
+      }),
       log: [
         {
           emit: "event",

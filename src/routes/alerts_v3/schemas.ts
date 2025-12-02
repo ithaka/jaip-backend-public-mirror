@@ -1,4 +1,4 @@
-import { targeted_alerts } from "@prisma/client";
+import { targeted_alerts } from "../../database/prisma/client.js";
 import { FEATURES, SWAGGER_TAGS } from "../../consts/index.js";
 import { standard_post_errors } from "../../utils/index.js";
 

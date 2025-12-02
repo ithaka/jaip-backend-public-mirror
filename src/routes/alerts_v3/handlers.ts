@@ -7,7 +7,7 @@ import type {
   IdOnlyBody,
   EditAlertBody,
 } from "../../types/routes.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../database/prisma/client.js";
 import {
   ENTITY_TYPES,
   FEATURES,

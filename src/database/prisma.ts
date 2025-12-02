@@ -11,7 +11,7 @@ import {
   statuses,
   globally_restricted_items,
   targeted_alerts,
-} from "@prisma/client";
+} from "../database/prisma/client.js";
 import { JAIPDatabase } from "./index.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
 import { User } from "../types/entities.js";

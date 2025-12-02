@@ -7,7 +7,7 @@ import {
   NameAndIdBody,
   NameOnlyBody,
 } from "../../../types/routes.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../database/prisma/client.js";
 
 export const get_groups_handler =
   (fastify: FastifyInstance) =>

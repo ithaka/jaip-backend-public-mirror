@@ -19,7 +19,7 @@ import {
   basic_user_ungrouped_add_ungrouped_feature,
   ungrouped_feature_response,
 } from "../../../../../tests/fixtures/site_administration/features/ungrouped/fixtures.js";
-import { features, Prisma } from "@prisma/client";
+import { features, Prisma } from "../../../../../database/prisma/client.js";
 
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;

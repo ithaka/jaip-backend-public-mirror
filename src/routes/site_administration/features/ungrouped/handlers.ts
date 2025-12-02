@@ -7,7 +7,7 @@ import {
   GetPaginatedBody,
   IdOnlyBody,
 } from "../../../../types/routes.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../../database/prisma/client.js";
 import { check_trimmed_strings } from "../../../../utils/index.js";
 
 export const get_ungrouped_features_handler =

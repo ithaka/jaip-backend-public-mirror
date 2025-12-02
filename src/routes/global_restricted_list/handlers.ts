@@ -11,7 +11,7 @@ import { search_handler } from "../search/handlers.js";
 import { json2csv } from "json-2-csv";
 import { map_restricted_items_list } from "./helpers.js";
 import { UNGROUPED_FEATURES } from "../../consts/index.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../database/prisma/client.js";
 
 export const get_restricted_items_handler =
   (fastify: FastifyInstance) =>

@@ -29,7 +29,7 @@ import {
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
 import axios from "axios";
-import { status_options } from "@prisma/client";
+import { status_options } from "../../../database/prisma/client.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {

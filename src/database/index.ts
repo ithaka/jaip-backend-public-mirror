@@ -7,7 +7,7 @@ import {
   ungrouped_features,
   globally_restricted_items,
   targeted_alerts,
-} from "@prisma/client";
+} from "./prisma/client.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
 import { User } from "../types/entities.js";
 import { Alert } from "../types/alerts.js";

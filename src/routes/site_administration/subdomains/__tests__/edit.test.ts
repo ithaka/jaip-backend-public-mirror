@@ -19,7 +19,7 @@ import {
   edit_subdomain_body_valid,
   subdomain_response,
 } from "../../../../tests/fixtures/site_administration/subdomains/fixtures.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../../database/prisma/client.js";
 import { Subdomain } from "../../../../types/routes.js";
 
 const app = build_test_server([route_settings]);

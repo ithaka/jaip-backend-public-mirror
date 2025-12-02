@@ -4,7 +4,7 @@ import axios from "axios";
 import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
 import { attach_bulk_approval } from "./helpers.js";
-import { jstor_types } from "@prisma/client";
+import { jstor_types } from "../../database/prisma/client.js";
 import { DiscParams } from "../../types/routes.js";
 import { Discipline, Journal } from "../../types/disciplines.js";
 

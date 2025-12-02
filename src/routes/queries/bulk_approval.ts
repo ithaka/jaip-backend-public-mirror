@@ -1,4 +1,4 @@
-import { jstor_types, Prisma } from "@prisma/client";
+import { jstor_types, Prisma } from "../../database/prisma/client.js";
 import { Status } from "../../types/database.js";
 
 export const bulk_approval_query = (

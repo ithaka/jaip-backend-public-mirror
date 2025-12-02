@@ -1,4 +1,4 @@
-import { Prisma, user_roles } from "@prisma/client";
+import { Prisma, user_roles } from "../../database/prisma/client.js";
 import { DBEntity } from "../../types/database.js";
 import { User } from "../../types/entities.js";
 import { Group } from "../../types/groups.js";

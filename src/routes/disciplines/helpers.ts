@@ -5,7 +5,7 @@ import {
 } from "../queries/bulk_approval.js";
 import { FastifyInstance } from "fastify";
 import { ensure_error } from "../../utils/index.js";
-import { jstor_types, status_options } from "@prisma/client";
+import { jstor_types, status_options } from "../../database/prisma/client.js";
 
 type RequiredCode = Required<string>;
 

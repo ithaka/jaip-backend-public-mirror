@@ -9,7 +9,7 @@ import {
 } from "../../types/routes.js";
 import { FEATURES, SEARCH3, STATUS_OPTIONS } from "../../consts/index.js";
 import { Search3Document, Search3Request } from "../../types/search.js";
-import { jstor_types, status_options } from "@prisma/client";
+import { jstor_types, status_options } from "../../database/prisma/client.js";
 import { Status } from "../../types/database.js";
 import {
   do_search3,

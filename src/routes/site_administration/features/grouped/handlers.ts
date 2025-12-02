@@ -8,7 +8,7 @@ import {
   GetPaginatedRequest,
   IdOnlyBody,
 } from "../../../../types/routes.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../../database/prisma/client.js";
 import { FEATURES, UNGROUPED_FEATURES } from "../../../../consts/index.js";
 import { check_trimmed_strings } from "../../../../utils/index.js";
 

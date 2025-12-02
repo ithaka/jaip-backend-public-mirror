@@ -14,7 +14,7 @@ import {
 } from "./routes.js";
 import { Feature } from "./features.js";
 import { DBGroup } from "./database.js";
-import { targeted_alerts } from "@prisma/client";
+import { targeted_alerts } from "../database/prisma/client.js";
 
 export interface CaptainsLog {
   origin: string;

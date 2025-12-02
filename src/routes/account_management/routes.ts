@@ -5,7 +5,7 @@ import {
   get_entities_handler,
   remove_entities_handler,
 } from "./handlers.js";
-import { entity_types } from "@prisma/client";
+import { entity_types } from "../../database/prisma/client.js";
 import { route_prefix } from "./options.js";
 import { get_route } from "../../utils/index.js";
 

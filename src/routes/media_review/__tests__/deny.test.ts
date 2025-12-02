@@ -22,7 +22,10 @@ import {
   basic_reviewer,
   basic_user_ungrouped,
 } from "../../../tests/fixtures/users/fixtures.js";
-import { jstor_types, status_options } from "@prisma/client";
+import {
+  jstor_types,
+  status_options,
+} from "../../../database/prisma/client.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {

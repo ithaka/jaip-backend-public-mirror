@@ -1,4 +1,4 @@
-import { alert_statuses } from "@prisma/client";
+import { alert_statuses } from "../../../database/prisma/client.js";
 
 export const valid_get_alerts_query = {
   page: 1,

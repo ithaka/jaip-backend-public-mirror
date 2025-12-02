@@ -1,4 +1,8 @@
-import { jstor_types, Prisma, status_options } from "@prisma/client";
+import {
+  jstor_types,
+  Prisma,
+  status_options,
+} from "../../database/prisma/client.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";

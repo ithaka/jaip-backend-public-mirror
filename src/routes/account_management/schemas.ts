@@ -1,4 +1,4 @@
-import { entity_types } from "@prisma/client";
+import { entity_types } from "../../database/prisma/client.js";
 import {
   SWAGGER_TAGS,
   FEATURES,

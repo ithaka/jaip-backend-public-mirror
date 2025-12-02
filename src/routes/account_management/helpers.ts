@@ -1,4 +1,8 @@
-import { entity_types, Prisma, user_roles } from "@prisma/client";
+import {
+  entity_types,
+  Prisma,
+  user_roles,
+} from "../../database/prisma/client.js";
 import { get_db_pagination } from "../../utils/index.js";
 import {
   get_many_entities_select_clause,

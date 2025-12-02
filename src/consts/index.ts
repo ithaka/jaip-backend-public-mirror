@@ -1,4 +1,4 @@
-import { status_options } from "@prisma/client";
+import { status_options } from "../database/prisma/client.js";
 import { AlternateDiscipline, Discipline } from "../types/disciplines.js";
 import type { EntityType } from "../types/entities.js";
 import { HTTPMethods } from "fastify";

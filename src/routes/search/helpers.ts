@@ -17,7 +17,7 @@ import {
   globally_restricted_items,
   jstor_types,
   status_options,
-} from "@prisma/client";
+} from "../../database/prisma/client.js";
 
 const status_select = {
   jstor_item_id: true,

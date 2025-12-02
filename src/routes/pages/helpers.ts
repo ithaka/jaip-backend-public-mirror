@@ -13,7 +13,7 @@ import {
   UNLISTED_PSEUDO_DISCIPLINES,
 } from "../../consts/index.js";
 import axios, { AxiosResponse } from "axios";
-import { status_options } from "@prisma/client";
+import { status_options } from "../../database/prisma/client.js";
 import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";

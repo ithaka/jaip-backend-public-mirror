@@ -1,7 +1,6 @@
 import logging from "./logging.js";
 import errorHandlerPlugin from "./error_handling.js";
 import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
-import database from "./database.js";
 import service_discovery from "./service_discovery.js";
 import db from "./db.js";
 
@@ -14,7 +13,6 @@ const plugins: {
 } = {
   errorHandlerPlugin,
   logging,
-  database,
   service_discovery,
   db,
 };

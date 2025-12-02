@@ -1,7 +1,7 @@
 import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { entity_types, user_roles } from "@prisma/client";
+import { entity_types, user_roles } from "../../database/prisma/client.js";
 import {
   AddEntitiesBody,
   GetEntitiesBody,

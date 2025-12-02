@@ -5,7 +5,7 @@ import {
   alert_statuses,
   entity_types,
   globally_restricted_items,
-} from "@prisma/client";
+} from "../database/prisma/client.js";
 import { Group } from "./groups.js";
 import { OFFLINE_INDICES } from "../consts/index.js";
 
@@ -183,8 +183,7 @@ export interface EditGroupFeatureRequest extends AddGroupFeatureRequest {
   id: number;
 }
 
-export interface EditUngroupedFeatureRequest
-  extends AddUngroupedFeatureRequest {
+export interface EditUngroupedFeatureRequest extends AddUngroupedFeatureRequest {
   id: number;
 }
 export interface AddUngroupedFeatureRequest {
