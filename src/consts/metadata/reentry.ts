@@ -19,7 +19,7 @@ export const reentry_metadata = [
     page_count: 473,
     alternate_versions: [
       {
-        filename: "connections-2025-ny-es.pdf",
+        filename: "conexiones-2025-ny-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },

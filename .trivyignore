@@ -22,3 +22,9 @@ CVE-2025-64756 exp:2026-03-01
 # create issues in local development.
 CVE-2025-62610 exp:2026-03-01
 CVE-2025-66020 exp:2026-03-01
+
+# GO 1.23.12 VULNERABILITIES
+# These vulnerabilities are in Go 1.23.12, in the underlying Alpine image. They are
+# not directly relevant to our application, which does not use Go.
+CVE-2025-61727 exp:2026-03-01
+CVE-2025-61729 exp:2026-03-01
