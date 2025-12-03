@@ -1,6 +1,7 @@
 import { FastifyError, FastifyInstance, FastifyPluginAsync } from "fastify";
 import fastify_plugin from "fastify-plugin";
 import type { ErrorHandlerPluginOptions } from "../types/plugins.js";
+import "dotenv/config";
 
 const error_handler_plugin: FastifyPluginAsync<ErrorHandlerPluginOptions> =
   fastify_plugin(async (fastify: FastifyInstance) => {

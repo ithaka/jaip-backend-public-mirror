@@ -8,6 +8,7 @@ import {
 import { PrismaJAIPDatabase } from "../database/prisma.js";
 import { PrismaClient } from "../database/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
+import "dotenv/config";
 
 // Use TypeScript module augmentation to declare the type of server.prisma to be PrismaClient
 declare module "fastify" {
