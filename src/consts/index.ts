@@ -3,6 +3,7 @@ import { AlternateDiscipline, Discipline } from "../types/disciplines.js";
 import type { EntityType } from "../types/entities.js";
 import { HTTPMethods } from "fastify";
 import { reentry_metadata } from "./metadata/index.js";
+import "dotenv/config";
 
 export const OFFLINE_INDICES = {
   content_mac: `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Mac.zip`,

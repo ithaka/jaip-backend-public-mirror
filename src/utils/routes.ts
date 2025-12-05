@@ -1,7 +1,7 @@
 import { FastifySchema } from "fastify";
 import { FastifyRequest } from "fastify";
 import { EPHEMERAL_DOMAIN_ENDINGS } from "../consts/index.js";
-
+import "dotenv/config";
 declare module "fastify" {
   interface FastifySchema {
     route?: string;
