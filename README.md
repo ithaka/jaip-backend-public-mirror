@@ -140,3 +140,30 @@ The application is deployed to the ITHAKA POW platform known as [Capstan](https:
 ### Environment Specific Configurations
 
 You can find these in the [k8s](k8s/) directory at the project root.
+
+## Content
+
+The JSTOR Access in Prison platform now includes content that is distinct from the content available on JSTOR. The content is divided into collections. The current pilot includes a single collection for reentry content.
+
+### Reentry
+
+New material can be added to the reentry collection by following these steps:
+
+1. Upload the pdf to S3. The path is specified in the `CUSTOM_CONTENT_BUCKET` in `/src/consts/index.ts`, and within that path, items should be placed in `/reentry/:filename`
+1. Create metadata for the new item in the format dictated by the `CollectionMetadata` interface.
+1. Ensure that the value of `filename` in the `CollectionMetadata` object matches the filename of the item in S3.
+1. Add the metadata object to the `reentry_metadata` value in `/src/consts/metadata/reentry.ts`.
+1. Additionally, add a thumbnail png to the `public` folder in `jaip-frontend`.
+
+### New Collections
+
+Additional collections can be added with the following steps:
+
+1. Add a new collection name to the `CustomContentCollections` enum.
+1. Add a new metadata file in `/src/consts/metadata`.
+1. Add the new items to S3. These should be added using the paths specified in the `CUSTOM_CONTENT_BUCKET` in `/src/consts/index.ts`. Within that path, items should be placed in a "directory" that matches the collection name.
+1. Export an array of `CollectionMetadata` objects from that metadata file.
+   1. The value of `filename` in the `CollectionMetadata` objects must match the filename of the object in S3.
+1. Export that value from `/src/consts/metadata/index.ts`.
+1. Add that array to the `CUSTOM_CONTENT_METADATA` in `/src/consts/index.ts`. The key used in this object should match the collection name in the `CustomContentCollections` enum, which should in turn match the collection name in the S3 path.
+1. The new collection will now be available in the API using the format `api/v2/custom_content/metadata/:collection`, where `:collection` is the collection name.
