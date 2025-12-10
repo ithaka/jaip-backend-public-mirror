@@ -21,11 +21,6 @@
         ".nvmrc",
         "Dockerfile",
         ".gitlab-ci.yml"
-      ]
-    },
-    {
-      "matchDepNames": [
-        "node"
       ],
       "allowedVersions": "<23"
     }
