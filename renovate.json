@@ -22,7 +22,7 @@
         "Dockerfile",
         ".gitlab-ci.yml"
       ],
-      "allowedVersions": "<23"
+      "allowedVersions": "<25"
     }
   ]
 }
