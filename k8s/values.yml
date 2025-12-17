@@ -20,7 +20,7 @@ extraEnv:
 autoscaling:
   enabled: true
   minReplicas: 1
-  maxReplicas: 8
+  maxReplicas: 16
 
 registerInEureka: true
 serviceLocatable: true
