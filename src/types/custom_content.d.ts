@@ -35,12 +35,15 @@ export interface CollectionMetadata {
   title: string;
   description: string;
   filename: string;
+  thumbnail: string;
   creator: string;
   contributor: string;
   publisher: string;
   date: string;
   type: string;
   format: string;
+  page_count: number;
+  alternate_versions: AlternateDocumentVersion[];
   subject: string;
   location: string;
   language: string;

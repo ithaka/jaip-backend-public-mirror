@@ -1,0 +1,8 @@
+site_name: JAIP Backend
+nav: 
+  - Home: index.md
+  - Setup: getting-started.md  
+  - Database: database.md  
+  - API: routes.md
+  - Architecture: architecture.md
+  - Collections: collections.md

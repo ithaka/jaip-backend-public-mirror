@@ -30,6 +30,8 @@ metadata:
       title: Production Application
     - url: https://jaip-backend.apps.test.cirrostratus.org/
       title: Test Application
+  annotations: 
+    backstage.io/tech-docs-ref: url:https://jaip-backend.apps.prod.cirrostratus.org/docs
 spec:
   type: service
   owner: jaip

@@ -1,8 +1,10 @@
+import { CollectionMetadata } from "../../types/custom_content.js";
+
 /**
  * Reentry guides collection metadata.
  * @type {CollectionMetadata[]}
  */
-export const reentry_metadata = [
+export const reentry_metadata: CollectionMetadata[] = [
   {
     title:
       "Connections 2025: A Free Guide for Formerly Incarcerated People in New York City",
@@ -377,6 +379,156 @@ export const reentry_metadata = [
       "Occupational licensing",
       "Distance education",
       "Student support services",
+    ],
+  },
+  {
+    title: "Deportation to Honduras",
+    description:
+      "Updated 2026 country-specific chapter that provides detailed information for people deported from the U.S. to Honduras.",
+    filename: "deportation-honduras-2026-usa-en.pdf",
+    thumbnail: "deportation-honduras-2026-usa-en.png",
+    creator: "Education Justice Project",
+    contributor:
+      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+    publisher: "University of Illinois Urbana-Champaign",
+    date: "2026",
+    type: "Text",
+    format: "PDF",
+    page_count: 41,
+    alternate_versions: [
+      {
+        filename: "deportacion-honduras-2026-usa-es.pdf",
+        language: "Español",
+        label: "Ver en Español",
+      },
+    ],
+    subject:
+      "Deportation to Honduras; immigration; reentry support; identification documents; migrant-serving organizations and shelters",
+    location: "Illinois",
+    language: "English",
+    jurisdiction: "United States; Honduras",
+    is_national: true,
+    state_code: "USA",
+    subject_arr: [
+      "Honduras",
+      "Deportation",
+      "Reintegration",
+      "Immigration law",
+      "Legal assistance",
+      "Human rights",
+      "Community support for deported individuals",
+    ],
+  },
+  {
+    title: "Deportación a Honduras",
+    description:
+      "Capítulo actualizado de 2026 específico para cada país que proporciona información detallada para las personas deportadas de Estados Unidos a Honduras.",
+    filename: "deportacion-honduras-2026-usa-es.pdf",
+    thumbnail: "deportacion-honduras-2026-usa-es.png",
+    creator: "Education Justice Project",
+    contributor:
+      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+    publisher: "University of Illinois Urbana-Champaign",
+    date: "2026",
+    type: "Text",
+    format: "PDF (recurso en línea)",
+    page_count: 43,
+    alternate_versions: [
+      {
+        filename: "deportation-honduras-2026-usa-en.pdf",
+        language: "English",
+        label: "View in English",
+      },
+    ],
+    subject:
+      "Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
+    language: "Español",
+    state_code: "USA",
+    location: "Illinois",
+    jurisdiction: "Estados Unidos, Honduras",
+    is_national: true,
+    subject_arr: [
+      "Honduras",
+      "Deportación",
+      "Reintegración",
+      "Derecho migratorio",
+      "Asistencia legal",
+      "Derechos humanos",
+      "Apoyo comunitario para personas deportadas",
+    ],
+  },
+  {
+    title: "A New Path: Deportation Guide 2026 Updates",
+    description:
+      "Updated and expanded chapters from the 2026 deportation guide.",
+    filename: "new-path-deportation-updates-2026-usa-en.pdf",
+    thumbnail: "new-path-deportation-updates-2026-usa-en.png",
+    creator: "Education Justice Project",
+    contributor:
+      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+    publisher: "University of Illinois Urbana-Champaign",
+    date: "2026",
+    type: "Text",
+    format: "PDF (online resource)",
+    page_count: 27,
+    alternate_versions: [
+      {
+        filename: "nuevo-camino-deportacion-actualizacion-2026-es.pdf",
+        language: "Español",
+        label: "Ver en Español",
+      },
+    ],
+    subject:
+      "Deportation; Reentry; Immigration law; Legal aid; Human rights; Community support for deported persons",
+    language: "English",
+    state_code: "USA",
+    location: "Illinois",
+    jurisdiction: "United States, Mexico, Central America",
+    is_national: true,
+    subject_arr: [
+      "Deportation",
+      "Reentry",
+      "Immigration law",
+      "Legal aid",
+      "Human rights",
+      "Community support for deported persons",
+    ],
+  },
+  {
+    title: "Un Nuevo Camino: Guía de Deportación 2026 Actualizaciones",
+    description:
+      "Capítulos actualizados y ampliados de la guía de deportación de 2026",
+    filename: "nuevo-camino-deportacion-actualizacion-2026-es.pdf",
+    thumbnail: "nuevo-camino-deportacion-actualizacion-2026-es.png",
+    creator: "Education Justice Project",
+    contributor:
+      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+    publisher: "University of Illinois Urbana-Champaign",
+    date: "2026",
+    type: "Text",
+    format: "PDF (recurso en línea)",
+    page_count: 28,
+    alternate_versions: [
+      {
+        filename: "new-path-deportation-updates-2026-usa-en.pdf",
+        language: "English",
+        label: "View in English",
+      },
+    ],
+    subject:
+      "Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
+    language: "Español",
+    state_code: "USA",
+    location: "Illinois",
+    jurisdiction: "Estados Unidos, México, América Central",
+    is_national: true,
+    subject_arr: [
+      "Deportación",
+      "Reintegración",
+      "Derecho migratorio",
+      "Asistencia legal",
+      "Derechos humanos",
+      "Apoyo comunitario para personas deportadas",
     ],
   },
 ];
