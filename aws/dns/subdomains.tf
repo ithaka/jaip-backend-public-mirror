@@ -17,6 +17,7 @@ locals {
     "nucleos-wy",
     "nucleos-hi",
     "nucleos-oh",
-    "nucleos-usvi"
+    "nucleos-usvi",
+    "nucleos-id",
   ]
 }
