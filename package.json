@@ -16,8 +16,8 @@
     "format": "yarn format:ci --write"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.954.0",
-    "@aws-sdk/s3-request-presigner": "^3.954.0",
+    "@aws-sdk/client-s3": "^3.958.0",
+    "@aws-sdk/s3-request-presigner": "^3.958.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.2.0",
     "@fastify/postgres": "^6.0.2",
@@ -47,7 +47,7 @@
     "prisma": "^7.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0",
+    "typescript-eslint": "^8.50.1",
     "vitest": "^4.0.16"
   },
   "resolutions": {
