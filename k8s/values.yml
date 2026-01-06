@@ -32,7 +32,7 @@ serviceAccountName: $SERVICE_ACCOUNT_NAME
 # We'll likely want to enable these in future, but there are things we need to
 # configure first.
 prometheus:
-  enable: false
+  enable: true
 
 # The port that your application itself listens on.
 internalPort: 8080
