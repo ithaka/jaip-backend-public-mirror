@@ -3,11 +3,11 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { LogPayload } from "../../event_handler/index.js";
 import { OfflineIndexParams } from "../../types/routes.js";
 import { OFFLINE_INDICES } from "../../consts/index.js";
-import { get_s3_object } from "../pages/helpers.js";
+import { get_presigned_url } from "../pages/helpers.js";
 
 /**
  * Handler for offline index downloads
- * Streams ZIP files directly from S3 to the client
+ * Redirects to a presigned S3 URL for the requested offline index ZIP file
  * @param fastify - Fastify instance
  * @returns Fastify handler function
  */
@@ -35,11 +35,12 @@ export const download_offline_index_handler =
     );
 
     try {
-      const [stream, s3_error] = await get_s3_object(path);
-      if (s3_error) {
+      const [url, s3_error] = await get_presigned_url(path);
+      if (s3_error || !url) {
         throw s3_error;
       }
-      await reply.type("application/zip").send(stream);
+
+      reply.redirect(url);
 
       fastify.event_logger.pep_standard_log_complete(
         `pep_download_offline_index_complete`,

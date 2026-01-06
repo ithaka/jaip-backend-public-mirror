@@ -1,4 +1,12 @@
 import { afterEach, expect, test, vi } from "vitest";
+
+vi.mock("../helpers.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../helpers.js")>();
+  return {
+    ...actual,
+    get_s3_object: vi.fn(),
+  };
+});
 import {
   build_test_server,
   db_mock,
@@ -18,6 +26,7 @@ import {
   mock_image_response,
 } from "../../../tests/fixtures/pages/fixtures.js";
 import axios from "axios";
+import { get_s3_object } from "../helpers.js";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,
@@ -27,6 +36,8 @@ import {
   basic_facility,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
+
+const mocked_get_s3_object = vi.mocked(get_s3_object);
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
@@ -95,8 +106,11 @@ test.each(routes)(
       .mockResolvedValue({
         status: 200,
         data: ale_response,
-      })
-      .mockResolvedValueOnce(mock_image_response);
+      });
+    mocked_get_s3_object.mockResolvedValueOnce([
+      Buffer.from(mock_image_response.data) as unknown as NodeJS.ReadableStream,
+      null,
+    ]);
 
     db_mock.get_item_status.mockResolvedValueOnce([
       approved_item_response,
@@ -112,7 +126,8 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(3);
+    expect(axios.get).toHaveBeenCalledTimes(2);
+    expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
   },
@@ -133,8 +148,11 @@ test.each(routes)(
       .mockResolvedValue({
         status: 200,
         data: ale_response,
-      })
-      .mockResolvedValueOnce(mock_image_response);
+      });
+    mocked_get_s3_object.mockResolvedValueOnce([
+      Buffer.from(mock_image_response.data) as unknown as NodeJS.ReadableStream,
+      null,
+    ]);
 
     db_mock.get_item_status.mockResolvedValueOnce([null, null]);
     db_mock.get_statuses.mockResolvedValueOnce([
@@ -151,7 +169,8 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(3);
+    expect(axios.get).toHaveBeenCalledTimes(2);
+    expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
@@ -173,8 +192,11 @@ test.each(routes)(
       .mockResolvedValue({
         status: 200,
         data: ale_response,
-      })
-      .mockResolvedValueOnce(mock_image_response);
+      });
+    mocked_get_s3_object.mockResolvedValueOnce([
+      Buffer.from(mock_image_response.data) as unknown as NodeJS.ReadableStream,
+      null,
+    ]);
 
     db_mock.get_item_status.mockResolvedValueOnce([null, null]);
     db_mock.get_statuses.mockResolvedValueOnce([
@@ -191,7 +213,8 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(3);
+    expect(axios.get).toHaveBeenCalledTimes(2);
+    expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
     expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
@@ -241,8 +264,11 @@ test.each(routes)(
       .mockResolvedValue({
         status: 200,
         data: ale_response,
-      })
-      .mockResolvedValueOnce(mock_image_response);
+      });
+    mocked_get_s3_object.mockResolvedValueOnce([
+      Buffer.from(mock_image_response.data) as unknown as NodeJS.ReadableStream,
+      null,
+    ]);
 
     const res = await app.inject({
       method: "GET",
@@ -253,7 +279,8 @@ test.each(routes)(
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
-    expect(axios.get).toHaveBeenCalledTimes(3);
+    expect(axios.get).toHaveBeenCalledTimes(2);
+    expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(0);
     expect(res.statusCode).toEqual(200);
   },

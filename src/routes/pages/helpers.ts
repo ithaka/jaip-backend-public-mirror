@@ -12,7 +12,7 @@ import {
   PSEUDO_DISCIPLINE_CODES,
   UNLISTED_PSEUDO_DISCIPLINES,
 } from "../../consts/index.js";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { status_options } from "../../database/prisma/client.js";
 import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
@@ -20,30 +20,55 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { JAIPDatabase } from "../../database/index.js";
 import { get_bulk_statuses } from "../search/helpers.js";
+import type { NodeJsClient } from "@smithy/types";
+
+// This is a slightly odd typing, but it is the most straightforward way
+// to deal with the superset that the s3 client returns as described here:
+// https://github.com/aws/aws-sdk-js-v3/issues/4720
+export const get_s3_client = (): NodeJsClient<S3Client> => {
+  return new S3Client({
+    region: "us-east-1",
+  }) as NodeJsClient<S3Client>;
+};
+
+export const get_s3_command = (str: string): GetObjectCommand => {
+  const url = new URL(str);
+  return new GetObjectCommand({
+    Bucket: url.host,
+    Key: url.pathname.substring(1),
+  });
+};
 
 export const get_s3_object = async (
   str: string,
-): Promise<[AxiosResponse | null, Error | null]> => {
+): Promise<[NodeJS.ReadableStream | null, Error | null]> => {
   try {
-    const url = new URL(str);
+    const client = get_s3_client();
+    const command = get_s3_command(str);
 
-    const client = new S3Client({
-      region: "us-east-1",
-    });
+    const s3Response = await client.send(command);
+    const s3ReadableStream = s3Response.Body;
+    if (!s3ReadableStream) {
+      throw new Error(`S3 object retrieval failed: No Body in response`);
+    }
 
-    const command = new GetObjectCommand({
-      Bucket: url.host,
-      Key: url.pathname.substring(1),
-    });
+    return [s3ReadableStream, null];
+  } catch (err) {
+    const error = ensure_error(err);
+    return [null, error];
+  }
+};
+
+export const get_presigned_url = async (
+  str: string,
+): Promise<[string | null, Error | null]> => {
+  try {
+    const client = get_s3_client();
+    const command = get_s3_command(str);
 
     const signed_url = await getSignedUrl(client, command, { expiresIn: 3600 });
-    const response = await axios.get(signed_url, {
-      responseType: "stream",
-    });
-    if (response.status !== 200) {
-      throw new Error(`S3 object request failed: Status code not 200`);
-    }
-    return [response.data, null];
+
+    return [signed_url, null];
   } catch (err) {
     const error = ensure_error(err);
     return [null, error];

@@ -1,10 +1,10 @@
 import { afterEach, expect, test, describe, vi } from "vitest";
 
 vi.mock("../../pages/helpers.js", () => ({
-  get_s3_object: vi.fn(),
+  get_presigned_url: vi.fn(),
 }));
 
-import { get_s3_object } from "../../pages/helpers.js";
+import { get_presigned_url } from "../../pages/helpers.js";
 import {
   build_test_server,
   db_mock,
@@ -15,7 +15,7 @@ import { get_route } from "../../../utils/index.js";
 import { route_schemas } from "../schemas.js";
 import { downloads_prefix } from "../options.js";
 import { OFFLINE_INDICES } from "../../../consts/index.js";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,
@@ -24,7 +24,7 @@ import { basic_reviewer } from "../../../tests/fixtures/users/fixtures.js";
 
 process.env.DB_MOCK = "true";
 
-const mocked_get_s3_object = vi.mocked(get_s3_object);
+const mocked_get_presigned_url = vi.mocked(get_presigned_url);
 const app = build_test_server([route_settings]);
 const download_route = `${route_settings.options.prefix}${get_route(route_schemas.download_offline_index)}`;
 const download_url = (index_id: string) =>
@@ -40,9 +40,8 @@ test(`requests the ${download_route} route with a valid admin and streams ZIP fi
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
-  const mockStream = Buffer.from("mock zip file content");
-  mocked_get_s3_object.mockResolvedValueOnce([
-    mockStream as unknown as AxiosResponse,
+  mocked_get_presigned_url.mockResolvedValueOnce([
+    "this text doesn't matter",
     null,
   ]);
 
@@ -60,15 +59,13 @@ test(`requests the ${download_route} route with a valid admin and streams ZIP fi
   expect(discover_mock).toHaveBeenCalledTimes(1);
   expect(axios.post).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
-  expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
-  expect(mocked_get_s3_object).toHaveBeenCalledWith(
+  expect(mocked_get_presigned_url).toHaveBeenCalledTimes(1);
+  expect(mocked_get_presigned_url).toHaveBeenCalledWith(
     `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Mac.zip`,
   );
   expect(log_start).toHaveBeenCalledTimes(1);
   expect(log_complete).toHaveBeenCalledTimes(1);
-  expect(res.statusCode).toEqual(200);
-  expect(res.headers["content-type"]).toContain("application/zip");
-  expect(res.body).toEqual("mock zip file content");
+  expect(res.statusCode).toEqual(302);
 });
 
 test(`requests the ${download_route} route with invalid index_id and returns 400`, async () => {
@@ -84,7 +81,7 @@ test(`requests the ${download_route} route with invalid index_id and returns 400
   expect(discover_mock).not.toHaveBeenCalled();
   expect(axios.post).not.toHaveBeenCalled();
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
-  expect(mocked_get_s3_object).not.toHaveBeenCalled();
+  expect(mocked_get_presigned_url).not.toHaveBeenCalled();
   expect(res.statusCode).toEqual(400);
 });
 
@@ -94,7 +91,7 @@ test(`requests the ${download_route} route when S3 error occurs and returns 500`
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
   const s3Error = new Error("S3 access denied");
-  mocked_get_s3_object.mockResolvedValueOnce([null, s3Error]);
+  mocked_get_presigned_url.mockResolvedValueOnce([null, s3Error]);
 
   const log_start = vi.spyOn(app.event_logger, "pep_standard_log_start");
   const log_error = vi.spyOn(app.event_logger, "pep_error");
@@ -110,7 +107,7 @@ test(`requests the ${download_route} route when S3 error occurs and returns 500`
   expect(discover_mock).toHaveBeenCalledTimes(1);
   expect(axios.post).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
-  expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
+  expect(mocked_get_presigned_url).toHaveBeenCalledTimes(1);
   expect(log_start).toHaveBeenCalledTimes(1);
   expect(log_error).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(500);

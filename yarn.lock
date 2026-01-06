@@ -4322,6 +4322,7 @@ __metadata:
     "@fastify/swagger-ui": "npm:^5.2.3"
     "@prisma/adapter-pg": "npm:^7.2.0"
     "@prisma/client": "npm:^7.2.0"
+    "@smithy/types": "npm:^4.11.0"
     "@types/node": "npm:^24.10.4"
     "@types/pg": "npm:^8.16.0"
     "@types/uuid": "npm:^11.0.0"

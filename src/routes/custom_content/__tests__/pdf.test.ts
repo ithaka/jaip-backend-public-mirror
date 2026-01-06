@@ -13,7 +13,7 @@ import {
 import route_settings from "../routes.js";
 import { get_route } from "../../../utils/index.js";
 import { route_schemas } from "../schemas.js";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 import {
   axios_session_data_with_code,
   axios_session_data_with_email,
@@ -46,7 +46,7 @@ test(`requests the ${pdf_route} route with a valid admin`, async () => {
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
   mocked_get_s3_object.mockResolvedValueOnce([
-    Buffer.from("pdf") as unknown as AxiosResponse,
+    Buffer.from("pdf") as unknown as NodeJS.ReadableStream,
     null,
   ]);
   const log_start = vi.spyOn(app.event_logger, "pep_standard_log_start");
@@ -107,7 +107,7 @@ test(`requests the ${pdf_route} route with a valid facility`, async () => {
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_first_facility.mockResolvedValueOnce(facility_with_access);
   mocked_get_s3_object.mockResolvedValueOnce([
-    Buffer.from("pdf") as unknown as AxiosResponse,
+    Buffer.from("pdf") as unknown as NodeJS.ReadableStream,
     null,
   ]);
   const log_start = vi.spyOn(app.event_logger, "pep_standard_log_start");
