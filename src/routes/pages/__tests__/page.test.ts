@@ -25,7 +25,7 @@ import {
   iid_path,
   mock_image_response,
 } from "../../../tests/fixtures/pages/fixtures.js";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { get_s3_object } from "../helpers.js";
 import {
   axios_session_data_with_email,
@@ -36,6 +36,7 @@ import {
   basic_facility,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
+import { S3ServiceException } from "@aws-sdk/client-s3";
 
 const mocked_get_s3_object = vi.mocked(get_s3_object);
 
@@ -307,4 +308,63 @@ test(`requests the ${page_route} route when metadata lacks page images`, async (
   expect(axios.get).toHaveBeenCalledTimes(1);
   expect(db_mock.get_item_status).not.toHaveBeenCalled();
   expect(res.payload).toContain("Page 0 not found");
+});
+
+test(`requests the ${page_route} route when metadata is missing`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  const axios_error = new AxiosError("not found", AxiosError.ERR_BAD_REQUEST);
+  (axios_error as AxiosError & { status?: number }).status = 404;
+  axios.get = vi.fn().mockRejectedValueOnce(axios_error);
+
+  const res = await app.inject({
+    method: "GET",
+    url: page_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
+  });
+
+  expect(res.statusCode).toEqual(404);
+  expect(res.payload).toStrictEqual("Metadata not found");
+  expect(mocked_get_s3_object).not.toHaveBeenCalled();
+});
+
+test(`requests the ${page_route} route when the page is missing in S3`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  axios.get = vi
+    .fn()
+    .mockResolvedValueOnce({
+      status: 200,
+      data: cedar_item_view_response,
+    })
+    .mockResolvedValueOnce({
+      status: 200,
+      data: ale_response,
+    });
+
+  const s3_error = new S3ServiceException({
+    name: "NoSuchKey",
+    message: "not found",
+    $fault: "client",
+    $metadata: { httpStatusCode: 404 },
+  });
+
+  mocked_get_s3_object.mockResolvedValueOnce([null, s3_error]);
+
+  const res = await app.inject({
+    method: "GET",
+    url: page_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
+  });
+
+  expect(res.statusCode).toEqual(404);
+  expect(res.payload).toStrictEqual("Item not found");
+  expect(axios.get).toHaveBeenCalledTimes(1);
+  expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
 });

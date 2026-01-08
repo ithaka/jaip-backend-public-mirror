@@ -12,6 +12,7 @@ import {
 } from "./helpers.js";
 import { AxiosError } from "axios";
 import { FEATURES } from "../../consts/index.js";
+import { S3ServiceException } from "@aws-sdk/client-s3";
 
 export const page_handler =
   (fastify: FastifyInstance) =>
@@ -111,7 +112,16 @@ export const page_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      reply.code(500).send(error.message);
+      if (error instanceof AxiosError && error.status === 404) {
+        reply.code(404).send("Metadata not found");
+      } else if (
+        error instanceof S3ServiceException &&
+        error.$metadata.httpStatusCode === 404
+      ) {
+        reply.code(404).send("Item not found");
+      } else {
+        reply.code(500).send(error.message);
+      }
       fastify.event_logger.pep_error(
         request,
         reply,
