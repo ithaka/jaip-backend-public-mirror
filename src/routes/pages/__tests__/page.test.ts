@@ -1,7 +1,8 @@
 import { afterEach, expect, test, vi } from "vitest";
 
-vi.mock("../helpers.js", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../helpers.js")>();
+vi.mock("../../../utils/aws-s3.js", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../../../utils/aws-s3.js")>();
   return {
     ...actual,
     get_s3_object: vi.fn(),
@@ -26,7 +27,7 @@ import {
   mock_image_response,
 } from "../../../tests/fixtures/pages/fixtures.js";
 import axios, { AxiosError } from "axios";
-import { get_s3_object } from "../helpers.js";
+import { get_s3_object } from "../../../utils/aws-s3.js";
 import {
   axios_session_data_with_email,
   valid_admin_subdomain,

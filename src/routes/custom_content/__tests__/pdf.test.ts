@@ -1,10 +1,11 @@
 import { afterEach, expect, test, vi } from "vitest";
 
-vi.mock("../../pages/helpers.js", () => ({
+vi.mock("../../../utils/aws-s3.js", () => ({
   get_s3_object: vi.fn(),
+  get_jaip_s3_url: vi.fn(),
 }));
 
-import { get_s3_object } from "../../pages/helpers.js";
+import { get_s3_object, get_jaip_s3_url } from "../../../utils/aws-s3.js";
 import {
   build_test_server,
   db_mock,
@@ -31,6 +32,7 @@ import {
 process.env.DB_MOCK = "true";
 
 const mocked_get_s3_object = vi.mocked(get_s3_object);
+const mocked_get_jaip_s3_url = vi.mocked(get_jaip_s3_url);
 const app = build_test_server([route_settings]);
 const pdf_route = `${route_settings.options.prefix}${get_route(route_schemas.get_pdf)}`;
 const pdf_url = (collection: string, filename: string) =>
@@ -45,6 +47,9 @@ test(`requests the ${pdf_route} route with a valid admin`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  mocked_get_jaip_s3_url.mockReturnValue(
+    "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
+  );
   mocked_get_s3_object.mockResolvedValueOnce([
     Buffer.from("pdf") as unknown as NodeJS.ReadableStream,
     null,
@@ -106,6 +111,9 @@ test(`requests the ${pdf_route} route with a valid facility`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
   db_mock.get_first_facility.mockResolvedValueOnce(facility_with_access);
+  mocked_get_jaip_s3_url.mockReturnValue(
+    "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
+  );
   mocked_get_s3_object.mockResolvedValueOnce([
     Buffer.from("pdf") as unknown as NodeJS.ReadableStream,
     null,
@@ -160,6 +168,9 @@ test(`requests the ${pdf_route} route when the pdf is unavailable`, async () => 
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
   const axios_error = new AxiosError("not found", AxiosError.ERR_BAD_REQUEST);
   axios_error.code = AxiosError.ERR_BAD_REQUEST;
+  mocked_get_jaip_s3_url.mockReturnValue(
+    "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
+  );
   mocked_get_s3_object.mockResolvedValueOnce([null, axios_error]);
   const log_error = vi.spyOn(app.event_logger, "pep_error");
 

@@ -1,10 +1,11 @@
 import { afterEach, expect, test, describe, vi } from "vitest";
 
-vi.mock("../../pages/helpers.js", () => ({
+vi.mock("../../../utils/aws-s3.js", () => ({
   get_presigned_url: vi.fn(),
+  get_jaip_s3_url: vi.fn(),
 }));
 
-import { get_presigned_url } from "../../pages/helpers.js";
+import { get_presigned_url, get_jaip_s3_url } from "../../../utils/aws-s3.js";
 import {
   build_test_server,
   db_mock,
@@ -25,6 +26,7 @@ import { basic_reviewer } from "../../../tests/fixtures/users/fixtures.js";
 process.env.DB_MOCK = "true";
 
 const mocked_get_presigned_url = vi.mocked(get_presigned_url);
+const mocked_get_jaip_s3_url = vi.mocked(get_jaip_s3_url);
 const app = build_test_server([route_settings]);
 const download_route = `${route_settings.options.prefix}${get_route(route_schemas.download_offline_index)}`;
 const download_url = (index_id: string) =>
@@ -40,6 +42,9 @@ test(`requests the ${download_route} route with a valid admin and streams ZIP fi
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
+  mocked_get_jaip_s3_url.mockReturnValue(
+    `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Mac.zip`,
+  );
   mocked_get_presigned_url.mockResolvedValueOnce([
     "this text doesn't matter",
     null,
@@ -91,6 +96,9 @@ test(`requests the ${download_route} route when S3 error occurs and returns 500`
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
 
   const s3Error = new Error("S3 access denied");
+  mocked_get_jaip_s3_url.mockReturnValue(
+    `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Windows.zip`,
+  );
   mocked_get_presigned_url.mockResolvedValueOnce([null, s3Error]);
 
   const log_start = vi.spyOn(app.event_logger, "pep_standard_log_start");

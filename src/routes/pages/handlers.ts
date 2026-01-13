@@ -8,8 +8,8 @@ import {
   get_is_forbidden,
   get_md_from_cedar,
   get_page_url,
-  get_s3_object,
 } from "./helpers.js";
+import { get_s3_object } from "../../utils/aws-s3.js";
 import { AxiosError } from "axios";
 import { FEATURES } from "../../consts/index.js";
 import { S3ServiceException } from "@aws-sdk/client-s3";

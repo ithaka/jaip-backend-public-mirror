@@ -4,10 +4,10 @@ import { LogPayload } from "../../event_handler/index.js";
 import { ensure_error } from "../../utils/index.js";
 import { AxiosError } from "axios";
 import {
-  CUSTOM_CONTENT_BUCKET,
   CUSTOM_CONTENT_METADATA,
+  CUSTOM_CONTENT_S3_PATH,
 } from "../../consts/index.js";
-import { get_s3_object } from "../pages/helpers.js";
+import { get_s3_object, get_jaip_s3_url } from "../../utils/aws-s3.js";
 
 export const get_metadata_handler =
   (fastify: FastifyInstance) =>
@@ -93,10 +93,11 @@ export const pdf_handler =
     );
 
     try {
-      const url = `http://${CUSTOM_CONTENT_BUCKET}/${collection}/${filename}`;
-      log_payload.page_path = url;
-      fastify.log.info(`Getting S3 object for ${url}`);
-      const [stream, s3_error] = await get_s3_object(url);
+      const substring = `${CUSTOM_CONTENT_S3_PATH}/${collection}/${filename}`;
+      log_payload.page_path = substring;
+      fastify.log.info(`Getting S3 object for ${substring}`);
+      const path = get_jaip_s3_url(substring);
+      const [stream, s3_error] = await get_s3_object(path);
       if (s3_error) {
         throw s3_error;
       }

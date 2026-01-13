@@ -3,7 +3,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { LogPayload } from "../../event_handler/index.js";
 import { OfflineIndexParams } from "../../types/routes.js";
 import { OFFLINE_INDICES } from "../../consts/index.js";
-import { get_presigned_url } from "../pages/helpers.js";
+import { get_presigned_url, get_jaip_s3_url } from "../../utils/aws-s3.js";
 
 /**
  * Handler for offline index downloads
@@ -16,12 +16,14 @@ export const download_offline_index_handler =
   async (request: FastifyRequest, reply: FastifyReply) => {
     const params = request.params as OfflineIndexParams;
     const index_id = params.index_id;
-    const path = OFFLINE_INDICES[index_id];
+    const substring = OFFLINE_INDICES[index_id];
 
-    if (!path) {
+    if (!substring) {
       reply.code(400).send({ error: `Invalid index id: ${index_id}` });
       return;
     }
+
+    const path = get_jaip_s3_url(substring);
 
     const log_payload: LogPayload = {
       log_made_by: "download-offline-index-api",
