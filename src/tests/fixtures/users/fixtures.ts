@@ -147,6 +147,15 @@ export const search_result_permissions = (enabled: boolean) =>
     },
   ]);
 
+export const analytics_permissions = (enabled: boolean) =>
+  structuredClone([
+    {
+      enabled,
+      features: { id: 41, name: FEATURES.view_analytics, is_active: true },
+      groups: { id: 1 },
+    },
+  ]);
+
 export const groups = {
   ithaka: { id: 1, name: "Ithaka" },
   ilium: { id: 2, name: "Ilium" },
@@ -188,6 +197,7 @@ export const basic_admin = {
       ...search_result_permissions(true),
       ...media_review_permissions(true),
       ...user_permissions(true),
+      ...analytics_permissions(true),
       ...internal_ithaka_permissions(false),
     ],
     ungrouped_features_entities: [],
@@ -476,6 +486,7 @@ export const basic_reviewer = {
       ...search_result_permissions(true),
       ...media_review_permissions(true),
       ...user_permissions(false),
+      ...analytics_permissions(false),
       ...internal_ithaka_permissions(false),
     ],
     ungrouped_features_entities: [],

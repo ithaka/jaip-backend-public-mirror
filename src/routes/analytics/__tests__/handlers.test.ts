@@ -7,12 +7,23 @@ vi.mock("../../../utils/aws-s3.js", () => ({
   get_json_from_s3: vi.fn(),
 }));
 
-// Mock ANALYTICS_S3_PATH constant
-vi.mock("../../../consts/index.js", () => ({
-  ANALYTICS_S3_PATH: "analytics/mvp",
-}));
+// Mock ANALYTICS_S3_PATH constant while preserving other exports like FEATURES
+vi.mock("../../../consts/index.js", async () => {
+  const actual = await vi.importActual<
+    typeof import("../../../consts/index.js")
+  >("../../../consts/index.js");
+  return {
+    ...actual,
+    ANALYTICS_S3_PATH: "analytics/mvp",
+  };
+});
 
 import { get_json_from_s3, get_jaip_s3_url } from "../../../utils/aws-s3.js";
+import { map_entities } from "../../queries/entities.js";
+import {
+  basic_admin,
+  basic_reviewer,
+} from "../../../tests/fixtures/users/fixtures.js";
 import { get_analytics_by_group_handler } from "../handlers.js";
 
 const mockGetJaipS3Url = vi.mocked(get_jaip_s3_url);
@@ -35,7 +46,8 @@ describe("Analytics handlers", () => {
     } as unknown as FastifyInstance;
 
     mockRequest = {
-      params: { group_id: "123" },
+      params: { group_id: "1" },
+      user: map_entities(basic_admin),
     } as unknown as FastifyRequest;
 
     mockReply = {
@@ -51,7 +63,7 @@ describe("Analytics handlers", () => {
   describe("get_analytics_by_group_handler", () => {
     it("should successfully return analytics data for valid group_id", async () => {
       const mockAnalyticsData = { analytics: "test data" };
-      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/123";
+      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/1";
 
       mockGetJaipS3Url.mockReturnValue(mockS3Url);
       mockGetJsonFromS3.mockResolvedValue([mockAnalyticsData, null]);
@@ -59,7 +71,7 @@ describe("Analytics handlers", () => {
       const handler = get_analytics_by_group_handler(mockFastify);
       await handler(mockRequest, mockReply);
 
-      expect(mockGetJaipS3Url).toHaveBeenCalledWith("analytics/mvp/123");
+      expect(mockGetJaipS3Url).toHaveBeenCalledWith("analytics/mvp/1");
       expect(mockGetJsonFromS3).toHaveBeenCalledWith(mockS3Url);
       expect(mockReply.code).toHaveBeenCalledWith(200);
       expect(mockReply.send).toHaveBeenCalledWith({ data: mockAnalyticsData });
@@ -67,8 +79,8 @@ describe("Analytics handlers", () => {
         mockFastify.event_logger.pep_standard_log_start,
       ).toHaveBeenCalledWith("pep_get_analytics_by_group_start", mockRequest, {
         log_made_by: "analytics-api",
-        event_description: "start to retrieve analytics for group 123",
-        group_id: 123,
+        event_description: "start to retrieve analytics for group 1",
+        group_id: 1,
       });
       expect(
         mockFastify.event_logger.pep_standard_log_complete,
@@ -79,8 +91,8 @@ describe("Analytics handlers", () => {
         {
           log_made_by: "analytics-api",
           event_description:
-            "successfully retrieved analytics data for group 123",
-          group_id: 123,
+            "successfully retrieved analytics data for group 1",
+          group_id: 1,
         },
       );
     });
@@ -98,7 +110,11 @@ describe("Analytics handlers", () => {
       expect(mockFastify.event_logger.pep_error).toHaveBeenCalledWith(
         mockRequest,
         mockReply,
-        { event_description: expectedErrorMsg },
+        expect.objectContaining({
+          log_made_by: "analytics-api",
+          group_id: 0,
+          event_description: expectedErrorMsg,
+        }),
         "analytics-api",
         expect.any(Error),
       );
@@ -119,7 +135,11 @@ describe("Analytics handlers", () => {
       expect(mockFastify.event_logger.pep_error).toHaveBeenCalledWith(
         mockRequest,
         mockReply,
-        { event_description: expectedErrorMsg },
+        expect.objectContaining({
+          log_made_by: "analytics-api",
+          group_id: 0,
+          event_description: expectedErrorMsg,
+        }),
         "analytics-api",
         expect.any(Error),
       );
@@ -129,7 +149,7 @@ describe("Analytics handlers", () => {
 
     it("should handle S3 errors gracefully", async () => {
       const mockError = new Error("S3 access error");
-      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/123";
+      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/1";
 
       mockGetJaipS3Url.mockReturnValue(mockS3Url);
       mockGetJsonFromS3.mockResolvedValue([null, mockError]);
@@ -137,7 +157,7 @@ describe("Analytics handlers", () => {
       const handler = get_analytics_by_group_handler(mockFastify);
       await handler(mockRequest, mockReply);
 
-      expect(mockGetJaipS3Url).toHaveBeenCalledWith("analytics/mvp/123");
+      expect(mockGetJaipS3Url).toHaveBeenCalledWith("analytics/mvp/1");
       expect(mockGetJsonFromS3).toHaveBeenCalledWith(mockS3Url);
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith(mockError.message);
@@ -149,8 +169,8 @@ describe("Analytics handlers", () => {
         mockReply,
         {
           log_made_by: "analytics-api",
-          event_description: "failed to retrieve analytics data for 123",
-          group_id: 123,
+          event_description: "failed to retrieve analytics data for 1",
+          group_id: 1,
         },
         "analytics",
         mockError,
@@ -159,9 +179,9 @@ describe("Analytics handlers", () => {
 
     it("should parse group_id to integer for logging", async () => {
       const mockAnalyticsData = { analytics: "test data" };
-      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/456";
+      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/1";
 
-      mockRequest.params = { group_id: "456" };
+      mockRequest.params = { group_id: "001" };
       mockGetJaipS3Url.mockReturnValue(mockS3Url);
       mockGetJsonFromS3.mockResolvedValue([mockAnalyticsData, null]);
 
@@ -172,29 +192,48 @@ describe("Analytics handlers", () => {
         mockFastify.event_logger.pep_standard_log_start,
       ).toHaveBeenCalledWith("pep_get_analytics_by_group_start", mockRequest, {
         log_made_by: "analytics-api",
-        event_description: "start to retrieve analytics for group 456",
-        group_id: 456,
+        event_description: "start to retrieve analytics for group 001",
+        group_id: 1,
       });
     });
 
-    it("should handle non-numeric group_id gracefully in logging", async () => {
-      const mockAnalyticsData = { analytics: "test data" };
-      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/abc";
-
+    it("should return 400 error for non-numeric group_id", async () => {
       mockRequest.params = { group_id: "abc" };
-      mockGetJaipS3Url.mockReturnValue(mockS3Url);
-      mockGetJsonFromS3.mockResolvedValue([mockAnalyticsData, null]);
+      const expectedErrorMsg =
+        "Group ID is required to retrieve analytics data";
 
       const handler = get_analytics_by_group_handler(mockFastify);
       await handler(mockRequest, mockReply);
 
-      expect(
-        mockFastify.event_logger.pep_standard_log_start,
-      ).toHaveBeenCalledWith("pep_get_analytics_by_group_start", mockRequest, {
-        log_made_by: "analytics-api",
-        event_description: "start to retrieve analytics for group abc",
-        group_id: NaN, // parseInt('abc', 10) returns NaN
-      });
+      expect(mockReply.code).toHaveBeenCalledWith(400);
+      expect(mockReply.send).toHaveBeenCalledWith(expectedErrorMsg);
+      expect(mockGetJaipS3Url).not.toHaveBeenCalled();
+      expect(mockGetJsonFromS3).not.toHaveBeenCalled();
+    });
+
+    it("should return 403 when basic reviewer lacks analytics permission", async () => {
+      mockRequest.user = map_entities(basic_reviewer);
+      const expectedErrorMsg =
+        "User does not have permission to view analytics for group 1";
+
+      const handler = get_analytics_by_group_handler(mockFastify);
+      await handler(mockRequest, mockReply);
+
+      expect(mockReply.code).toHaveBeenCalledWith(403);
+      expect(mockReply.send).toHaveBeenCalledWith(expectedErrorMsg);
+      expect(mockGetJaipS3Url).not.toHaveBeenCalled();
+      expect(mockGetJsonFromS3).not.toHaveBeenCalled();
+      expect(mockFastify.event_logger.pep_error).toHaveBeenCalledWith(
+        mockRequest,
+        mockReply,
+        expect.objectContaining({
+          log_made_by: "analytics-api",
+          event_description: expectedErrorMsg,
+          group_id: 1,
+        }),
+        "analytics-api",
+        expect.any(Error),
+      );
     });
   });
 });

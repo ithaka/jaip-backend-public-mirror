@@ -22,3 +22,9 @@ CVE-2025-64756 exp:2026-03-01
 # not directly relevant to our application, which does not use Go.
 CVE-2025-61727 exp:2026-03-01
 CVE-2025-61729 exp:2026-03-01
+
+
+# PRISMA VULNERABILITIES
+# These are vulnerabilities in Hono, a Prisma dependency. We're not using the vulnerable code.
+CVE-2026-22817 exp:2026-04-01
+CVE-2026-22818 exp:2026-04-01
