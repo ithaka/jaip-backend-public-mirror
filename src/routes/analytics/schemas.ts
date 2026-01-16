@@ -12,7 +12,7 @@ export const route_schemas = {
     requires: {
       any: {
         grouped: {
-          any: [FEATURES.view_analytics],
+          any: [FEATURES.manage_facilities], //TODO: Change when analytics feature is complete
         },
       },
     },
