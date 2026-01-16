@@ -127,6 +127,7 @@ export const FEATURES = {
   undo_bulk_approve: "undo_bulk_approve",
   use_protected_features: "use_protected_features",
   view_abstract: "view_abstract",
+  view_analytics: "view_analytics",
   view_book_description: "view_book_description",
   view_document: "view_document",
   view_hidden_users: "view_hidden_users",
