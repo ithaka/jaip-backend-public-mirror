@@ -1,4 +1,4 @@
-FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.12.0-alpine
+FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.13.0-alpine
 
 WORKDIR /usr/src/app
 
