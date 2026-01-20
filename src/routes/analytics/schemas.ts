@@ -1,6 +1,8 @@
 import { FEATURES, SWAGGER_TAGS } from "../../consts/index.js";
-import { AnalyticsData } from "../../types/analytics.js";
 import { standard_errors } from "../../utils/index.js";
+// TODO: When AnalyticsData type is locked down in the databricks setup, uncomment the following line
+// For now, we use additionalProperties: true in the response schema to allow any shape of object
+// import { AnalyticsData } from "../../types/analytics.js";
 
 export const route_schemas = {
   get_analytics: {
@@ -18,9 +20,9 @@ export const route_schemas = {
     },
     response: {
       200: {
+        description: "Analytics data object (AnalyticsData)",
         type: "object",
-        properties: {} as AnalyticsData,
-        required: ["data"],
+        additionalProperties: true,
       },
       ...standard_errors,
     },
