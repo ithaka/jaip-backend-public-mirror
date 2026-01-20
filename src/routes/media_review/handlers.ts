@@ -9,7 +9,7 @@ import { LogPayload } from "../../event_handler/index.js";
 import {
   MediaReviewApproval,
   MediaReviewBulk,
-  MediaReviewBulUndo,
+  MediaReviewBulkUndo,
   MediaReviewDenial,
   MediaReviewRequest,
 } from "../../types/routes.js";
@@ -19,10 +19,7 @@ export const denial_and_incomplete_handler = (
   status: status_options,
 ) => {
   const action = status === status_options.Denied ? "denial" : "incomplete";
-  return async (
-    request: FastifyRequest<MediaReviewDenial>,
-    reply: FastifyReply,
-  ) => {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
@@ -35,12 +32,13 @@ export const denial_and_incomplete_handler = (
       },
     );
     try {
-      const doi = request.body.doi;
+      const body = request.body as MediaReviewDenial;
+      const doi = body.doi;
       const full_groups = request.user.groups.filter((group) =>
-        request.body.groups.includes(group.id),
+        body.groups.includes(group.id),
       );
-      const reason = request.body.reason;
-      const comments = request.body.comments;
+      const reason = body.reason;
+      const comments = body.comments;
       log_payload.doi = doi;
       log_payload.full_groups = full_groups;
       log_payload.reason = reason;
@@ -110,7 +108,7 @@ export const denial_and_incomplete_handler = (
 
 export const approval_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<MediaReviewApproval>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
@@ -123,9 +121,10 @@ export const approval_handler =
       },
     );
     try {
-      const doi = request.body.doi;
+      const body = request.body as MediaReviewApproval;
+      const doi = body.doi;
       const full_groups = request.user.groups.filter((group) =>
-        request.body.groups.includes(group.id),
+        body.groups.includes(group.id),
       );
       const groups = full_groups.map((group) => group.id);
       log_payload.doi = doi;
@@ -184,7 +183,7 @@ export const approval_handler =
 
 export const request_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<MediaReviewRequest>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
@@ -197,8 +196,9 @@ export const request_handler =
       },
     );
     try {
-      const dois = request.body.dois;
-      const comments = (request.body.comments || "").trim();
+      const body = request.body as MediaReviewRequest;
+      const dois = body.dois;
+      const comments = (body.comments || "").trim();
       // Because requests come from facilities, we can assume that there is only one group
       const group_id = request.user.groups[0].id;
       log_payload.dois = dois;
@@ -266,7 +266,7 @@ export const request_handler =
 
 export const bulk_approval_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<MediaReviewBulk>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
@@ -279,14 +279,15 @@ export const bulk_approval_handler =
       },
     );
     try {
+      const body = request.body as MediaReviewBulk;
       const full_groups = request.user.groups.filter((group) =>
-        request.body.groups.includes(group.id),
+        body.groups.includes(group.id),
       );
 
       // Using an empty array to handle undefined values allows us to just check length
-      const documents = request.body.documents || [];
-      const journals = request.body.journals || [];
-      const disciplines = request.body.disciplines || [];
+      const documents = body.documents || [];
+      const journals = body.journals || [];
+      const disciplines = body.disciplines || [];
 
       // If none of the arrays have any values, then there is no change to process.
       // This is a little too complicated for the standard validation schema, so it's
@@ -407,7 +408,7 @@ export const bulk_approval_handler =
 
 export const bulk_undo_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<MediaReviewBulUndo>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "media-review-api",
     };
@@ -420,10 +421,11 @@ export const bulk_undo_handler =
       },
     );
     try {
+      const body = request.body as MediaReviewBulkUndo;
       const full_groups = request.user.groups.filter((group) =>
-        request.body.groups.includes(group.id),
+        body.groups.includes(group.id),
       );
-      const code = request.body.code;
+      const code = body.code;
 
       log_payload.full_groups = full_groups;
       log_payload.code = code;

@@ -2,16 +2,16 @@ import { ensure_error } from "../../../utils/index.js";
 import { LogPayload } from "../../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
-  GetPaginatedBody,
-  IdOnlyBody,
-  NameAndIdBody,
-  NameOnlyBody,
+  GetPaginatedRequest,
+  IdOnlyRequest,
+  NameAndIdRequest,
+  NameOnlyRequest,
 } from "../../../types/routes.js";
 import { Prisma } from "../../../database/prisma/client.js";
 
 export const get_groups_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<GetPaginatedBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -24,7 +24,8 @@ export const get_groups_handler =
       },
     );
 
-    const { name, page, limit, is_active } = request.body;
+    const { name, page, limit, is_active } =
+      request.body as GetPaginatedRequest;
 
     try {
       const where_clause: Prisma.groupsFindManyArgs = {
@@ -94,7 +95,7 @@ export const get_groups_handler =
 
 export const add_group_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<NameOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -106,7 +107,7 @@ export const add_group_handler =
         event_description: "attempting to add group",
       },
     );
-    const { name } = request.body;
+    const { name } = request.body as NameOnlyRequest;
     log_payload.group_name = name;
 
     try {
@@ -172,7 +173,7 @@ export const add_group_handler =
 
 export const delete_group_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -184,7 +185,7 @@ export const delete_group_handler =
         event_description: "attempting to delete group",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.group_id = id;
 
     try {
@@ -217,7 +218,7 @@ export const delete_group_handler =
 
 export const reactivate_group_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -229,7 +230,7 @@ export const reactivate_group_handler =
         event_description: "attempting to reactivate group",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.group_id = id;
 
     try {
@@ -278,7 +279,7 @@ export const reactivate_group_handler =
 
 export const edit_group_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<NameAndIdBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -290,7 +291,7 @@ export const edit_group_handler =
         event_description: "attempting to edit group",
       },
     );
-    const { id, name } = request.body;
+    const { id, name } = request.body as NameAndIdRequest;
     const new_name = name.trim();
 
     if (!new_name) {
@@ -370,7 +371,7 @@ export const edit_group_handler =
 
 export const clear_history_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -382,7 +383,7 @@ export const clear_history_handler =
         event_description: "attempting to clear media review history",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.group_id = id;
 
     try {
@@ -418,7 +419,7 @@ export const clear_history_handler =
 
 export const create_group_admin_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -430,7 +431,7 @@ export const create_group_admin_handler =
         event_description: "attempting to create group admin",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.user_ids = [id];
 
     try {

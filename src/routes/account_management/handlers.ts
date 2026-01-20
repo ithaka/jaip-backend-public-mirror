@@ -3,9 +3,9 @@ import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { entity_types, user_roles } from "../../database/prisma/client.js";
 import {
-  AddEntitiesBody,
-  GetEntitiesBody,
-  RemoveEntitiesBody,
+  AddEntitiesRequest,
+  GetEntitiesRequest,
+  RemoveEntitiesRequest,
 } from "../../types/routes.js";
 import {
   add_or_edit_entity,
@@ -19,7 +19,7 @@ import { User } from "../../types/entities.js";
 
 export const get_entities_handler =
   (fastify: FastifyInstance, type: entity_types) =>
-  async (request: FastifyRequest<GetEntitiesBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "account-management-api",
       entity_type: type,
@@ -34,7 +34,8 @@ export const get_entities_handler =
       },
     );
 
-    const { query, page, groups, limit, include_ungrouped } = request.body;
+    const { query, page, groups, limit, include_ungrouped } =
+      request.body as GetEntitiesRequest;
     log_payload.query = query;
     log_payload.page = page.toString();
     log_payload.groups = groups;
@@ -156,7 +157,7 @@ export const get_entities_handler =
 
 export const remove_entities_handler =
   (fastify: FastifyInstance, type: entity_types) =>
-  async (request: FastifyRequest<RemoveEntitiesBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "account-management-api",
       entity_type: type,
@@ -170,7 +171,7 @@ export const remove_entities_handler =
       },
     );
 
-    const altered_user = request.body;
+    const altered_user = request.body as RemoveEntitiesRequest;
     log_payload.altered_user = altered_user;
     const groups = altered_user.groups.map((group) => group.id);
     log_payload.groups = groups;
@@ -244,7 +245,7 @@ export const remove_entities_handler =
 
 export const add_or_edit_entities_handler =
   (fastify: FastifyInstance, type: entity_types) =>
-  async (request: FastifyRequest<AddEntitiesBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "account-management-api",
       entity_type: type,
@@ -258,7 +259,7 @@ export const add_or_edit_entities_handler =
       },
     );
 
-    const requested_user = request.body;
+    const requested_user = request.body as AddEntitiesRequest;
     const new_user: User = {
       ...requested_user,
       type,

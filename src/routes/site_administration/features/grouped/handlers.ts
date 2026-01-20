@@ -2,11 +2,10 @@ import { ensure_error } from "../../../../utils/index.js";
 import { LogPayload } from "../../../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
-  AddGroupFeatureBody,
-  EditGroupFeatureBody,
-  GetPaginatedBody,
+  AddGroupFeatureRequest,
+  EditGroupFeatureRequest,
   GetPaginatedRequest,
-  IdOnlyBody,
+  IdOnlyRequest,
 } from "../../../../types/routes.js";
 import { Prisma } from "../../../../database/prisma/client.js";
 import { FEATURES, UNGROUPED_FEATURES } from "../../../../consts/index.js";
@@ -14,7 +13,7 @@ import { check_trimmed_strings } from "../../../../utils/index.js";
 
 export const get_group_features_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<GetPaginatedBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -153,7 +152,7 @@ export const get_group_features_handler =
 
 export const add_group_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<AddGroupFeatureBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -172,7 +171,7 @@ export const add_group_feature_handler =
       description,
       is_admin_only,
       is_protected,
-    } = request.body;
+    } = request.body as AddGroupFeatureRequest;
 
     // Checking here to make sure none of the submitted strings are empty
     const empty_strings = check_trimmed_strings({
@@ -271,7 +270,7 @@ export const add_group_feature_handler =
 
 export const delete_group_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -283,7 +282,7 @@ export const delete_group_feature_handler =
         event_description: "attempting to delete group feature",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.feature_id = id;
 
     try {
@@ -319,7 +318,7 @@ export const delete_group_feature_handler =
 
 export const reactivate_group_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -331,7 +330,7 @@ export const reactivate_group_feature_handler =
         event_description: "attempting to reactivate group feature",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.feature_id = id;
 
     try {
@@ -385,10 +384,7 @@ export const reactivate_group_feature_handler =
 
 export const edit_group_feature_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<EditGroupFeatureBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration",
     };
@@ -409,7 +405,7 @@ export const edit_group_feature_handler =
       description,
       is_admin_only,
       is_protected,
-    } = request.body;
+    } = request.body as EditGroupFeatureRequest;
 
     // Checking here to make sure none of the submitted strings are empty
     const empty_strings = check_trimmed_strings({

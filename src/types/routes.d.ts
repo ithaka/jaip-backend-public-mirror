@@ -1,5 +1,4 @@
 import { RouteGenericInterface } from "fastify";
-import { SearchRequest, StatusSearchRequest } from "./search.js";
 import { Entitlement } from "./accounts.js";
 import {
   alert_statuses,
@@ -47,121 +46,41 @@ export interface OfflineIndexParams {
 }
 
 export interface MediaReviewRequest extends RouteGenericInterface {
-  Body: {
-    dois: string[];
-    comments?: string;
-  };
+  dois: string[];
+  comments?: string;
 }
 
 export interface MediaReviewApproval extends RouteGenericInterface {
-  Body: {
-    doi: string;
-    groups: number[];
-  };
+  doi: string;
+  groups: number[];
 }
 
 export interface UnrestrictItem extends RouteGenericInterface {
-  Body: {
-    doi: string;
-  };
+  doi: string;
 }
 
 export interface RestrictItem extends RouteGenericInterface {
-  Body: {
-    doi: string;
-    reason: string;
-  };
+  doi: string;
+  reason: string;
 }
 
 export interface MediaReviewDenial extends RouteGenericInterface {
-  Body: {
-    doi: string;
-    groups: number[];
-    reason: string;
-    comments: string;
-  };
+  doi: string;
+  groups: number[];
+  reason: string;
+  comments: string;
 }
 
 export interface MediaReviewBulk extends RouteGenericInterface {
-  Body: {
-    groups: number[];
-    disciplines: string[];
-    journals: string[];
-    documents: string[];
-  };
+  groups: number[];
+  disciplines: string[];
+  journals: string[];
+  documents: string[];
 }
 
-export interface MediaReviewBulUndo extends RouteGenericInterface {
-  Body: {
-    groups: number[];
-    code: string;
-  };
-}
-
-export interface AddAlertBody extends RouteGenericInterface {
-  Body: AddAlertRequest;
-}
-export interface EditAlertBody extends RouteGenericInterface {
-  Body: EditAlertRequest;
-}
-
-export interface SearchRequestBody extends RouteGenericInterface {
-  Body: SearchRequest;
-}
-export interface StatusSearchRequestBody extends RouteGenericInterface {
-  Body: StatusSearchRequest;
-}
-
-export interface GetEntitiesBody extends RouteGenericInterface {
-  Body: GetEntitiesRequest;
-}
-
-export interface RemoveEntitiesBody extends RouteGenericInterface {
-  Body: RemoveEntitiesRequest;
-}
-
-export interface AddEntitiesBody extends RouteGenericInterface {
-  Body: AddEntitiesRequest;
-}
-
-export interface GetPaginatedBody extends RouteGenericInterface {
-  Body: GetPaginatedRequest;
-}
-
-export interface GetPaginatedGroupedBody extends RouteGenericInterface {
-  Body: GetPaginatedGroupedRequest;
-}
-
-export interface GetRestrictedItemsBody extends RouteGenericInterface {
-  Body: GetRestrictedItemsRequest;
-}
-
-export interface AddGroupFeatureBody extends RouteGenericInterface {
-  Body: AddGroupFeatureRequest;
-}
-
-export interface EditGroupFeatureBody extends RouteGenericInterface {
-  Body: EditGroupFeatureRequest;
-}
-
-export interface AddUngroupedFeatureBody extends RouteGenericInterface {
-  Body: AddUngroupedFeatureRequest;
-}
-
-export interface EditUngroupedFeatureBody extends RouteGenericInterface {
-  Body: EditUngroupedFeatureRequest;
-}
-
-export interface NameOnlyBody extends RouteGenericInterface {
-  Body: NameOnlyRequest;
-}
-
-export interface IdOnlyBody extends RouteGenericInterface {
-  Body: IdOnlyRequest;
-}
-
-export interface NameAndIdBody extends RouteGenericInterface {
-  Body: NameAndIdRequest;
+export interface MediaReviewBulkUndo extends RouteGenericInterface {
+  groups: number[];
+  code: string;
 }
 export interface IdOnlyRequest {
   id: number;

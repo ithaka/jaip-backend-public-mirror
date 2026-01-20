@@ -2,17 +2,17 @@ import { ensure_error } from "../../../../utils/index.js";
 import { LogPayload } from "../../../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
-  AddUngroupedFeatureBody,
-  EditUngroupedFeatureBody,
-  GetPaginatedBody,
-  IdOnlyBody,
+  AddUngroupedFeatureRequest,
+  EditUngroupedFeatureRequest,
+  GetPaginatedRequest,
+  IdOnlyRequest,
 } from "../../../../types/routes.js";
 import { Prisma } from "../../../../database/prisma/client.js";
 import { check_trimmed_strings } from "../../../../utils/index.js";
 
 export const get_ungrouped_features_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<GetPaginatedBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -25,7 +25,8 @@ export const get_ungrouped_features_handler =
       },
     );
 
-    const { name, page, limit, is_active } = request.body;
+    const { name, page, limit, is_active } =
+      request.body as GetPaginatedRequest;
 
     const name_query = name ? name.trim() : "";
 
@@ -115,10 +116,7 @@ export const get_ungrouped_features_handler =
 
 export const add_ungrouped_feature_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<AddUngroupedFeatureBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -130,7 +128,8 @@ export const add_ungrouped_feature_handler =
         event_description: "attempting to add ungrouped feature",
       },
     );
-    const { name, display_name, category, description } = request.body;
+    const { name, display_name, category, description } =
+      request.body as AddUngroupedFeatureRequest;
 
     // Checking here to make sure none of the submitted strings are empty
     const empty_strings = check_trimmed_strings({
@@ -227,7 +226,7 @@ export const add_ungrouped_feature_handler =
 
 export const delete_ungrouped_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -239,7 +238,7 @@ export const delete_ungrouped_feature_handler =
         event_description: "attempting to delete ungrouped feature",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.feature_id = id;
 
     try {
@@ -272,7 +271,7 @@ export const delete_ungrouped_feature_handler =
 
 export const reactivate_ungrouped_feature_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -284,7 +283,7 @@ export const reactivate_ungrouped_feature_handler =
         event_description: "attempting to reactivate ungrouped feature",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.feature_id = id;
 
     try {
@@ -335,10 +334,7 @@ export const reactivate_ungrouped_feature_handler =
 
 export const edit_ungrouped_feature_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<EditUngroupedFeatureBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration",
     };
@@ -351,7 +347,8 @@ export const edit_ungrouped_feature_handler =
       },
     );
 
-    const { id, name, display_name, category, description } = request.body;
+    const { id, name, display_name, category, description } =
+      request.body as EditUngroupedFeatureRequest;
 
     // Checking here to make sure none of the submitted strings are empty
     const empty_strings = check_trimmed_strings({

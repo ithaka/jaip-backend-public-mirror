@@ -2,10 +2,10 @@ import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type {
-  AddAlertBody,
-  GetPaginatedGroupedBody,
-  IdOnlyBody,
-  EditAlertBody,
+  GetPaginatedGroupedRequest,
+  IdOnlyRequest,
+  EditAlertRequest,
+  AddAlertRequest,
 } from "../../types/routes.js";
 import { Prisma } from "../../database/prisma/client.js";
 import {
@@ -17,10 +17,7 @@ import { is_target_valid } from "./helpers.js";
 
 export const get_alerts_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<GetPaginatedGroupedBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };
@@ -142,10 +139,7 @@ export const get_alerts_handler =
 
 export const get_paginated_alerts_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<GetPaginatedGroupedBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };
@@ -158,7 +152,8 @@ export const get_paginated_alerts_handler =
       },
     );
 
-    const { name, page, limit, is_active, groups } = request.body;
+    const { name, page, limit, is_active, groups } =
+      request.body as GetPaginatedGroupedRequest;
 
     // NOTE: The requirements for managing this are a little too complex for the standard requirements guard.
     // We sometimes need to check not only that the user has a given feature, but also that they have it for
@@ -332,7 +327,7 @@ export const get_paginated_alerts_handler =
 
 export const add_alert_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<AddAlertBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };
@@ -354,7 +349,7 @@ export const add_alert_handler =
       subdomains,
       groups,
       facilities,
-    } = request.body;
+    } = request.body as AddAlertRequest;
 
     const { is_valid, code, message } = is_target_valid(
       !!request.user.ungrouped_features[UNGROUPED_FEATURES.add_subdomain]
@@ -424,7 +419,7 @@ export const add_alert_handler =
 
 export const delete_alert_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };
@@ -436,7 +431,7 @@ export const delete_alert_handler =
         event_description: "attempting to delete alert",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.alert_id = id;
 
     try {
@@ -469,7 +464,7 @@ export const delete_alert_handler =
 
 export const edit_alert_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<EditAlertBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "alerts-api",
     };
@@ -491,7 +486,7 @@ export const edit_alert_handler =
       subdomains,
       groups,
       facilities,
-    } = request.body;
+    } = request.body as EditAlertRequest;
 
     const { is_valid, code, message } = is_target_valid(
       !!request.user.ungrouped_features[UNGROUPED_FEATURES.add_subdomain]

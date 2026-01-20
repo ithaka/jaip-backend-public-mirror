@@ -2,16 +2,16 @@ import { ensure_error } from "../../../utils/index.js";
 import { LogPayload } from "../../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
-  GetPaginatedBody,
-  IdOnlyBody,
-  NameAndIdBody,
-  NameOnlyBody,
+  GetPaginatedRequest,
+  IdOnlyRequest,
+  NameAndIdRequest,
+  NameOnlyRequest,
 } from "../../../types/routes.js";
 import { Prisma } from "../../../database/prisma/client.js";
 
 export const get_subdomains_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<GetPaginatedBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -24,11 +24,11 @@ export const get_subdomains_handler =
       },
     );
 
-    const name = request.body.name || "";
-    const page = request.body.page;
-    const limit = request.body.limit;
-    const is_active = request.body.is_active!;
-
+    const body = request.body as GetPaginatedRequest;
+    const name = body.name || "";
+    const page = body.page;
+    const limit = body.limit;
+    const is_active = body.is_active!;
     try {
       const where_clause: Prisma.subdomainsFindManyArgs = {
         where: {
@@ -95,7 +95,7 @@ export const get_subdomains_handler =
 
 export const add_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<NameOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -107,7 +107,7 @@ export const add_subdomain_handler =
         event_description: "attempting to add subdomain",
       },
     );
-    const { name } = request.body;
+    const { name } = request.body as NameOnlyRequest;
     log_payload.db_subdomain = name;
 
     try {
@@ -166,7 +166,7 @@ export const add_subdomain_handler =
 
 export const delete_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -178,7 +178,7 @@ export const delete_subdomain_handler =
         event_description: "attempting to delete subdomains",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.db_subdomain_id = id;
 
     try {
@@ -213,7 +213,7 @@ export const delete_subdomain_handler =
 
 export const reactivate_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<IdOnlyBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -225,7 +225,7 @@ export const reactivate_subdomain_handler =
         event_description: "attempting to reactivate subdomain",
       },
     );
-    const { id } = request.body;
+    const { id } = request.body as IdOnlyRequest;
     log_payload.db_subdomain_id = id;
 
     try {
@@ -271,7 +271,7 @@ export const reactivate_subdomain_handler =
 
 export const edit_subdomain_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<NameAndIdBody>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "site-administration-api",
     };
@@ -283,7 +283,7 @@ export const edit_subdomain_handler =
         event_description: "attempting to edit subdomain",
       },
     );
-    const { id, name } = request.body;
+    const { id, name } = request.body as NameAndIdRequest;
     const new_name = name.trim().toLowerCase();
     if (!new_name) {
       reply.code(400).send("Name cannot be empty");

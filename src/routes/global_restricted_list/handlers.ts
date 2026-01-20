@@ -3,8 +3,8 @@ import { ensure_error, user_has_ungrouped_feature } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
 import {
   RestrictItem,
-  GetRestrictedItemsBody,
   UnrestrictItem,
+  GetRestrictedItemsRequest,
 } from "../../types/routes.js";
 import { SearchRequest } from "../../types/search.js";
 import { search_handler } from "../search/handlers.js";
@@ -15,10 +15,7 @@ import { Prisma } from "../../database/prisma/client.js";
 
 export const get_restricted_items_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<GetRestrictedItemsBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "global-restricted-list-api",
     };
@@ -31,16 +28,15 @@ export const get_restricted_items_handler =
       },
     );
 
-    const term = request.body.query || "";
-    const page = request.body.pageNo || 1;
-    const limit = request.body.limit;
-    const start_date =
-      request.body.statusStartDate || new Date("January 1, 2022");
+    const body = request.body as GetRestrictedItemsRequest;
+    const term = body.query || "";
+    const page = body.pageNo || 1;
+    const limit = body.limit;
+    const start_date = body.statusStartDate || new Date("January 1, 2022");
     const end_date =
-      request.body.statusEndDate ||
+      body.statusEndDate ||
       new Date(new Date().setDate(new Date().getDate() + 1));
-    const sort = request.body.sort || "new";
-
+    const sort = body.sort || "new";
     try {
       const [restricted_items, count, error] =
         await fastify.db.get_restricted_items_and_count(
@@ -86,7 +82,7 @@ export const get_restricted_items_handler =
       const search_request_body = {
         query: "",
         pageNo: 1,
-        limit: request.body.limit,
+        limit: body.limit,
         sort: "new",
         facets: ["contentType", "disciplines"],
         filters: dois.length ? [doi_filter] : [],
@@ -131,7 +127,7 @@ export const get_restricted_items_handler =
   };
 
 export const restrict_handler = (fastify: FastifyInstance) => {
-  return async (request: FastifyRequest<RestrictItem>, reply: FastifyReply) => {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "global-restricted-list-api",
     };
@@ -144,8 +140,9 @@ export const restrict_handler = (fastify: FastifyInstance) => {
       },
     );
     try {
-      const doi = request.body.doi;
-      const reason = request.body.reason;
+      const body = request.body as RestrictItem;
+      const doi = body.doi;
+      const reason = body.reason;
       log_payload.doi = doi;
       log_payload.reason = reason;
 
@@ -188,7 +185,7 @@ export const restrict_handler = (fastify: FastifyInstance) => {
 
 export const unrestrict_handler =
   (fastify: FastifyInstance) =>
-  async (request: FastifyRequest<UnrestrictItem>, reply: FastifyReply) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "global-restricted-items-api",
     };
@@ -201,7 +198,8 @@ export const unrestrict_handler =
       },
     );
     try {
-      const doi = request.body.doi;
+      const body = request.body as UnrestrictItem;
+      const doi = body.doi;
       // Because requests come from facilities, we can assume that there is only one group
       log_payload.doi = doi;
 

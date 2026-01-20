@@ -183,8 +183,7 @@ export interface AccountCredentialOAuth extends AccountCredential {
   oAuthProvider: string;
 }
 
-export interface AccountCredentialJstorInstitutionIndividualPairing
-  extends AccountCredential {
+export interface AccountCredentialJstorInstitutionIndividualPairing extends AccountCredential {
   individualId: string;
 }
 

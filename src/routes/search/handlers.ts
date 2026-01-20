@@ -1,14 +1,14 @@
 import { ensure_error, user_has_feature } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import {
-  GetRestrictedItemsBody,
-  SearchRequestBody,
-  StatusParams,
-  StatusSearchRequestBody,
-} from "../../types/routes.js";
+import { StatusParams } from "../../types/routes.js";
 import { FEATURES, SEARCH3, STATUS_OPTIONS } from "../../consts/index.js";
-import { Search3Document, Search3Request } from "../../types/search.js";
+import {
+  Search3Document,
+  Search3Request,
+  SearchRequest,
+  StatusSearchRequest,
+} from "../../types/search.js";
 import { jstor_types, status_options } from "../../database/prisma/client.js";
 import { Status } from "../../types/database.js";
 import {
@@ -28,10 +28,7 @@ import { get_restricted_items_handler } from "../global_restricted_list/handlers
 
 export const status_search_handler =
   (fastify: FastifyInstance) =>
-  async (
-    request: FastifyRequest<StatusSearchRequestBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "search-api",
     };
@@ -44,16 +41,17 @@ export const status_search_handler =
       },
     );
     try {
+      const body = request.body as StatusSearchRequest;
       const params = request.params as StatusParams;
       const status = params.status;
-      const start_date = request.body.statusStartDate;
-      const end_date = request.body.statusEndDate;
+      const start_date = body.statusStartDate;
+      const end_date = body.statusEndDate;
       const query_statuses: status_options[] = [];
 
       // If the search is for restricted items, we handle it separately.
       if (status === "restricted") {
         return get_restricted_items_handler(fastify)(
-          request as FastifyRequest<GetRestrictedItemsBody>,
+          request as FastifyRequest,
           reply,
         );
       }
@@ -79,9 +77,9 @@ export const status_search_handler =
         query_statuses.push(option);
       }
 
-      const groups = request.body.groups || [];
+      const groups = body.groups || [];
 
-      const query_string = request.body.statusQuery.trim();
+      const query_string = body.statusQuery.trim();
 
       fastify.log.info(`Getting search statuses with query: ${query_string}`);
       const [status_results, count, error] =
@@ -95,9 +93,9 @@ export const status_search_handler =
           query_statuses,
           start_date,
           end_date,
-          request.body.sort,
-          request.body.limit,
-          request.body.pageNo,
+          body.sort,
+          body.limit,
+          body.pageNo,
         );
       if (error) {
         throw error;
@@ -133,8 +131,8 @@ export const status_search_handler =
       }
       doi_filter += ")";
 
-      request.body.filters.push(doi_filter);
-      request.body.dois = dois;
+      body.filters.push(doi_filter);
+      body.dois = dois;
 
       fastify.event_logger.pep_standard_log_complete(
         "pep_statuses_retrieved",
@@ -150,8 +148,8 @@ export const status_search_handler =
       // We need to clear the existing query now that we've used it to get statuses from the
       // database. The request will now be used to build a request for Search3 that won't
       // use a query.
-      request.body.query = "";
-      request.body.pageNo = 1;
+      body.query = "";
+      body.pageNo = 1;
       await search_handler(fastify, count || 0)(request, reply);
 
       fastify.event_logger.pep_standard_log_complete(
@@ -181,10 +179,7 @@ export const status_search_handler =
 
 export const search_handler =
   (fastify: FastifyInstance, count: number) =>
-  async (
-    request: FastifyRequest<SearchRequestBody | StatusSearchRequestBody>,
-    reply: FastifyReply,
-  ) => {
+  async (request: FastifyRequest, reply: FastifyReply) => {
     const log_payload: LogPayload = {
       log_made_by: "search-api",
     };
@@ -194,8 +189,9 @@ export const search_handler =
       event_description: "attempting to search by query",
     });
     try {
-      const { query, limit, pageNo, sort, facets, filters } = request.body;
-      log_payload.search_request = request.body;
+      const body = request.body as SearchRequest | StatusSearchRequest;
+      const { query, limit, pageNo, sort, facets, filters } = body;
+      log_payload.search_request = body;
       const query_string = query || "";
       const page_mark = btoa(`pageMark=${pageNo}`);
       const search3_request: Search3Request = {
@@ -207,7 +203,7 @@ export const search_handler =
       };
       const full_groups = request.user.groups.filter((group) => {
         const groups =
-          request.body.groups || request.user.groups.map((group) => group.id);
+          body.groups || request.user.groups.map((group) => group.id);
         return groups.includes(group.id);
       });
       const groups = full_groups.map((group) => group.id);
@@ -482,7 +478,7 @@ export const search_handler =
         return_docs.push(new_doc);
       });
 
-      if (request.body.dois && request.body.dois.length !== docs.length) {
+      if (body.dois && body.dois.length !== docs.length) {
         // If the number of dois from the statuses table does not match the number of
         // documents returned, we know that there's a mismatch. This log will help us
         // determine how prevalent that is.
@@ -493,7 +489,7 @@ export const search_handler =
           {
             ...log_payload,
             event_description: "mismatch between dois and documents",
-            dois: request.body.dois,
+            dois: body.dois,
             dois_successfully_retrieved: docs.map((doc) => doc.doi),
           },
         );
@@ -511,8 +507,8 @@ export const search_handler =
       // to consistently match that order. Otherwise, we return the documents in the order
       // they were returned from Search3.
       const sorted_return_docs =
-        request.body.dois && request.body.dois.length
-          ? request.body.dois
+        body.dois && body.dois.length
+          ? body.dois
               .map((doi) => {
                 return return_docs.find((doc) => doc.doi === doi);
               })
