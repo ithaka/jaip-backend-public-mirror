@@ -53,7 +53,7 @@
   },
   "resolutions": {
     "form-data": "^4.0.5",
-    "@eslint/plugin-kit": "^0.5.0",
+    "@eslint/plugin-kit": "^0.5.1",
     "tar": "^7.5.3"
   },
   "lint-staged": {
