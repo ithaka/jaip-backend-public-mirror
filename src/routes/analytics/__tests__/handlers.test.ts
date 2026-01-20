@@ -74,7 +74,7 @@ describe("Analytics handlers", () => {
       expect(mockGetJaipS3Url).toHaveBeenCalledWith("analytics/mvp/1");
       expect(mockGetJsonFromS3).toHaveBeenCalledWith(mockS3Url);
       expect(mockReply.code).toHaveBeenCalledWith(200);
-      expect(mockReply.send).toHaveBeenCalledWith({ data: mockAnalyticsData });
+      expect(mockReply.send).toHaveBeenCalledWith(mockAnalyticsData);
       expect(
         mockFastify.event_logger.pep_standard_log_start,
       ).toHaveBeenCalledWith("pep_get_analytics_by_group_start", mockRequest, {

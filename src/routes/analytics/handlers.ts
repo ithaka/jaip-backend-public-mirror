@@ -71,7 +71,7 @@ export const get_analytics_by_group_handler =
         throw s3_error;
       }
 
-      reply.code(200).send({ data: s3_data });
+      reply.code(200).send(s3_data);
 
       fastify.event_logger.pep_standard_log_complete(
         `pep_get_analytics_by_group_complete`,

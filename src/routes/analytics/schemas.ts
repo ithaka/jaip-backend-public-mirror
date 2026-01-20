@@ -19,13 +19,7 @@ export const route_schemas = {
     response: {
       200: {
         type: "object",
-        properties: {
-          data: {
-            type: "object",
-            description: "Analytics data for the specified group",
-            additionalProperties: {} as AnalyticsData,
-          },
-        },
+        properties: {} as AnalyticsData,
         required: ["data"],
       },
       ...standard_errors,
