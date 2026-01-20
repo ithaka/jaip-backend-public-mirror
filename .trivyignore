@@ -28,3 +28,7 @@ CVE-2025-61729 exp:2026-03-01
 # These are vulnerabilities in Hono, a Prisma dependency. We're not using the vulnerable code.
 CVE-2026-22817 exp:2026-04-01
 CVE-2026-22818 exp:2026-04-01
+
+# NODE VULNERABILITIES
+# These vulnerabilities are in the node-tar package, which we're not using.
+CVE-2026-23745 exp:2026-04-01
