@@ -32,3 +32,4 @@ CVE-2026-22818 exp:2026-04-01
 # NODE VULNERABILITIES
 # These vulnerabilities are in the node-tar package, which we're not using.
 CVE-2026-23745 exp:2026-04-01
+CVE-2026-23950 exp:2026-04-01

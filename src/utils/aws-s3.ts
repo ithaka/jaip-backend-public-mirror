@@ -111,6 +111,7 @@ export const get_json_from_s3 = async (
     const listCommand = new ListObjectsV2Command({
       Bucket: url.hostname,
       Prefix: path,
+      Delimiter: "/",
     });
 
     const listResponse = await s3Client.send(listCommand);
