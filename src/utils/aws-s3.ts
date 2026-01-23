@@ -110,7 +110,7 @@ export const get_json_from_s3 = async (
     // List objects in the bucket with the given prefix
     const listCommand = new ListObjectsV2Command({
       Bucket: url.hostname,
-      Prefix: path,
+      Prefix: path + "/",
       Delimiter: "/",
     });
 
