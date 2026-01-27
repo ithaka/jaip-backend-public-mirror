@@ -84,7 +84,11 @@ export const get_analytics_by_group_handler =
       );
     } catch (err) {
       const error = ensure_error(err);
-      reply.code(500).send(error.message);
+      const code =
+        "status_code" in error && typeof error.status_code === "number"
+          ? error.status_code
+          : 500;
+      reply.code(code || 500).send(error.message);
 
       fastify.event_logger.pep_error(
         request,

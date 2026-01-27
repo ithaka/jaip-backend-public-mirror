@@ -235,5 +235,33 @@ describe("Analytics handlers", () => {
         expect.any(Error),
       );
     });
+
+    it("should return 404 when analytics data is missing in S3", async () => {
+      const mockError = new Error("Not found");
+      (mockError as { status_code?: number }).status_code = 404;
+      const mockS3Url = "s3://ithaka-jaip/test/analytics/mvp/1";
+
+      mockGetJaipS3Url.mockReturnValue(mockS3Url);
+      mockGetJsonFromS3.mockResolvedValue([null, mockError]);
+
+      const handler = get_analytics_by_group_handler(mockFastify);
+      await handler(mockRequest, mockReply);
+
+      expect(mockGetJaipS3Url).toHaveBeenCalledWith("analytics/mvp/1");
+      expect(mockGetJsonFromS3).toHaveBeenCalledWith(mockS3Url);
+      expect(mockReply.code).toHaveBeenCalledWith(404);
+      expect(mockReply.send).toHaveBeenCalledWith(mockError.message);
+      expect(mockFastify.event_logger.pep_error).toHaveBeenCalledWith(
+        mockRequest,
+        mockReply,
+        {
+          log_made_by: "analytics-api",
+          event_description: "failed to retrieve analytics data for 1",
+          group_id: 1,
+        },
+        "analytics",
+        mockError,
+      );
+    });
   });
 });
