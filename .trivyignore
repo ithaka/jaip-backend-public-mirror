@@ -16,6 +16,13 @@ CVE-2025-61725 exp:2026-03-01
 # This vulnerability is in glob@10.4.5. It's a fairly deep transitive dependency in some build packages (rollup and vite) for the glob CLI, so it is unlikely to be relevant to our actual use. The version used directly by Fastify is fixed. Leaving an expiration date on there to revisit this in a few months.
 CVE-2025-64756 exp:2026-03-01
 
+# TAR VULNERABILITIES
+# Some dependencies may include node-tar, but we're not using it from Alpine.
+CVE-2026-24842 exp:2026-04-01
+
+# XML VULNERABILITIES
+# We are not parsing XML in our application, so these vulnerabilities are not relevant.
+CVE-2026-25128 exp:2026-04-01
 
 # GO 1.23.12 VULNERABILITIES
 # These vulnerabilities are in Go 1.23.12, in the underlying Alpine image. They are
@@ -33,3 +40,5 @@ CVE-2026-22818 exp:2026-04-01
 # These vulnerabilities are in the node-tar package, which we're not using.
 CVE-2026-23745 exp:2026-04-01
 CVE-2026-23950 exp:2026-04-01
+
+
