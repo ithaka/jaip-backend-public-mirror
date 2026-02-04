@@ -18,13 +18,13 @@ declare module "fastify" {
 const discovery_handler = async function (
   service: string,
 ): Promise<[string, Error | null]> {
-  const url = `http://localhost:8888/v1/apps/${service}/instances`;
+  const url = `http://localhost:8888/v1/apps/${service}/instances/next`;
   try {
     console.log("Attempting service discovery for", service);
     const {
       data,
       status,
-    }: { data: JSTORInstance[] | JSTORInstanceError; status: number } =
+    }: { data: JSTORInstance | JSTORInstanceError; status: number } =
       await axios.get(url);
     if (status !== 200) {
       const msg =
@@ -33,24 +33,11 @@ const discovery_handler = async function (
           : "Service discovery failed: Status code not 200";
       throw new Error(msg);
     }
-    if (Array.isArray(data)) {
-      if (data.length) {
-        const homePageUrl = data.find(
-          (instance: JSTORInstance) => instance.homePageUrl,
-        );
-        if (homePageUrl) {
-          console.log("Service discovered at", homePageUrl.homePageUrl);
-          return [homePageUrl.homePageUrl, null];
-        } else {
-          throw new Error(
-            "Service discovery failed: No homepage URLs found in instances",
-          );
-        }
-      } else {
-        throw new Error("Service discovery failed: No instances found");
-      }
+    console.log(data);
+    if ("homePageUrl" in data) {
+      return [data.homePageUrl, null];
     } else {
-      throw new Error("Service discovery failed: Response is not an array");
+      throw new Error("Service discovery failed: No instances found");
     }
   } catch (err) {
     const error = ensure_error(err);
