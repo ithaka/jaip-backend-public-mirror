@@ -11,6 +11,10 @@ CVE-2025-61723 exp:2026-03-01
 CVE-2025-61724 exp:2026-03-01
 CVE-2025-61725 exp:2026-03-01
 
+# BRACE EXPANSION VULNERABILITIES
+# We're not using brace expansion in Alpine, but we'll revisit this in a few days.
+CVE-2026-25547 exp:2026-02-08
+CVE-2026-25547 exp:2026-02-08
 
 # GLOB VULNERABILITIES
 # This vulnerability is in glob@10.4.5. It's a fairly deep transitive dependency in some build packages (rollup and vite) for the glob CLI, so it is unlikely to be relevant to our actual use. The version used directly by Fastify is fixed. Leaving an expiration date on there to revisit this in a few months.
@@ -41,4 +45,6 @@ CVE-2026-22818 exp:2026-04-01
 CVE-2026-23745 exp:2026-04-01
 CVE-2026-23950 exp:2026-04-01
 
-
+# This vulnerability is in the npm cli itself. It shouldn't be relevant to our
+# application unless someone is in the build pipeline already.
+CVE-2026-0775 exp:2026-02-08

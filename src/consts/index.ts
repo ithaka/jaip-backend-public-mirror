@@ -12,6 +12,24 @@ export const EPHEMERAL_DOMAIN_ENDINGS = {
   student: "student.apps.test.cirrostratus.org",
 };
 
+// NOTE: Any new frontend log events need to be added to this list in order to be accepted by the logging endpoint.
+// This is to prevent abuse of the logging endpoint by bots, which has been a problem.
+export const FRONTEND_LOG_EVENTS = [
+  "pep_fe_button_click",
+  "pep_fe_dropdown_open",
+  "pep_fe_dropdown_select",
+  "pep_fe_checkbox_toggle",
+  "pep_fe_modal_close",
+  "pep_fe_modal_open",
+  "pep_fe_link_click",
+  "pep_fe_radio_select",
+  "pep_fe_form_submit",
+  "pep_fe_error",
+  "pep_fe_page_landing",
+  "pep_fe_page_exit",
+  "pep_fe_route_change",
+];
+
 export const STATUS_OPTIONS = {
   ...status_options,
   Restricted: "Restricted",
