@@ -28,6 +28,9 @@ export const FRONTEND_LOG_EVENTS = [
   "pep_fe_page_landing",
   "pep_fe_page_exit",
   "pep_fe_route_change",
+  "start_viewing_session",
+  "end_viewing_session",
+  "viewer_control",
 ];
 
 export const STATUS_OPTIONS = {
