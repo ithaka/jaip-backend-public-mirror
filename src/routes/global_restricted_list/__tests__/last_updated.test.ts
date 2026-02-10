@@ -36,6 +36,9 @@ test(`requests the ${get_last_updated_route} route with no permissions`, async (
   const res = await app.inject({
     method: "GET",
     url: get_last_updated_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(403);
 });

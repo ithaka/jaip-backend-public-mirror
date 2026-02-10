@@ -15,7 +15,11 @@ import {
   ip_handler,
 } from "../../utils/index.js";
 import { FastifyInstance, FastifyRequest } from "fastify";
-import { RESTRICTED_ITEMS_FEATURES, SUBDOMAINS } from "../../consts/index.js";
+import {
+  IAC_SERVICE,
+  RESTRICTED_ITEMS_FEATURES,
+  SUBDOMAINS,
+} from "../../consts/index.js";
 import { SESSION_MANAGER } from "../../consts/index.js";
 import { JAIPDatabase } from "../../database/index.js";
 import { user_roles } from "../../database/prisma/client.js";
@@ -450,4 +454,86 @@ export const get_current_user = async (
     const error = ensure_error(err);
     return [null, error];
   }
+};
+
+export const get_credentials = async (
+  fastify: FastifyInstance,
+  request: FastifyRequest,
+): Promise<[string[], Error | null]> => {
+  const codes = [];
+
+  try {
+    // First, get the IAC Service
+    const [host, error] = await request.server.discover(IAC_SERVICE.name);
+    if (error) throw error;
+
+    // Get the path for credentials, and then get the IPs from the request. We will check each IP against the IAC service until we find a match,
+    // at which point we will get the site codes for that account and attach them to the request.
+    // If we exhaust all IPs without finding a match, we will proceed without attaching any site codes,
+    // which will result in no user being identified.
+    const url = host + IAC_SERVICE.credential.path;
+    const ips = ip_handler(request);
+
+    // For local development purposes, we do want to make sure we're not making a request from localhost
+    // which will result in a 404 from IAC.
+    if (
+      process.env.ENVIRONMENT !== "prod" &&
+      ips.indexOf("127.0.0.1") !== -1 &&
+      process.env.VPN_IP
+    ) {
+      ips[ips.indexOf("127.0.0.1")] = process.env.VPN_IP;
+    }
+
+    // Check each IP in turn. If we find a match, we can push it to codes, and no subsequent IPs need to be checked.
+    // There should only be one IP in the array, but at present, we guarantee that this is an array, so keeping this loop
+    // ensures that we're handling it gracefully even if we eventually have to address the possibility of
+    // multiple IPs in the request.
+    for (const ip of ips) {
+      if (!codes.length) {
+        // Append the ip param to the credential route.
+        const fullUrl = `${url}?ip=${ip}`;
+        const credential_response = await axios.get(fullUrl);
+        // If we have a response that includes an accountExternalId, we can use that to get the site code for the account and attach it to the request.
+        if (credential_response.status === 200) {
+          if (credential_response.data?.IPRANGE?.accountExternalId) {
+            const account_id =
+              credential_response.data.IPRANGE.accountExternalId;
+
+            // Now that we have the account ID, we can get the site codes for that account and attach them to the request.
+            const url = host + IAC_SERVICE.account.path + `/${account_id}`;
+            const account_response = await axios.get(url);
+            if (account_response.status === 200) {
+              if (account_response.data?.code) {
+                codes.push(account_response.data.code);
+              }
+            }
+          } else {
+            fastify.event_logger.pep_standard_log_start(
+              "pep_auth_iac_no_accountid",
+              request,
+              {
+                log_made_by: "auth-api",
+                event_description:
+                  "failed to retrieve an account id from the IAC credential response",
+              },
+            );
+          }
+        }
+      }
+    }
+    if (!codes.length) {
+      fastify.event_logger.pep_standard_log_start(
+        "pep_auth_iac_no_codes",
+        request,
+        {
+          log_made_by: "auth-api",
+          event_description: "failed to retrieve any site codes from IAC",
+        },
+      );
+    }
+  } catch (err) {
+    const error = ensure_error(err);
+    return [[], error];
+  }
+  return [codes, null];
 };

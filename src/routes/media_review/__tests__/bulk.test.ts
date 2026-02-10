@@ -36,6 +36,9 @@ test(`requests the ${bulk_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",
     url: bulk_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -45,6 +48,9 @@ test(`requests the ${bulk_route} route with invalid body`, async () => {
     method: "POST",
     url: bulk_route,
     payload: submit_bulk_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -59,6 +65,9 @@ test(`requests the ${bulk_route} route with valid body and no permissions`, asyn
     method: "POST",
     url: bulk_route,
     payload: submit_bulk_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(403);
 });

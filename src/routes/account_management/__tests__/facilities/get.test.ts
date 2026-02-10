@@ -36,6 +36,9 @@ test(`requests the ${get_facilities_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",
     url: `${get_facilities_route}`,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -45,6 +48,9 @@ test(`requests the ${get_facilities_route} route with invalid body`, async () =>
     method: "POST",
     url: `${get_facilities_route}`,
     payload: get_entities_body_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -58,6 +64,9 @@ test(`requests the ${get_facilities_route} route with valid body and no account 
     method: "POST",
     url: `${get_facilities_route}`,
     payload: get_entities_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(res.statusCode).toEqual(403);

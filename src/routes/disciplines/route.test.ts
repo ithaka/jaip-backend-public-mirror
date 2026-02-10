@@ -8,7 +8,12 @@ import { get_route } from "../../utils/index.js";
 import { route_schemas } from "./schemas.js";
 import route_settings from "./routes.js";
 import axios from "axios";
-import { axios_session_data_with_email } from "../../tests/fixtures/auth/fixtures.js";
+import {
+  axios_session_data_with_email,
+  iac_account_response,
+  iac_credential_response,
+  valid_student_subdomain,
+} from "../../tests/fixtures/auth/fixtures.js";
 import { basic_facility } from "../../tests/fixtures/users/fixtures.js";
 import {
   bulk_approval_statuses_disciplines,
@@ -39,17 +44,23 @@ test(`requests the ${disciplines_route} route without a user or facility`, async
 
 test(`requests the ${disciplines_route} route with a facility and no statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = vi.fn().mockResolvedValue({
-    status: 200,
-    data: disciplines_response,
-  });
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response)
+    .mockResolvedValueOnce({
+      status: 200,
+      data: disciplines_response,
+    }) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
   db_mock.get_statuses.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "GET",
     url: disciplines_route,
+    headers: {
+      host: valid_student_subdomain,
+    },
   });
   expect(discover_mock).toHaveBeenCalledTimes(2);
   expect(res.json()).toEqual(disciplines_response_with_pseudodisciplines);
@@ -58,12 +69,15 @@ test(`requests the ${disciplines_route} route with a facility and no statuses`, 
 
 test(`requests the ${disciplines_route} route with a facility and statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = vi.fn().mockResolvedValue({
-    status: 200,
-    data: disciplines_response,
-  });
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response)
+    .mockResolvedValueOnce({
+      status: 200,
+      data: disciplines_response,
+    }) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
   db_mock.get_statuses.mockResolvedValueOnce([
     bulk_approval_statuses_disciplines,
     null,
@@ -72,6 +86,9 @@ test(`requests the ${disciplines_route} route with a facility and statuses`, asy
   const res = await app.inject({
     method: "GET",
     url: disciplines_route,
+    headers: {
+      host: valid_student_subdomain,
+    },
   });
   expect(discover_mock).toHaveBeenCalledTimes(2);
   expect(res.json()).toStrictEqual(disciplines_response_with_approval);
@@ -92,17 +109,23 @@ test(`requests the ${journals_route} route without a user or facility`, async ()
 
 test(`requests the ${journals_route} route with a facility and no statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = vi.fn().mockResolvedValue({
-    status: 200,
-    data: journals_response,
-  });
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response)
+    .mockResolvedValueOnce({
+      status: 200,
+      data: journals_response,
+    }) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
   db_mock.get_statuses.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "GET",
     url: journals_route,
+    headers: {
+      host: valid_student_subdomain,
+    },
   });
   expect(discover_mock).toHaveBeenCalledTimes(2);
   expect(res.json()).toEqual(journals_response);
@@ -111,12 +134,15 @@ test(`requests the ${journals_route} route with a facility and no statuses`, asy
 
 test(`requests the ${journals_route} route with a facility and statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  axios.get = vi.fn().mockResolvedValue({
-    status: 200,
-    data: journals_response,
-  });
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response)
+    .mockResolvedValueOnce({
+      status: 200,
+      data: journals_response,
+    }) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
   db_mock.get_statuses.mockResolvedValueOnce([
     bulk_approval_statuses_journals,
     null,
@@ -125,6 +151,9 @@ test(`requests the ${journals_route} route with a facility and statuses`, async 
   const res = await app.inject({
     method: "GET",
     url: journals_route,
+    headers: {
+      host: valid_student_subdomain,
+    },
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(2);

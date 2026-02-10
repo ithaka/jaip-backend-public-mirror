@@ -36,6 +36,9 @@ test(`requests the ${bulk_undo_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",
     url: bulk_undo_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -45,6 +48,9 @@ test(`requests the ${bulk_undo_route} route with invalid body`, async () => {
     method: "POST",
     url: bulk_undo_route,
     payload: submit_bulk_undo_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -59,6 +65,9 @@ test(`requests the ${bulk_undo_route} route with valid body and no permissions`,
     method: "POST",
     url: bulk_undo_route,
     payload: submit_bulk_undo_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(403);
 });

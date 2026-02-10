@@ -8,7 +8,8 @@ import route_settings from "./routes.js";
 import { route_schemas } from "./schemas.js";
 import { get_route } from "../../utils/index.js";
 import {
-  axios_session_data_with_code,
+  iac_account_response,
+  iac_credential_response,
   valid_student_subdomain,
 } from "../../tests/fixtures/auth/fixtures.js";
 import axios from "axios";
@@ -18,9 +19,10 @@ const prefix = route_settings.options.prefix;
 const route = `${prefix}${get_route(route_schemas.get_environment)}`;
 test(`requests the ${route} route`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = vi
+  axios.get = vi
     .fn()
-    .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(null);
 
   db_mock.get_alerts.mockResolvedValueOnce([null, null]);

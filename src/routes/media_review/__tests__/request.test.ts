@@ -14,7 +14,10 @@ import {
 import axios from "axios";
 import {
   axios_session_data_with_email,
+  iac_account_response,
+  iac_credential_response,
   valid_student_subdomain,
+  valid_admin_subdomain,
 } from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
@@ -32,6 +35,9 @@ test(`requests the ${request_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",
     url: request_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -41,6 +47,9 @@ test(`requests the ${request_route} route with invalid body`, async () => {
     method: "POST",
     url: request_route,
     payload: submit_request_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -58,14 +67,20 @@ test(`requests the ${request_route} route with valid body and no permissions`, a
     method: "POST",
     url: request_route,
     payload: submit_request_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(403);
 });
 
 test(`requests the ${request_route} route with valid body and request permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({
     method: "POST",

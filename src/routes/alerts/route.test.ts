@@ -10,7 +10,8 @@ import { get_route } from "../../utils/index.js";
 import { alerts_fixture } from "../../tests/fixtures/alerts/fixtures.js";
 import axios from "axios";
 import {
-  axios_session_data_with_code,
+  iac_account_response,
+  iac_credential_response,
   valid_student_subdomain,
 } from "../../tests/fixtures/auth/fixtures.js";
 const app = build_test_server([route_settings]);
@@ -20,9 +21,10 @@ const route = `${prefix}${get_route(route_schemas.alerts)}`;
 
 test(`requests the ${route} route when no alert exists`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = vi
+  axios.get = vi
     .fn()
-    .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(null);
 
   db_mock.get_alerts.mockResolvedValueOnce([null, null]);
@@ -38,9 +40,10 @@ test(`requests the ${route} route when no alert exists`, async () => {
 
 test(`requests the ${route} route when an alert exists`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = vi
+  axios.get = vi
     .fn()
-    .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(null);
 
   db_mock.get_alerts.mockResolvedValueOnce([alerts_fixture, null]);
@@ -57,9 +60,10 @@ test(`requests the ${route} route when an alert exists`, async () => {
 
 test(`requests the ${route} route when the database errors`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = vi
+  axios.get = vi
     .fn()
-    .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(null);
 
   db_mock.get_alerts.mockResolvedValueOnce([

@@ -37,6 +37,9 @@ test(`requests the ${route} route`, async () => {
   const res = await app.inject({
     method: "POST",
     url: route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -46,6 +49,9 @@ test(`requests the ${route} route with invalid body`, async () => {
     method: "POST",
     url: `${route}`,
     payload: invalid_targeted_alert,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -61,6 +67,9 @@ test(`requests the ${route} route with valid alert and no permissions`, async ()
     method: "POST",
     url: `${route}`,
     payload: targeted_alert_with_facilities,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(res.statusCode).toEqual(403);

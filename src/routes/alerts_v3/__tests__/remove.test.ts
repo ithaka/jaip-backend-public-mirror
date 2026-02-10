@@ -30,6 +30,9 @@ test(`requests the ${route} route`, async () => {
   const res = await app.inject({
     method: "DELETE",
     url: route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -39,6 +42,9 @@ test(`requests the ${route} route invalid body id`, async () => {
     method: "DELETE",
     url: `${route}`,
     payload: { ...full_targeted_alert, id: undefined },
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -54,6 +60,9 @@ test(`requests the ${route} route with valid body and no permissions`, async () 
     method: "DELETE",
     url: `${route}`,
     payload: { id: 1 },
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(res.statusCode).toEqual(403);

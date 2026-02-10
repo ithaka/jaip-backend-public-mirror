@@ -9,7 +9,8 @@ import route_settings from "../routes.js";
 import { route_schemas } from "../schemas.js";
 import axios from "axios";
 import {
-  axios_session_data_with_code,
+  iac_account_response,
+  iac_credential_response,
   axios_session_data_with_email,
   valid_admin_subdomain,
   valid_student_subdomain,
@@ -37,6 +38,9 @@ test(`requests the ${route} route`, async () => {
   const res = await app.inject({
     method: "POST",
     url: route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -52,15 +56,19 @@ test(`requests the ${route} route with invalid body`, async () => {
     method: "POST",
     url: `${route}`,
     payload: { invalid: "body" },
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
 
 test(`requests the ${route} route with valid body and facility`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
-  axios.post = vi
+  axios.get = vi
     .fn()
-    .mockReturnValue(axios_session_data_with_code) as typeof axios.post;
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
 
   const res = await app.inject({

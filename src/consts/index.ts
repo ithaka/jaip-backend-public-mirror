@@ -44,18 +44,38 @@ export const SUBDOMAINS = {
   student: ["pep", "www.pep", "test-pep", "www.test-pep"],
 };
 
+// General Prefixes for route versionsing
 export const GLOBAL_ROUTE_PREFIX = "/api";
 export const GLOBAL_VERSION = "v2";
 export const GLOBAL_ROUTE_PREFIX_VERSIONED = `${GLOBAL_ROUTE_PREFIX}/${GLOBAL_VERSION}`;
+
+// Route prefixes for different categories of routes. These are appended to the global route prefix when defining routes.
 export const AUTH_ROUTE_PREFIX = "/auth";
+export const SEARCH_ROUTE_PREFIX = "/search";
+export const PAGES_ROUTE_PREFIX = "/page";
+export const METADATA_ROUTE_PREFIX = "/metadata";
 export const SUBDOMAINS_VALIDATION_ROUTE_PREFIX = "/subdomains/validate";
 export const HEALTHCHECK_ROUTE_PREFIX = "/healthcheck";
+
+// These routes are accessible without authentication of any kind, and so do not
+// require the route guard.
 export const UNGUARDED_ROUTES = [
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${AUTH_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SUBDOMAINS_VALIDATION_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${HEALTHCHECK_ROUTE_PREFIX}/liveness`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${HEALTHCHECK_ROUTE_PREFIX}/readiness`,
 ];
+
+// These routes require the creation of a JSTOR session, generally for getting
+// search tokens, licenses, or both. Other routes may be accessible without a JSTOR session,
+// requiring only a valid site code for identifying the JAIP user.
+export const SESSION_ROUTES = [
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${AUTH_ROUTE_PREFIX}`,
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SEARCH_ROUTE_PREFIX}`,
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${PAGES_ROUTE_PREFIX}`,
+  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${METADATA_ROUTE_PREFIX}`,
+];
+
 export const ENTITY_TYPES: { [key: string]: EntityType } = {
   USERS: "users" as EntityType.users,
   FACILITIES: "facilities" as EntityType.facilities,
@@ -193,6 +213,16 @@ export const RESTRICTED_ITEMS_FEATURES = [
 export const SESSION_MANAGER = {
   name: "session-service",
   path: "v1/graphql",
+};
+
+export const IAC_SERVICE = {
+  name: "iac-service",
+  credential: {
+    path: "credential/ip",
+  },
+  account: {
+    path: "account",
+  },
 };
 
 export const SEARCH_SERVICE = {

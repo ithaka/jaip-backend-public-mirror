@@ -4,26 +4,56 @@ import {
   get_current_user,
   get_email_from_session,
   get_code_from_session,
+  get_credentials,
 } from "../auth/helpers.js";
-import { ensure_error } from "../../utils/index.js";
-import { SUBDOMAINS } from "../../consts/index.js";
+import { ensure_error, get_subdomain } from "../../utils/index.js";
+import { SESSION_ROUTES, SUBDOMAINS } from "../../consts/index.js";
 
 export const route_guard =
   (is_private: boolean) =>
   async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const [session, session_error] = await manage_session(
-        request.server,
-        request,
-      );
-      if (session_error) {
-        throw session_error;
+      const url = new URL(request.headers.referer || `https://${request.host}`);
+      const subdomain = get_subdomain(url.hostname);
+      const emails = [];
+      const codes = [];
+      // If the request is coming from an admin subdomain or a route that requires session data,
+      // we will attempt to get session data. Otherwise, we will attempt to get site codes from the IAC service based on the request IP.
+      if (
+        SUBDOMAINS.admin.includes(subdomain) ||
+        SESSION_ROUTES.some((route) =>
+          (request.routeOptions.url || "").startsWith(route),
+        )
+      ) {
+        const [session, session_error] = await manage_session(
+          request.server,
+          request,
+        );
+        if (session_error) {
+          throw session_error;
+        }
+        request.session = session;
+
+        emails.push(...get_email_from_session(session));
+        codes.push(...get_code_from_session(session));
+      } else {
+        const [iac_codes, iac_error] = await get_credentials(
+          request.server,
+          request,
+        );
+        if (iac_error) {
+          throw iac_error;
+        }
+        codes.push(...iac_codes);
       }
+
+      // Once we have any possible emails or sitecodes, we can get the JAIP user
+      // associated with that session or IP address.
       const [current_user, user_error] = await get_current_user(
         request.server,
         request,
-        get_email_from_session(session),
-        get_code_from_session(session),
+        emails,
+        codes,
         false, // Do not include facilities in the user object
       );
       if (user_error) {
@@ -41,9 +71,12 @@ export const route_guard =
         return;
       }
 
-      request.session = session;
       if (current_user) {
+        // Attach User object to the request object for use in route handlers
         request.user = current_user;
+
+        // Set flags for whether the user is an authenticated admin or student based on their subdomain and account type.
+        // This will be used in route handlers and hooks to determine access to certain features.
         request.is_authenticated_admin =
           SUBDOMAINS.admin.includes(request.subdomain) &&
           request.user.type === "users";

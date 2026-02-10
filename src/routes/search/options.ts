@@ -1,3 +1,6 @@
-import { GLOBAL_ROUTE_PREFIX_VERSIONED } from "../../consts/index.js";
+import {
+  GLOBAL_ROUTE_PREFIX_VERSIONED,
+  SEARCH_ROUTE_PREFIX,
+} from "../../consts/index.js";
 
-export const search_prefix = `${GLOBAL_ROUTE_PREFIX_VERSIONED}/search`;
+export const search_prefix = `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SEARCH_ROUTE_PREFIX}`;

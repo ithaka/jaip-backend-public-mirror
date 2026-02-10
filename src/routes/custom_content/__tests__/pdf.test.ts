@@ -16,8 +16,9 @@ import { get_route } from "../../../utils/index.js";
 import { route_schemas } from "../schemas.js";
 import axios, { AxiosError } from "axios";
 import {
-  axios_session_data_with_code,
   axios_session_data_with_email,
+  iac_account_response,
+  iac_credential_response,
   valid_admin_subdomain,
   valid_student_subdomain,
 } from "../../../tests/fixtures/auth/fixtures.js";
@@ -109,7 +110,10 @@ test(`requests the ${pdf_route} route with a valid facility`, async () => {
   };
 
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(facility_with_access);
   mocked_get_jaip_s3_url.mockReturnValue(
     "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
@@ -130,7 +134,7 @@ test(`requests the ${pdf_route} route with a valid facility`, async () => {
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
-  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
   expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
@@ -142,7 +146,10 @@ test(`requests the ${pdf_route} route with a valid facility`, async () => {
 
 test(`requests the ${pdf_route} route with a facility lacking required features`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(
     basic_facility_without_permissions,
   );
@@ -156,7 +163,7 @@ test(`requests the ${pdf_route} route with a facility lacking required features`
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
-  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(mocked_get_s3_object).not.toHaveBeenCalled();
   expect(res.statusCode).toEqual(403);

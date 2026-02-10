@@ -12,7 +12,10 @@ import {
   add_entities_body_valid,
 } from "../../../../tests/fixtures/account_management/fixtures.js";
 import axios from "axios";
-import { axios_session_data_with_email } from "../../../../tests/fixtures/auth/fixtures.js";
+import {
+  axios_session_data_with_email,
+  valid_admin_subdomain,
+} from "../../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_admin,
   basic_ithaka_admin,
@@ -28,6 +31,9 @@ test(`requests the ${add_facilities_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",
     url: `${add_facilities_route}`,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -37,6 +43,9 @@ test(`requests the ${add_facilities_route} route with invalid body`, async () =>
     method: "POST",
     url: `${add_facilities_route}`,
     payload: add_entities_body_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -52,6 +61,9 @@ test(`requests the ${add_facilities_route} route with valid body and no add faci
     method: "POST",
     url: `${add_facilities_route}`,
     payload: add_entities_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(db_mock.manage_entity).toHaveBeenCalledTimes(0);
@@ -69,6 +81,9 @@ test(`requests the ${add_facilities_route} route with valid body and edit facili
     method: "POST",
     url: `${add_facilities_route}`,
     payload: add_entities_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(db_mock.manage_entity).toHaveBeenCalledTimes(0);
@@ -86,6 +101,9 @@ test(`requests the ${add_facilities_route} route with valid body and manage faci
     method: "POST",
     url: `${add_facilities_route}`,
     payload: add_entities_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(db_mock.manage_entity).toHaveBeenCalledTimes(1);

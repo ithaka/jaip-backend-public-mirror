@@ -5,7 +5,6 @@ import {
   discover_mock,
 } from "../../../tests/helpers.js";
 import route_settings from "../routes.js";
-import { metadata_prefix } from "../schemas.js";
 import {
   ale_response,
   approved_discipline_response,
@@ -30,6 +29,7 @@ import {
   basic_facility,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
+import { METADATA_ROUTE_PREFIX } from "../../../consts/index.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
@@ -37,7 +37,7 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-const metadata_route = `${route_settings.options.prefix}${metadata_prefix}${iid_path}`;
+const metadata_route = `${route_settings.options.prefix}${METADATA_ROUTE_PREFIX}${iid_path}`;
 test(`requests the ${metadata_route}" route without a user or facility`, async () => {
   const res = await app.inject({
     method: "GET",

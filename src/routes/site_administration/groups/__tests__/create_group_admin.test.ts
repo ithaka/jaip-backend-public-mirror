@@ -31,6 +31,9 @@ test(`requests the ${route} route`, async () => {
   const res = await app.inject({
     method: "POST",
     url: route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -40,6 +43,9 @@ test(`requests the ${route} route with invalid body`, async () => {
     method: "POST",
     url: `${route}`,
     payload: create_group_admin_body_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -53,6 +59,9 @@ test(`requests the ${route} route with valid body and no group permissions`, asy
     method: "POST",
     url: `${route}`,
     payload: create_group_admin_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(res.statusCode).toEqual(403);

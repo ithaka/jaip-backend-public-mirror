@@ -34,6 +34,9 @@ test(`requests the ${unrestrict_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",
     url: unrestrict_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -43,6 +46,9 @@ test(`requests the ${unrestrict_route} route with invalid body`, async () => {
     method: "POST",
     url: unrestrict_route,
     payload: unrestrict_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -57,6 +63,9 @@ test(`requests the ${unrestrict_route} route with valid body and no permissions`
     method: "POST",
     url: unrestrict_route,
     payload: unrestrict_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(403);
 });

@@ -14,7 +14,6 @@ import {
   discover_mock,
 } from "../../../tests/helpers.js";
 import route_settings from "../routes.js";
-import { page_prefix } from "../schemas.js";
 import {
   ale_response,
   approved_discipline_response,
@@ -38,6 +37,7 @@ import {
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
 import { S3ServiceException } from "@aws-sdk/client-s3";
+import { PAGES_ROUTE_PREFIX } from "../../../consts/index.js";
 
 const mocked_get_s3_object = vi.mocked(get_s3_object);
 
@@ -49,8 +49,8 @@ afterEach(() => {
 
 // NOTE: The tests for the page route and the pdf route are the same, because we're supplying
 // a mock response for the s3 bucket anyway, and that and the page number are the only distinctions
-const page_route = `${route_settings.options.prefix}${page_prefix}${iid_path}/0`;
-const pdf_route = `${route_settings.options.prefix}${page_prefix}${iid_path}`;
+const page_route = `${route_settings.options.prefix}${PAGES_ROUTE_PREFIX}${iid_path}/0`;
+const pdf_route = `${route_settings.options.prefix}${PAGES_ROUTE_PREFIX}${iid_path}`;
 const routes = [page_route, pdf_route];
 
 test.each(routes)(

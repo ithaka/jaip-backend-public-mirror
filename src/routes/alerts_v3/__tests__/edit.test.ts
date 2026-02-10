@@ -37,6 +37,9 @@ test(`requests the ${route} route`, async () => {
   const res = await app.inject({
     method: "PATCH",
     url: route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -46,6 +49,9 @@ test(`requests the ${route} route with invalid body`, async () => {
     method: "PATCH",
     url: `${route}`,
     payload: invalid_targeted_alert,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -55,6 +61,9 @@ test(`requests the ${route} route with valid alert but no id`, async () => {
     method: "PATCH",
     url: `${route}`,
     payload: { ...full_targeted_alert, id: undefined },
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -70,6 +79,9 @@ test(`requests the ${route} route with valid alert and no permissions`, async ()
     method: "PATCH",
     url: `${route}`,
     payload: full_targeted_alert_with_facilities,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(res.statusCode).toEqual(403);

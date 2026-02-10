@@ -8,8 +8,9 @@ import route_settings from "../routes.js";
 import { get_route } from "../../../utils/index.js";
 import { route_schemas } from "../schemas.js";
 import {
-  axios_session_data_with_code,
   axios_session_data_with_email,
+  iac_account_response,
+  iac_credential_response,
   valid_admin_subdomain,
   valid_student_subdomain,
 } from "../../../tests/fixtures/auth/fixtures.js";
@@ -38,7 +39,10 @@ afterEach(() => {
 
 test(`requests the ${metadata_route} route with a facility and no permissions`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(
     basic_facility_without_permissions,
   );
@@ -53,7 +57,7 @@ test(`requests the ${metadata_route} route with a facility and no permissions`, 
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
-  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
   expect(log_start).not.toHaveBeenCalled();
@@ -118,7 +122,10 @@ test(`requests the ${metadata_route} route with a valid facility`, async () => {
   };
 
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
-  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_code);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(facility_with_access);
   const log_start = vi.spyOn(app.event_logger, "pep_standard_log_start");
   const log_complete = vi.spyOn(app.event_logger, "pep_standard_log_complete");
@@ -132,7 +139,7 @@ test(`requests the ${metadata_route} route with a valid facility`, async () => {
   });
 
   expect(discover_mock).toHaveBeenCalledTimes(1);
-  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
   expect(log_start).toHaveBeenCalledTimes(1);

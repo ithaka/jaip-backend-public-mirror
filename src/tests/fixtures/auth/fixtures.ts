@@ -79,3 +79,28 @@ export const axios_session_data_with_email = {
   },
   status: 200,
 };
+
+export const iac_credential_response = {
+  data: {
+    IPRANGE: {
+      id: "credential-id",
+      type: {
+        value: "IP_RANGE",
+        rank: 1,
+      },
+      legacyId: "legacy-credential-id",
+      accountExternalId: "iac-account-id",
+      legacyUniqueValue: "legacy-unique-value",
+      ipAddress: "203.0.113.10",
+      allow: true,
+    },
+  },
+  status: 200,
+};
+
+export const iac_account_response = {
+  data: {
+    code: "test_sitecode",
+  },
+  status: 200,
+};

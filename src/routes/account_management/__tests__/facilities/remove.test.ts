@@ -12,7 +12,10 @@ import {
   remove_entities_body_valid,
 } from "../../../../tests/fixtures/account_management/fixtures.js";
 import axios from "axios";
-import { axios_session_data_with_email } from "../../../../tests/fixtures/auth/fixtures.js";
+import {
+  axios_session_data_with_email,
+  valid_admin_subdomain,
+} from "../../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_ithaka_admin,
   basic_reviewer,
@@ -27,6 +30,9 @@ test(`requests the ${remove_facilities_route} route with no body`, async () => {
   const res = await app.inject({
     method: "DELETE",
     url: `${remove_facilities_route}`,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -36,6 +42,9 @@ test(`requests the ${remove_facilities_route} route with invalid body`, async ()
     method: "DELETE",
     url: `${remove_facilities_route}`,
     payload: remove_entities_body_invalid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(400);
 });
@@ -51,6 +60,9 @@ test(`requests the ${remove_facilities_route} route with valid body and no remov
     method: "DELETE",
     url: `${remove_facilities_route}`,
     payload: remove_entities_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(db_mock.remove_user).toHaveBeenCalledTimes(0);
@@ -68,6 +80,9 @@ test(`requests the ${remove_facilities_route} route with valid body and manage f
     method: "DELETE",
     url: `${remove_facilities_route}`,
     payload: remove_entities_body_valid,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
 
   expect(db_mock.remove_facility).toHaveBeenCalledTimes(1);

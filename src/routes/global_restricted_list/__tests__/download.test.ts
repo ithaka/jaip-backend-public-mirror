@@ -38,6 +38,9 @@ test(`requests the ${download_route} route with no permissions`, async () => {
   const res = await app.inject({
     method: "GET",
     url: download_route,
+    headers: {
+      host: valid_admin_subdomain,
+    },
   });
   expect(res.statusCode).toEqual(403);
 });

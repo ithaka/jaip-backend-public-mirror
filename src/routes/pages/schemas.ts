@@ -1,16 +1,17 @@
-import { SWAGGER_TAGS } from "../../consts/index.js";
+import {
+  METADATA_ROUTE_PREFIX,
+  PAGES_ROUTE_PREFIX,
+  SWAGGER_TAGS,
+} from "../../consts/index.js";
 import { CedarMetadataReturn } from "../../types/routes.js";
 import { standard_errors } from "../../utils/index.js";
-
-export const page_prefix = "/page";
-export const metadata_prefix = "/metadata";
 
 export const route_schemas = {
   metadata: {
     name: "metadata",
     description: `Returns metadata.`,
     tags: [SWAGGER_TAGS.private],
-    route: `${metadata_prefix}/:iid`,
+    route: `${METADATA_ROUTE_PREFIX}/:iid`,
     path: {
       type: "string",
       properties: {
@@ -31,7 +32,7 @@ export const route_schemas = {
     name: "get_page",
     description: `Returns a page image.`,
     tags: [SWAGGER_TAGS.private],
-    route: `${page_prefix}/:iid/:page`,
+    route: `${PAGES_ROUTE_PREFIX}/:iid/:page`,
     path: {
       type: "string",
       properties: {
@@ -56,7 +57,7 @@ export const route_schemas = {
     name: "get_pdf",
     description: `Returns a pdf.`,
     tags: [SWAGGER_TAGS.private],
-    route: `${page_prefix}/:iid`,
+    route: `${PAGES_ROUTE_PREFIX}/:iid`,
     path: {
       type: "string",
       properties: {

@@ -17,6 +17,9 @@ export const get_route = (schema: FastifySchema): string => {
   return "/";
 };
 
+// We should only have single IPs in the array, but this ensures that we can handle multiple IPs
+// gracefully if we ever need to handle forwarded IPs or other cases where there might be multiple
+// IPs in the request.
 export const ip_handler = (req: FastifyRequest): string[] => {
   if (process.env.ENVIRONMENT === "development") {
     req.headers["fastly-client-ip"] = process.env.VPN_IP;
