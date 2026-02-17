@@ -1,4 +1,4 @@
-FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.13.0-alpine
+FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.13.1-alpine
 
 WORKDIR /usr/src/app
 RUN apk update && apk upgrade
