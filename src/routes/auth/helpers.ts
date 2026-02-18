@@ -235,7 +235,9 @@ const get_user = async (
     // @ts-expect-error Prisma isn't able to parse the query correctly in assigning a type to the result.
     const result: DBEntity = await db.get_first_user(get_user_query(arr));
     if (!result) {
-      throw new Error("No user found with the provided emails");
+      throw new Error(
+        `No user found with the provided emails: [${arr.join(", ")}]`,
+      );
     }
     return [map_entities(result), null];
   } catch (err) {

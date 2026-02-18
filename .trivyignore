@@ -27,6 +27,7 @@ CVE-2026-24842 exp:2026-04-01
 # XML VULNERABILITIES
 # We are not parsing XML in our application, so these vulnerabilities are not relevant.
 CVE-2026-25128 exp:2026-04-01
+CVE-2026-26278 exp:2026-04-01
 
 # GO 1.23.12 VULNERABILITIES
 # These vulnerabilities are in Go 1.23.12, in the underlying Alpine image. They are
