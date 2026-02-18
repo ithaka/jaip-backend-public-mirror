@@ -123,7 +123,7 @@ export const get_json_from_s3 = async (
 
     if (!jsonObject || !jsonObject.Key) {
       const error = Object.assign(new Error("No .json file found in bucket"), {
-        statusCode: 404,
+        status_code: 404,
       });
       throw error;
     }
