@@ -23,15 +23,18 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   client: PrismaClient;
 
   constructor(client: PrismaClient) {
-    client.$on(
-      // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
-      "query",
-      (e: { query: string; params: string; duration: number }) => {
-        console.log("Query: " + e.query);
-        console.log("Params: " + e.params);
-        console.log("Duration: " + e.duration + "ms");
-      },
-    );
+    // This will log all queries to the console for debugging purposes. We don't generally
+    // need this, and don't want all those queries stored indefinitely, but it's extremely
+    // useful when developing a new query or debugging an issue.
+    // client.$on(
+    //   // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
+    //   "query",
+    //   (e: { query: string; params: string; duration: number }) => {
+    //     console.log("Query: " + e.query);
+    //     console.log("Params: " + e.params);
+    //     console.log("Duration: " + e.duration + "ms");
+    //   },
+    // );
     client.$on(
       // @ts-expect-error Prisma typing doesn't seem to work for the event emitter
       "error",
