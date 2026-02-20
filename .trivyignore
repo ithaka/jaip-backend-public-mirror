@@ -49,3 +49,7 @@ CVE-2026-23950 exp:2026-04-01
 # This vulnerability is in the npm cli itself. It shouldn't be relevant to our
 # application unless someone is in the build pipeline already.
 CVE-2026-0775 exp:2026-02-08
+
+# Most instances of this have been handled, but this is still a dependency of 
+# some eslint plugins. 
+CVE-2026-26996 exp:2026-04-01
