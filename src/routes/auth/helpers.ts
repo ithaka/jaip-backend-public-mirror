@@ -492,33 +492,57 @@ export const get_credentials = async (
     // multiple IPs in the request.
     for (const ip of ips) {
       if (!codes.length) {
-        // Append the ip param to the credential route.
-        const fullUrl = `${url}?ip=${ip}`;
-        const credential_response = await axios.get(fullUrl);
-        // If we have a response that includes an accountExternalId, we can use that to get the site code for the account and attach it to the request.
-        if (credential_response.status === 200) {
-          if (credential_response.data?.IPRANGE?.accountExternalId) {
-            const account_id =
-              credential_response.data.IPRANGE.accountExternalId;
+        try {
+          // Append the ip param to the credential route.
+          const fullUrl = `${url}?ip=${ip}`;
+          const credential_response = await axios.get(fullUrl);
 
-            // Now that we have the account ID, we can get the site codes for that account and attach them to the request.
-            const url = host + IAC_SERVICE.account.path + `/${account_id}`;
-            const account_response = await axios.get(url);
-            if (account_response.status === 200) {
-              if (account_response.data?.code) {
-                codes.push(account_response.data.code);
+          // If we have a response that includes an accountExternalId, we can use that to get the site code for the account and attach it to the request.
+          if (credential_response.status === 200) {
+            if (credential_response.data?.IPRANGE?.accountExternalId) {
+              const account_id =
+                credential_response.data.IPRANGE.accountExternalId;
+
+              // Now that we have the account ID, we can get the site codes for that account and attach them to the request.
+              const url = host + IAC_SERVICE.account.path + `/${account_id}`;
+              const account_response = await axios.get(url);
+              if (account_response.status === 200) {
+                if (account_response.data?.code) {
+                  codes.push(account_response.data.code);
+                }
+              }
+            } else {
+              fastify.event_logger.pep_standard_log_start(
+                "pep_auth_iac_no_accountid",
+                request,
+                {
+                  log_made_by: "auth-api",
+                  event_description:
+                    "failed to retrieve an account id from the IAC credential response",
+                },
+              );
+            }
+          }
+        } catch (err) {
+          // If we get a 404, that means that the IP wasn't found in IAC. It's not an error, but we
+          // still want to check for an ip bypass in our own database. If we don't have an
+          // IP bypass, then we can move on and try the next ip if there is one. Otherwise, we'll
+          // simply return an empty array and no error.
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            const [bypass_user, bypass_user_error] = await get_ip_bypass(
+              fastify.db,
+              ip,
+            );
+            if (bypass_user_error) {
+              throw bypass_user_error;
+            }
+            if (bypass_user) {
+              if (bypass_user.contact) {
+                codes.push(bypass_user.contact);
               }
             }
           } else {
-            fastify.event_logger.pep_standard_log_start(
-              "pep_auth_iac_no_accountid",
-              request,
-              {
-                log_made_by: "auth-api",
-                event_description:
-                  "failed to retrieve an account id from the IAC credential response",
-              },
-            );
+            throw err;
           }
         }
       }
