@@ -30,7 +30,7 @@ export const manage_session = async (
   request: FastifyRequest,
   ignore_cookie: boolean = false,
 ): Promise<[Session, Error | null]> => {
-  let session: Session = {} as Session;
+  let session: Session;
   const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
   // We can't use the frontend UUID cookie on a student subdomain, because we
   // can't trust the cookie from the frontend alone. This means we will fall back to
@@ -346,7 +346,7 @@ export const get_current_user = async (
   codes: string[],
   include_facilities: boolean,
 ): Promise<[User | null, Error | null]> => {
-  let current_user: User | null = null;
+  let current_user: User | null;
   try {
     // If there are emails, try to find a user with one of them
     if (emails.length) {
