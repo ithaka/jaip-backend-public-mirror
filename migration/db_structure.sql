@@ -81,8 +81,38 @@ CREATE PROCEDURE public.add_admin_to_active_groups(IN uid integer)
   END LOOP;
 END; $$;
 
-
 ALTER PROCEDURE public.add_admin_to_active_groups(IN uid integer) OWNER TO masterpostgresuser;
+
+--
+-- Name: add_group_admin(uid INT, gid INT); Type: PROCEDURE; Schema: public; Owner: masterpostgresuser
+--
+CREATE OR REPLACE PROCEDURE add_group_admin(uid INT, gid INT)
+  LANGUAGE plpgsql AS $$
+  DECLARE
+    fid INT;
+  BEGIN
+    INSERT INTO groups_entities (group_id, entity_id, role)
+    VALUES (gid, uid, 'admin')
+    ON CONFLICT ON CONSTRAINT groups_entities_pkey
+    DO UPDATE
+    SET role = EXCLUDED.role, updated_at = DEFAULT;
+
+    FOR fid IN SELECT id FROM features
+    LOOP
+      INSERT INTO features_groups_entities (group_id, entity_id, feature_id, enabled) 
+      VALUES (
+        gid,
+        uid,
+        fid,
+        true
+      )
+      ON CONFLICT ON CONSTRAINT features_groups_entities_pkey
+      DO UPDATE
+      SET enabled = EXCLUDED.enabled, updated_at = DEFAULT;
+    END LOOP;
+END; $$;
+
+ALTER PROCEDURE public.add_group_admin(uid INT, gid INT) OWNER TO masterpostgresuser;
 
 --
 -- Name: add_facilities(json, boolean); Type: PROCEDURE; Schema: public; Owner: masterpostgresuser
