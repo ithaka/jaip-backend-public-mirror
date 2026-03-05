@@ -7,18 +7,18 @@ import { CollectionMetadata } from "../../types/custom_content.js";
 export const reentry_metadata: CollectionMetadata[] = [
   {
     title:
-      "Connections 2025: A Free Guide for Formerly Incarcerated People in New York City",
+      "Connections 2026: A Free Guide for Formerly Incarcerated People in New York City",
     description:
       "Annual reentry resource guide for people returning to New York City after incarceration.",
-    filename: "connections-2025-ny-en.pdf",
-    thumbnail: "connections-2025-ny-en.png",
+    filename: "connections-2026-ny-en.pdf",
+    thumbnail: "connections-2026-ny-en.png",
     creator: "New York Public Library, Jail & Prison Services",
     contributor: "Kate Heenan (Editor)",
     publisher: "The New York Public Library",
-    date: "2025",
+    date: "2026",
     type: "Text",
     format: "PDF, 473 pages, illustrated",
-    page_count: 473,
+    page_count: 513,
     alternate_versions: [
       {
         filename: "conexiones-2025-ny-es.pdf",
@@ -44,7 +44,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     title:
       "Conexiones 2025: Una guía gratuita para personas anteriormente encarceladas en la ciudad de Nueva York",
     description:
-      "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York.",
+      "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York. La guía 2026 de reingreso traducida estará disponible próximamente. ¡Vuelva pronto para ver actualizaciones!",
     filename: "conexiones-2025-ny-es.pdf",
     thumbnail: "conexiones-2025-ny-es.png",
     creator: "New York Public Library, Jail & Prison Services",
@@ -56,7 +56,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     page_count: 473,
     alternate_versions: [
       {
-        filename: "connections-2025-ny-en.pdf",
+        filename: "connections-2026-ny-en.pdf",
         language: "English",
         label: "View in English",
       },

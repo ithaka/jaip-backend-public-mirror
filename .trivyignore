@@ -16,6 +16,8 @@ CVE-2026-26278 exp:2026-04-01
 # These are vulnerabilities in Hono, a Prisma dependency. We're not using the vulnerable code.
 CVE-2026-22817 exp:2026-04-01
 CVE-2026-22818 exp:2026-04-01
+CVE-2026-29087 exp:2026-05-01
+CVE-2026-29045 exp:2026-05-01
 
 # NODE VULNERABILITIES
 # These vulnerabilities are in the node-tar package, which we're not using.
@@ -34,3 +36,8 @@ CVE-2026-26996 exp:2026-04-01
 # These vulnerabilities are in an eslint dependency. We're not using the vulnerable code.
 CVE-2026-27903 exp:2026-04-01
 CVE-2026-27904 exp:2026-04-01
+
+#Tar vulnerabilities
+# These vulnerabilities are in the tar package, We're not using user-supplied tar files,
+# and the other two possibilities are pretty low risk.
+GHSA-qffp-2rhf-9h96 exp:2026-04-01
