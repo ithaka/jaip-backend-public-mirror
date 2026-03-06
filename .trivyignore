@@ -41,3 +41,4 @@ CVE-2026-27904 exp:2026-04-01
 # These vulnerabilities are in the tar package, We're not using user-supplied tar files,
 # and the other two possibilities are pretty low risk.
 GHSA-qffp-2rhf-9h96 exp:2026-04-01
+CVE-2026-29786 exp:2026-04-01
