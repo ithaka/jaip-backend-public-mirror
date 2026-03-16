@@ -40,6 +40,7 @@
     K8S_ACTION: apply
     BASE_URL: https://jaip-backend-$CI_COMMIT_SHORT_SHA.apps.test.cirrostratus.org/jaip/api
     DATABASE_SECRET_NAME: jaip-database-creds
+    WORDNIK_SECRET_NAME: wordnik-api-key
     # Disable autoscaling for ephemeral environment. It is not permitted and deploys will fail if enabled.
     AUTOSCALING_ENABLED: "false"
     SERVICE_ACCOUNT_NAME: test-jaip-irsa
@@ -54,6 +55,7 @@
     TARGET_CLUSTER: integration
     BASE_URL: https://jaip-backend.apps.test.cirrostratus.org/jaip/api
     DATABASE_SECRET_NAME: jaip-database-creds
+    WORDNIK_SECRET_NAME: wordnik-api-key
     SERVICE_ACCOUNT_NAME: test-jaip-irsa
 .prod-env:
   variables:
@@ -66,6 +68,7 @@
     TARGET_CLUSTER: production
     BASE_URL: https://jaip-backend.apps.prod.cirrostratus.org/jaip/api
     DATABASE_SECRET_NAME: jaip-database-creds
+    WORDNIK_SECRET_NAME: wordnik-api-key
     SERVICE_ACCOUNT_NAME: prod-jaip-irsa
 
 

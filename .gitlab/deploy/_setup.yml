@@ -45,6 +45,9 @@ variables:
 # JAIP Database Credentials
   JAIP_DB_URL: "/$API_TARGET/labs/jaip/jaip-backend/database/url"
 
+# JAIP Wordnik API Key
+  WORDNIK_KEY: "/$API_TARGET/labs/jaip/jaip-backend/wordnik-api-key"
+
 # Child pipelines inherit parent pipeline workflows, but the parent pipeline
 # rules will never evaluate to true here. (The source is a trigger, not a merge
 # request.)

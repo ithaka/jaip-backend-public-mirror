@@ -17,6 +17,11 @@ extraEnv:
       secretKeyRef:
         key: JAIP_DB_URL
         name: jaip-database-creds
+  - name: WORDNIK_API_KEY
+    valueFrom:
+      secretKeyRef:
+        key: WORDNIK_KEY
+        name: wordnik-api-key
 autoscaling:
   enabled: true
   minReplicas: 1

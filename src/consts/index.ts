@@ -167,6 +167,7 @@ export const FEATURES = {
   remove_users: "remove_users",
   submit_requests: "submit_requests",
   undo_bulk_approve: "undo_bulk_approve",
+  use_dictionary: "use_dictionary",
   use_protected_features: "use_protected_features",
   view_abstract: "view_abstract",
   view_analytics: "view_analytics",
