@@ -71,8 +71,18 @@ scan vulnerabilities:
     # replace / with - in branch name to be friendly w/ job
     - export CI_COMMIT_BRANCH="${CI_COMMIT_BRANCH//\//-}"
 
+# Using a hidden stage, we can ensure that the yarn deps get cached. Use 'extends' on any job that needs to install yarn deps to take advantage of the cache.
+.yarn-cache:
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - .yarn
+
 lint:
   stage: check
+  extends: .yarn-cache
   dependencies:
     - build app image
   image: $IMAGE_TAG
@@ -84,6 +94,7 @@ lint:
 
 unit tests:
   stage: check
+  extends: .yarn-cache
   dependencies:
     - build app image
   image: $IMAGE_TAG
