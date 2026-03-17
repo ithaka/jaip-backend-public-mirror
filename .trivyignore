@@ -43,3 +43,7 @@ CVE-2026-27904 exp:2026-04-01
 GHSA-qffp-2rhf-9h96 exp:2026-04-01
 CVE-2026-29786 exp:2026-04-01
 CVE-2026-31802 exp:2026-04-01
+
+# FLATTED VULNERABILITIES
+# This is a transitive dependency of eslint. We're not using the vulnerable code.
+CVE-2026-32141 exp:2026-05-01
