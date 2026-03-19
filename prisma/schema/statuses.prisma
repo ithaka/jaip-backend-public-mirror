@@ -1,0 +1,48 @@
+model globally_restricted_items {
+  id            Int      @id @default(autoincrement())
+  entity_id     Int
+  jstor_item_id String   @unique @db.VarChar
+  reason        String
+  is_restricted Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamp(6)
+  updated_at    DateTime @default(now()) @db.Timestamp(6)
+  entities      entities @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, jstor_item_id, reason, is_restricted])
+}
+
+model statuses {
+  id              Int              @id @default(autoincrement())
+  entity_id       Int?
+  jstor_item_id   String?          @db.VarChar
+  jstor_item_type jstor_types?
+  status          status_options?
+  group_id        Int?
+  created_at      DateTime?        @default(now()) @db.Timestamp(6)
+  status_details  status_details[]
+  entities        entities?        @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  groups          groups?          @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "statuses_group_fkey")
+
+  @@index([id, jstor_item_id, jstor_item_type, status, group_id], map: "statuses_id_jstor_item_id_jstor_item_type_status_group_idx")
+}
+
+model status_details {
+  id        Int       @id @default(autoincrement())
+  status_id Int?
+  type      String?   @db.VarChar
+  detail    String?
+  statuses  statuses? @relation(fields: [status_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum jstor_types {
+  doi
+  headid
+  discipline
+}
+
+enum status_options {
+  Pending
+  Approved
+  Denied
+  Incomplete
+}

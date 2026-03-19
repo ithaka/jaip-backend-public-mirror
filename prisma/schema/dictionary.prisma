@@ -1,0 +1,9 @@
+model wordnik_ahd_5_headwords {
+  headword          String  @id @unique @db.VarChar
+  has_definition    Boolean @default(true)
+  has_pronunciation Boolean @default(false)
+  has_etymology     Boolean @default(false)
+  frequency         BigInt  @default(0)
+
+  @@index([headword])
+}

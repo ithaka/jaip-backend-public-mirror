@@ -1,0 +1,11 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../../src/database/prisma"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Models and enums are contained in other files in this directory.

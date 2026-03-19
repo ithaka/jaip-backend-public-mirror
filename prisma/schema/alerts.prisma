@@ -1,0 +1,30 @@
+model alerts {
+  id         Int            @id @default(autoincrement())
+  text       String
+  created_at DateTime?      @default(now()) @db.Timestamp(6)
+  expires_at DateTime?      @default(dbgenerated("(CURRENT_DATE + '7 days'::interval)")) @db.Timestamp(6)
+  status     alert_statuses
+}
+
+model targeted_alerts {
+  id                Int                 @id @default(autoincrement())
+  text              String
+  status            alert_statuses
+  start_date        DateTime
+  end_date          DateTime
+  is_active         Boolean
+  entity_id         Int
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  updated_at        DateTime            @default(now()) @db.Timestamp(6)
+  alerts_facilities alerts_facilities[]
+  alerts_groups     alerts_groups[]
+  alerts_subdomains alerts_subdomains[]
+  entities          entities            @relation(fields: [entity_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum alert_statuses {
+  info
+  warning
+  error
+  success
+}

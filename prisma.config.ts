@@ -2,8 +2,9 @@ import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
 export default defineConfig({
-  // the main entry for your schema
-  schema: "./prisma/schema.prisma",
+  // The main entry for the schema. This is a directory which includes all the .prisma files,
+  // with schema.prisma being the main one.
+  schema: "./prisma/schema",
   // where migrations should be generated
   // what script to run for "prisma db seed"
   migrations: {
