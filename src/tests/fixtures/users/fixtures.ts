@@ -156,6 +156,15 @@ export const analytics_permissions = (enabled: boolean) =>
     },
   ]);
 
+export const dictionary_permissions = (enabled: boolean) =>
+  structuredClone([
+    {
+      enabled,
+      features: { id: 42, name: FEATURES.use_dictionary, is_active: true },
+      groups: { id: 1 },
+    },
+  ]);
+
 export const groups = {
   ithaka: { id: 1, name: "Ithaka" },
   ilium: { id: 2, name: "Ilium" },
@@ -628,6 +637,25 @@ export const basic_facility_without_permissions = {
     groups_entities: groups_entities.facility,
     features_groups_entities: [
       ...search_result_permissions(false),
+      ...media_review_permissions(false),
+      ...user_permissions(false),
+      ...internal_ithaka_permissions(false),
+    ],
+    ungrouped_features_entities: [],
+  },
+};
+
+export const basic_facility_with_dictionary = {
+  jstor_id: "test@test.com",
+  uuid: "uuid",
+  entities: {
+    name: "Test Facility",
+    id: 1,
+    entity_type: ENTITY_TYPES.FACILITIES,
+    groups_entities: groups_entities.facility,
+    features_groups_entities: [
+      ...search_result_permissions(true),
+      ...dictionary_permissions(true),
       ...media_review_permissions(false),
       ...user_permissions(false),
       ...internal_ithaka_permissions(false),

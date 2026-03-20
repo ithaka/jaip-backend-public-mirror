@@ -64,6 +64,9 @@ export interface JAIPDatabase {
     is_manager: boolean,
   ) => void;
 
+  // DICTIONARY
+  get_headwords: (target: string) => Promise<[string[], Error | null]>;
+
   // ALERTS
   get_alerts: () => Promise<[Alert | null, Error | null]>;
 

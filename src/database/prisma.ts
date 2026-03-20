@@ -180,6 +180,39 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
 
+  async get_headwords(target: string): Promise<[string[], Error | null]> {
+    try {
+      const headwords: { headword: string }[] =
+        await this.client.wordnik_ahd_5_headwords.findMany({
+          where: {
+            headword: {
+              startsWith: target,
+              mode: "insensitive",
+            },
+          },
+          orderBy: [
+            {
+              frequency: "desc",
+            },
+            {
+              headword: "asc",
+            },
+          ],
+          take: 10,
+        });
+
+      return [
+        (headwords
+          .map((hw: { headword: string }) => hw.headword || "")
+          .filter((hw) => hw) || []) as string[],
+        null,
+      ];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
+    }
+  }
+
   async get_alerts(): Promise<[Alert | null, Error | null]> {
     try {
       const result = await this.client.alerts.findFirst({

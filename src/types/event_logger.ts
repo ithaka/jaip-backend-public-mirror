@@ -92,6 +92,7 @@ export interface CompleteLogPayload {
   alert_id: number;
   collection: string;
   filename: string;
+  headwords: string[];
 }
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial

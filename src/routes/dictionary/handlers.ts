@@ -17,20 +17,42 @@ export const headwords_search_handler =
       },
     );
     try {
-      const exampleAWords = [
-        "abacus",
-        "abalone",
-        "abandon",
-        "abbey",
-        "ability",
-        "abject",
-        "ablaze",
-        "abnormal",
-        "aboard",
-        "abode",
-        "abound",
-      ];
-      reply.send(exampleAWords);
+      // Extract term from request parameters
+      const params = request.params as { term: string };
+      const term = params.term || "";
+      log_payload.query = term;
+
+      // Validate term length
+      if (term.length < 2) {
+        reply.code(400).send("Search term must be at least 2 characters long");
+        fastify.event_logger.pep_error(
+          request,
+          reply,
+          {
+            ...log_payload,
+            event_description: "headword search term too short",
+          },
+          "dictionary",
+          new Error("Search term must be at least 2 characters long"),
+        );
+      }
+
+      // Fetch headwords from the database
+      const [headwords, error] = await fastify.db.get_headwords(term);
+      if (error) {
+        throw error;
+      }
+      log_payload.headwords = headwords;
+
+      // Send the headwords in the response
+      reply.send(headwords);
+
+      fastify.event_logger.pep_standard_log_complete(
+        "pep_get_headwords_complete",
+        request,
+        reply,
+        log_payload,
+      );
     } catch (err) {
       const error = ensure_error(err);
       fastify.event_logger.pep_error(

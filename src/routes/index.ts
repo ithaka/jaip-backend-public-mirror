@@ -16,6 +16,7 @@ import alerts_v3 from "./alerts_v3/routes.js";
 import downloads from "./downloads/routes.js";
 import custom_content from "./custom_content/routes.js";
 import analytics from "./analytics/routes.js";
+import dictionary from "./dictionary/routes.js";
 
 // Some of these routes are grouped, so we need to flatten the array
 // to avoid nested arrays in the final export. While the realistic depth
@@ -40,4 +41,5 @@ export default [
   downloads,
   custom_content,
   analytics,
+  dictionary,
 ].flat(10);
