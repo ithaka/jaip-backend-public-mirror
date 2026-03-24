@@ -15,6 +15,7 @@ import {
 import { Feature } from "./features.js";
 import { DBGroup } from "./database.js";
 import { targeted_alerts } from "../database/prisma/client.js";
+import { WordnikDataLog } from "./dictionary.js";
 
 export interface CaptainsLog {
   origin: string;
@@ -92,8 +93,10 @@ export interface CompleteLogPayload {
   alert_id: number;
   collection: string;
   filename: string;
+  wordnik_data: WordnikDataLog;
   headwords: string[];
 }
+
 // The log payload in use will probably always be incomplete. Rather than
 // specifying optional fields for everything or always specifying a Partial
 // type, we'll just use this type alias to simplify things.
