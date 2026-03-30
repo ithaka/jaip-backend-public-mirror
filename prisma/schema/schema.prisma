@@ -1,7 +1,9 @@
 generator client {
   provider        = "prisma-client"
   output          = "../../src/database/prisma"
-  previewFeatures = ["relationJoins"]
+  // Partial index support is required for trigram index on wordnik_ahd_5_headwords,
+  // and relation join support is required for several models.
+  previewFeatures = ["relationJoins", "partialIndexes"]
 }
 
 datasource db {

@@ -1,15 +1,10 @@
-➤ YN0000: · Yarn 4.6.0
-➤ YN0000: ┌ Resolution step
-➤ YN0085: │ + prisma@npm:6.4.1, @esbuild/aix-ppc64@npm:0.25.0, @esbuild/android-arm64@npm:0.25.0, @esbuild/android-arm@npm:0.25.0, @esbuild/android-x64@npm:0.25.0, and 118 more.
-➤ YN0000: └ Completed in 1s 623ms
-➤ YN0000: ┌ Fetch step
-➤ YN0000: └ Completed
-➤ YN0000: ┌ Link step
-➤ YN0007: │ @prisma/engines@npm:6.4.1 must be built because it never has been before or the last one failed
-➤ YN0007: │ esbuild@npm:0.25.0 must be built because it never has been before or the last one failed
-➤ YN0007: │ prisma@npm:6.4.1 [dc3fc] must be built because it never has been before or the last one failed
-➤ YN0000: └ Completed in 1s 174ms
-➤ YN0000: · Done in 2s 874ms
+-- PRISMA MIGRATION DATA
+-- This is manually added to the prisma migration file to ensure that the pg_trgm extension is 
+-- created before any tables or indexes that depend on it.
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- CreateEnum
+CREATE TYPE "alert_statuses" AS ENUM ('info', 'warning', 'error', 'success');
 
 -- CreateEnum
 CREATE TYPE "entity_types" AS ENUM ('programs', 'users', 'facilities');
@@ -27,11 +22,50 @@ CREATE TYPE "user_roles" AS ENUM ('admin', 'user', 'removed');
 CREATE TABLE "alerts" (
     "id" SERIAL NOT NULL,
     "text" TEXT NOT NULL,
-    "status" VARCHAR NOT NULL,
+    "status" "alert_statuses" NOT NULL,
     "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "expires_at" TIMESTAMP(6) DEFAULT (CURRENT_DATE + '7 days'::interval),
 
     CONSTRAINT "alerts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "targeted_alerts" (
+    "id" SERIAL NOT NULL,
+    "text" TEXT NOT NULL,
+    "status" "alert_statuses" NOT NULL,
+    "start_date" TIMESTAMP(3) NOT NULL,
+    "end_date" TIMESTAMP(3) NOT NULL,
+    "is_active" BOOLEAN NOT NULL,
+    "entity_id" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "targeted_alerts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "alerts_facilities" (
+    "alert_id" INTEGER NOT NULL,
+    "facility_id" INTEGER NOT NULL,
+
+    CONSTRAINT "alerts_facilities_pkey" PRIMARY KEY ("alert_id","facility_id")
+);
+
+-- CreateTable
+CREATE TABLE "alerts_groups" (
+    "alert_id" INTEGER NOT NULL,
+    "group_id" INTEGER NOT NULL,
+
+    CONSTRAINT "alerts_groups_pkey" PRIMARY KEY ("alert_id","group_id")
+);
+
+-- CreateTable
+CREATE TABLE "alerts_subdomains" (
+    "alert_id" INTEGER NOT NULL,
+    "subdomain" VARCHAR NOT NULL,
+
+    CONSTRAINT "alerts_subdomains_pkey" PRIMARY KEY ("alert_id","subdomain")
 );
 
 -- CreateTable
@@ -58,13 +92,13 @@ CREATE TABLE "facilities" (
 CREATE TABLE "features" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR NOT NULL,
-    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "display_name" VARCHAR NOT NULL,
-    "category" VARCHAR,
-    "description" TEXT,
+    "category" VARCHAR NOT NULL,
+    "description" TEXT NOT NULL,
     "is_protected" BOOLEAN NOT NULL,
-    "is_admin_only" BOOLEAN,
+    "is_admin_only" BOOLEAN NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "features_pkey" PRIMARY KEY ("id")
@@ -86,8 +120,8 @@ CREATE TABLE "features_groups_entities" (
 CREATE TABLE "groups" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR NOT NULL,
-    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "groups_pkey" PRIMARY KEY ("id")
@@ -96,12 +130,25 @@ CREATE TABLE "groups" (
 -- CreateTable
 CREATE TABLE "groups_entities" (
     "id" SERIAL NOT NULL,
-    "group_id" INTEGER,
-    "entity_id" INTEGER,
+    "group_id" INTEGER NOT NULL,
+    "entity_id" INTEGER NOT NULL,
     "role" "user_roles",
     "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "groups_entities_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "groups_entities_pkey" PRIMARY KEY ("group_id","entity_id")
+);
+
+-- CreateTable
+CREATE TABLE "globally_restricted_items" (
+    "id" SERIAL NOT NULL,
+    "entity_id" INTEGER NOT NULL,
+    "jstor_item_id" VARCHAR NOT NULL,
+    "reason" TEXT NOT NULL,
+    "is_restricted" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "globally_restricted_items_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -141,10 +188,10 @@ CREATE TABLE "statuses" (
 CREATE TABLE "subdomains" (
     "id" SERIAL NOT NULL,
     "subdomain" VARCHAR NOT NULL,
-    "entity_type" "entity_types",
-    "is_active" BOOLEAN DEFAULT true,
-    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    "entity_type" "entity_types" NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "subdomains_pkey" PRIMARY KEY ("id")
 );
@@ -178,8 +225,8 @@ CREATE TABLE "ungrouped_features" (
     "display_name" VARCHAR NOT NULL,
     "category" VARCHAR NOT NULL,
     "description" TEXT NOT NULL,
-    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "ungrouped_features_pkey" PRIMARY KEY ("id")
@@ -205,6 +252,22 @@ CREATE TABLE "users" (
 
     CONSTRAINT "pk_users" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "wordnik_ahd_5_headwords" (
+    "headword" VARCHAR NOT NULL,
+    "has_pronunciation" BOOLEAN NOT NULL DEFAULT false,
+    "has_etymology" BOOLEAN NOT NULL DEFAULT false,
+    "frequency" BIGINT NOT NULL DEFAULT 0,
+
+    CONSTRAINT "wordnik_ahd_5_headwords_pkey" PRIMARY KEY ("headword")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "globally_restricted_items_jstor_item_id_key" ON "globally_restricted_items"("jstor_item_id");
+
+-- CreateIndex
+CREATE INDEX "globally_restricted_items_id_jstor_item_id_reason_is_restri_idx" ON "globally_restricted_items"("id", "jstor_item_id", "reason", "is_restricted");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "facilities_jstor_id_uq" ON "facilities"("jstor_id");
@@ -242,29 +305,62 @@ CREATE INDEX "ungrouped_features_entities_id_feature_id_entity_id_idx" ON "ungro
 -- CreateIndex
 CREATE UNIQUE INDEX "users_jstor_id_uq" ON "users"("jstor_id");
 
--- AddForeignKey
-ALTER TABLE "facilities" ADD CONSTRAINT "facilities_id_fkey" FOREIGN KEY ("id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- CreateIndex
+CREATE INDEX "wordnik_ahd_5_headwords_headword_idx" ON "wordnik_ahd_5_headwords"("headword");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "wordnik_ahd_5_headwords_headword_key" ON "wordnik_ahd_5_headwords"("headword");
+
+-- CreateIndex
+CREATE INDEX "wordnik_ahd_5_headwords_headword_trgm_idx" ON "wordnik_ahd_5_headwords" USING GIN ("headword" gin_trgm_ops);
 
 -- AddForeignKey
-ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "targeted_alerts" ADD CONSTRAINT "targeted_alerts_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_feature_id_fkey" FOREIGN KEY ("feature_id") REFERENCES "features"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "alerts_facilities" ADD CONSTRAINT "alerts_facilities_alert_id_fkey" FOREIGN KEY ("alert_id") REFERENCES "targeted_alerts"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "alerts_facilities" ADD CONSTRAINT "alerts_facilities_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "alerts_groups" ADD CONSTRAINT "alerts_groups_alert_id_fkey" FOREIGN KEY ("alert_id") REFERENCES "targeted_alerts"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entities_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "alerts_groups" ADD CONSTRAINT "alerts_groups_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "ip_bypass" ADD CONSTRAINT "ip_bypass_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "alerts_subdomains" ADD CONSTRAINT "alerts_subdomains_alert_id_fkey" FOREIGN KEY ("alert_id") REFERENCES "targeted_alerts"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "status_details" ADD CONSTRAINT "status_details_status_id_fkey" FOREIGN KEY ("status_id") REFERENCES "statuses"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "alerts_subdomains" ADD CONSTRAINT "alerts_subdomains_subdomain_fkey" FOREIGN KEY ("subdomain") REFERENCES "subdomains"("subdomain") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "globally_restricted_items" ADD CONSTRAINT "globally_restricted_items_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "facilities" ADD CONSTRAINT "facilities_id_fkey" FOREIGN KEY ("id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_feature_id_fkey" FOREIGN KEY ("feature_id") REFERENCES "features"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "features_groups_entities" ADD CONSTRAINT "features_groups_entities_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "groups_entities" ADD CONSTRAINT "groups_entities_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "ip_bypass" ADD CONSTRAINT "ip_bypass_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "status_details" ADD CONSTRAINT "status_details_status_id_fkey" FOREIGN KEY ("status_id") REFERENCES "statuses"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "statuses" ADD CONSTRAINT "statuses_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -273,17 +369,16 @@ ALTER TABLE "statuses" ADD CONSTRAINT "statuses_entity_id_fkey" FOREIGN KEY ("en
 ALTER TABLE "statuses" ADD CONSTRAINT "statuses_group_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "subdomains_facilities" ADD CONSTRAINT "subdomains_facilities_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "subdomains_facilities" ADD CONSTRAINT "subdomains_facilities_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "subdomains_facilities" ADD CONSTRAINT "subdomains_facilities_subdomain_fkey" FOREIGN KEY ("subdomain") REFERENCES "subdomains"("subdomain") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "subdomains_facilities" ADD CONSTRAINT "subdomains_facilities_subdomain_fkey" FOREIGN KEY ("subdomain") REFERENCES "subdomains"("subdomain") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "ungrouped_features_entities" ADD CONSTRAINT "ungrouped_features_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "ungrouped_features_entities" ADD CONSTRAINT "ungrouped_features_entities_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "ungrouped_features_entities" ADD CONSTRAINT "ungrouped_features_entities_feature_id_fkey" FOREIGN KEY ("feature_id") REFERENCES "ungrouped_features"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "ungrouped_features_entities" ADD CONSTRAINT "ungrouped_features_entities_feature_id_fkey" FOREIGN KEY ("feature_id") REFERENCES "ungrouped_features"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "entities"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
+ALTER TABLE "users" ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;

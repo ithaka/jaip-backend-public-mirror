@@ -5,4 +5,5 @@ model wordnik_ahd_5_headwords {
   frequency         BigInt  @default(0)
 
   @@index([headword])
+  @@index([headword(ops: raw("gin_trgm_ops"))], type: Gin, name: "wordnik_ahd_5_headwords_headword_trgm_idx")
 }
