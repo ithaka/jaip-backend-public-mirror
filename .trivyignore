@@ -1,8 +1,3 @@
-# BRACE EXPANSION VULNERABILITIES
-# This remaining vulnerability is in the global npm install in the docker image. We're not using that, and
-# all the transitive dependencies using this package have been updated to a fixed version.
-CVE-2026-25547 exp:2026-03-08
-
 # TAR VULNERABILITIES
 # Some dependencies may include node-tar, but we're not using it from Alpine.
 CVE-2026-24842 exp:2026-04-01
@@ -20,14 +15,13 @@ CVE-2026-22818 exp:2026-04-01
 CVE-2026-29087 exp:2026-05-01
 CVE-2026-29045 exp:2026-05-01
 
+# This vulnerability is in Effect, and affects localstorage usage, which should not be relevant in our backend.
+CVE-2026-32887 exp:2026-05-01
+
 # NODE VULNERABILITIES
 # These vulnerabilities are in the node-tar package, which we're not using.
 CVE-2026-23745 exp:2026-04-01
 CVE-2026-23950 exp:2026-04-01
-
-# This vulnerability is in the npm cli itself. It shouldn't be relevant to our
-# application unless someone is in the build pipeline already.
-CVE-2026-0775 exp:2026-02-08
 
 # Most instances of this have been handled, but this is still a dependency of 
 # some eslint plugins. 
@@ -38,7 +32,11 @@ CVE-2026-26996 exp:2026-04-01
 CVE-2026-27903 exp:2026-04-01
 CVE-2026-27904 exp:2026-04-01
 
-#Tar vulnerabilities
+# PICOMATCH VULNERABILITIES
+# This package is included in the global npm package, and we're not using it.
+CVE-2026-33671 exp:2026-05-01
+
+# TAR VULNERABILITIES
 # These vulnerabilities are in the tar package, We're not using user-supplied tar files,
 # and the other two possibilities are pretty low risk.
 GHSA-qffp-2rhf-9h96 exp:2026-04-01
@@ -48,5 +46,9 @@ CVE-2026-31802 exp:2026-04-01
 # FLATTED VULNERABILITIES
 # This is a transitive dependency of eslint. We're not using the vulnerable code.
 CVE-2026-32141 exp:2026-05-01
+
+# ZLIB VULNERABILITIES
+# This is in Alpine, and we are not using the vulnerable code.
+CVE-2026-22184 exp:2026-05-01
 
 
