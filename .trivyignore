@@ -1,47 +1,22 @@
-# TAR VULNERABILITIES
-# Some dependencies may include node-tar, but we're not using it from Alpine.
-CVE-2026-24842 exp:2026-04-01
-
 # XML VULNERABILITIES
 # We are not parsing XML in our application, so these vulnerabilities are not relevant.
-CVE-2026-25128 exp:2026-04-01
-CVE-2026-26278 exp:2026-04-01
 CVE-2026-33036 exp:2026-05-01
 
 # PRISMA VULNERABILITIES
 # These are vulnerabilities in Hono, a Prisma dependency. We're not using the vulnerable code.
-CVE-2026-22817 exp:2026-04-01
-CVE-2026-22818 exp:2026-04-01
 CVE-2026-29087 exp:2026-05-01
 CVE-2026-29045 exp:2026-05-01
+
+# This vulnerability is in lodash, which is a transitive dependcy of prisma, but it's used only for prisma dev 
+# in parsing schema.prisma files. 
+CVE-2026-4800  exp:2026-05-01
 
 # This vulnerability is in Effect, and affects localstorage usage, which should not be relevant in our backend.
 CVE-2026-32887 exp:2026-05-01
 
-# NODE VULNERABILITIES
-# These vulnerabilities are in the node-tar package, which we're not using.
-CVE-2026-23745 exp:2026-04-01
-CVE-2026-23950 exp:2026-04-01
-
-# Most instances of this have been handled, but this is still a dependency of 
-# some eslint plugins. 
-CVE-2026-26996 exp:2026-04-01
-
-# MINIMATCH VULNERABILITIES
-# These vulnerabilities are in an eslint dependency. We're not using the vulnerable code.
-CVE-2026-27903 exp:2026-04-01
-CVE-2026-27904 exp:2026-04-01
-
 # PICOMATCH VULNERABILITIES
 # This package is included in the global npm package, and we're not using it.
 CVE-2026-33671 exp:2026-05-01
-
-# TAR VULNERABILITIES
-# These vulnerabilities are in the tar package, We're not using user-supplied tar files,
-# and the other two possibilities are pretty low risk.
-GHSA-qffp-2rhf-9h96 exp:2026-04-01
-CVE-2026-29786 exp:2026-04-01
-CVE-2026-31802 exp:2026-04-01
 
 # FLATTED VULNERABILITIES
 # This is a transitive dependency of eslint. We're not using the vulnerable code.

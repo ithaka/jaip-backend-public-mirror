@@ -91,6 +91,7 @@ export const word_search_handler =
     try {
       const params = request.params as { term: string };
       const term = params.term || "";
+      log_payload.query = term;
 
       // Error identification is built into get_word_data. We will return an object that indicates
       // if any of the api calls failed so the frontend can display appropriate error messages as
