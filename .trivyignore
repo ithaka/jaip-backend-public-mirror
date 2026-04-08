@@ -14,6 +14,19 @@ CVE-2026-4800  exp:2026-05-01
 # This vulnerability is in Effect, and affects localstorage usage, which should not be relevant in our backend.
 CVE-2026-32887 exp:2026-05-01
 
+# This vulnerability is in defu, a dependency of prisma config. I don't think we're using it,
+# but we're going to revisit this next week.
+CVE-2026-35209 exp:2026-04-15
+
+# Most instances of this have been handled, but this is still a dependency of 
+# some eslint plugins. 
+CVE-2026-26996 exp:2026-04-01
+
+# MINIMATCH VULNERABILITIES
+# These vulnerabilities are in an eslint dependency. We're not using the vulnerable code.
+CVE-2026-27903 exp:2026-04-01
+CVE-2026-27904 exp:2026-04-01
+
 # PICOMATCH VULNERABILITIES
 # This package is included in the global npm package, and we're not using it.
 CVE-2026-33671 exp:2026-05-01

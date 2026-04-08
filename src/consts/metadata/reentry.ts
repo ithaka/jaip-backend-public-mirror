@@ -458,6 +458,82 @@ export const reentry_metadata: CollectionMetadata[] = [
     ],
   },
   {
+    title: "Deportation to Guatemala",
+    description:
+      "Updated 2026 country-specific chapter that provides detailed information for people deported from the U.S. to Guatemala.",
+    filename: "deportation-guatemala-2026-usa-en.pdf",
+    thumbnail: "deportation-guatemala-2026-usa-en.png",
+    creator: "Education Justice Project",
+    contributor:
+      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+    publisher: "University of Illinois Urbana-Champaign",
+    date: "2026",
+    type: "Text",
+    format: "PDF",
+    page_count: 43,
+    alternate_versions: [
+      {
+        filename: "deportacion-guatemala-2026-usa-es.pdf",
+        language: "Español",
+        label: "Ver en Español",
+      },
+    ],
+    subject:
+      "Deportation to Guatemala; immigration; reentry support; identification documents; migrant-serving organizations and shelters",
+    location: "Illinois",
+    language: "English",
+    jurisdiction: "United States; Guatemala",
+    is_national: true,
+    state_code: "USA",
+    subject_arr: [
+      "Guatemala",
+      "Deportation",
+      "Reintegration",
+      "Immigration law",
+      "Legal assistance",
+      "Human rights",
+      "Community support for deported individuals",
+    ],
+  },
+  {
+    title: "Deportación a Guatemala",
+    description:
+      "Capítulo actualizado de 2026 específico para cada país que proporciona información detallada para las personas deportadas de Estados Unidos a Guatemala.",
+    filename: "deportacion-guatemala-2026-usa-es.pdf",
+    thumbnail: "deportacion-guatemala-2026-usa-es.png",
+    creator: "Education Justice Project",
+    contributor:
+      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+    publisher: "University of Illinois Urbana-Champaign",
+    date: "2026",
+    type: "Text",
+    format: "PDF (recurso en línea)",
+    page_count: 46,
+    alternate_versions: [
+      {
+        filename: "deportation-guatemala-2026-usa-en.pdf",
+        language: "English",
+        label: "View in English",
+      },
+    ],
+    subject:
+      "Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
+    language: "Español",
+    state_code: "USA",
+    location: "Illinois",
+    jurisdiction: "Estados Unidos, Guatemala",
+    is_national: true,
+    subject_arr: [
+      "Guatemala",
+      "Deportación",
+      "Reintegración",
+      "Derecho migratorio",
+      "Asistencia legal",
+      "Derechos humanos",
+      "Apoyo comunitario para personas deportadas",
+    ],
+  },
+  {
     title: "A New Path: Deportation Guide 2026 Updates",
     description:
       "Updated and expanded chapters from the 2026 deportation guide.",
