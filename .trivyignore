@@ -18,15 +18,6 @@ CVE-2026-32887 exp:2026-05-01
 # but we're going to revisit this next week.
 CVE-2026-35209 exp:2026-04-15
 
-# Most instances of this have been handled, but this is still a dependency of 
-# some eslint plugins. 
-CVE-2026-26996 exp:2026-04-01
-
-# MINIMATCH VULNERABILITIES
-# These vulnerabilities are in an eslint dependency. We're not using the vulnerable code.
-CVE-2026-27903 exp:2026-04-01
-CVE-2026-27904 exp:2026-04-01
-
 # PICOMATCH VULNERABILITIES
 # This package is included in the global npm package, and we're not using it.
 CVE-2026-33671 exp:2026-05-01
@@ -39,4 +30,15 @@ CVE-2026-32141 exp:2026-05-01
 # This is in Alpine, and we are not using the vulnerable code.
 CVE-2026-22184 exp:2026-05-01
 
+# LIBCRYPTO VULNERABILITIES
+# This is in Alpine, and we are not using the vulnerable code.
+CVE-2026-28390 exp:2026-06-01
 
+# LIBSSL VULNERABILITIES
+# This is in Alpine, and we are not using the vulnerable code.
+CVE-2026-28390 exp:2026-06-01
+
+# MUSL VULNERABILITIES
+# This is in Alpine, and we are not using the vulnerable code.
+CVE-2026-40200 exp:2026-06-01
+CVE-2026-6042 exp:2026-06-01
