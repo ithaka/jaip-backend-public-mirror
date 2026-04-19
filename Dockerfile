@@ -1,4 +1,4 @@
-FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.14.1-alpine
+FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.15.0-alpine
 
 WORKDIR /usr/src/app
 RUN npm update -g
