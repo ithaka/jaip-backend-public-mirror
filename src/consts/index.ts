@@ -60,7 +60,6 @@ export const HEALTHCHECK_ROUTE_PREFIX = "/healthcheck";
 // These routes are accessible without authentication of any kind, and so do not
 // require the route guard.
 export const UNGUARDED_ROUTES = [
-  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${AUTH_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SUBDOMAINS_VALIDATION_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${HEALTHCHECK_ROUTE_PREFIX}/liveness`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${HEALTHCHECK_ROUTE_PREFIX}/readiness`,
@@ -70,7 +69,6 @@ export const UNGUARDED_ROUTES = [
 // search tokens, licenses, or both. Other routes may be accessible without a JSTOR session,
 // requiring only a valid site code for identifying the JAIP user.
 export const SESSION_ROUTES = [
-  `${GLOBAL_ROUTE_PREFIX_VERSIONED}${AUTH_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${SEARCH_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${PAGES_ROUTE_PREFIX}`,
   `${GLOBAL_ROUTE_PREFIX_VERSIONED}${METADATA_ROUTE_PREFIX}`,

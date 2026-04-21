@@ -1,12 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { SUBDOMAINS, ENTITY_TYPES } from "../../consts/index.js";
 import { LogPayload } from "../../event_handler/index.js";
-import {
-  manage_session,
-  get_current_user,
-  get_email_from_session,
-  get_code_from_session,
-} from "./helpers.js";
+import { SUBDOMAINS } from "../../consts/index.js";
 
 export const auth_session_handler =
   (fastify: FastifyInstance) =>
@@ -19,56 +13,34 @@ export const auth_session_handler =
       ...log_payload,
       event_description: "attempting auth",
     });
-    const [session, err] = await manage_session(fastify, request);
-    if (err) {
-      throw err;
-    }
-    log_payload.sessionid = session.uuid;
-    fastify.log.info(`Getting current user from session ${session.uuid}`);
-    const [current_user, error] = await get_current_user(
-      fastify,
-      request,
-      get_email_from_session(session),
-      get_code_from_session(session),
-      true, // Include facilities in the user object
-    );
+    // This value is set in the route_guard hook, which runs before this handler.
+    // If the user is authenticated, request.user will be populated with their JAIP user information.
+    // If they are not authenticated, request.user will be undefined.
+    const current_user = request.user;
     if (current_user) {
-      current_user.uuid = session.uuid;
-      log_payload.user = current_user;
-    }
-    if (error) {
-      reply.code(500).send(error.message);
-      fastify.event_logger.pep_error(
-        request,
-        reply,
-        {
-          ...log_payload,
-          event_description: "failed to authenticate user",
-        },
-        "auth",
-        error,
-      );
-      return;
-    } else if (!current_user) {
-      reply.code(401).send();
-      fastify.event_logger.pep_unauthorized_error(request, reply, log_payload);
-      return;
-    } else {
+      // If the user is authenticated and trying to access an admin subdomain,
+      // we check that they have the appropriate admin role before allowing them to proceed.
       const is_admin_subdomain = SUBDOMAINS.admin.includes(request.subdomain);
-      if (is_admin_subdomain && current_user.type !== ENTITY_TYPES.USERS) {
+      if (is_admin_subdomain && !request.is_authenticated_admin) {
         reply.code(403).send();
         fastify.event_logger.pep_forbidden_error(request, reply, log_payload);
         return;
       }
+
+      reply.code(200).send(request.user);
+
+      fastify.event_logger.pep_standard_log_complete(
+        "pep_auth_complete",
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "user authenticated and authorized",
+        },
+      );
+    } else {
+      // If there is no user associated with the request, we return a 401 Unauthorized response.
+      reply.code(401);
+      fastify.event_logger.pep_unauthorized_error(request, reply, log_payload);
     }
-    reply.code(200).send(current_user);
-    fastify.event_logger.pep_standard_log_complete(
-      "pep_auth_complete",
-      request,
-      reply,
-      {
-        ...log_payload,
-        event_description: "user authenticated and authorized",
-      },
-    );
   };

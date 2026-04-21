@@ -36,6 +36,23 @@ export const route_guard =
 
         emails.push(...get_email_from_session(session));
         codes.push(...get_code_from_session(session));
+
+        // We may be having issues with identifying the proper sitecode when more than one is returned.
+        // This will give us more data to diagnose whether that's the case and what the different sitecodes are.
+        if (codes.length > 1) {
+          request.server.event_logger.pep_standard_log_complete(
+            "pep_multiple_sitecodes",
+            request,
+            reply,
+            {
+              log_made_by: "route_guard_hook",
+              event_description: `Multiple sitecodes found in session: ${codes.join(
+                ", ",
+              )}`,
+              sitecodes: codes,
+            },
+          );
+        }
       } else {
         const [iac_codes, iac_error] = await get_credentials(
           request.server,

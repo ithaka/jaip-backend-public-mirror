@@ -416,7 +416,10 @@ export const get_current_user = async (
           fastify.log.info(
             `Sitecode found for subdomain ${subdomain}: ${sitecode}`,
           );
-          codes.push(sitecode);
+
+          // If we retrieve a sitecode based on the subdomain, we should replace any other codes that came
+          // from the IP address with the one that matches the subdomain.
+          codes = [sitecode];
         } else {
           throw new Error(
             `No sitecode found for nonstandard subdomain ${subdomain}`,

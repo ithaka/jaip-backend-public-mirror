@@ -1,3 +1,6 @@
+import { AuthenticatedAccount, JPASS } from "../../../types/accounts.js";
+import { Session } from "../../../types/sessions.js";
+
 export const fake_subdomain = "fake-subdomain.test-pep.jstor.org";
 export const valid_student_subdomain = "test-pep.jstor.org";
 export const valid_provider_subdomain = "test-subdomain.test-pep.jstor.org";
@@ -103,4 +106,34 @@ export const iac_account_response = {
     code: "test_sitecode",
   },
   status: 200,
+};
+
+export const session_fixture: Session = {
+  uuid: "mock-uuid",
+  sessionId: "mock-session-id",
+  previousSessionId: "mock-previous-session-id",
+  requestId: "mock-request-id",
+  ip: "127.0.0.1",
+  userAgentString: "mock-agent",
+  termsConditionsAccepted: true,
+  lastAccessTime: new Date(),
+  lastUpdatedTime: new Date(),
+  startedTime: new Date(),
+  validUntil: new Date(),
+  lastEvaluation: new Date(),
+  authenticated: false,
+  jpass: {} as JPASS,
+  attributes: "",
+  reasonsForAccessByIdentity: "",
+  authenticatedAccounts: [],
+  userAccount: {} as AuthenticatedAccount,
+  accounts: [],
+  relatedAccounts: [],
+  implicitAccounts: [],
+  authenticatedProfiles: [],
+  entitlements: [],
+  licenses: [],
+  providerDesignationStatements: [],
+  licensedProducts: [],
+  accountEmailVerified: "",
 };
