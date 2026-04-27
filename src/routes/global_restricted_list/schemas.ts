@@ -70,6 +70,39 @@ export const route_schemas = {
       ...standard_post_errors,
     },
   },
+  bulk_restrict: {
+    name: "bulk_restrict",
+    route: "/bulk-restrict",
+    description: `Submits multiple restricted items.`,
+    tags: [SWAGGER_TAGS.private],
+    requires: {
+      any: {
+        ungrouped: [UNGROUPED_FEATURES.manage_restricted_list],
+      },
+    },
+    body: {
+      type: "array",
+      items: {
+        type: "object",
+        required: ["doi", "reason"],
+        properties: {
+          reason: {
+            type: "string",
+          },
+          doi: {
+            type: "string",
+          },
+        },
+      },
+      minLength: 1,
+    },
+    response: {
+      201: {
+        description: "Successfully added item to the blocked list.",
+      },
+      ...standard_post_errors,
+    },
+  },
   unrestrict: {
     name: "unrestrict",
     route: "/unrestrict",

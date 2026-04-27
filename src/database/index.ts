@@ -153,6 +153,10 @@ export interface JAIPDatabase {
     reason: string,
     user_id: number,
   ) => Promise<Error | null>;
+  create_restricted_items: (
+    items: { doi: string; reason: string }[],
+    user_id: number,
+  ) => Promise<Error | null>;
   remove_restricted_item: (
     doi: string,
     user_id: number,

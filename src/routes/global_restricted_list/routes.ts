@@ -6,6 +6,7 @@ import {
   unrestrict_handler,
   download_handler,
   get_last_updated_handler,
+  bulk_restrict_handler,
 } from "./handlers.js";
 import { global_restricted_list_prefix } from "./options.js";
 import { get_route } from "../../utils/index.js";
@@ -20,6 +21,9 @@ async function routes(fastify: FastifyInstance, opts: RouteShorthandOptions) {
 
   opts.schema = route_schemas.restrict;
   fastify.post(get_route(opts.schema), opts, restrict_handler(fastify));
+
+  opts.schema = route_schemas.bulk_restrict;
+  fastify.post(get_route(opts.schema), opts, bulk_restrict_handler(fastify));
 
   opts.schema = route_schemas.unrestrict;
   fastify.post(get_route(opts.schema), opts, unrestrict_handler(fastify));

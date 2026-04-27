@@ -50,6 +50,7 @@ export interface CompleteLogPayload {
   dois_successfully_retrieved: string[];
   comments: string;
   reason: string;
+  reasons: string[];
   code: string;
   groups: number[];
   full_groups: Group[];

@@ -182,6 +182,59 @@ export const restrict_handler = (fastify: FastifyInstance) => {
     }
   };
 };
+export const bulk_restrict_handler = (fastify: FastifyInstance) => {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
+    const log_payload: LogPayload = {
+      log_made_by: "global-restricted-list-api",
+    };
+    fastify.event_logger.pep_standard_log_start(
+      `pep_global_restrict_start`,
+      request,
+      {
+        ...log_payload,
+        event_description: `attempting to add a restricted item`,
+      },
+    );
+    try {
+      const body = request.body as RestrictItem[];
+      log_payload.dois = body.map((item) => item.doi);
+      log_payload.reasons = body.map((item) => item.reason);
+
+      fastify.log.info(
+        `Creating restricted items for ${log_payload.dois.join(", ")} with reasons: ${log_payload.reasons.join(", ")}`,
+      );
+      const error = await fastify.db.create_restricted_items(
+        body,
+        request.user.id!,
+      );
+      if (error) throw error;
+
+      fastify.event_logger.pep_standard_log_complete(
+        `pep_global_restrict_complete`,
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: `completed restricting for dois: ${log_payload.dois?.join(", ")}`,
+        },
+      );
+      reply.code(201);
+    } catch (err) {
+      const error = ensure_error(err);
+      fastify.event_logger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: `failed to restrict item`,
+        },
+        "restrict",
+        error,
+      );
+      reply.code(500).send(error.message);
+    }
+  };
+};
 
 export const unrestrict_handler =
   (fastify: FastifyInstance) =>

@@ -552,6 +552,42 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     return null;
   }
 
+  async create_restricted_items(
+    items: { doi: string; reason: string }[],
+    user_id: number,
+  ) {
+    try {
+      await this.client.$transaction(async (tx) => {
+        const result_promises = [];
+        for (const item of items) {
+          result_promises.push(
+            tx.globally_restricted_items.upsert({
+              where: {
+                jstor_item_id: item.doi,
+              },
+              update: {
+                reason: item.reason,
+                entity_id: user_id,
+                updated_at: new Date(),
+                is_restricted: true,
+              },
+              create: {
+                jstor_item_id: item.doi,
+                reason: item.reason,
+                entity_id: user_id,
+              },
+            }),
+          );
+        }
+        await Promise.all(result_promises);
+      });
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+    return null;
+  }
+
   async remove_restricted_item(doi: string, user_id: number) {
     try {
       await this.client.$transaction(async (tx) => {

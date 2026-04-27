@@ -52,6 +52,7 @@ export const db_mock = {
   remove_ungrouped_feature: vi.fn().mockName("remove_ungrouped_feature"),
   update_ungrouped_feature: vi.fn().mockName("update_ungrouped_feature"),
   create_restricted_item: vi.fn().mockName("create_restricted_item"),
+  create_restricted_items: vi.fn().mockName("create_restricted_items"),
   remove_restricted_item: vi.fn().mockName("remove_restricted_item"),
   get_restricted_items: vi.fn().mockName("get_restricted_items"),
   get_restricted_items_and_count: vi
