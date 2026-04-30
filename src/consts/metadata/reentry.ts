@@ -21,7 +21,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     page_count: 513,
     alternate_versions: [
       {
-        filename: "conexiones-2025-ny-es.pdf",
+        filename: "conexiones-2026-ny-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },
@@ -42,18 +42,18 @@ export const reentry_metadata: CollectionMetadata[] = [
   },
   {
     title:
-      "Conexiones 2025: Una guía gratuita para personas anteriormente encarceladas en la ciudad de Nueva York",
+      "Conexiones 2026: Una guía gratuita para personas anteriormente encarceladas en la ciudad de Nueva York",
     description:
-      "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York. La guía 2026 de reingreso traducida estará disponible próximamente. ¡Vuelva pronto para ver actualizaciones!",
-    filename: "conexiones-2025-ny-es.pdf",
-    thumbnail: "conexiones-2025-ny-es.png",
+      "Versión en español de la guía anual Connections, creada para apoyar a las personas que regresan a la comunidad después de la encarcelación en la ciudad de Nueva York.",
+    filename: "conexiones-2026-ny-es.pdf",
+    thumbnail: "conexiones-2026-ny-es.png",
     creator: "New York Public Library, Jail & Prison Services",
     contributor: "Kate Heenan (Editor)",
     publisher: "The New York Public Library",
-    date: "2025",
+    date: "2026",
     type: "Text",
-    format: "PDF, 473 pages, illustrated",
-    page_count: 473,
+    format: "PDF, 513 pages, illustrated",
+    page_count: 513,
     alternate_versions: [
       {
         filename: "connections-2026-ny-en.pdf",
@@ -162,8 +162,8 @@ export const reentry_metadata: CollectionMetadata[] = [
       "Mapping Your Future: A Guide to Successful Reentry (National Edition, 2025)",
     description:
       "A national reentry guide designed to help people across the United States prepare for and navigate successful reentry after incarceration.",
-    filename: "mapping-your-future-2025-usa-en.pdf",
-    thumbnail: "mapping-your-future-2025-usa-en.png",
+    filename: "mapping-your-future-2025b-usa-en.pdf",
+    thumbnail: "mapping-your-future-2025b-usa-en.png",
     creator: "Education Justice Project",
     contributor:
       "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
@@ -174,7 +174,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     page_count: 84,
     alternate_versions: [
       {
-        filename: "construyendo-tu-futuro-2025-usa-es.pdf",
+        filename: "construyendo-tu-futuro-2025b-usa-es.pdf",
         language: "Español",
         label: "Ver en Español",
       },
@@ -203,8 +203,8 @@ export const reentry_metadata: CollectionMetadata[] = [
       "Construyendo tu futuro: Una guía para la reintegración exitosa (Edición Nacional 2025)",
     description:
       "Guía nacional de reingreso diseñada para ayudar a las personas en los Estados Unidos a prepararse y navegar con éxito la reintegración después del encarcelamiento.",
-    filename: "construyendo-tu-futuro-2025-usa-es.pdf",
-    thumbnail: "construyendo-tu-futuro-2025-usa-es.png",
+    filename: "construyendo-tu-futuro-2025b-usa-es.pdf",
+    thumbnail: "construyendo-tu-futuro-2025b-usa-es.png",
     creator: "Education Justice Project",
     contributor:
       "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
@@ -215,7 +215,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     page_count: 86,
     alternate_versions: [
       {
-        filename: "mapping-your-future-2025-usa-en.pdf",
+        filename: "mapping-your-future-2025b-usa-en.pdf",
         language: "English",
         label: "View in English",
       },
