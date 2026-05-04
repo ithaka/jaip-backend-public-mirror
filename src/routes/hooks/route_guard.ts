@@ -71,7 +71,7 @@ export const route_guard =
         request,
         emails,
         codes,
-        false, // Do not include facilities in the user object
+        SUBDOMAINS.admin.includes(subdomain), // Only include facilities in the user object for admin subdomains
       );
       if (user_error) {
         throw user_error;

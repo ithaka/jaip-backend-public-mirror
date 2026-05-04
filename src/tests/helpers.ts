@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, Mock, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, Mock, vi } from "vitest";
 import build from "../build.js";
 import { RouteSettings } from "../types/routes.js";
 import type { JAIPDatabase } from "../database/index.js";
@@ -12,7 +12,10 @@ export const db_mock = {
   get_sitecode_by_subdomain: vi.fn().mockName("get_sitecode_by_subdomain"),
   get_users_and_count: vi.fn().mockName("get_users_and_count"),
   get_facilities_and_count: vi.fn().mockName("get_facilities_and_count"),
-  get_facilities: vi.fn().mockName("get_facilities"),
+  get_facilities: vi
+    .fn()
+    .mockResolvedValue([[], null])
+    .mockName("get_facilities"),
   remove_user: vi.fn().mockName("remove_user"),
   remove_facility: vi.fn().mockName("remove_facility"),
   get_user_id: vi.fn().mockName("get_user_id"),
@@ -71,6 +74,10 @@ export const db_mock = {
 } as JAIPDatabase as Record<keyof JAIPDatabase, Mock>;
 
 export const discover_mock = vi.fn().mockName("discover");
+
+beforeEach(() => {
+  db_mock.get_facilities.mockResolvedValue([[], null]);
+});
 
 export function build_test_server(route_settings: RouteSettings[]) {
   const app = build(
