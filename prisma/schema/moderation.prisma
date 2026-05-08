@@ -1,0 +1,100 @@
+enum review_status {
+  waiting_for_review
+  saved_for_later
+  in_cart
+  dismissed
+  restricted
+  unflagged
+}
+
+model moderation_entries {
+  doi                        String                               @id @db.Text
+  iid                        String                               @unique @db.Uuid
+  title                      String                               @db.Text
+  authors                    String?                              @db.Text
+  journal                    String?                              @db.Text
+  book_title                 String?                              @db.Text
+  content_type               String?                              @db.Text
+  item_type                  String?                              @db.Text
+  review_status              review_status?
+  moderation_date            DateTime?                            @db.Timestamp(6)
+  created_at                 DateTime                             @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime?                            @default(now()) @db.Timestamp(6)
+  disciplines                moderation_entry_disciplines[]
+  disc_codes                 moderation_entry_disc_codes[]
+  images                     moderation_images[]
+  flagged_text_pages         moderation_flagged_text_pages[]
+
+  @@map("moderation_entries")
+}
+
+model moderation_entry_disciplines {
+  id        BigInt   @id @default(autoincrement())
+  entry_doi String   @db.Text
+  discipline String   @db.Text
+  entry     moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+
+  @@unique([entry_doi, discipline])
+  @@index([entry_doi])
+  @@map("moderation_entry_disciplines")
+}
+
+model moderation_entry_disc_codes {
+  id        BigInt   @id @default(autoincrement())
+  entry_doi String   @db.Text
+  disc_code String   @db.Text
+  entry     moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+
+  @@unique([entry_doi, disc_code])
+  @@index([entry_doi])
+  @@map("moderation_entry_disc_codes")
+}
+
+model moderation_images {
+  id                     BigInt                                      @id @default(autoincrement())
+  entry_doi              String                                      @db.Text
+  page                   Int
+  image_index            Int
+  is_flagged             Boolean?
+  image_file             String?                                     @db.Text
+  entry                  moderation_entries                          @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+  flagged_categories     moderation_flagged_image_categories[]
+
+  @@unique([entry_doi, page, image_index])
+  @@index([entry_doi])
+  @@map("moderation_images")
+}
+
+model moderation_flagged_image_categories {
+  id       BigInt   @id @default(autoincrement())
+  image_id BigInt
+  category String   @db.Text
+  image    moderation_images @relation(fields: [image_id], references: [id], onDelete: Cascade)
+
+  @@unique([image_id, category])
+  @@index([image_id])
+  @@map("moderation_flagged_image_categories")
+}
+
+model moderation_flagged_text_pages {
+  id        BigInt   @id @default(autoincrement())
+  entry_doi String   @db.Text
+  page      Int
+  entry     moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+  snippets  moderation_flagged_text_snippets[]
+
+  @@unique([entry_doi, page])
+  @@index([entry_doi])
+  @@map("moderation_flagged_text_pages")
+}
+
+model moderation_flagged_text_snippets {
+  id           BigInt   @id @default(autoincrement())
+  text_page_id BigInt
+  category     String   @db.Text
+  snippet_text String   @db.Text
+  text_page    moderation_flagged_text_pages @relation(fields: [text_page_id], references: [id], onDelete: Cascade)
+
+  @@index([text_page_id])
+  @@map("moderation_flagged_text_snippets")
+}

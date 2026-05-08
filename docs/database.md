@@ -26,14 +26,18 @@ yarn dlx prisma generate
 ## Common Commands
 
 ```bash
-# Schema changes
-yarn dlx prisma db push           # Push schema to DB
+# Deploying
+yarn dlx prisma migrate deploy    # Apply migration to the db currently listed in the .env
+
+# Making changes
 yarn dlx prisma migrate dev       # Create migration
-yarn dlx prisma generate          # Generate client
+yarn dlx prisma generate          # Generate client locally
 
 # Database operations
-yarn dlx prisma db pull           # Pull schema from DB
 yarn dlx prisma studio            # Browse data
+
+# Depricated commands
+yarn dlx prisma db push           # Screws up migrations
 ```
 
 ## Development Database
