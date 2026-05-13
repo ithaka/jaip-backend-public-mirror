@@ -130,3 +130,19 @@ CREATE INDEX "moderation_flagged_text_pages_entry_doi_idx" ON "moderation_flagge
 
 -- CreateIndex
 CREATE INDEX "moderation_flagged_text_snippets_text_page_id_idx" ON "moderation_flagged_text_snippets"("text_page_id");
+
+-- Permissions
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_entries TO jaip_writer;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_entry_disciplines TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.moderation_entry_disciplines_id_seq TO jaip_writer;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_entry_disc_codes TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.moderation_entry_disc_codes_id_seq TO jaip_writer;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_images TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.moderation_images_id_seq TO jaip_writer;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_flagged_image_categories TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.moderation_flagged_image_categories_id_seq TO jaip_writer;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_flagged_text_pages TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.moderation_flagged_text_pages_id_seq TO jaip_writer;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_flagged_text_snippets TO jaip_writer;
+GRANT SELECT,USAGE ON SEQUENCE public.moderation_flagged_text_snippets_id_seq TO jaip_writer;
+

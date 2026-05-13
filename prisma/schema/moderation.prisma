@@ -98,3 +98,14 @@ model moderation_flagged_text_snippets {
   @@index([text_page_id])
   @@map("moderation_flagged_text_snippets")
 }
+
+model moderation_pipeline_errors {
+  id        BigInt   @id @default(autoincrement())
+  job_id    String   @db.Uuid
+  iid       String?  @db.Text
+  stage     String?  @db.Text
+  error     String   @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([job_id, iid])
+}

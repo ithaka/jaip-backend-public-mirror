@@ -306,13 +306,10 @@ CREATE INDEX "ungrouped_features_entities_id_feature_id_entity_id_idx" ON "ungro
 CREATE UNIQUE INDEX "users_jstor_id_uq" ON "users"("jstor_id");
 
 -- CreateIndex
-CREATE INDEX "wordnik_ahd_5_headwords_headword_idx" ON "wordnik_ahd_5_headwords"("headword");
-
--- CreateIndex
 CREATE UNIQUE INDEX "wordnik_ahd_5_headwords_headword_key" ON "wordnik_ahd_5_headwords"("headword");
 
 -- CreateIndex
-CREATE INDEX "wordnik_ahd_5_headwords_headword_trgm_idx" ON "wordnik_ahd_5_headwords" USING GIN ("headword" gin_trgm_ops);
+CREATE INDEX "wordnik_ahd_5_headwords_headword_idx" ON "wordnik_ahd_5_headwords"("headword");
 
 -- AddForeignKey
 ALTER TABLE "targeted_alerts" ADD CONSTRAINT "targeted_alerts_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
