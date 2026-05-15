@@ -68,7 +68,7 @@ test(`requests the ${download_route} route with a valid admin and streams ZIP fi
   expect(mocked_get_presigned_url).toHaveBeenCalledWith(
     `s3://ithaka-jaip/${process.env.ENVIRONMENT?.toLowerCase()}/offline_drive_downloads/with_content/JSTOR-Mac.zip`,
   );
-  expect(log_start).toHaveBeenCalledTimes(1);
+  expect(log_start).toHaveBeenCalledTimes(2);
   expect(log_complete).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(302);
 });
@@ -116,7 +116,7 @@ test(`requests the ${download_route} route when S3 error occurs and returns 500`
   expect(axios.post).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
   expect(mocked_get_presigned_url).toHaveBeenCalledTimes(1);
-  expect(log_start).toHaveBeenCalledTimes(1);
+  expect(log_start).toHaveBeenCalledTimes(2);
   expect(log_error).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(500);
 });

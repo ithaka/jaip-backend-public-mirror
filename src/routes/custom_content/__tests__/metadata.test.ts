@@ -60,7 +60,7 @@ test(`requests the ${metadata_route} route with a facility and no permissions`, 
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
-  expect(log_start).not.toHaveBeenCalled();
+  expect(log_start).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
 });
 
@@ -81,7 +81,7 @@ test(`requests the ${metadata_route} route with an admin and no features`, async
   expect(discover_mock).toHaveBeenCalledTimes(1);
   expect(axios.post).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
-  expect(log_start).not.toHaveBeenCalled();
+  expect(log_start).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
 });
 
@@ -103,7 +103,7 @@ test(`requests the ${metadata_route} route with a valid admin`, async () => {
   expect(discover_mock).toHaveBeenCalledTimes(1);
   expect(axios.post).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
-  expect(log_start).toHaveBeenCalledTimes(1);
+  expect(log_start).toHaveBeenCalledTimes(2);
   expect(log_complete).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
   expect(res.json()).toStrictEqual(CUSTOM_CONTENT_METADATA.reentry);
@@ -142,7 +142,7 @@ test(`requests the ${metadata_route} route with a valid facility`, async () => {
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
-  expect(log_start).toHaveBeenCalledTimes(1);
+  expect(log_start).toHaveBeenCalledTimes(2);
   expect(log_complete).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
   expect(res.json()).toStrictEqual(CUSTOM_CONTENT_METADATA.reentry);

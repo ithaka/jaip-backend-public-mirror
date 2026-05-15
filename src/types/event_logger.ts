@@ -89,6 +89,10 @@ export interface CompleteLogPayload {
   include_ungrouped: boolean;
   sitecodes: string[];
   original_uuid: string;
+  auth_source: string;
+  subdomain_source: string;
+  referer_host: string;
+  request_host: string;
   download_path: string;
   alerts: targeted_alerts[];
   alert_id: number;

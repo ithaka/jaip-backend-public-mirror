@@ -338,6 +338,8 @@ const get_sitecode_by_subdomain = async (
   }
 };
 
+export type AuthSource = "session" | "iac" | "ip_bypass" | "none";
+
 // Accepts a request and a fastify instance and returns the current user, after retrieving session data
 export const get_current_user = async (
   fastify: FastifyInstance,
@@ -345,7 +347,8 @@ export const get_current_user = async (
   emails: string[],
   codes: string[],
   include_facilities: boolean,
-): Promise<[User | null, Error | null]> => {
+  credential_source: "session" | "iac",
+): Promise<[User | null, Error | null, AuthSource]> => {
   let current_user: User | null;
   try {
     // If there are emails, try to find a user with one of them
@@ -394,7 +397,7 @@ export const get_current_user = async (
             });
           }
         }
-        return [current_user, null];
+        return [current_user, null, "session"];
       }
     }
 
@@ -435,7 +438,7 @@ export const get_current_user = async (
         throw error;
         // If a facility is found, we don't need to look for anything else
       } else if (current_user) {
-        return [current_user, null];
+        return [current_user, null, credential_source];
       }
     }
 
@@ -451,13 +454,13 @@ export const get_current_user = async (
       // If we find a facility, we don't need to look for anything else
       if (result) {
         current_user = result;
-        return [current_user, null];
+        return [current_user, null, "ip_bypass"];
       }
     }
-    return [null, null];
+    return [null, null, "none"];
   } catch (err) {
     const error = ensure_error(err);
-    return [null, error];
+    return [null, error, "none"];
   }
 };
 

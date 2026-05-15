@@ -71,7 +71,7 @@ test(`requests the ${pdf_route} route with a valid admin`, async () => {
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_facility).not.toHaveBeenCalled();
   expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
-  expect(log_start).toHaveBeenCalledTimes(1);
+  expect(log_start).toHaveBeenCalledTimes(2);
   expect(log_complete).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
   expect(res.headers["content-type"]).toContain("application/pdf");
@@ -138,7 +138,7 @@ test(`requests the ${pdf_route} route with a valid facility`, async () => {
   expect(db_mock.get_first_facility).toHaveBeenCalledTimes(1);
   expect(db_mock.get_first_user).not.toHaveBeenCalled();
   expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
-  expect(log_start).toHaveBeenCalledTimes(1);
+  expect(log_start).toHaveBeenCalledTimes(2);
   expect(log_complete).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
   expect(res.headers["content-type"]).toContain("application/pdf");

@@ -45,6 +45,21 @@ function build(opts = {}, route_settings: RouteSettings[]) {
     credentials: true,
   });
 
+  app.addHook("onSend", async (request, reply, payload) => {
+    const route_url = request.routeOptions.url || request.url;
+    const is_docs_route = route_url.startsWith("/docs");
+
+    // Default to no-cache for dynamic API responses. Routes can opt out by
+    // explicitly setting their own cache headers before response is sent.
+    if (!is_docs_route && !reply.hasHeader("Cache-Control")) {
+      reply.header("Cache-Control", "private, no-store, no-cache, max-age=0");
+      reply.header("Pragma", "no-cache");
+      reply.header("Expires", "0");
+    }
+
+    return payload;
+  });
+
   app.addHook("onRoute", (routeOptions) => {
     app.log.info(`Adding route: ${routeOptions.url}`);
 
