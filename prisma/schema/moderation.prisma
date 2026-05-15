@@ -16,6 +16,7 @@ model moderation_entries {
   book_title                 String?                              @db.Text
   content_type               String?                              @db.Text
   item_type                  String?                              @db.Text
+  restrict_reason            String?                              @db.Text  
   review_status              review_status?
   moderation_date            DateTime?                            @db.Timestamp(6)
   created_at                 DateTime                             @default(now()) @db.Timestamp(6)
