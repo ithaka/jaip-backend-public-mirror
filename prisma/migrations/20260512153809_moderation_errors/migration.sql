@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "moderation_pipeline_errors" (
+CREATE TABLE IF NOT EXISTS "moderation_pipeline_errors" (
     "id" BIGSERIAL NOT NULL,
     "job_id" UUID NOT NULL,
     "iid" TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE "moderation_pipeline_errors" (
 );
 
 -- CreateIndex
-CREATE INDEX "moderation_pipeline_errors_job_id_iid_idx" ON "moderation_pipeline_errors"("job_id", "iid");
+CREATE INDEX IF NOT EXISTS"moderation_pipeline_errors_job_id_iid_idx" ON "moderation_pipeline_errors"("job_id", "iid");
 
 -- CreateIndex
 CREATE INDEX IF NOT EXISTS "wordnik_ahd_5_headwords_headword_trgm_idx" ON "wordnik_ahd_5_headwords" USING GIN ("headword" gin_trgm_ops);

@@ -1,8 +1,12 @@
 -- CreateEnum
-CREATE TYPE "review_status" AS ENUM ('waiting_for_review', 'saved_for_later', 'in_cart', 'dismissed', 'restricted', 'unflagged');
+DO $$ BEGIN
+    CREATE TYPE "review_status" AS ENUM ('waiting_for_review', 'saved_for_later', 'in_cart', 'dismissed', 'restricted', 'unflagged');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateTable
-CREATE TABLE "moderation_entries" (
+CREATE TABLE IF NOT EXISTS "moderation_entries" (
     "doi" TEXT NOT NULL,
     "iid" UUID NOT NULL,
     "title" TEXT NOT NULL,
@@ -20,7 +24,7 @@ CREATE TABLE "moderation_entries" (
 );
 
 -- CreateTable
-CREATE TABLE "moderation_entry_disciplines" (
+CREATE TABLE IF NOT EXISTS "moderation_entry_disciplines" (
     "id" BIGSERIAL NOT NULL,
     "entry_doi" TEXT NOT NULL,
     "discipline" TEXT NOT NULL,
@@ -29,7 +33,7 @@ CREATE TABLE "moderation_entry_disciplines" (
 );
 
 -- CreateTable
-CREATE TABLE "moderation_entry_disc_codes" (
+CREATE TABLE IF NOT EXISTS "moderation_entry_disc_codes" (
     "id" BIGSERIAL NOT NULL,
     "entry_doi" TEXT NOT NULL,
     "disc_code" TEXT NOT NULL,
@@ -38,7 +42,7 @@ CREATE TABLE "moderation_entry_disc_codes" (
 );
 
 -- CreateTable
-CREATE TABLE "moderation_images" (
+CREATE TABLE IF NOT EXISTS "moderation_images" (
     "id" BIGSERIAL NOT NULL,
     "entry_doi" TEXT NOT NULL,
     "page" INTEGER NOT NULL,
@@ -50,7 +54,7 @@ CREATE TABLE "moderation_images" (
 );
 
 -- CreateTable
-CREATE TABLE "moderation_flagged_image_categories" (
+CREATE TABLE IF NOT EXISTS "moderation_flagged_image_categories" (
     "id" BIGSERIAL NOT NULL,
     "image_id" BIGINT NOT NULL,
     "category" TEXT NOT NULL,
@@ -59,7 +63,7 @@ CREATE TABLE "moderation_flagged_image_categories" (
 );
 
 -- CreateTable
-CREATE TABLE "moderation_flagged_text_pages" (
+CREATE TABLE IF NOT EXISTS "moderation_flagged_text_pages" (
     "id" BIGSERIAL NOT NULL,
     "entry_doi" TEXT NOT NULL,
     "page" INTEGER NOT NULL,
@@ -68,7 +72,7 @@ CREATE TABLE "moderation_flagged_text_pages" (
 );
 
 -- CreateTable
-CREATE TABLE "moderation_flagged_text_snippets" (
+CREATE TABLE IF NOT EXISTS "moderation_flagged_text_snippets" (
     "id" BIGSERIAL NOT NULL,
     "text_page_id" BIGINT NOT NULL,
     "category" TEXT NOT NULL,
@@ -78,58 +82,58 @@ CREATE TABLE "moderation_flagged_text_snippets" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moderation_entries_iid_key" ON "moderation_entries"("iid");
+CREATE UNIQUE INDEX IF NOT EXISTS "moderation_entries_iid_key" ON "moderation_entries"("iid");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moderation_entry_disciplines_entry_doi_discipline_key" ON "moderation_entry_disciplines"("entry_doi", "discipline");
+CREATE UNIQUE INDEX IF NOT EXISTS "moderation_entry_disciplines_entry_doi_discipline_key" ON "moderation_entry_disciplines"("entry_doi", "discipline");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moderation_entry_disc_codes_entry_doi_disc_code_key" ON "moderation_entry_disc_codes"("entry_doi", "disc_code");
+CREATE UNIQUE INDEX IF NOT EXISTS "moderation_entry_disc_codes_entry_doi_disc_code_key" ON "moderation_entry_disc_codes"("entry_doi", "disc_code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moderation_images_entry_doi_page_image_index_key" ON "moderation_images"("entry_doi", "page", "image_index");
+CREATE UNIQUE INDEX IF NOT EXISTS "moderation_images_entry_doi_page_image_index_key" ON "moderation_images"("entry_doi", "page", "image_index");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moderation_flagged_image_categories_image_id_category_key" ON "moderation_flagged_image_categories"("image_id", "category");
+CREATE UNIQUE INDEX IF NOT EXISTS "moderation_flagged_image_categories_image_id_category_key" ON "moderation_flagged_image_categories"("image_id", "category");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moderation_flagged_text_pages_entry_doi_page_key" ON "moderation_flagged_text_pages"("entry_doi", "page");
+CREATE UNIQUE INDEX IF NOT EXISTS "moderation_flagged_text_pages_entry_doi_page_key" ON "moderation_flagged_text_pages"("entry_doi", "page");
 
 -- AddForeignKey
-ALTER TABLE "moderation_entry_disciplines" ADD CONSTRAINT "moderation_entry_disciplines_entry_doi_fkey" FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE;
+SELECT create_constraint_if_not_exists('moderation_entry_disciplines', 'moderation_entry_disciplines_entry_doi_fkey', 'FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE');
 
 -- AddForeignKey
-ALTER TABLE "moderation_entry_disc_codes" ADD CONSTRAINT "moderation_entry_disc_codes_entry_doi_fkey" FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE;
+SELECT create_constraint_if_not_exists('moderation_entry_disc_codes', 'moderation_entry_disc_codes_entry_doi_fkey', 'FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE');
 
 -- AddForeignKey
-ALTER TABLE "moderation_images" ADD CONSTRAINT "moderation_images_entry_doi_fkey" FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE;
+SELECT create_constraint_if_not_exists('moderation_images', 'moderation_images_entry_doi_fkey', 'FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE');
 
 -- AddForeignKey
-ALTER TABLE "moderation_flagged_image_categories" ADD CONSTRAINT "moderation_flagged_image_categories_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "moderation_images"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+SELECT create_constraint_if_not_exists('moderation_flagged_image_categories', 'moderation_flagged_image_categories_image_id_fkey', 'FOREIGN KEY ("image_id") REFERENCES "moderation_images"("id") ON DELETE CASCADE ON UPDATE CASCADE');
 
 -- AddForeignKey
-ALTER TABLE "moderation_flagged_text_pages" ADD CONSTRAINT "moderation_flagged_text_pages_entry_doi_fkey" FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE;
+SELECT create_constraint_if_not_exists('moderation_flagged_text_pages', 'moderation_flagged_text_pages_entry_doi_fkey', 'FOREIGN KEY ("entry_doi") REFERENCES "moderation_entries"("doi") ON DELETE CASCADE ON UPDATE CASCADE');
 
 -- AddForeignKey
-ALTER TABLE "moderation_flagged_text_snippets" ADD CONSTRAINT "moderation_flagged_text_snippets_text_page_id_fkey" FOREIGN KEY ("text_page_id") REFERENCES "moderation_flagged_text_pages"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+SELECT create_constraint_if_not_exists('moderation_flagged_text_snippets', 'moderation_flagged_text_snippets_text_page_id_fkey', 'FOREIGN KEY ("text_page_id") REFERENCES "moderation_flagged_text_pages"("id") ON DELETE CASCADE ON UPDATE CASCADE');
 
 -- CreateIndex
-CREATE INDEX "moderation_entry_disciplines_entry_doi_idx" ON "moderation_entry_disciplines"("entry_doi");
+CREATE INDEX IF NOT EXISTS "moderation_entry_disciplines_entry_doi_idx" ON "moderation_entry_disciplines"("entry_doi");
 
 -- CreateIndex
-CREATE INDEX "moderation_entry_disc_codes_entry_doi_idx" ON "moderation_entry_disc_codes"("entry_doi");
+CREATE INDEX IF NOT EXISTS "moderation_entry_disc_codes_entry_doi_idx" ON "moderation_entry_disc_codes"("entry_doi");
 
 -- CreateIndex
-CREATE INDEX "moderation_images_entry_doi_idx" ON "moderation_images"("entry_doi");
+CREATE INDEX IF NOT EXISTS "moderation_images_entry_doi_idx" ON "moderation_images"("entry_doi");
 
 -- CreateIndex
-CREATE INDEX "moderation_flagged_image_categories_image_id_idx" ON "moderation_flagged_image_categories"("image_id");
+CREATE INDEX IF NOT EXISTS "moderation_flagged_image_categories_image_id_idx" ON "moderation_flagged_image_categories"("image_id");
 
 -- CreateIndex
-CREATE INDEX "moderation_flagged_text_pages_entry_doi_idx" ON "moderation_flagged_text_pages"("entry_doi");
+CREATE INDEX IF NOT EXISTS "moderation_flagged_text_pages_entry_doi_idx" ON "moderation_flagged_text_pages"("entry_doi");
 
 -- CreateIndex
-CREATE INDEX "moderation_flagged_text_snippets_text_page_id_idx" ON "moderation_flagged_text_snippets"("text_page_id");
+CREATE INDEX IF NOT EXISTS "moderation_flagged_text_snippets_text_page_id_idx" ON "moderation_flagged_text_snippets"("text_page_id");
 
 -- Permissions
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.moderation_entries TO jaip_writer;

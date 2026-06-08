@@ -43,7 +43,7 @@ variables:
 
 
 # JAIP Database Credentials
-  JAIP_DB_URL: "/$API_TARGET/labs/jaip/jaip-backend/database/url"
+  JAIP_DB_URL: "/$API_TARGET/labs/jaip/jaip-backend/database/alt/url"
 
 # JAIP Wordnik API Key
   WORDNIK_KEY: "/$API_TARGET/labs/jaip/jaip-backend/wordnik-api-key"
