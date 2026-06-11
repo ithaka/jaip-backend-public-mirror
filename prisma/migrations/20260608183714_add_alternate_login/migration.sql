@@ -1,0 +1,1 @@
+ALTER ROLE jaip_writer_alt WITH LOGIN;
