@@ -15,7 +15,7 @@ import {
 import { JAIPDatabase } from "./index.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
 import { User } from "../types/entities.js";
-import { ensure_error, paginated_array } from "../utils/index.js";
+import { ensure_error } from "../utils/index.js";
 import { Alert } from "../types/alerts.js";
 import { Subdomain } from "../types/routes.js";
 
@@ -761,7 +761,7 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
   async get_search_statuses(
-    has_restricted_items_subscription: boolean,
+    exclude_restricted_items: boolean,
     query_string: string,
     groups: number[],
     query_statuses: status_options[],
@@ -770,59 +770,71 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     sort: string,
     limit: number,
     page: number,
-  ): Promise<[Status[] | null, number | null, Error | null]> {
+  ): Promise<[string[] | null, number | null, Error | null]> {
     try {
-      // TODO: This absurd query is a bit of a hack to get around some limitations with Prisma and subqueries. It could certainly be
-      // simplified if we didn't need a count, and could probably be simplified further to a standard prisma query as well.
-      let where_clause = `status_details.detail ~~* '%${query_string}%'::text OR statuses.status::text ~~* '%${query_string}%'::text OR entities.name ~~*  '%${query_string}%'::text OR users.jstor_id ~~* '%${query_string}%'::text`;
-      if (query_string === "") {
-        where_clause += " OR status_details.detail IS NULL";
-      }
-      const [statuses, count] = await this.client.$transaction(
-        async (tx) => {
-          const max_ids_object: { max: number }[] =
-            await tx.$queryRaw`SELECT MAX(id) FROM statuses WHERE group_id = ANY(${groups}::INT[]) GROUP BY jstor_item_id, group_id`;
-          let ids_object: { id: number; jstor_item_id: string }[] =
-            sort === "new"
-              ? await tx.$queryRaw`SELECT statuses.id, statuses.jstor_item_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY statuses.id DESC`
-              : await tx.$queryRaw`SELECT statuses.id, statuses.jstor_item_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE statuses.id = ANY(${max_ids_object.map((obj) => obj.max)}) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.status = ANY(${query_statuses}::status_options[]) AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) GROUP BY statuses.id ORDER BY statuses.id ASC`;
+      const direction = sort === "new" ? Prisma.sql`DESC` : Prisma.sql`ASC`;
+      const offset = limit * (page - 1);
 
-          // If the user has a restricted items subscription, we need to filter the results to avoid including
-          // anything that is on the restricted list. Doing this here means we can get an accurate count of the
-          // total number of results.
-          if (has_restricted_items_subscription) {
-            const restricted_items: { jstor_item_id: string }[] =
-              await tx.$queryRaw`SELECT jstor_item_id FROM globally_restricted_items WHERE is_restricted = true AND jstor_item_id = ANY(${ids_object.map((obj) => obj.jstor_item_id)}::TEXT[])`;
-            ids_object = ids_object.filter(
-              (obj) =>
-                !restricted_items.some(
-                  (item: { jstor_item_id: string }) =>
-                    item.jstor_item_id === obj.jstor_item_id,
-                ),
-            );
-          }
+      // Escape LIKE wildcards in user-supplied text so '%' / '_' / '\' search literally.
+      const escaped = query_string.replace(/[\\%_]/g, "\\$&");
+      const like_pattern = `%${escaped}%`;
 
-          const partial_ids_object = paginated_array(
-            ids_object,
-            limit,
-            limit * (page - 1),
-          ).map((obj) => obj.id);
-          const statuses =
-            sort === "new"
-              ? await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE group_id = ANY(${groups}::INT[]) AND statuses.id = ANY(${partial_ids_object}::INT[]) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) ORDER BY statuses.id DESC`
-              : await tx.$queryRaw`SELECT statuses.id, statuses.status, statuses.jstor_item_id, statuses.group_id FROM statuses LEFT JOIN status_details ON statuses.id=status_details.status_id LEFT JOIN entities ON statuses.entity_id=entities.id LEFT JOIN users ON statuses.entity_id=users.id WHERE group_id = ANY(${groups}::INT[]) AND statuses.id = ANY(${partial_ids_object}::INT[]) AND statuses.jstor_item_type = ${jstor_types.doi}::jstor_types AND statuses.created_at >= ${start_date}::timestamp AND statuses.created_at <= ${end_date}::timestamp AND (${Prisma.sql([where_clause])}) ORDER BY statuses.id ASC`;
+      // When query_string is empty, skip the text filter entirely. Otherwise match against
+      // status details, entity name, and user jstor_id.
+      const text_filter =
+        query_string === ""
+          ? Prisma.sql`TRUE`
+          : Prisma.sql`(
+              EXISTS (SELECT 1 FROM status_details sd WHERE sd.status_id = latest.id AND sd.detail ILIKE ${like_pattern})
+              OR EXISTS (SELECT 1 FROM entities e WHERE e.id = latest.entity_id AND e.name ILIKE ${like_pattern})
+              OR EXISTS (SELECT 1 FROM users u WHERE u.id = latest.entity_id AND u.jstor_id ILIKE ${like_pattern})
+            )`;
 
-          const unique_ids = new Set(
-            ids_object.map((obj) => obj.jstor_item_id),
-          );
-          return [statuses, unique_ids.size];
-        },
-        {
-          timeout: 10000,
-        },
-      );
+      // When exclude_restricted_items is true, filter out any items that have an active restriction in the globally_restricted_items table.
+      const restricted_filter = exclude_restricted_items
+        ? Prisma.sql`AND NOT EXISTS (
+            SELECT 1 FROM globally_restricted_items gri
+            WHERE gri.is_restricted = TRUE
+              AND gri.jstor_item_id = latest.jstor_item_id
+          )`
+        : Prisma.empty;
 
-      return [statuses as unknown as Status[], Number(count), null];
+      // Single statement: pick the latest status per (jstor_item_id, group_id), apply filters,
+      // collapse to one row per DOI (sort key = max status id across that DOI's groups),
+      // paginate by DOI, and emit the total count via a window function.
+      const rows: { jstor_item_id: string; total: bigint }[] = await this.client
+        .$queryRaw(Prisma.sql`
+          WITH latest AS (
+            SELECT DISTINCT ON (jstor_item_id, group_id)
+                   id, jstor_item_id, group_id, status, entity_id, jstor_item_type, created_at
+            FROM statuses
+            WHERE group_id = ANY(${groups}::INT[])
+            ORDER BY jstor_item_id, group_id, id DESC
+          ),
+          filtered AS (
+            SELECT id, jstor_item_id
+            FROM latest
+            WHERE latest.jstor_item_type = ${jstor_types.doi}::jstor_types
+              AND latest.status = ANY(${query_statuses}::status_options[])
+              AND latest.created_at >= ${start_date}::timestamp
+              AND latest.created_at <= ${end_date}::timestamp
+              AND ${text_filter}
+              ${restricted_filter}
+          ),
+          by_doi AS (
+            SELECT jstor_item_id, MAX(id) AS sort_id
+            FROM filtered
+            GROUP BY jstor_item_id
+          )
+          SELECT jstor_item_id, COUNT(*) OVER ()::bigint AS total
+          FROM by_doi
+          ORDER BY sort_id ${direction}
+          LIMIT ${limit} OFFSET ${offset}
+        `);
+
+      const dois = rows.map((row) => row.jstor_item_id);
+      const total = rows.length ? Number(rows[0].total) : 0;
+      return [dois, total, null];
     } catch (err) {
       const error = ensure_error(err);
       return [null, null, error];

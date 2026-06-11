@@ -1,9 +1,12 @@
-import { User } from "../types/entities.js";
+import { Entity, User } from "../types/entities.js";
 
 // NOTE: This function will return true if the user is associated with any
 // group that has the feature enabled.
-export const user_has_feature = (user: User, feature: string): boolean => {
-  for (const group of user.groups) {
+export const user_has_feature = (
+  user: User | Entity,
+  feature: string,
+): boolean => {
+  for (const group of user.groups || []) {
     if (group.features[feature]) {
       return true;
     }
@@ -12,15 +15,15 @@ export const user_has_feature = (user: User, feature: string): boolean => {
 };
 
 export const user_has_feature_in_all_groups = (
-  user: User,
+  user: User | Entity,
   feature: string,
 ): boolean => {
-  for (const group of user.groups) {
+  for (const group of user.groups || []) {
     if (!group.features[feature]) {
       return false;
     }
   }
-  if (user.groups.length === 0 || !user.groups) {
+  if (!user.groups || user.groups.length === 0) {
     return false;
   }
   return true;

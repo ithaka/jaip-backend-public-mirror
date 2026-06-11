@@ -408,3 +408,9 @@ export const status_selections = [
     group_id: 1,
   },
 ];
+
+export const status_selection_dois = [
+  "10.2307/23006127",
+  "10.2307/1260890",
+  "10.2979/jfemistudreli.33.1.25",
+];

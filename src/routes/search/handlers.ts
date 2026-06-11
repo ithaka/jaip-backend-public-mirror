@@ -81,13 +81,55 @@ export const status_search_handler =
 
       const query_string = body.statusQuery.trim();
 
+      // If the user is a student and the facility is subscribed to restricted items, we don't
+      // want to include those in a status search. Similarly, if the user is an admin searching for
+      // pending items, so that restricted items don't clog up the pending items queue.
+
+      // First we get the facilities in the user's groups (if the user is not an admin, they won't have
+      // any facilities, so this will just return an empty array). Facilities must belong to exactly
+      // one group, so we only have to check the first one.
+      const facilities_in_groups = request.user.facilities?.filter(
+        (facility) => {
+          const facility_group = facility.groups?.[0].id;
+          if (facility_group) {
+            return groups.includes(facility_group);
+          }
+          return false;
+        },
+      );
+
+      // Then we check if any of those facilities don't have the restricted items subscription.
+      // If the user is an admin searching for pending items, we'll want to include restricted items
+      // if any of the facilities in the user's groups don't have the restricted items subscription,
+      // since those pending items could still be reviewed.
+      const facilities_without_restricted_items_subscription =
+        facilities_in_groups
+          ?.filter((facility) => {
+            return !user_has_feature(
+              facility,
+              FEATURES.restricted_items_subscription,
+            );
+          })
+          .map((facility) => facility.id) || [];
+
+      // For status-based searches, a restricted list subscription for all the facilities in the user's groups
+      // will mean excluding the results from searches for pending items. They will still be included in standard
+      // search results for everyone.
+      const exclude_restricted_items =
+        (user_has_feature(
+          request.user,
+          FEATURES.restricted_items_subscription,
+        ) &&
+          request.is_authenticated_student) ||
+        (request.is_authenticated_admin &&
+          query_statuses.length === 1 &&
+          query_statuses.includes(status_options.Pending) &&
+          !facilities_without_restricted_items_subscription.length);
+
       fastify.log.info(`Getting search statuses with query: ${query_string}`);
       const [status_results, count, error] =
         await fastify.db.get_search_statuses(
-          user_has_feature(
-            request.user,
-            FEATURES.restricted_items_subscription,
-          ) && request.is_authenticated_student,
+          exclude_restricted_items,
           query_string,
           groups,
           query_statuses,
@@ -118,10 +160,8 @@ export const status_search_handler =
         return;
       }
 
-      // We only need to add unique DOIs to the filter
-      const dois = [
-        ...new Set(status_results.map((status) => status.jstor_item_id!)),
-      ];
+      // status_results is already a deduped, ordered list of DOIs.
+      const dois = status_results;
       let doi_filter = "(";
       for (let i = 0; i < dois.length; i++) {
         doi_filter += `doi:"${dois[i]}"`;

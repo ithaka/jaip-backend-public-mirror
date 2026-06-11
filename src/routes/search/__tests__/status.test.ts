@@ -13,10 +13,10 @@ import {
   processed_search_response_with_mixed_statuses_and_status_order,
   processed_search_response_with_mixed_statuses_reviewer_and_status_order,
   search3_results,
-  search_status_results,
+  status_search_dois,
   status_search_request_invalid,
   status_search_request_valid,
-  status_selections,
+  status_selection_dois,
   tokens,
 } from "../../../tests/fixtures/search/fixtures.js";
 import {
@@ -88,7 +88,7 @@ test.each(route_options)(
       });
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
     db_mock.get_search_statuses.mockResolvedValueOnce([
-      status_selections,
+      status_selection_dois,
       4,
       null,
     ]);
@@ -151,7 +151,7 @@ test.each(route_options)(
       basic_facility_with_restricted_items_subscription,
     );
     db_mock.get_search_statuses.mockResolvedValueOnce([
-      status_selections,
+      status_selection_dois,
       4,
       null,
     ]);
@@ -249,7 +249,7 @@ test(`requests the ${route_options[0].route} route with a facility and valid bod
     });
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
   db_mock.get_search_statuses.mockResolvedValueOnce([
-    search_status_results,
+    status_search_dois,
     0,
     null,
   ]);
@@ -289,7 +289,7 @@ test(`requests the ${route_options[0].route} route with a reviewer and valid bod
     });
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
   db_mock.get_search_statuses.mockResolvedValueOnce([
-    search_status_results,
+    status_search_dois,
     0,
     null,
   ]);

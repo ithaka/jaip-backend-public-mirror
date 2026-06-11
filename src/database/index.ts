@@ -120,7 +120,7 @@ export interface JAIPDatabase {
     user_id: number,
   ) => Promise<Error | null>;
   get_search_statuses: (
-    has_restricted_items_subscription: boolean,
+    exclude_restricted_items: boolean,
     query_string: string,
     groups: number[],
     query_statuses: status_options[],
@@ -129,7 +129,7 @@ export interface JAIPDatabase {
     sort: string,
     limit: number,
     page: number,
-  ) => Promise<[Status[] | null, number | null, Error | null]>;
+  ) => Promise<[string[] | null, number | null, Error | null]>;
 
   // RESTRICTED ITEMS
   get_restricted_items_and_count: (
