@@ -90,6 +90,9 @@ export const status_search_handler =
       // one group, so we only have to check the first one.
       const facilities_in_groups = request.user.facilities?.filter(
         (facility) => {
+          if (!facility?.groups?.length) {
+            console.log(facility);
+          }
           const facility_group = facility.groups?.[0].id;
           if (facility_group) {
             return groups.includes(facility_group);
@@ -123,7 +126,6 @@ export const status_search_handler =
           request.is_authenticated_student) ||
         (request.is_authenticated_admin &&
           query_statuses.length === 1 &&
-          query_statuses.includes(status_options.Pending) &&
           !facilities_without_restricted_items_subscription.length);
 
       fastify.log.info(`Getting search statuses with query: ${query_string}`);
