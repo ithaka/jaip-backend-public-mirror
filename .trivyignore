@@ -1,2 +1,5 @@
 # vulnerabilities in libcrypto and libssl, in the underlying alpine image
 CVE-2026-45447 exp:2026-07-15
+
+# vulnerability in unidici (transitive dependency) that involve websockets, which we're not using
+CVE-2026-12151 exp:2026-07-15
