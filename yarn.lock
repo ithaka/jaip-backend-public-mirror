@@ -103,7 +103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:^3.1062.0":
+"@aws-sdk/client-s3@npm:^3.1075.0":
   version: 3.1075.0
   resolution: "@aws-sdk/client-s3@npm:3.1075.0"
   dependencies:
@@ -307,7 +307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-request-presigner@npm:^3.1062.0":
+"@aws-sdk/s3-request-presigner@npm:^3.1075.0":
   version: 3.1075.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.1075.0"
   dependencies:
@@ -1386,7 +1386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.13.0":
+"@types/node@npm:^24.13.2":
   version: 24.13.2
   resolution: "@types/node@npm:24.13.2"
   dependencies:
@@ -1812,7 +1812,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.17.0":
+"axios@npm:^1.18.1":
   version: 1.18.1
   resolution: "axios@npm:1.18.1"
   dependencies:
@@ -2301,7 +2301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.4.1":
+"eslint@npm:^10.5.0":
   version: 10.5.0
   resolution: "eslint@npm:10.5.0"
   dependencies:
@@ -2634,7 +2634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.5":
+"form-data@npm:^4.0.6":
   version: 4.0.6
   resolution: "form-data@npm:4.0.6"
   dependencies:
@@ -3002,8 +3002,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "jaip-backend@workspace:."
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.1062.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.1062.0"
+    "@aws-sdk/client-s3": "npm:^3.1075.0"
+    "@aws-sdk/s3-request-presigner": "npm:^3.1075.0"
     "@eslint/js": "npm:^10.0.1"
     "@fastify/cookie": "npm:^11.0.2"
     "@fastify/cors": "npm:^11.2.0"
@@ -3012,28 +3012,28 @@ __metadata:
     "@fastify/swagger-ui": "npm:^5.2.6"
     "@prisma/adapter-pg": "npm:^7.8.0"
     "@prisma/client": "npm:^7.8.0"
-    "@smithy/types": "npm:^4.14.3"
-    "@types/node": "npm:^24.13.0"
+    "@smithy/types": "npm:^4.15.0"
+    "@types/node": "npm:^24.13.2"
     "@types/pg": "npm:^8.20.0"
     "@types/uuid": "npm:^11.0.0"
-    axios: "npm:^1.17.0"
+    axios: "npm:^1.18.1"
     dotenv: "npm:^17.4.2"
-    eslint: "npm:^10.4.1"
+    eslint: "npm:^10.5.0"
     fastify: "npm:^5.8.5"
     fastify-plugin: "npm:^5.1.0"
     husky: "npm:^9.1.7"
     json-2-csv: "npm:^5.5.10"
     lint-staged: "npm:^16.4.0"
     nodemon: "npm:^3.1.14"
-    pg: "npm:^8.21.0"
+    pg: "npm:^8.22.0"
     pino-pretty: "npm:^13.1.3"
-    prettier: "npm:^3.8.3"
+    prettier: "npm:^3.8.4"
     prisma: "npm:^7.8.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
-    typescript-eslint: "npm:^8.60.1"
-    uuid: "npm:^14.0.0"
-    vitest: "npm:^4.1.8"
+    typescript-eslint: "npm:^8.62.0"
+    uuid: "npm:^14.0.1"
+    vitest: "npm:^4.1.9"
   languageName: unknown
   linkType: soft
 
@@ -3694,7 +3694,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg@npm:^8.16.3, pg@npm:^8.21.0":
+"pg@npm:^8.16.3, pg@npm:^8.22.0":
   version: 8.22.0
   resolution: "pg@npm:8.22.0"
   dependencies:
@@ -3879,7 +3879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.8.3":
+"prettier@npm:^3.8.4":
   version: 3.8.4
   resolution: "prettier@npm:3.8.4"
   bin:
@@ -4526,7 +4526,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-eslint@npm:^8.60.1":
+"typescript-eslint@npm:^8.62.0":
   version: 8.62.0
   resolution: "typescript-eslint@npm:8.62.0"
   dependencies:
@@ -4598,7 +4598,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:*, uuid@npm:^14.0.0":
+"uuid@npm:*, uuid@npm:^14.0.1":
   version: 14.0.1
   resolution: "uuid@npm:14.0.1"
   bin:
@@ -4683,7 +4683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.1.8":
+"vitest@npm:^4.1.9":
   version: 4.1.9
   resolution: "vitest@npm:4.1.9"
   dependencies:
