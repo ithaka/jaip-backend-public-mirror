@@ -103,7 +103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:^3.1062.0":
+"@aws-sdk/client-s3@npm:^3.1075.0":
   version: 3.1075.0
   resolution: "@aws-sdk/client-s3@npm:3.1075.0"
   dependencies:
@@ -307,7 +307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-request-presigner@npm:^3.1062.0":
+"@aws-sdk/s3-request-presigner@npm:^3.1075.0":
   version: 3.1075.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.1075.0"
   dependencies:
@@ -1386,7 +1386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.13.0":
+"@types/node@npm:^24.13.2":
   version: 24.13.2
   resolution: "@types/node@npm:24.13.2"
   dependencies:
@@ -1812,7 +1812,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.17.0":
+"axios@npm:^1.18.1":
   version: 1.18.1
   resolution: "axios@npm:1.18.1"
   dependencies:
@@ -2301,9 +2301,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.4.1":
-  version: 10.5.0
-  resolution: "eslint@npm:10.5.0"
+"eslint@npm:^10.5.0":
+  version: 10.6.0
+  resolution: "eslint@npm:10.6.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -2342,7 +2342,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/e1f7a1d442027e5478945cb07b6a382adc3f149fbfd3dbc14951a7a9fa312546b27fb35b0556897ca1d04539ad16ee85bda75ad9f724873e1153d1fbca0d6145
+  checksum: 10c0/ebe0261fc750afb7f1a0c5a14f5288e57b971e0bee9754b1620132d22ad0c23690183977b0c9514ffa7ad460768d689d3fb9792ad9267b6c6205e2e0c17d8563
   languageName: node
   linkType: hard
 
@@ -2634,7 +2634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.5":
+"form-data@npm:^4.0.6":
   version: 4.0.6
   resolution: "form-data@npm:4.0.6"
   dependencies:
@@ -3002,8 +3002,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "jaip-backend@workspace:."
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.1062.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.1062.0"
+    "@aws-sdk/client-s3": "npm:^3.1075.0"
+    "@aws-sdk/s3-request-presigner": "npm:^3.1075.0"
     "@eslint/js": "npm:^10.0.1"
     "@fastify/cookie": "npm:^11.0.2"
     "@fastify/cors": "npm:^11.2.0"
@@ -3012,28 +3012,28 @@ __metadata:
     "@fastify/swagger-ui": "npm:^5.2.6"
     "@prisma/adapter-pg": "npm:^7.8.0"
     "@prisma/client": "npm:^7.8.0"
-    "@smithy/types": "npm:^4.14.3"
-    "@types/node": "npm:^24.13.0"
+    "@smithy/types": "npm:^4.15.0"
+    "@types/node": "npm:^24.13.2"
     "@types/pg": "npm:^8.20.0"
     "@types/uuid": "npm:^11.0.0"
-    axios: "npm:^1.17.0"
+    axios: "npm:^1.18.1"
     dotenv: "npm:^17.4.2"
-    eslint: "npm:^10.4.1"
+    eslint: "npm:^10.5.0"
     fastify: "npm:^5.8.5"
     fastify-plugin: "npm:^5.1.0"
     husky: "npm:^9.1.7"
     json-2-csv: "npm:^5.5.10"
     lint-staged: "npm:^16.4.0"
     nodemon: "npm:^3.1.14"
-    pg: "npm:^8.21.0"
+    pg: "npm:^8.22.0"
     pino-pretty: "npm:^13.1.3"
-    prettier: "npm:^3.8.3"
+    prettier: "npm:^3.8.4"
     prisma: "npm:^7.8.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
-    typescript-eslint: "npm:^8.60.1"
-    uuid: "npm:^14.0.0"
-    vitest: "npm:^4.1.8"
+    typescript-eslint: "npm:^8.62.0"
+    uuid: "npm:^14.0.1"
+    vitest: "npm:^4.1.9"
   languageName: unknown
   linkType: soft
 
@@ -3694,7 +3694,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg@npm:^8.16.3, pg@npm:^8.21.0":
+"pg@npm:^8.16.3, pg@npm:^8.22.0":
   version: 8.22.0
   resolution: "pg@npm:8.22.0"
   dependencies:
@@ -3879,12 +3879,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.8.3":
-  version: 3.8.4
-  resolution: "prettier@npm:3.8.4"
+"prettier@npm:^3.8.4":
+  version: 3.8.5
+  resolution: "prettier@npm:3.8.5"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/b90a0cbe75b88ac0af9c13fe0f359bd19926fabccd88483227b21f71f0c1cc42da056fc1ac3a361e665577c568371d5ccfb2c62c31c8a1186f8d1bd531a063e9
+  checksum: 10c0/57ba3cd8ddc0cebcb31038f09081da5c8633ff1823ff5e5cf3496918b3b839f76a21e06050fd1a2c41547f44fedea2c28d7a4a26f0b2ed40eb60428c54c297ea
   languageName: node
   linkType: hard
 
@@ -4526,7 +4526,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-eslint@npm:^8.60.1":
+"typescript-eslint@npm:^8.62.0":
   version: 8.62.0
   resolution: "typescript-eslint@npm:8.62.0"
   dependencies:
@@ -4598,7 +4598,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:*, uuid@npm:^14.0.0":
+"uuid@npm:*, uuid@npm:^14.0.1":
   version: 14.0.1
   resolution: "uuid@npm:14.0.1"
   bin:
@@ -4683,7 +4683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.1.8":
+"vitest@npm:^4.1.9":
   version: 4.1.9
   resolution: "vitest@npm:4.1.9"
   dependencies:
