@@ -378,6 +378,9 @@ export const get_current_user = async (
                       group_id: {
                         in: groups_with_restricted_items_access,
                       },
+                      role: {
+                        not: user_roles.removed,
+                      },
                     },
                   },
                 },
@@ -390,7 +393,7 @@ export const get_current_user = async (
               },
             });
           if (facilities_error) {
-            throw error;
+            throw facilities_error;
           } else if (facilities.length) {
             current_user.facilities = facilities.map((facility) => {
               return map_entities(facility) as Entity;

@@ -90,10 +90,7 @@ export const status_search_handler =
       // one group, so we only have to check the first one.
       const facilities_in_groups = request.user.facilities?.filter(
         (facility) => {
-          if (!facility?.groups?.length) {
-            console.log(facility);
-          }
-          const facility_group = facility.groups?.[0].id;
+          const facility_group = facility.groups?.[0]?.id;
           if (facility_group) {
             return groups.includes(facility_group);
           }
