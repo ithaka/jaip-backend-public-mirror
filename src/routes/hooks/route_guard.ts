@@ -127,6 +127,10 @@ export const route_guard =
       // we can proceed and attach the user and session data even to public routes.
       if (!current_user && is_private) {
         reply.code(401).send();
+        request.server.event_logger.pep_unauthorized_error(request, reply, {
+          log_made_by: "route_guard_hook",
+          event_description: "no user found for private route",
+        });
         return;
       }
 
