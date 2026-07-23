@@ -100,6 +100,8 @@ export interface CompleteLogPayload {
   filename: string;
   wordnik_data: WordnikDataLog;
   headwords: string[];
+  not_found: true;
+  error_message: string;
 }
 
 // The log payload in use will probably always be incomplete. Rather than

@@ -231,14 +231,15 @@ export const SEARCH_SERVICE = {
 
 export const CEDAR_DELIVERY_SERVICE = {
   name: "cedar-delivery-service",
-  path: "v3/content",
+  // The newer transclude endpoint replaces what we were using from /v3/content
+  path: "v3/transclude",
   queries: {
     params: {
       item_view: {
         format: "ITEM_VIEW_1",
       },
-      identity_block: {
-        format: "IDENTITY_BLOCK",
+      csl_export: {
+        format: "CSL_EXPORT",
       },
     },
   },

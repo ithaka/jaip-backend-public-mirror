@@ -24,6 +24,9 @@ export interface StatusParams {
   status: string;
 }
 
+export interface ItemIdentifierParams {
+  iid: string;
+}
 export interface PagesParams {
   iid: string;
   page?: string;

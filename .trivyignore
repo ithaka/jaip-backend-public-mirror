@@ -1,5 +1,13 @@
-# vulnerabilities in libcrypto and libssl, in the underlying alpine image
-CVE-2026-45447 exp:2026-07-15
-
 # vulnerability in unidici (transitive dependency) that involve websockets, which we're not using
-CVE-2026-12151 exp:2026-07-15
+CVE-2026-12151 exp:2026-08-15
+
+# vulnerable transitive dependencies in tar and brace-expansion. 
+# We don't do archive extraction or multipart upload handlers, so
+# these shouldn't affect us
+CVE-2026-13149 exp:2026-09-15
+CVE-2026-59873 exp:2026-09-15
+CVE-2026-59874 exp:2026-09-15
+
+# vulnerable fast-uri transitive dependency mismatch with Node URL parsing.
+# We're not doing uri-generation from user inputs, so it shouldn't affect us
+CVE-2026-16221 exp:2026-09-15
