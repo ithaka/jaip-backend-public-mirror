@@ -2,16 +2,21 @@
 FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.18.0-alpine AS builder
 
 WORKDIR /usr/src/app
-RUN npm update -g
+
+# Mark this as a CI-style environment so lifecycle scripts (e.g. postinstall)
+# skip local-only steps like the postinstall `prisma generate`, which is run explicitly by
+# `yarn build` below.
+ENV CI=true
 
 COPY . .
 
-RUN yarn install
+# Install (with dev deps), build, then prune to production deps.
+RUN yarn install --immutable  \
+&& yarn build \
+&& yarn workspaces focus --all --production \
+&& yarn cache clean \
+&& rm -rf .yarn/cache /root/.npm/_cacache /root/.cache
 
-RUN yarn build
-
-# Remove devDependencies from node_modules
-RUN npm prune --omit=dev
 
 # ---- Runtime stage ----
 FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.18.0-alpine AS runtime

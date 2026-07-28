@@ -11,3 +11,15 @@ CVE-2026-59874 exp:2026-09-15
 # vulnerable fast-uri transitive dependency mismatch with Node URL parsing.
 # We're not doing uri-generation from user inputs, so it shouldn't affect us
 CVE-2026-16221 exp:2026-09-15
+
+# vulnerability in brace-expansion, which is a transitive dependency,
+# and the vulnerable code isn't exposed here
+CVE-2026-14257 exp:2026-09-15
+
+# vulnerability in fastify, but only using http/2, which we are not
+CVE-2026-47219 exp:2026-09-15
+
+# vulnerability in fastify/static, which is in this case a dependency of 
+# the swagger-ui. That's only exposed internally, so we don't have to worry
+# much about that.
+CVE-2026-15074 exp:2026-09-15

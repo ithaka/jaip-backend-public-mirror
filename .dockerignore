@@ -3,8 +3,12 @@
 .github
 .husky
 .vscode
+.git
 gloo
 k8s
 docker
 README.md
 example.env
+node_modules
+dist
+.yarn/cache
