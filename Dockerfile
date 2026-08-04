@@ -1,5 +1,5 @@
 # ---- Build stage ----
-FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.18.0-alpine AS builder
+FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.19.0-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -19,7 +19,7 @@ RUN yarn install --immutable  \
 
 
 # ---- Runtime stage ----
-FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.18.0-alpine AS runtime
+FROM docker-virtual.artifactory.acorn.cirrostratus.org/node:24.19.0-alpine AS runtime
 
 WORKDIR /usr/src/app
 
