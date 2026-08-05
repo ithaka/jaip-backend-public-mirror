@@ -18,6 +18,40 @@ import {
   jstor_types,
   status_options,
 } from "../../database/prisma/client.js";
+import { validate as is_uuid } from "uuid";
+
+// Detects whether query_string is a URL of the form `/pdf/:iid` with the same
+// origin as request_origin. Otherwise returns null.
+export const extract_iid_from_url = (
+  query_string: string,
+  request_origin: string,
+): string | null => {
+  let url: URL;
+  // First check to see if the string is a url, and if not, return null.
+  // This will catch any invalid urls or query strings that are not urls.
+  try {
+    url = new URL(query_string);
+  } catch {
+    return null;
+  }
+
+  // Check that the origin of the URL matches the origin of the request.
+  // If it doesn't, return null. This will catch any URLs that are not
+  // same-origin, in case someone is just searching for a URL.
+  if (url.origin !== request_origin) {
+    return null;
+  }
+
+  // Expecting a pathname of exactly `/pdf/:iid` (ignoring any trailing slash).
+  const segments = url.pathname.replace(/\/+$/, "").split("/");
+  if (segments.length !== 3 || segments[1] !== "pdf") {
+    return null;
+  }
+
+  // Validate that the iid is in fact a uuid, and if so return it. Otherwise return null.
+  const iid = segments[2];
+  return is_uuid(iid) ? iid : null;
+};
 
 const status_select = {
   jstor_item_id: true,

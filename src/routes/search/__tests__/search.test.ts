@@ -53,6 +53,50 @@ test(`requests the ${search_route} route with invalid body`, async () => {
   expect(res.statusCode).toEqual(400);
 });
 
+test(`rewrites same-origin pdf urls to iid queries`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi
+    .fn()
+    .mockResolvedValueOnce(axios_session_data_with_email)
+    .mockResolvedValueOnce({
+      status: 200,
+      data: {
+        total: 0,
+        results: [] as [],
+      },
+    });
+  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
+
+  const pdf_url =
+    "http://pep.jstor.org/pdf/a37ddab2-abda-340b-ab09-44a6906984a7";
+  const res = await app.inject({
+    method: "POST",
+    url: `${search_route}`,
+    payload: {
+      ...search_request_valid,
+      query: pdf_url,
+    },
+    headers: {
+      origin: "http://pep.jstor.org",
+    },
+  });
+
+  expect(axios.post).toHaveBeenCalledTimes(2);
+  expect(axios.post).toHaveBeenNthCalledWith(
+    2,
+    expect.any(String),
+    expect.objectContaining({
+      query: "",
+      filter_queries: expect.arrayContaining([
+        "id:a37ddab2-abda-340b-ab09-44a6906984a7",
+      ]),
+    }),
+    expect.any(Object),
+  );
+  expect(res.json()).toEqual({ docs: [], total: 0 });
+  expect(res.statusCode).toEqual(200);
+});
+
 test(`requests the ${search_route} route with a facility and valid body and no statuses`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.post = vi

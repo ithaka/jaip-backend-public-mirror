@@ -17,6 +17,7 @@ import {
   get_block_list_items,
   get_bulk_statuses,
   get_facility_statuses,
+  extract_iid_from_url,
   get_snippets,
   get_status_keys,
   get_tokens,
@@ -231,7 +232,18 @@ export const search_handler =
       const body = request.body as SearchRequest | StatusSearchRequest;
       const { query, limit, pageNo, sort, facets, filters } = body;
       log_payload.search_request = body;
-      const query_string = query || "";
+      let query_string = query || "";
+
+      // If the query is a same-origin `/pdf/:iid` URL, the user pasted a link to a
+      // specific document. Target that document with a filter rather than a query.
+      const request_origin = request.headers.origin || "";
+      const pdf_url_query = extract_iid_from_url(query_string, request_origin);
+      if (pdf_url_query) {
+        query_string = ``;
+        filters.push(`id:${pdf_url_query}`);
+        log_payload.is_url_search_string = true;
+      }
+
       const page_mark = btoa(`pageMark=${pageNo}`);
       const search3_request: Search3Request = {
         query: query_string,

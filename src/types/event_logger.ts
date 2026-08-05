@@ -102,6 +102,7 @@ export interface CompleteLogPayload {
   headwords: string[];
   not_found: true;
   error_message: string;
+  is_url_search_string: boolean;
 }
 
 // The log payload in use will probably always be incomplete. Rather than
