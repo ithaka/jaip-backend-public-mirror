@@ -23,3 +23,9 @@ CVE-2026-47219 exp:2026-09-15
 # the swagger-ui. That's only exposed internally, so we don't have to worry
 # much about that.
 CVE-2026-15074 exp:2026-09-15
+
+# vulnerability in ip-address. It's in the base node image, but we're not using it.
+CVE-2026-69192 exp:2026-09-15
+
+# vulnerability in brace-expansion, in the npm internals
+CVE-2026-69152 exp:2026-09-15
