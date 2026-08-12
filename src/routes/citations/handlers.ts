@@ -49,7 +49,6 @@ export const citations_handler =
       if (cedar_host_error) {
         throw cedar_host_error;
       }
-
       const url = `${cedar_host}${CEDAR_DELIVERY_SERVICE.path}`;
 
       const cedar_csl_response = await axios.get(url, {
@@ -57,6 +56,8 @@ export const citations_handler =
           ...CEDAR_DELIVERY_SERVICE.queries.params.csl_export,
           iid,
         },
+        // Allow all HTTP status codes to be handled manually rather than throwing an error for non-2xx responses.
+        validateStatus: () => true,
       });
 
       if (cedar_csl_response.status !== 200) {
