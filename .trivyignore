@@ -29,3 +29,6 @@ CVE-2026-69192 exp:2026-09-15
 
 # vulnerability in brace-expansion, in the npm internals
 CVE-2026-69152 exp:2026-09-15
+
+# vulnerability in unidici. This vuln affects websockets, which we aren't using
+CVE-2026-12151 exp:2026-09-15

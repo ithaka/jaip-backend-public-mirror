@@ -3279,13 +3279,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-plugin@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "fastify-plugin@npm:5.1.0"
-  checksum: 10c0/61b330b8cb03a3581b796d745137499a782934abcf65dbf9a41d07248520cfd220b3ae8b16afeaf81af712e68e1ac24352895132cfeb2b372c66662c0170f365
-  languageName: node
-  linkType: hard
-
 "fastify-plugin@npm:^6.0.0":
   version: 6.0.0
   resolution: "fastify-plugin@npm:6.0.0"
@@ -3820,7 +3813,7 @@ __metadata:
     dotenv: "npm:^17.4.2"
     eslint: "npm:^10.8.0"
     fastify: "npm:^5.10.0"
-    fastify-plugin: "npm:^5.1.0"
+    fastify-plugin: "npm:^6.0.0"
     husky: "npm:^9.1.7"
     json-2-csv: "npm:^5.5.10"
     lint-staged: "npm:^17.2.0"
