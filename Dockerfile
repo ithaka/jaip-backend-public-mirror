@@ -25,6 +25,12 @@ WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 
+# Pick up patched OS packages (e.g. openssl) and npm's own bundled deps
+# (e.g. pacote, tar) that aren't pinned via yarn.lock.
+RUN apk update && apk upgrade --no-cache \
+&& npm install -g npm@latest \
+&& rm -rf /var/cache/apk/* /root/.npm
+
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/prisma ./prisma
