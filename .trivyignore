@@ -1,6 +1,3 @@
-# vulnerability in unidici (transitive dependency) that involve websockets, which we're not using
-CVE-2026-12151 exp:2026-08-15
-
 # vulnerable transitive dependencies in tar and brace-expansion. 
 # We don't do archive extraction or multipart upload handlers, so
 # these shouldn't affect us
@@ -38,3 +35,6 @@ CVE-2026-12151 exp:2026-09-15
 # extract untrusted archives at runtime (we only run `node dist/server.js`), so
 # this shouldn't affect us. Re-check when npm ships a release with tar >=7.5.21.
 CVE-2026-73566 exp:2026-09-30
+
+# vulnerabilities in libcrypto and libssl affecting QUIC servers, which we are not
+CVE-2026-14456 exp:2026-10-01

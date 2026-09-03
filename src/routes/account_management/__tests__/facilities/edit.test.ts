@@ -88,7 +88,12 @@ test(`requests the ${add_facilities_route} route with valid body and edit facili
     },
   });
 
-  expect(db_mock.manage_entity).toHaveBeenCalledTimes(1);
+  expect(db_mock.manage_entity).toHaveBeenCalledWith(
+    "edit",
+    expect.anything(),
+    expect.anything(),
+    expect.anything(),
+  );
   expect(res.statusCode).toEqual(200);
 });
 

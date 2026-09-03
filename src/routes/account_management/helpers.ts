@@ -266,24 +266,22 @@ export const add_or_edit_entity = async (
     // It is possible that the user submitting this request does not have the required permissions
     // to see that the entity they're adding already exists in another group. So first we check for that possibility.
     let existing_entity = {} as { id: number } | null;
+    // If the submitted entity has an id, we check for an existing entity with that id or the same contact.
+    // If it doesn't have an id, we check for an existing entity with the same contact. This prevents a potential
+    // problem where Prisma's FindFirst method returns an entity matching an empty id.
+    const where_clause = entity.id
+      ? { OR: [{ id: entity.id }, { jstor_id: entity.contact }] }
+      : { jstor_id: entity.contact };
+    const entity_query = {
+      where: where_clause,
+      select: {
+        id: true,
+      },
+    };
     if (type === entity_types.users) {
-      existing_entity = await db.get_user_id({
-        where: {
-          jstor_id: entity.contact,
-        },
-        select: {
-          id: true,
-        },
-      });
+      existing_entity = await db.get_user_id(entity_query);
     } else {
-      existing_entity = await db.get_facility_id({
-        where: {
-          jstor_id: entity.contact,
-        },
-        select: {
-          id: true,
-        },
-      });
+      existing_entity = await db.get_facility_id(entity_query);
     }
 
     // If an existing entity is found with a matching email, we edit the existing entity, rather than creating a new one.

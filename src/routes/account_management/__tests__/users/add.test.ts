@@ -88,3 +88,32 @@ test(`requests the ${add_users_route} route with valid body and add user permiss
   expect(db_mock.manage_entity).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
+
+test(`requests the ${add_users_route} route with an empty id`, async () => {
+  discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
+  db_mock.get_user_id.mockClear();
+  db_mock.manage_entity.mockClear();
+
+  const res = await app.inject({
+    method: "POST",
+    url: `${add_users_route}`,
+    payload: { ...add_entities_body_valid, id: "" },
+    headers: {
+      host: valid_admin_subdomain,
+    },
+  });
+
+  expect(db_mock.get_user_id).toHaveBeenCalledWith({
+    where: { jstor_id: "test@test.edu" },
+    select: { id: true },
+  });
+  expect(db_mock.manage_entity).toHaveBeenCalledWith(
+    "add",
+    expect.anything(),
+    expect.anything(),
+    expect.anything(),
+  );
+  expect(res.statusCode).toEqual(200);
+});

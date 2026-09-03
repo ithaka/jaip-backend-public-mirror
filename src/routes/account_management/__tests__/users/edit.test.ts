@@ -73,18 +73,24 @@ test(`requests the ${add_users_route} route with valid body and add user permiss
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
   db_mock.get_first_user.mockResolvedValueOnce(basic_admin);
+  db_mock.get_user_id.mockResolvedValueOnce({ id: 1 });
 
   db_mock.manage_entity.mockClear();
 
   const res = await app.inject({
     method: "PATCH",
     url: `${add_users_route}`,
-    payload: add_entities_body_valid,
+    payload: { ...add_entities_body_valid, id: 1 },
     headers: {
       host: valid_admin_subdomain,
     },
   });
 
-  expect(db_mock.manage_entity).toHaveBeenCalledTimes(1);
+  expect(db_mock.manage_entity).toHaveBeenCalledWith(
+    "edit",
+    expect.anything(),
+    expect.anything(),
+    expect.anything(),
+  );
   expect(res.statusCode).toEqual(200);
 });

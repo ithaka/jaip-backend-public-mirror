@@ -52,10 +52,10 @@ export interface JAIPDatabase {
   remove_user: (query: Prisma.usersUpdateArgs) => void;
   remove_facility: (query: Prisma.facilitiesUpdateArgs) => void;
   get_user_id: (
-    query: Prisma.usersFindUniqueArgs,
+    query: Prisma.usersFindFirstArgs,
   ) => Promise<{ id: number } | null>;
   get_facility_id: (
-    query: Prisma.facilitiesFindUniqueArgs,
+    query: Prisma.facilitiesFindFirstArgs,
   ) => Promise<{ id: number } | null>;
   manage_entity: (
     action: "add" | "edit",

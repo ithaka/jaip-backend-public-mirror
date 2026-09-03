@@ -136,15 +136,15 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   }
 
   async get_user_id(
-    query: Prisma.usersFindUniqueArgs,
+    query: Prisma.usersFindFirstArgs,
   ): Promise<{ id: number } | null> {
-    return await this.client.users.findUnique(query);
+    return await this.client.users.findFirst(query);
   }
 
   async get_facility_id(
-    query: Prisma.facilitiesFindUniqueArgs,
+    query: Prisma.facilitiesFindFirstArgs,
   ): Promise<{ id: number } | null> {
-    return await this.client.facilities.findUnique(query);
+    return await this.client.facilities.findFirst(query);
   }
 
   async manage_entity(
