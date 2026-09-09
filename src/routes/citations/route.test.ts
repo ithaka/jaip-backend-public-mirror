@@ -24,7 +24,6 @@ const prefix = route_settings.options.prefix;
 const route = `${prefix}${get_route(route_schemas.citations)}`;
 
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
   vi.useRealTimers();
 });

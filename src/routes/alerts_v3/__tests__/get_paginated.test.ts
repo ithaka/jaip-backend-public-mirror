@@ -29,7 +29,6 @@ import {
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

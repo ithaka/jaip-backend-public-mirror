@@ -40,7 +40,6 @@ const pdf_url = (collection: string, filename: string) =>
   pdf_route.replace(":collection", collection).replace(":filename", filename);
 
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

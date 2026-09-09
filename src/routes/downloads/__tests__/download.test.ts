@@ -33,7 +33,6 @@ const download_url = (index_id: string) =>
   download_route.replace(":index_id", index_id);
 
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

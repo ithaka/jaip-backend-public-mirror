@@ -33,7 +33,6 @@ const metadata_url = (collection: string) =>
   metadata_route.replace(":collection", collection);
 
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

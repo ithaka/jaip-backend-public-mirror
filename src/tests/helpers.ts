@@ -73,7 +73,9 @@ export const db_mock = {
   get_headwords: vi.fn().mockName("get_headwords"),
 } as JAIPDatabase as Record<keyof JAIPDatabase, Mock>;
 
-export const discover_mock = vi.fn().mockName("discover");
+export const discover_mock: Mock<
+  (service: string) => Promise<[string, Error | null]>
+> = vi.fn().mockName("discover");
 
 beforeEach(() => {
   db_mock.get_facilities.mockResolvedValue([[], null]);

@@ -1,4 +1,4 @@
-import { afterEach, expect, test, vi } from "vitest";
+import { expect, test, vi } from "vitest";
 import {
   build_test_server,
   db_mock,
@@ -25,10 +25,6 @@ import {
 
 const app = build_test_server([route_settings]);
 const prefix = route_settings.options.prefix;
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
 
 // USERS
 // GET

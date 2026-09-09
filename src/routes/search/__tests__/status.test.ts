@@ -33,7 +33,6 @@ import { status_options } from "../../../database/prisma/client.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

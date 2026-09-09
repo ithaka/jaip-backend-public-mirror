@@ -27,7 +27,6 @@ import {
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

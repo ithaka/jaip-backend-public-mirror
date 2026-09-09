@@ -43,7 +43,6 @@ const mocked_get_s3_object = vi.mocked(get_s3_object);
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

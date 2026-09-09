@@ -35,8 +35,6 @@ describe("Analytics handlers", () => {
   let mockReply: FastifyReply;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     mockFastify = {
       event_logger: {
         pep_standard_log_start: vi.fn(),

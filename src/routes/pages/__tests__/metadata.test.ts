@@ -33,7 +33,6 @@ import { METADATA_ROUTE_PREFIX } from "../../../consts/index.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 

@@ -24,7 +24,6 @@ import { map_restricted_items_list } from "../helpers.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
-  vi.clearAllMocks();
   vi.resetAllMocks();
 });
 
