@@ -11,6 +11,7 @@ import {
   statuses,
   globally_restricted_items,
   targeted_alerts,
+  request_permissions,
 } from "../database/prisma/client.js";
 import { JAIPDatabase } from "./index.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
@@ -1225,6 +1226,64 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return [{} as ungrouped_features, error];
+    }
+  }
+
+  async create_request_permission(
+    query: Prisma.request_permissionsCreateArgs,
+  ): Promise<[request_permissions, Error | null]> {
+    try {
+      const { facility_id, admin_id, start_date, end_date } = query.data;
+      // facility_id is unique, so a facility can only have one active request permission.
+      // Upsert instead of create in case a soft-deleted (past end_date) row already exists.
+      const permission = await this.client.request_permissions.upsert({
+        where: { facility_id: facility_id as number },
+        // If the facility_id does not exist, create a new row with the provided data.
+        create: query.data,
+        // On conflict (i.e., if a row with the same facility_id already exists), update
+        // the following values in the existing row.
+        update: {
+          admin_id,
+          start_date: start_date ?? new Date(),
+          end_date: end_date ?? null,
+          updated_at: new Date(),
+        },
+      });
+      return [permission, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as request_permissions, error];
+    }
+  }
+
+  async remove_request_permission(id: number): Promise<Error | null> {
+    try {
+      // Set the end_date of the request permission to yesterday to effectively remove it
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      await this.client.request_permissions.update({
+        where: { id },
+        data: {
+          end_date: yesterday,
+          updated_at: new Date(),
+        },
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
+    }
+  }
+
+  async update_request_permission(
+    query: Prisma.request_permissionsUpdateArgs,
+  ): Promise<[request_permissions, Error | null]> {
+    try {
+      const permission = await this.client.request_permissions.update(query);
+      return [permission, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [{} as request_permissions, error];
     }
   }
 }

@@ -1,34 +1,12 @@
-# vulnerable transitive dependencies in tar and brace-expansion. 
-# We don't do archive extraction or multipart upload handlers, so
-# these shouldn't affect us
-CVE-2026-13149 exp:2026-09-15
-CVE-2026-59873 exp:2026-09-15
-CVE-2026-59874 exp:2026-09-15
-
-# vulnerable fast-uri transitive dependency mismatch with Node URL parsing.
-# We're not doing uri-generation from user inputs, so it shouldn't affect us
-CVE-2026-16221 exp:2026-09-15
-
 # vulnerability in brace-expansion, which is a transitive dependency,
 # and the vulnerable code isn't exposed here
-CVE-2026-14257 exp:2026-09-15
-
-# vulnerability in fastify, but only using http/2, which we are not
-CVE-2026-47219 exp:2026-09-15
-
-# vulnerability in fastify/static, which is in this case a dependency of 
-# the swagger-ui. That's only exposed internally, so we don't have to worry
-# much about that.
-CVE-2026-15074 exp:2026-09-15
+CVE-2026-14257 exp:2026-10-31
 
 # vulnerability in ip-address. It's in the base node image, but we're not using it.
-CVE-2026-69192 exp:2026-09-15
+CVE-2026-69192 exp:2026-10-31
 
 # vulnerability in brace-expansion, in the npm internals
-CVE-2026-69152 exp:2026-09-15
-
-# vulnerability in unidici. This vuln affects websockets, which we aren't using
-CVE-2026-12151 exp:2026-09-15
+CVE-2026-69152 exp:2026-10-31
 
 # vulnerability in tar, bundled inside npm itself (not our own dependency tree -
 # not in yarn.lock). No npm release bundles the fixed tar version yet. We don't
@@ -38,3 +16,6 @@ CVE-2026-73566 exp:2026-09-30
 
 # vulnerabilities in libcrypto and libssl affecting QUIC servers, which we are not
 CVE-2026-14456 exp:2026-10-01
+
+# vulnerability in find-my-way, but it only affects http/2 servers, which this is not
+CVE-2026-47219 exp:2026-10-31

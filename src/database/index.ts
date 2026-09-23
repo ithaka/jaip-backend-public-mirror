@@ -7,6 +7,7 @@ import {
   ungrouped_features,
   globally_restricted_items,
   targeted_alerts,
+  request_permissions,
 } from "./prisma/client.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
 import { User } from "../types/entities.js";
@@ -223,4 +224,13 @@ export interface JAIPDatabase {
   update_ungrouped_feature: (
     subdomains_query: Prisma.ungrouped_featuresUpdateArgs,
   ) => Promise<[ungrouped_features, Error | null]>;
+
+  // REQUEST PERMISSIONS
+  create_request_permission: (
+    query: Prisma.request_permissionsCreateArgs,
+  ) => Promise<[request_permissions, Error | null]>;
+  remove_request_permission: (id: number) => Promise<Error | null>;
+  update_request_permission: (
+    query: Prisma.request_permissionsUpdateArgs,
+  ) => Promise<[request_permissions, Error | null]>;
 }

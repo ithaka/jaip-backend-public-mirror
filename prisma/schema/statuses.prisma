@@ -45,4 +45,5 @@ enum status_options {
   Approved
   Denied
   Incomplete
+  Suspended
 }
