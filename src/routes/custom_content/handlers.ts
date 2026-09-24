@@ -7,7 +7,13 @@ import {
   CUSTOM_CONTENT_METADATA,
   CUSTOM_CONTENT_S3_PATH,
 } from "../../consts/index.js";
-import { get_s3_object, get_jaip_s3_url } from "../../utils/aws-s3.js";
+import {
+  attach_abortable_stream,
+  get_s3_object,
+  get_jaip_s3_url,
+  is_valid_byte_range,
+} from "../../utils/aws-s3.js";
+import { S3ServiceException } from "@aws-sdk/client-s3";
 
 export const get_metadata_handler =
   (fastify: FastifyInstance) =>
@@ -97,10 +103,26 @@ export const pdf_handler =
       log_payload.page_path = substring;
       fastify.log.info(`Getting S3 object for ${substring}`);
       const path = get_jaip_s3_url(substring);
-      const [stream, s3_error] = await get_s3_object(path);
+
+      const is_valid_range = is_valid_byte_range(request.headers.range);
+      if (is_valid_range instanceof Error) {
+        throw is_valid_range;
+      }
+      const range = is_valid_range ? request.headers.range : undefined;
+
+      const [stream, s3_error, metadata] = await get_s3_object(path, range);
       if (s3_error) {
         throw s3_error;
       }
+      if (metadata?.content_range) {
+        reply.code(206);
+        reply.header("content-range", metadata.content_range);
+      }
+      if (metadata?.content_length !== undefined) {
+        reply.header("content-length", metadata.content_length);
+      }
+      reply.header("accept-ranges", metadata?.accept_ranges || "bytes");
+      attach_abortable_stream(request, stream);
       await reply.type("application/pdf").send(stream);
 
       fastify.event_logger.pep_standard_log_complete(
@@ -119,6 +141,12 @@ export const pdf_handler =
         error.code === AxiosError.ERR_BAD_REQUEST
       ) {
         reply.code(404).send({ status: 404 });
+      } else if (
+        (error instanceof S3ServiceException &&
+          error.$metadata.httpStatusCode === 416) ||
+        (error as unknown as { status_code?: number }).status_code === 416
+      ) {
+        reply.code(416).send("Requested range not satisfiable");
       } else {
         reply.code(500).send(error.message);
       }

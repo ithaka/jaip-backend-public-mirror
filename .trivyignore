@@ -1,6 +1,29 @@
-# vulnerability in brace-expansion, which is a transitive dependency,
-# and the vulnerable code isn't exposed here
+# vulnerable transitive dependencies in tar and brace-expansion.
+# We do not extract untrusted archives or handle multipart uploads, so the
+# vulnerable tar/brace-expansion code paths are not exercised by this service.
+CVE-2026-13149 exp:2026-10-31
+CVE-2026-59873 exp:2026-10-31
+CVE-2026-59874 exp:2026-10-31
+
+# vulnerable fast-uri transitive dependency mismatch with Node URL parsing.
+# We do not generate arbitrary URIs from untrusted input in this service, so this
+# does not create a reachable exploit path.
+CVE-2026-16221 exp:2026-10-31
+
+# vulnerable brace-expansion bundled in npm internals. The service does not call
+# the affected glob expansion code at runtime, and this path is outside the app's
+# dependency tree.
 CVE-2026-14257 exp:2026-10-31
+
+# vulnerability in find-my-way bundled via Fastify. This service listens on plain
+# HTTP/1.1 only; it does not enable `http2: true`, so the HTTP/2 DoS code path is
+# not active.
+CVE-2026-47219 exp:2026-10-31
+
+# vulnerability in fastify/static, which is in this case a dependency of
+# the swagger-ui. That's only exposed internally, so we don't have to worry
+# much about that.
+CVE-2026-15074 exp:2026-10-31
 
 # vulnerability in ip-address. It's in the base node image, but we're not using it.
 CVE-2026-69192 exp:2026-10-31
@@ -8,14 +31,11 @@ CVE-2026-69192 exp:2026-10-31
 # vulnerability in brace-expansion, in the npm internals
 CVE-2026-69152 exp:2026-10-31
 
-# vulnerability in tar, bundled inside npm itself (not our own dependency tree -
-# not in yarn.lock). No npm release bundles the fixed tar version yet. We don't
-# extract untrusted archives at runtime (we only run `node dist/server.js`), so
-# this shouldn't affect us. Re-check when npm ships a release with tar >=7.5.21.
-CVE-2026-73566 exp:2026-09-30
+# vulnerability in tar, bundled inside npm itself (not our own dependency tree).
+# We do not extract untrusted archives at runtime; the service only runs
+# `node dist/server.js` and does not accept archive upload processing.
+# Re-check when npm ships a release with tar >= 7.5.21.
+CVE-2026-73566 exp:2026-10-31
 
-# vulnerabilities in libcrypto and libssl affecting QUIC servers, which we are not
-CVE-2026-14456 exp:2026-10-01
-
-# vulnerability in find-my-way, but it only affects http/2 servers, which this is not
-CVE-2026-47219 exp:2026-10-31
+# vulnerabilities in libcrypto and libssl affecting QUIC servers, which we are not using
+CVE-2026-14456 exp:2026-10-31

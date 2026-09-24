@@ -9,10 +9,16 @@ import {
   get_md_from_cedar,
   get_page_url,
 } from "./helpers.js";
-import { get_s3_object } from "../../utils/aws-s3.js";
+import {
+  attach_abortable_stream,
+  get_s3_object,
+  is_valid_byte_range,
+} from "../../utils/aws-s3.js";
 import { AxiosError } from "axios";
 import { FEATURES } from "../../consts/index.js";
 import { S3ServiceException } from "@aws-sdk/client-s3";
+
+export { attach_abortable_stream } from "../../utils/aws-s3.js";
 
 export const page_handler =
   (fastify: FastifyInstance) =>
@@ -83,11 +89,33 @@ export const page_handler =
       }
       log_payload.page_path = url;
       fastify.log.info(`Getting S3 object for ${url}`);
-      const [stream, s3_error] = await get_s3_object(url);
+
+      // Validate the requested byte range (if it exists) before fetching the S3 object.
+      const is_valid_range = is_valid_byte_range(request.headers.range);
+      if (is_valid_range instanceof Error) {
+        throw is_valid_range;
+      }
+      const range = is_valid_range ? request.headers.range : undefined;
+
+      // Fetch the S3 object using the validated byte range (if any).
+      const [stream, s3_error, metadata] = await get_s3_object(url, range);
       if (s3_error) {
         throw s3_error;
       }
 
+      // If no content range is returned, assume the entire object is being served. Using ranges is entirely
+      // optional and depends on the client's request. The PDF viewer will be managing this on the frontend.
+      if (metadata?.content_range) {
+        reply.code(206);
+        reply.header("content-range", metadata.content_range);
+      }
+      // Set the content length header if available.
+      if (metadata?.content_length !== undefined) {
+        reply.header("content-length", metadata.content_length);
+      }
+      // Set the accept-ranges header to indicate support for byte-range requests.
+      reply.header("accept-ranges", metadata?.accept_ranges || "bytes");
+      attach_abortable_stream(request, stream);
       await reply.type("application/pdf").send(stream);
 
       fastify.log.info(`Getting entitlement map for ${iid}`);
@@ -119,6 +147,12 @@ export const page_handler =
         error.$metadata.httpStatusCode === 404
       ) {
         reply.code(404).send("Item not found");
+      } else if (
+        (error instanceof S3ServiceException &&
+          error.$metadata.httpStatusCode === 416) ||
+        (error as unknown as { status_code?: number }).status_code === 416
+      ) {
+        reply.code(416).send("Requested range not satisfiable");
       } else {
         reply.code(500).send(error.message);
       }

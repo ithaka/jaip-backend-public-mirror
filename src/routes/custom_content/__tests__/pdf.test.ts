@@ -1,6 +1,10 @@
+import { EventEmitter } from "node:events";
+import { PassThrough } from "node:stream";
+import type { FastifyRequest } from "fastify";
 import { afterEach, expect, test, vi } from "vitest";
 
-vi.mock("../../../utils/aws-s3.js", () => ({
+vi.mock("../../../utils/aws-s3.js", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../utils/aws-s3.js")>()),
   get_s3_object: vi.fn(),
   get_jaip_s3_url: vi.fn(),
 }));
@@ -22,6 +26,7 @@ import {
   valid_admin_subdomain,
   valid_student_subdomain,
 } from "../../../tests/fixtures/auth/fixtures.js";
+import { attach_abortable_stream } from "../../../utils/aws-s3.js";
 import {
   basic_facility,
   basic_facility_without_permissions,
@@ -41,6 +46,17 @@ const pdf_url = (collection: string, filename: string) =>
 
 afterEach(() => {
   vi.resetAllMocks();
+});
+
+test("destroy the stream when the client connection closes", () => {
+  const request = { raw: new EventEmitter() } as FastifyRequest;
+  const stream = new PassThrough();
+  const destroySpy = vi.spyOn(stream, "destroy");
+
+  attach_abortable_stream(request, stream);
+  request.raw.emit("close");
+
+  expect(destroySpy).toHaveBeenCalledTimes(1);
 });
 
 test(`requests the ${pdf_route} route with a valid admin`, async () => {
@@ -74,6 +90,76 @@ test(`requests the ${pdf_route} route with a valid admin`, async () => {
   expect(log_complete).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
   expect(res.headers["content-type"]).toContain("application/pdf");
+});
+
+// Tests for handling valid byte range requests
+test(`requests a range from the ${pdf_route} route`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  mocked_get_jaip_s3_url.mockReturnValue(
+    "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
+  );
+  mocked_get_s3_object.mockResolvedValueOnce([
+    Buffer.from("pdf") as unknown as NodeJS.ReadableStream,
+    null,
+    {
+      content_range: "bytes 0-2/10",
+      content_length: 3,
+      accept_ranges: "bytes",
+    },
+  ]);
+
+  const res = await app.inject({
+    method: "GET",
+    url: pdf_url("reentry", "ny-connections-2025.pdf"),
+    headers: {
+      host: valid_admin_subdomain,
+      range: "bytes=0-2",
+    },
+  });
+
+  expect(mocked_get_s3_object).toHaveBeenCalledWith(
+    "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
+    "bytes=0-2",
+  );
+  expect(res.statusCode).toEqual(206);
+  expect(res.headers["content-range"]).toEqual("bytes 0-2/10");
+  expect(res.headers["content-length"]).toEqual("3");
+  expect(res.headers["accept-ranges"]).toEqual("bytes");
+});
+
+// Tests for handling unsatisfiable byte range requests
+test.each([
+  "bytes=2-0",
+  "bytes=-0",
+  "bytes=0-2,4-6",
+  "bytes=abc",
+  " bytes=0-2",
+])(`returns 416 for invalid range %s`, async (range) => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+  db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
+  mocked_get_jaip_s3_url.mockReturnValue(
+    "s3://ithaka-jaip/test/jaip-collections/reentry/ny-connections-2025.pdf",
+  );
+  mocked_get_s3_object.mockResolvedValueOnce([
+    Buffer.from("pdf") as unknown as NodeJS.ReadableStream,
+    null,
+  ]);
+
+  const res = await app.inject({
+    method: "GET",
+    url: pdf_url("reentry", "ny-connections-2025.pdf"),
+    headers: {
+      host: valid_admin_subdomain,
+      range,
+    },
+  });
+
+  expect(mocked_get_s3_object).not.toHaveBeenCalled();
+  expect(res.statusCode).toEqual(416);
+  expect(res.payload).toEqual("Requested range not satisfiable");
 });
 
 test(`requests the ${pdf_route} route with an admin lacking required features`, async () => {
