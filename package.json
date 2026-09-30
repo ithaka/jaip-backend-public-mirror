@@ -60,10 +60,10 @@
   "resolutions": {
     "brace-expansion@npm:^5.0.5": "npm:5.0.9",
     "brace-expansion@npm:^5.0.6": "npm:5.0.9",
-    "fast-uri@npm:^3.0.0": "npm:fast-uri@4.1.4",
-    "fast-uri@npm:^3.0.1": "npm:fast-uri@4.1.4",
-    "fast-uri@npm:^3.0.5": "npm:fast-uri@4.1.4",
-    "fast-uri@npm:^4.0.0": "npm:fast-uri@4.1.4",
+    "fast-uri@npm:^3.0.0": "npm:fast-uri@4.1.5",
+    "fast-uri@npm:^3.0.1": "npm:fast-uri@4.1.5",
+    "fast-uri@npm:^3.0.5": "npm:fast-uri@4.1.5",
+    "fast-uri@npm:^4.0.0": "npm:fast-uri@4.1.5",
     "form-data": "^4.0.6",
     "@eslint/plugin-kit": "^0.7.2",
     "tar": "^7.5.22"
