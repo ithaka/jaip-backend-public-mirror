@@ -39,3 +39,11 @@ CVE-2026-73566 exp:2026-10-31
 
 # vulnerabilities in libcrypto and libssl affecting QUIC servers, which we are not using
 CVE-2026-14456 exp:2026-10-31
+
+# vulnerabilities in brace-expansion and undici bundled inside npm itself
+# (/usr/local/lib/node_modules/npm), not our app dependency tree. Runtime only runs
+# `node dist/server.js`; npm is never invoked with untrusted glob patterns or WebSockets.
+# Re-check when npm ships brace-expansion >= 5.0.11 and undici >= 6.28.1.
+CVE-2026-102276 exp:2026-10-31
+CVE-2026-102278 exp:2026-10-31
+CVE-2026-19534 exp:2026-10-31

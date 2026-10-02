@@ -8,3 +8,4 @@ Node.js/TypeScript API service for JSTOR Access in Prisons web application.
 - **[Database](database.md)** - Database configuration
 - **[API Routes](routes.md)** - Endpoint documentation
 - **[Architecture](architecture.md)** - System overview
+- **[Runbook](runbook.md)** - Runbook documentation
