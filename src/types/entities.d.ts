@@ -11,6 +11,7 @@ export interface User {
   name: string;
   type: string | null;
   ungrouped_features: UngroupedFeatureDetails;
+  request_permissions?: RequestPermission | null;
   // This value is only used when adding or editing users
   contact?: string;
   groups: Array<Group>;
@@ -20,12 +21,19 @@ export interface User {
   facilities?: Entity[];
 }
 
+export interface RequestPermission {
+  id?: number;
+  start_date: Date;
+  end_date: Date | null;
+}
+
 export interface Entity {
   id?: number;
   name?: string;
   // This is the only necessary value when adding or editing
   type: EntityType;
   ungrouped_features?: UngroupedFeatureDetails;
+  request_permissions?: RequestPermission | null;
   // This value is only used when adding or editing
   contact?: string;
   groups?: Array<Group>;

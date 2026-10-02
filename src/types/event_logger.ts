@@ -96,6 +96,7 @@ export interface CompleteLogPayload {
   download_path: string;
   alerts: targeted_alerts[];
   alert_id: number;
+  facility_id: number;
   collection: string;
   filename: string;
   wordnik_data: WordnikDataLog;

@@ -143,6 +143,12 @@ export const get_facilities = async (
       ...get_entities_where_clause(groups, user_roles.user, query),
       select: {
         ...get_many_entities_select_clause(user_roles.user, groups),
+        request_permissions: {
+          select: {
+            start_date: true,
+            end_date: true,
+          },
+        },
         subdomains_facilities: {
           select: {
             subdomain: true,

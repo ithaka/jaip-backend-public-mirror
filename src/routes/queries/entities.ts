@@ -14,6 +14,12 @@ export const get_facility_query = (
   },
   select: {
     ...get_entity_select_clause(user_roles.user),
+    request_permissions: {
+      select: {
+        start_date: true,
+        end_date: true,
+      },
+    },
     subdomains_facilities: {
       select: {
         sitecode: true,
@@ -34,7 +40,7 @@ export const get_user_query = (arr: string[]): Prisma.usersFindFirstArgs => ({
 
 export const get_entity_select_clause = (
   role: user_roles,
-): Prisma.usersSelect => ({
+): Pick<Prisma.usersSelect, "jstor_id" | "entities"> => ({
   jstor_id: true,
   entities: {
     select: {
@@ -93,7 +99,7 @@ export const get_entity_select_clause = (
 export const get_many_entities_select_clause = (
   role: user_roles,
   groups: number[],
-): Prisma.usersSelect => ({
+): Pick<Prisma.usersSelect, "jstor_id" | "entities"> => ({
   jstor_id: true,
   entities: {
     select: {
@@ -201,6 +207,9 @@ export const map_entities = (user: DBEntity): User => {
         return groups;
       }, [] as Array<Group>) || ([] as Array<Group>),
   };
+  if (user.request_permissions) {
+    entity.request_permissions = user.request_permissions;
+  }
   if (user.uuid) {
     entity.uuid = user.uuid;
   }

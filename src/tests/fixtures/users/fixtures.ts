@@ -608,6 +608,14 @@ export const basic_facility = {
   },
 };
 
+export const basic_facility_with_request_permissions = {
+  ...basic_facility,
+  request_permissions: {
+    start_date: new Date(Date.now() - 1000),
+    end_date: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  },
+};
+
 export const basic_facility_with_restricted_items_subscription = {
   jstor_id: "test@test.com",
   uuid: "uuid",

@@ -45,5 +45,8 @@ enum status_options {
   Approved
   Denied
   Incomplete
+  // Suspended replaces a facility's outstanding Pending request when its request permission is
+  // turned off; entity_id still identifies the facility. If an item/group's latest row is
+  // Suspended, its status history is not displayed to users.
   Suspended
 }

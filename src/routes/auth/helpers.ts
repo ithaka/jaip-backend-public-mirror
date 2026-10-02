@@ -390,6 +390,13 @@ export const get_current_user = async (
                   user_roles.user,
                   groups_with_restricted_items_access,
                 ),
+                request_permissions: {
+                  select: {
+                    id: true,
+                    start_date: true,
+                    end_date: true,
+                  },
+                },
               },
             });
           if (facilities_error) {

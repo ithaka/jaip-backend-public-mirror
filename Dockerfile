@@ -28,8 +28,8 @@ ENV NODE_ENV=production
 # Pick up patched OS packages (e.g. openssl) and npm's own bundled deps
 # (e.g. pacote, tar) that aren't pinned via yarn.lock.
 RUN apk update && apk upgrade --no-cache \
-&& npm install -g npm@latest \
-&& rm -rf /var/cache/apk/* /root/.npm
+&& rm -rf /var/cache/apk/* /root/.npm \
+&& rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules

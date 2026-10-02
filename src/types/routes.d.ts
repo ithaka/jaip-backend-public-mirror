@@ -249,6 +249,22 @@ export interface EditAlertRequest extends AddAlertRequest {
   id: number;
 }
 
+export interface AddRequestPermissionsRequest {
+  facility_id: number;
+  start_date: string;
+  end_date?: string | null;
+}
+
+export interface EditRequestPermissionsRequest {
+  facility_id: number;
+  start_date: string;
+  end_date?: string | null;
+}
+
+export interface DeleteRequestPermissionsRequest {
+  facility_id: number;
+}
+
 interface RestrictedItem extends globally_restricted_items {
   entities?: {
     name: string;

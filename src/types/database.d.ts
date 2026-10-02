@@ -1,4 +1,5 @@
 import { StatusOptions } from "./media_record.js";
+import { RequestPermission } from "./entities.js";
 
 export interface IPBypassResult {
   facilities: {
@@ -11,6 +12,7 @@ export interface DBEntity {
   jstor_id: string;
   entities: Entities;
   uuid?: string;
+  request_permissions?: RequestPermission | null;
   subdomains_facilities?: {
     sitecode: string;
     subdomain: string;
