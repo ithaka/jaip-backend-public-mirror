@@ -106,9 +106,8 @@ test(`requests the ${search_route} route with a facility and valid body and no s
       data: search3_results,
     });
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses
-    .mockResolvedValueOnce([[], null])
-    .mockResolvedValueOnce([[], null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([[], null]);
+  db_mock.get_statuses.mockResolvedValueOnce([[], null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
@@ -137,9 +136,8 @@ test(`requests the ${search_route} route with a facility and valid body and bulk
       data: search3_results,
     });
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses
-    .mockResolvedValueOnce([bulk_statuses, null])
-    .mockResolvedValueOnce([[], null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([[], null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
@@ -169,9 +167,8 @@ test(`requests the ${search_route} route with a facility and valid body and both
       data: search3_results,
     });
   db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses
-    .mockResolvedValueOnce([bulk_statuses, null])
-    .mockResolvedValueOnce([item_statuses, null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
@@ -200,9 +197,8 @@ test(`requests the ${search_route} route with a reviewer and valid body and both
       data: search3_results,
     });
   db_mock.get_first_user.mockResolvedValueOnce(basic_reviewer);
-  db_mock.get_statuses
-    .mockResolvedValueOnce([bulk_statuses, null])
-    .mockResolvedValueOnce([item_statuses, null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 

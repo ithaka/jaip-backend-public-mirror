@@ -91,9 +91,8 @@ test.each(route_options)(
       4,
       null,
     ]);
-    db_mock.get_statuses
-      .mockResolvedValueOnce([bulk_statuses, null])
-      .mockResolvedValueOnce([item_statuses, null]);
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+    db_mock.get_statuses.mockResolvedValueOnce([item_statuses, null]);
     db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
     const res = await app.inject({
@@ -154,9 +153,8 @@ test.each(route_options)(
       4,
       null,
     ]);
-    db_mock.get_statuses
-      .mockResolvedValueOnce([bulk_statuses, null])
-      .mockResolvedValueOnce([item_statuses, null]);
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+    db_mock.get_statuses.mockResolvedValueOnce([item_statuses, null]);
     db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
     const res = await app.inject({
@@ -252,9 +250,8 @@ test(`requests the ${route_options[0].route} route with a facility and valid bod
     0,
     null,
   ]);
-  db_mock.get_statuses
-    .mockResolvedValueOnce([bulk_statuses, null])
-    .mockResolvedValueOnce([item_statuses, null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
@@ -266,7 +263,7 @@ test(`requests the ${route_options[0].route} route with a facility and valid bod
   expect(discover_mock).toHaveBeenCalledTimes(2);
   expect(axios.post).toHaveBeenCalledTimes(2);
   expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_statuses).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.json()).toEqual({
     docs: processed_search_response_with_mixed_statuses_and_status_order,
     total: search3_results.total,
@@ -292,9 +289,8 @@ test(`requests the ${route_options[0].route} route with a reviewer and valid bod
     0,
     null,
   ]);
-  db_mock.get_statuses
-    .mockResolvedValueOnce([bulk_statuses, null])
-    .mockResolvedValueOnce([item_statuses, null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+  db_mock.get_statuses.mockResolvedValueOnce([item_statuses, null]);
   db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
   db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
 
@@ -311,7 +307,7 @@ test(`requests the ${route_options[0].route} route with a reviewer and valid bod
   expect(axios.post).toHaveBeenCalledTimes(2);
   expect(db_mock.get_all_tokens).toHaveBeenCalledTimes(1);
   expect(db_mock.get_search_statuses).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_statuses).toHaveBeenCalledTimes(2);
+  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
   expect(res.json()).toEqual({
     docs: processed_search_response_with_mixed_statuses_reviewer_and_status_order,
     total: search3_results.total,

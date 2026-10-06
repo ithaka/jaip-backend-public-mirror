@@ -36,7 +36,7 @@ export const attach_bulk_approval = async (
     `Getting bulk approval statuses using ${codes.length} codes`,
   );
   try {
-    const [response, error] = await fastify.db.get_statuses(
+    const [response, error] = await fastify.db.get_bulk_statuses(
       bulk_approval_query(type, codes, groups),
     );
     if (error) {

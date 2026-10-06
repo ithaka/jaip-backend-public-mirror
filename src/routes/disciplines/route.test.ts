@@ -52,7 +52,7 @@ test(`requests the ${disciplines_route} route with a facility and no statuses`, 
       data: disciplines_response,
     }) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses.mockResolvedValueOnce([[], null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "GET",
@@ -77,7 +77,7 @@ test(`requests the ${disciplines_route} route with a facility and statuses`, asy
       data: disciplines_response,
     }) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses.mockResolvedValueOnce([
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([
     bulk_approval_statuses_disciplines,
     null,
   ]);
@@ -117,7 +117,7 @@ test(`requests the ${journals_route} route with a facility and no statuses`, asy
       data: journals_response,
     }) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses.mockResolvedValueOnce([[], null]);
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([[], null]);
 
   const res = await app.inject({
     method: "GET",
@@ -142,7 +142,7 @@ test(`requests the ${journals_route} route with a facility and statuses`, async 
       data: journals_response,
     }) as typeof axios.get;
   db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
-  db_mock.get_statuses.mockResolvedValueOnce([
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([
     bulk_approval_statuses_journals,
     null,
   ]);

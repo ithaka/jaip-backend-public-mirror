@@ -74,7 +74,7 @@ test.each(routes)(
       data: cedar_item_view_response,
     });
     db_mock.get_item_status.mockResolvedValue([null, null]);
-    db_mock.get_statuses.mockResolvedValue([[], null]);
+    db_mock.get_bulk_statuses.mockResolvedValue([[], null]);
 
     const res = await app.inject({
       method: "GET",
@@ -87,7 +87,7 @@ test.each(routes)(
     expect(res.payload).toStrictEqual("");
     expect(axios.get).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-    expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(403);
   },
 );
@@ -156,7 +156,7 @@ test.each(routes)(
     ]);
 
     db_mock.get_item_status.mockResolvedValueOnce([null, null]);
-    db_mock.get_statuses.mockResolvedValueOnce([
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([
       [approved_discipline_response],
       null,
     ]);
@@ -173,7 +173,7 @@ test.each(routes)(
     expect(axios.get).toHaveBeenCalledTimes(2);
     expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-    expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
   },
 );
@@ -200,7 +200,7 @@ test.each(routes)(
     ]);
 
     db_mock.get_item_status.mockResolvedValueOnce([null, null]);
-    db_mock.get_statuses.mockResolvedValueOnce([
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([
       [approved_journal_response],
       null,
     ]);
@@ -217,7 +217,7 @@ test.each(routes)(
     expect(axios.get).toHaveBeenCalledTimes(2);
     expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-    expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+    expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toEqual(200);
   },
 );

@@ -388,6 +388,20 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
 
+  async get_bulk_statuses(
+    query: Prisma.statusesFindManyArgs,
+  ): Promise<[Status[], Error | null]> {
+    try {
+      const statuses = (await this.client.statuses.findMany(
+        query,
+      )) as unknown as Status[];
+      return [statuses, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
+    }
+  }
+
   async create_request_statuses(
     data: Prisma.statusesCreateManyInput[],
     comments: string = "",

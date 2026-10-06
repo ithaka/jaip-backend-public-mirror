@@ -54,7 +54,7 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
     data: cedar_item_view_response,
   });
   db_mock.get_item_status.mockResolvedValue([null, null]);
-  db_mock.get_statuses.mockResolvedValue([[], null]);
+  db_mock.get_bulk_statuses.mockResolvedValue([[], null]);
 
   const res = await app.inject({
     method: "GET",
@@ -67,7 +67,7 @@ test(`requests the ${metadata_route} route with a facility and no status`, async
   expect(res.json()).toStrictEqual(metadata_response_forbidden);
   expect(axios.get).toHaveBeenCalledTimes(1);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(403);
 });
 
@@ -116,7 +116,7 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
       data: ale_response,
     });
   db_mock.get_item_status.mockResolvedValueOnce([null, null]);
-  db_mock.get_statuses.mockResolvedValueOnce([
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([
     [approved_discipline_response],
     null,
   ]);
@@ -132,7 +132,7 @@ test(`requests the ${metadata_route} route with a facility and discipline approv
   expect(res.json()).toStrictEqual(metadata_response_allowed);
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
 
@@ -151,7 +151,7 @@ test(`requests the ${metadata_route} route with a facility and unlisted pseudo d
       data: ale_response,
     });
   db_mock.get_item_status.mockResolvedValueOnce([null, null]);
-  db_mock.get_statuses.mockResolvedValueOnce([
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([
     [approved_pseudo_discipline_response],
     null,
   ]);
@@ -167,7 +167,7 @@ test(`requests the ${metadata_route} route with a facility and unlisted pseudo d
   expect(res.json()).toStrictEqual(metadata_response_allowed_pseudo);
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
 
@@ -186,7 +186,7 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
       data: ale_response,
     });
   db_mock.get_item_status.mockResolvedValueOnce([null, null]);
-  db_mock.get_statuses.mockResolvedValueOnce([
+  db_mock.get_bulk_statuses.mockResolvedValueOnce([
     [approved_journal_response],
     null,
   ]);
@@ -202,7 +202,7 @@ test(`requests the ${metadata_route} route with a facility and journal approval`
   expect(res.json()).toStrictEqual(metadata_response_allowed);
   expect(axios.get).toHaveBeenCalledTimes(2);
   expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-  expect(db_mock.get_statuses).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_bulk_statuses).toHaveBeenCalledTimes(1);
   expect(res.statusCode).toEqual(200);
 });
 

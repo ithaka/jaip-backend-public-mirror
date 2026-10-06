@@ -94,6 +94,9 @@ export interface JAIPDatabase {
   get_statuses: (
     query: Prisma.statusesFindManyArgs,
   ) => Promise<[Status[], Error | null]>;
+  get_bulk_statuses: (
+    query: Prisma.statusesFindManyArgs,
+  ) => Promise<[Status[], Error | null]>;
   get_item_status: (
     query: Prisma.statusesFindFirstArgs,
   ) => Promise<[Status | null, Error | null]>;

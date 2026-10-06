@@ -23,6 +23,7 @@ export const db_mock = {
   manage_entity: vi.fn().mockName("manage_entity"),
   get_alerts: vi.fn().mockName("get_alerts"),
   get_statuses: vi.fn().mockName("get_statuses"),
+  get_bulk_statuses: vi.fn().mockName("get_bulk_statuses"),
   get_item_status: vi.fn().mockName("get_item_status"),
   create_request_statuses: vi.fn().mockName("create_requests"),
   create_statuses: vi.fn().mockName("create_requests"),

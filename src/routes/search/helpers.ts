@@ -262,7 +262,7 @@ export const get_bulk_statuses = async (
   groups: number[],
 ): Promise<[Status[], Error | null]> => {
   try {
-    const [results, error] = await db.get_statuses({
+    const [results, error] = await db.get_bulk_statuses({
       where: {
         jstor_item_type: {
           in: [jstor_types.discipline, jstor_types.headid],
