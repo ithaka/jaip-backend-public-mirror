@@ -20,6 +20,36 @@ import { ensure_error } from "../utils/index.js";
 import { Alert } from "../types/alerts.js";
 import { Subdomain } from "../types/routes.js";
 
+/**
+ * Locks the advisory keys for a set of statuses, to prevent race conditions when multiple facilities
+ * are trying to create or update statuses for the same item/group.
+ *
+ * @param tx
+ * @param data
+ */
+const lock_status_keys = async (
+  tx: Prisma.TransactionClient,
+  data: Prisma.statusesCreateManyInput[],
+) => {
+  const keys = Array.from(
+    new Set(
+      data.map((status) =>
+        JSON.stringify([
+          status.jstor_item_id,
+          status.jstor_item_type,
+          status.group_id,
+        ]),
+      ),
+    ),
+  ).sort();
+
+  for (const key of keys) {
+    await tx.$queryRaw`
+      SELECT pg_advisory_xact_lock(hashtextextended(${key}, 0));
+    `;
+  }
+};
+
 export class PrismaJAIPDatabase implements JAIPDatabase {
   client: PrismaClient;
 
@@ -408,28 +438,26 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
   ) {
     try {
       await this.client.$transaction(async (tx) => {
-        // First check for any existing statuses in the specified groups for the specified items
+        await lock_status_keys(tx, data);
+
+        // Find the current group status for each requested item. A Pending or Approved
+        // status blocks requests from every facility in the group.
         const existing_statuses: statuses[] = await tx.$queryRaw`
-          WITH max_ids AS (
-                SELECT MAX(id) AS id
-                FROM statuses
-                WHERE group_id = ANY(${data.map((status) => status.group_id)}::INT[]) 
-                  AND jstor_item_id = ANY(${data.map((status) => status.jstor_item_id)}::TEXT[])
-                GROUP BY jstor_item_id, group_id
-            )
-            SELECT statuses.id, statuses.jstor_item_id, statuses.group_id, statuses.jstor_item_type, statuses.status
-            FROM statuses
-            WHERE statuses.id = ANY(SELECT id FROM max_ids);
+          SELECT DISTINCT ON (jstor_item_id, jstor_item_type, group_id)
+                 id, jstor_item_id, jstor_item_type, group_id, entity_id, status
+          FROM statuses
+          WHERE group_id = ANY(${data.map((status) => status.group_id)}::INT[])
+            AND jstor_item_id = ANY(${data.map((status) => status.jstor_item_id)}::TEXT[])
+          ORDER BY jstor_item_id, jstor_item_type, group_id, id DESC;
         `;
-        // Filter out any existing Approved or Pending statuses. We don't want to add multiple
-        // pending statuses or allow a new Pending status for an already approved item.
         const new_statuses = data.filter((status) => {
           return !existing_statuses.some((existing_status) => {
             return (
               existing_status.jstor_item_id === status.jstor_item_id &&
+              existing_status.jstor_item_type === status.jstor_item_type &&
               existing_status.group_id === status.group_id &&
-              (existing_status.status === status_options.Pending ||
-                existing_status.status === status_options.Approved)
+              (existing_status.status === status_options.Approved ||
+                existing_status.status === status_options.Pending)
             );
           });
         });
@@ -747,16 +775,18 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     user_id: number,
   ): Promise<Error | null> {
     try {
-      await this.client.statuses.createMany({
-        data: groups.map((group_id) => {
-          return {
-            jstor_item_type: jstor_types.doi,
-            jstor_item_id: doi,
-            status: status_options.Approved,
-            entity_id: user_id,
-            group_id: group_id,
-          };
-        }),
+      const data = groups.map((group_id) => {
+        return {
+          jstor_item_type: jstor_types.doi,
+          jstor_item_id: doi,
+          status: status_options.Approved,
+          entity_id: user_id,
+          group_id: group_id,
+        };
+      });
+      await this.client.$transaction(async (tx) => {
+        await lock_status_keys(tx, data);
+        await tx.statuses.createMany({ data });
       });
       return null;
     } catch (err) {

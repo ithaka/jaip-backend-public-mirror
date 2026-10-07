@@ -205,7 +205,9 @@ export const request_handler =
       log_payload.comments = comments;
       log_payload.group_id = group_id;
 
-      const db_object = dois.map((doi) => {
+      // Creating an array from the set ensure that we have no duplicate dois,
+      // which would create messy pending requests in the db.
+      const db_object = Array.from(new Set(dois)).map((doi) => {
         const obj = {
           jstor_item_type: jstor_types.doi,
           jstor_item_id: doi,
