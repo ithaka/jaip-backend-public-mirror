@@ -167,21 +167,24 @@ export const get_facility_statuses = async (
   groups: number[],
 ): Promise<[{ [key: string]: Status[] }, Error | null]> => {
   try {
-    const [results, error] = await db.get_statuses({
-      where: {
-        jstor_item_id: {
-          in: dois,
+    const [results, error] = await db.get_statuses(
+      {
+        where: {
+          jstor_item_id: {
+            in: dois,
+          },
+          group_id: {
+            in: groups,
+          },
         },
-        group_id: {
-          in: groups,
+        orderBy: {
+          id: "desc",
         },
+        distinct: ["jstor_item_id", "group_id"],
+        select: status_select,
       },
-      orderBy: {
-        created_at: "desc",
-      },
-      distinct: ["jstor_item_id", "group_id"],
-      select: status_select,
-    });
+      dois,
+    );
     if (error) {
       throw error;
     }
@@ -199,17 +202,20 @@ export const get_user_statuses = async (
   groups: number[],
 ): Promise<[{ [key: string]: Status[] }, Error | null]> => {
   try {
-    const [results, error] = await db.get_statuses({
-      where: {
-        jstor_item_id: {
-          in: dois,
+    const [results, error] = await db.get_statuses(
+      {
+        where: {
+          jstor_item_id: {
+            in: dois,
+          },
         },
+        orderBy: {
+          id: "desc",
+        },
+        select: status_select,
       },
-      orderBy: {
-        created_at: "desc",
-      },
-      select: status_select,
-    });
+      dois,
+    );
     if (error) {
       throw error;
     }

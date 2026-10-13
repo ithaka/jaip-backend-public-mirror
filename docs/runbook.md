@@ -1,24 +1,25 @@
 # Runbook
 
 ## Turnkey group approval (disciplines + journals)
+
 _Or, how to bulk-approve disciplines for a group (institution) while carving out
 exceptions at the individual journal level._
 
-This is the pattern used for the "full Colorado" rollout and uses the disciplines and journals approved therein as the model. 
+This is the pattern used for the "full Colorado" rollout and uses the disciplines and journals approved therein as the model.
 
-Variables that will need to be replaced: 
+Variables that will need to be replaced:
 
-* <GROUP_NAME> 
-* <GROUP_ID>
-* <ADMIN_SESSION_UUID>
+- <GROUP_NAME>
+- <GROUP_ID>
+- <ADMIN_SESSION_UUID>
 
 ### 0. Connect to the database
 
 Open three terminals:
 
-* **sidecar** runs the Polaris sidecar. Leave it running.
-* **psql** runs the queries in steps 1 and 4.
-* **curl** runs the curls in steps 2 and 3.
+- **sidecar** runs the Polaris sidecar. Leave it running.
+- **psql** runs the queries in steps 1 and 4.
+- **curl** runs the curls in steps 2 and 3.
 
 In the sidecar terminal, start:
 
@@ -45,7 +46,7 @@ Then connect:
 psql "$DATABASE_URL"
 ```
 
-This is **prod*. Only run `SELECT`s in psql. Changes go through the API in steps 2 and 3.
+This is _prod_. Only run `SELECT`s in psql. Changes go through the API in steps 2 and 3.
 
 ## 1. Find the group and its current approvals
 
@@ -70,8 +71,8 @@ Swap `'discipline'` for `'headid'` (journals are stored as `headid`) to check jo
 
 ### 2. Bulk-approve disciplines
 
-Decide what belongs in the array of disciplines then POST it to the bulk endpoint. 
-Example below is the 'full Colorado' where economics and aquatic sciences are already approved. 
+Decide what belongs in the array of disciplines then POST it to the bulk endpoint.
+Example below is the 'full Colorado' where economics and aquatic sciences are already approved.
 
 ```bash
 curl -i -X POST 'https://admin.pep.jstor.org/api/v2/media-review/bulk' \
@@ -105,18 +106,18 @@ curl -i -X POST 'https://admin.pep.jstor.org/api/v2/media-review/bulk' \
 
 #### Notes:
 
-* groups accepts a list, so you can apply the same disciplines to multiple groups in one call.
-* Grab uuid browser cookies in an authenticated session on admin.pep.jstor.org 
-* Any discipline code omitted from the array is left as-is (not implicitly denied) — this endpoint only touches items you include in the payload.
-* Re-verify with the query from step 1 after the call. Expect a fresh  created_at timestamp per item, since every call inserts new rows.
-* Run the curl with `-i` so you can see the HTTP status. Success has an empty body, so without it a failure looks the same as a success.
-* **Requires `bulk_approve` in every group you belong to.** The permission check passes only if the `bulk_approve` feature is enabled for your user in *all* of your groups, not just the target group. If it is missing in any of them, the API returns `403` with an empty body and nothing is written.
-* **A `201` does not prove rows were written.** The endpoint only inserts for group ids that are in your own user's groups. Any other id is silently dropped and the request still returns `201`. A database error during the insert is also swallowed and returns `201`. Always confirm with a verification query (step 1 for disciplines, step 4 for journals).
-* A `500` with `session management failed: No session returned` means the `uuid` cookie was not recognized (expired or replaced). Nothing was written. Grab a fresh cookie and retry.
+- groups accepts a list, so you can apply the same disciplines to multiple groups in one call.
+- Grab uuid browser cookies in an authenticated session on admin.pep.jstor.org
+- Any discipline code omitted from the array is left as-is (not implicitly denied) — this endpoint only touches items you include in the payload.
+- Re-verify with the query from step 1 after the call. Expect a fresh created_at timestamp per item, since every call inserts new rows.
+- Run the curl with `-i` so you can see the HTTP status. Success has an empty body, so without it a failure looks the same as a success.
+- **Requires `bulk_approve` in every group you belong to.** The permission check passes only if the `bulk_approve` feature is enabled for your user in _all_ of your groups, not just the target group. If it is missing in any of them, the API returns `403` with an empty body and nothing is written.
+- **A `201` does not prove rows were written.** The endpoint only inserts for group ids that are in your own user's groups. Any other id is silently dropped and the request still returns `201`. A database error during the insert is also swallowed and returns `201`. Always confirm with a verification query (step 1 for disciplines, step 4 for journals).
+- A `500` with `session management failed: No session returned` means the `uuid` cookie was not recognized (expired or replaced). Nothing was written. Grab a fresh cookie and retry.
 
 ### 3. Carve out an individual-journal exception
 
-Denying a whole discipline (e.g. arthistory-discipline) turns off every journal in that discipline.  To restrict one or more specific journals deny the discipline and then individually approve every journal in that discipline except the one(s) you actually want excluded, using the journals key instead of disciplines. 
+Denying a whole discipline (e.g. arthistory-discipline) turns off every journal in that discipline. To restrict one or more specific journals deny the discipline and then individually approve every journal in that discipline except the one(s) you actually want excluded, using the journals key instead of disciplines.
 
 Journal entries are identified by JSTOR journal UUID.
 
@@ -224,4 +225,4 @@ WHERE jstor_item_id IN (
 
 Confirm the discipline-level row for the carved-out discipline reflects your intended top-level status (e.g. arthistory-discipline → Denied at the discipline level, but its journals individually Approved), and spot-check a couple of the individually-approved journal ids resolve to the expected status and timestamp.
 
-ᕕ( ᐛ )ᕗ 
+ᕕ( ᐛ )ᕗ

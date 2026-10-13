@@ -449,7 +449,14 @@ export const search_handler =
 
         // Add the individual statuses
         const mediaReviewStatuses = {} as { [key: string]: History };
+        const resolved_status_groups = new Set<number>();
         for (const status of document_statuses[new_doc.doi] || []) {
+          // Suspended means there is no displayable item status. Pending is a request
+          // rather than a review decision, so an applicable bulk approval still wins.
+          if (status.status === status_options.Suspended) {
+            continue;
+          }
+
           const status_details = format_status_details(status);
           const new_status: History = {
             status: status.status,
@@ -463,14 +470,24 @@ export const search_handler =
             new_status.entityName = status.entities?.name;
             new_status.entityID = status.entities?.id;
           }
-          // We only need the first one, because they're already in descending order of created_at
+          // Statuses are newest-first. Resolve the current individual status once per
+          // group, so skipping a Pending row because of a bulk approval cannot expose
+          // an older individual decision from history.
           if (
             status.groups &&
             status.jstor_item_id === new_doc.doi &&
-            !mediaReviewStatuses[status.groups.id] &&
+            !resolved_status_groups.has(status.groups.id) &&
             groups.includes(status.groups.id)
           ) {
-            mediaReviewStatuses[status.groups.id] = new_status;
+            resolved_status_groups.add(status.groups.id);
+            const existing_status =
+              new_doc.mediaReviewStatuses[status.groups.id];
+            if (
+              status.status !== status_options.Pending ||
+              existing_status?.status !== status_options.Approved
+            ) {
+              mediaReviewStatuses[status.groups.id] = new_status;
+            }
           }
 
           // This is where we'll include all of them in the history for admins.
@@ -482,6 +499,16 @@ export const search_handler =
               new_doc.history.push(new_status);
             }
           }
+        }
+        // Sort the history by statusCreatedAt, newest first. This is only relevant for admins,
+        // since they see the history, but the db query is getting absurd and can't reasonably
+        // ensure this order in the query itself without getting even more absurd.
+        if (new_doc.history) {
+          new_doc.history.sort(
+            (left, right) =>
+              (right.statusCreatedAt?.getTime() ?? 0) -
+              (left.statusCreatedAt?.getTime() ?? 0),
+          );
         }
         // If there are individual statuses that are not bulk approval,
         // those should take precedence over the bulk approval statuses.

@@ -406,12 +406,190 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
 
   async get_statuses(
     query: Prisma.statusesFindManyArgs,
+    suspended_check_item_ids: string[],
   ): Promise<[Status[], Error | null]> {
     try {
-      const statuses = (await this.client.statuses.findMany(
-        query,
-      )) as unknown as Status[];
-      return [statuses, null];
+      if (!suspended_check_item_ids.length) {
+        const statuses = (await this.client.statuses.findMany(
+          query,
+        )) as unknown as Status[];
+        return [statuses, null];
+      }
+
+      // Classify latest-Suspended pairs by whether any facility still has a current Pending row.
+      const suspension_groups: {
+        jstor_item_id: string;
+        group_id: number | null;
+        pending_facility_ids: number[];
+        has_admin_decision: boolean;
+      }[] = await this.client.$queryRaw(Prisma.sql`
+        WITH latest_group AS (
+          SELECT DISTINCT ON (jstor_item_id, group_id)
+                 jstor_item_id, group_id, status
+          FROM statuses
+          WHERE jstor_item_id = ANY(${suspended_check_item_ids}::TEXT[])
+          ORDER BY jstor_item_id, group_id, id DESC
+        ), latest_facility AS (
+          SELECT DISTINCT ON (s.jstor_item_id, s.group_id, s.entity_id)
+                 s.id, s.jstor_item_id, s.jstor_item_type, s.group_id,
+                 s.entity_id, s.status
+          FROM statuses s
+          JOIN entities e ON e.id = s.entity_id
+          WHERE s.jstor_item_id = ANY(${suspended_check_item_ids}::TEXT[])
+            AND e.entity_type = ${entity_types.facilities}::entity_types
+          ORDER BY s.jstor_item_id, s.group_id, s.entity_id, s.id DESC
+        ), current_pending_facilities AS (
+          SELECT facility.*
+          FROM latest_facility facility
+          WHERE facility.status = ${status_options.Pending}::status_options
+            AND NOT EXISTS (
+              SELECT 1
+              FROM statuses newer
+              JOIN entities admin ON admin.id = newer.entity_id
+              WHERE newer.jstor_item_id = facility.jstor_item_id
+                AND newer.jstor_item_type IS NOT DISTINCT FROM facility.jstor_item_type
+                AND newer.group_id IS NOT DISTINCT FROM facility.group_id
+                AND newer.id > facility.id
+                AND newer.status IN (
+                  ${status_options.Approved}::status_options,
+                  ${status_options.Denied}::status_options,
+                  ${status_options.Incomplete}::status_options
+                )
+                AND admin.entity_type = ${entity_types.users}::entity_types
+            )
+        ), pending_facilities AS (
+          SELECT jstor_item_id, group_id, ARRAY_AGG(entity_id) AS facility_ids
+          FROM current_pending_facilities
+          GROUP BY jstor_item_id, group_id
+        ), latest_admin_decision AS (
+          SELECT DISTINCT ON (s.jstor_item_id, s.group_id)
+                 s.id, s.jstor_item_id, s.group_id
+          FROM statuses s
+          JOIN entities admin ON admin.id = s.entity_id
+          WHERE s.jstor_item_id = ANY(${suspended_check_item_ids}::TEXT[])
+            AND s.status IN (
+              ${status_options.Approved}::status_options,
+              ${status_options.Denied}::status_options,
+              ${status_options.Incomplete}::status_options
+            )
+            AND admin.entity_type = ${entity_types.users}::entity_types
+          ORDER BY s.jstor_item_id, s.group_id, s.id DESC
+        )
+        SELECT latest_group.jstor_item_id, latest_group.group_id,
+               COALESCE(pending_facilities.facility_ids, ARRAY[]::INT[]) AS pending_facility_ids,
+               latest_admin_decision.id IS NOT NULL AS has_admin_decision
+        FROM latest_group
+        LEFT JOIN pending_facilities USING (jstor_item_id, group_id)
+        LEFT JOIN latest_admin_decision USING (jstor_item_id, group_id)
+        WHERE latest_group.status = ${status_options.Suspended}::status_options
+      `);
+
+      const fully_suspended_item_groups = suspension_groups
+        .filter(
+          (group) =>
+            group.pending_facility_ids.length === 0 &&
+            !group.has_admin_decision,
+        )
+        .map(({ jstor_item_id, group_id }) => ({ jstor_item_id, group_id }));
+      const mixed_suspended_item_groups = suspension_groups.filter(
+        (group) => group.pending_facility_ids.length > 0,
+      );
+
+      const where: Prisma.statusesWhereInput = {
+        AND: [
+          query.where ?? {},
+          { status: { not: status_options.Suspended } },
+          {
+            NOT: {
+              OR: fully_suspended_item_groups,
+            },
+          },
+          ...(query.distinct?.includes("jstor_item_id") &&
+          query.distinct.includes("group_id")
+            ? [
+                {
+                  OR: [
+                    {
+                      NOT: {
+                        OR: mixed_suspended_item_groups.map(
+                          ({ jstor_item_id, group_id }) => ({
+                            jstor_item_id,
+                            group_id,
+                          }),
+                        ),
+                      },
+                    },
+                    ...mixed_suspended_item_groups.flatMap(
+                      ({ jstor_item_id, group_id, pending_facility_ids }) =>
+                        pending_facility_ids.map((facility_id) => ({
+                          jstor_item_id,
+                          group_id,
+                          entity_id: facility_id,
+                          status: status_options.Pending,
+                        })),
+                    ),
+                  ],
+                },
+              ]
+            : []),
+        ],
+      };
+      const statuses = (await this.client.statuses.findMany({
+        ...query,
+        where,
+      })) as unknown as Status[];
+
+      if (query.distinct?.includes("jstor_item_id")) {
+        return [statuses, null];
+      }
+
+      // For reviewer history, put the still-current Pending request first for mixed
+      // suspended pairs so it drives the displayed current status; retain remaining history.
+      const prioritized_statuses: Status[] = [];
+      const keyed_statuses = new Map<
+        string,
+        { jstor_item_id: string; group_id: number | null; statuses: Status[] }
+      >();
+      for (const status of statuses) {
+        const group_id = status.groups?.id ?? status.group_id ?? null;
+        const key = JSON.stringify([status.jstor_item_id, group_id]);
+        const entry = keyed_statuses.get(key) ?? {
+          jstor_item_id: status.jstor_item_id ?? "",
+          group_id,
+          statuses: [],
+        };
+        entry.statuses.push(status);
+        keyed_statuses.set(key, entry);
+      }
+      for (const {
+        jstor_item_id,
+        group_id,
+        statuses: item_statuses,
+      } of keyed_statuses.values()) {
+        const pending_facility_ids = mixed_suspended_item_groups.find(
+          (group) =>
+            group.jstor_item_id === jstor_item_id &&
+            group.group_id === group_id,
+        )?.pending_facility_ids;
+        if (!pending_facility_ids?.length) {
+          prioritized_statuses.push(...item_statuses);
+          continue;
+        }
+        const current_pending_index = item_statuses.findIndex(
+          (status) =>
+            status.status === status_options.Pending &&
+            pending_facility_ids.includes(status.entities?.id ?? -1),
+        );
+        if (current_pending_index > 0) {
+          const [current_pending] = item_statuses.splice(
+            current_pending_index,
+            1,
+          );
+          item_statuses.unshift(current_pending);
+        }
+        prioritized_statuses.push(...item_statuses);
+      }
+      return [prioritized_statuses, null];
     } catch (err) {
       const error = ensure_error(err);
       return [[], error];
@@ -844,21 +1022,110 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
           )`
         : Prisma.empty;
 
-      // Single statement: pick the latest status per (jstor_item_id, group_id), apply filters,
-      // collapse to one row per DOI (sort key = max status id across that DOI's groups),
-      // paginate by DOI, and emit the total count via a window function.
+      // Resolve each item/group's display status before applying status/date/text filters.
+      // When the latest group row is Suspended, an unsuperseded facility request keeps the
+      // item Pending. Otherwise, use the latest admin decision or hide the suspended history.
+      // Collapse to one row per DOI (sort key = max status id across
+      // that DOI's groups), paginate by DOI, and emit the total count via a window function.
       const rows: { jstor_item_id: string; total: bigint }[] = await this.client
         .$queryRaw(Prisma.sql`
-          WITH latest AS (
+          WITH latest_group AS (
             SELECT DISTINCT ON (jstor_item_id, group_id)
                    id, jstor_item_id, group_id, status, entity_id, jstor_item_type, created_at
             FROM statuses
             WHERE group_id = ANY(${groups}::INT[])
             ORDER BY jstor_item_id, group_id, id DESC
           ),
+          latest_facility AS (
+            SELECT DISTINCT ON (s.jstor_item_id, s.group_id, s.entity_id)
+                   s.id, s.jstor_item_id, s.group_id, s.status, s.entity_id,
+                   s.jstor_item_type, s.created_at
+            FROM statuses s
+            JOIN entities e ON e.id = s.entity_id
+            WHERE s.group_id = ANY(${groups}::INT[])
+              AND e.entity_type = ${entity_types.facilities}::entity_types
+            ORDER BY s.jstor_item_id, s.group_id, s.entity_id, s.id DESC
+          ),
+          current_pending_facilities AS (
+            SELECT facility.*
+            FROM latest_facility facility
+            WHERE facility.status = ${status_options.Pending}::status_options
+              AND NOT EXISTS (
+                SELECT 1
+                FROM statuses newer
+                JOIN entities admin ON admin.id = newer.entity_id
+                WHERE newer.jstor_item_id = facility.jstor_item_id
+                  AND newer.jstor_item_type IS NOT DISTINCT FROM facility.jstor_item_type
+                  AND newer.group_id IS NOT DISTINCT FROM facility.group_id
+                  AND newer.id > facility.id
+                  AND newer.status IN (
+                    ${status_options.Approved}::status_options,
+                    ${status_options.Denied}::status_options,
+                    ${status_options.Incomplete}::status_options
+                  )
+                  AND admin.entity_type = ${entity_types.users}::entity_types
+              )
+          ),
+          pending_counts AS (
+            SELECT jstor_item_id, group_id, COUNT(*) AS count
+            FROM current_pending_facilities
+            GROUP BY jstor_item_id, group_id
+          ),
+          latest_admin_decision AS (
+            SELECT DISTINCT ON (s.jstor_item_id, s.group_id)
+                   s.id, s.jstor_item_id, s.group_id, s.status, s.entity_id,
+                   s.jstor_item_type, s.created_at
+            FROM statuses s
+            JOIN entities admin ON admin.id = s.entity_id
+            WHERE s.group_id = ANY(${groups}::INT[])
+              AND s.status IN (
+                ${status_options.Approved}::status_options,
+                ${status_options.Denied}::status_options,
+                ${status_options.Incomplete}::status_options
+              )
+              AND admin.entity_type = ${entity_types.users}::entity_types
+            ORDER BY s.jstor_item_id, s.group_id, s.id DESC
+          ),
+          pending_overrides AS (
+            SELECT DISTINCT ON (pending.jstor_item_id, pending.group_id)
+                   pending.id, pending.jstor_item_id, pending.group_id,
+                   pending.status, pending.entity_id, pending.jstor_item_type,
+                   pending.created_at
+            FROM latest_group suspended
+            JOIN current_pending_facilities pending
+              ON pending.jstor_item_id = suspended.jstor_item_id
+             AND pending.group_id = suspended.group_id
+            WHERE suspended.status = ${status_options.Suspended}::status_options
+            ORDER BY pending.jstor_item_id, pending.group_id, pending.id DESC
+          ),
+          decision_overrides AS (
+            SELECT decision.*
+            FROM latest_group suspended
+            JOIN latest_admin_decision decision
+              ON decision.jstor_item_id = suspended.jstor_item_id
+             AND decision.group_id = suspended.group_id
+            WHERE suspended.status = ${status_options.Suspended}::status_options
+              AND NOT EXISTS (
+                SELECT 1
+                FROM pending_counts
+                WHERE pending_counts.jstor_item_id = suspended.jstor_item_id
+                  AND pending_counts.group_id = suspended.group_id
+              )
+          ),
+          effective_latest AS (
+            SELECT latest_group.*
+            FROM latest_group
+            WHERE latest_group.status IS DISTINCT FROM ${status_options.Suspended}::status_options
+            UNION ALL
+            SELECT *
+            FROM pending_overrides
+            UNION ALL
+            SELECT *
+            FROM decision_overrides
+          ),
           filtered AS (
             SELECT id, jstor_item_id
-            FROM latest
+            FROM effective_latest latest
             WHERE latest.jstor_item_type = ${jstor_types.doi}::jstor_types
               AND latest.status = ANY(${query_statuses}::status_options[])
               AND latest.created_at >= ${start_date}::timestamp

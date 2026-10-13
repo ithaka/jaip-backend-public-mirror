@@ -93,6 +93,7 @@ export interface JAIPDatabase {
   // STATUSES
   get_statuses: (
     query: Prisma.statusesFindManyArgs,
+    suspended_check_item_ids: string[],
   ) => Promise<[Status[], Error | null]>;
   get_bulk_statuses: (
     query: Prisma.statusesFindManyArgs,
