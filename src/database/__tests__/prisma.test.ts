@@ -75,10 +75,10 @@ test("a facility cannot create Pending while another facility's latest status is
   const error = await db.create_request_statuses([request]);
 
   expect(error).toBeNull();
-  expect(tx.$queryRaw.mock.calls[0][0].join(" ")).toContain(
+  expect(tx.$executeRaw.mock.calls[0][0].join(" ")).toContain(
     "pg_advisory_xact_lock",
   );
-  expect(tx.$queryRaw.mock.calls[1][0].join(" ")).toContain(
+  expect(tx.$queryRaw.mock.calls[0][0].join(" ")).toContain(
     "SELECT DISTINCT ON",
   );
   expect(tx.statuses.createManyAndReturn).not.toHaveBeenCalled();
@@ -90,8 +90,15 @@ test("approvals acquire the same status-key lock before inserting", async () => 
   const error = await db.create_approvals(doi, [group_id], admin_id);
 
   expect(error).toBeNull();
-  expect(tx.$queryRaw.mock.calls[0][0].join(" ")).toContain(
+  expect(tx.$executeRaw.mock.calls[0][0].join(" ")).toContain(
     "pg_advisory_xact_lock",
+  );
+  expect(tx.$executeRaw.mock.calls[0].slice(1)).toEqual([
+    JSON.stringify([doi, "doi", group_id]),
+  ]);
+  expect(tx.$queryRaw).not.toHaveBeenCalled();
+  expect(tx.$executeRaw.mock.invocationCallOrder[0]).toBeLessThan(
+    tx.statuses.createMany.mock.invocationCallOrder[0],
   );
   expect(tx.statuses.createMany).toHaveBeenCalledWith({
     data: [
@@ -104,6 +111,17 @@ test("approvals acquire the same status-key lock before inserting", async () => 
       },
     ],
   });
+});
+
+test("approvals do not insert statuses when acquiring the lock fails", async () => {
+  const { db, tx } = make_database();
+  const lock_error = new Error("lock acquisition failed");
+  tx.$executeRaw.mockRejectedValueOnce(lock_error);
+
+  const error = await db.create_approvals(doi, [group_id], admin_id);
+
+  expect(error).toBe(lock_error);
+  expect(tx.statuses.createMany).not.toHaveBeenCalled();
 });
 
 test("the same facility cannot create a duplicate Pending request", async () => {
