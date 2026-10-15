@@ -3,6 +3,7 @@ import {
   Prisma,
   status_options,
 } from "../../database/prisma/client.js";
+import { can_make_requests } from "./helpers.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ensure_error } from "../../utils/index.js";
 import { LogPayload } from "../../event_handler/index.js";
@@ -204,6 +205,17 @@ export const request_handler =
       log_payload.dois = dois;
       log_payload.comments = comments;
       log_payload.group_id = group_id;
+
+      // Check if the user has permission to make requests. If not, return a 403 error.
+      if (!can_make_requests(request.user.request_permissions)) {
+        const message = "requests are currently disabled for this facility";
+        reply.code(403).send(message);
+        fastify.event_logger.pep_forbidden_error(request, reply, {
+          ...log_payload,
+          event_description: message,
+        });
+        return;
+      }
 
       // Creating an array from the set ensure that we have no duplicate dois,
       // which would create messy pending requests in the db.

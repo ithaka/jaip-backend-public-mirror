@@ -21,6 +21,43 @@ import { Alert } from "../types/alerts.js";
 import { Subdomain } from "../types/routes.js";
 
 /**
+ * Suspends a facility's outstanding requests by relabelling them from Pending to Suspended.
+ *
+ * @param tx
+ * @param facility_id
+ */
+const suspend_pending_statuses = async (
+  tx: Prisma.TransactionClient,
+  facility_id: number,
+) => {
+  // Only a Pending row that is still the latest row for its item/group is outstanding;
+  // older Pending rows were superseded by a later decision and are left as history.
+  await tx.$executeRaw(Prisma.sql`
+    UPDATE statuses s
+    SET status = ${status_options.Suspended}::status_options
+    WHERE s.entity_id = ${facility_id}
+      AND s.status = ${status_options.Pending}::status_options
+      AND NOT EXISTS (
+        SELECT 1 FROM statuses newer
+        WHERE newer.jstor_item_id = s.jstor_item_id
+          AND newer.jstor_item_type IS NOT DISTINCT FROM s.jstor_item_type
+          AND newer.group_id IS NOT DISTINCT FROM s.group_id
+          AND newer.id > s.id
+          AND newer.status IN (
+            ${status_options.Approved}::status_options,
+            ${status_options.Denied}::status_options,
+            ${status_options.Incomplete}::status_options
+          )
+          AND EXISTS (
+            SELECT 1 FROM entities admin
+            WHERE admin.id = newer.entity_id
+              AND admin.entity_type = ${entity_types.users}::entity_types
+          )
+      )
+  `);
+};
+
+/**
  * Locks the advisory keys for a set of statuses, to prevent race conditions when multiple facilities
  * are trying to create or update statuses for the same item/group.
  *
@@ -1547,18 +1584,31 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       const { facility_id, admin_id, start_date, end_date } = query.data;
       // facility_id is unique, so a facility can only have one active request permission.
       // Upsert instead of create in case a soft-deleted (past end_date) row already exists.
-      const permission = await this.client.request_permissions.upsert({
-        where: { facility_id: facility_id as number },
-        // If the facility_id does not exist, create a new row with the provided data.
-        create: query.data,
-        // On conflict (i.e., if a row with the same facility_id already exists), update
-        // the following values in the existing row.
-        update: {
-          admin_id,
-          start_date: start_date ?? new Date(),
-          end_date: end_date ?? null,
-          updated_at: new Date(),
-        },
+      const permission = await this.client.$transaction(async (tx) => {
+        const result = await tx.request_permissions.upsert({
+          where: { facility_id: facility_id as number },
+          // If the facility_id does not exist, create a new row with the provided data.
+          create: query.data,
+          // On conflict (i.e., if a row with the same facility_id already exists), update
+          // the following values in the existing row.
+          update: {
+            admin_id,
+            start_date: start_date ?? new Date(),
+            end_date: end_date ?? null,
+            updated_at: new Date(),
+          },
+        });
+        // If requests are being disabled temporarily (end_date is not null),
+        // we don't need to suspend any pending requests.
+        if (
+          start_date &&
+          start_date <= new Date() &&
+          end_date === null &&
+          facility_id
+        ) {
+          await suspend_pending_statuses(tx, facility_id);
+        }
+        return result;
       });
       return [permission, null];
     } catch (err) {
@@ -1567,13 +1617,13 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     }
   }
 
-  async remove_request_permission(id: number): Promise<Error | null> {
+  async remove_request_permission(facility_id: number): Promise<Error | null> {
     try {
       // Set the end_date of the request permission to yesterday to effectively remove it
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       await this.client.request_permissions.update({
-        where: { id },
+        where: { facility_id },
         data: {
           end_date: yesterday,
           updated_at: new Date(),
@@ -1590,7 +1640,21 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     query: Prisma.request_permissionsUpdateArgs,
   ): Promise<[request_permissions, Error | null]> {
     try {
-      const permission = await this.client.request_permissions.update(query);
+      const permission = await this.client.$transaction(async (tx) => {
+        const result = await tx.request_permissions.update(query);
+        const { facility_id } = query.where;
+        // If requests are being disabled temporarily (end_date is not null),
+        // we don't need to suspend any pending requests.
+        if (
+          query.data.start_date &&
+          query.data.start_date <= new Date() &&
+          query.data.end_date === null &&
+          facility_id
+        ) {
+          await suspend_pending_statuses(tx, facility_id);
+        }
+        return result;
+      });
       return [permission, null];
     } catch (err) {
       const error = ensure_error(err);

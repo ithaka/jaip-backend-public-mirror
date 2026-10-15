@@ -233,7 +233,7 @@ export interface JAIPDatabase {
   create_request_permission: (
     query: Prisma.request_permissionsCreateArgs,
   ) => Promise<[request_permissions, Error | null]>;
-  remove_request_permission: (id: number) => Promise<Error | null>;
+  remove_request_permission: (facility_id: number) => Promise<Error | null>;
   update_request_permission: (
     query: Prisma.request_permissionsUpdateArgs,
   ) => Promise<[request_permissions, Error | null]>;

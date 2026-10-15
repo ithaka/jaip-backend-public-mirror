@@ -21,7 +21,7 @@ import {
 } from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
-  basic_facility_without_permissions,
+  basic_facility_with_request_permissions,
 } from "../../../tests/fixtures/users/fixtures.js";
 
 const app = build_test_server([route_settings]);
@@ -53,12 +53,10 @@ test(`requests the ${request_route} route with invalid body`, async () => {
   expect(res.statusCode).toEqual(400);
 });
 
-test(`requests the ${request_route} route with valid body and no permissions`, async () => {
+test(`requests the ${request_route} route with valid body and no request permissions`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
-  db_mock.get_first_user.mockResolvedValueOnce(
-    basic_facility_without_permissions,
-  );
+  db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
 
   db_mock.manage_entity.mockClear();
 
@@ -70,7 +68,90 @@ test(`requests the ${request_route} route with valid body and no permissions`, a
       host: valid_admin_subdomain,
     },
   });
+  expect(res.payload).toStrictEqual("");
+  expect(res.statusCode).toEqual(201);
+});
+
+test.each([
+  {
+    name: "a future end date",
+    facility: basic_facility_with_request_permissions,
+  },
+  {
+    name: "a null end date",
+    facility: {
+      ...basic_facility_with_request_permissions,
+      request_permissions: {
+        ...basic_facility_with_request_permissions.request_permissions,
+        end_date: null,
+      },
+    },
+  },
+])(`requests are blocked with $name`, async ({ facility }) => {
+  discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(facility);
+
+  const res = await app.inject({
+    method: "POST",
+    url: request_route,
+    payload: submit_request_valid,
+    headers: {
+      host: valid_student_subdomain,
+    },
+  });
+
+  expect(res.payload).toStrictEqual(
+    "requests are currently disabled for this facility",
+  );
   expect(res.statusCode).toEqual(403);
+  expect(db_mock.create_request_statuses).not.toHaveBeenCalled();
+});
+
+test.each([
+  {
+    name: "a past end date",
+    facility: {
+      ...basic_facility_with_request_permissions,
+      request_permissions: {
+        ...basic_facility_with_request_permissions.request_permissions,
+        end_date: new Date(Date.now() - 1000),
+      },
+    },
+  },
+  {
+    name: "a future start date",
+    facility: {
+      ...basic_facility_with_request_permissions,
+      request_permissions: {
+        ...basic_facility_with_request_permissions.request_permissions,
+        start_date: new Date(Date.now() + 1000),
+      },
+    },
+  },
+])(`requests are allowed with $name`, async ({ facility }) => {
+  discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(facility);
+
+  const res = await app.inject({
+    method: "POST",
+    url: request_route,
+    payload: submit_request_valid,
+    headers: {
+      host: valid_student_subdomain,
+    },
+  });
+
+  expect(res.payload).toStrictEqual("");
+  expect(res.statusCode).toEqual(201);
+  expect(db_mock.create_request_statuses).toHaveBeenCalled();
 });
 
 test(`requests the ${request_route} route with valid body and request permissions`, async () => {

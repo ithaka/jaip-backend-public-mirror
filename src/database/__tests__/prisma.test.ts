@@ -52,6 +52,26 @@ const status_row = (entity_id: number, status: status_options, id: number) => ({
   status_details: [],
 });
 
+test("suspending a facility updates its own Pending request despite another facility's newer Pending", async () => {
+  const { db, tx } = make_database();
+
+  await db.create_request_permission({
+    data: {
+      facility_id: facility_a,
+      admin_id,
+      start_date: new Date(Date.now() - 60_000),
+      end_date: null,
+    },
+  });
+
+  const statement = tx.$executeRaw.mock.calls[0][0];
+  expect(statement.sql).toContain("UPDATE statuses s");
+  expect(statement.sql).toContain("WHERE s.entity_id =");
+  expect(statement.sql).toContain("admin.entity_type");
+  expect(statement.sql).toContain("newer.status IN (");
+  expect(statement.sql).not.toContain("newer.status = ?::status_options");
+});
+
 test("a facility cannot create Pending while another facility's latest status is Pending", async () => {
   const { db, tx } = make_database();
   tx.$queryRaw.mockResolvedValue([
