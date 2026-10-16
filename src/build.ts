@@ -42,6 +42,7 @@ function build(opts = {}, route_settings: RouteSettings[]) {
 
   app.register(fastify_cors, {
     origin: [/\.jstor\.org$/, /\.cirrostratus\.org$/],
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   });
 
