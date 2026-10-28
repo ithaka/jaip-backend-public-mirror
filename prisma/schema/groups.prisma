@@ -8,4 +8,5 @@ model groups {
   features_groups_entities features_groups_entities[]
   groups_entities          groups_entities[]
   statuses                 statuses[]
+  global_approvals         global_approvals?
 }

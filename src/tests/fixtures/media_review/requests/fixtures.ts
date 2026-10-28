@@ -45,3 +45,9 @@ export const submit_bulk_undo_valid = {
   groups: [1],
   code: "this is a discipline code",
 };
+
+export const submit_global_approval_invalid = { group_ids: [] };
+
+export const submit_global_approval_valid = {
+  group_ids: [1],
+};

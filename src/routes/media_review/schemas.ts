@@ -243,4 +243,68 @@ export const route_schemas = {
       ...standard_post_errors,
     },
   },
+  create_global_approvals: {
+    name: "create_global_approvals",
+    route: "/global-approvals",
+    description: `Creates global approvals for groups`,
+    tags: [SWAGGER_TAGS.private],
+    requires: {
+      any: {
+        grouped: {
+          any: [FEATURES.bulk_approve],
+        },
+      },
+    },
+    body: {
+      type: "object",
+      required: ["group_ids"],
+      properties: {
+        group_ids: {
+          type: "array",
+          minItems: 1,
+          items: {
+            type: "number",
+          },
+        },
+      },
+    },
+    response: {
+      201: {
+        description: "Successfully created global approval.",
+      },
+      ...standard_post_errors,
+    },
+  },
+  remove_global_approvals: {
+    name: "remove_global_approvals",
+    route: "/global-approvals/remove",
+    description: `Removes global approvals for groups`,
+    tags: [SWAGGER_TAGS.private],
+    requires: {
+      any: {
+        grouped: {
+          any: [FEATURES.undo_bulk_approve],
+        },
+      },
+    },
+    body: {
+      type: "object",
+      required: ["group_ids"],
+      properties: {
+        group_ids: {
+          type: "array",
+          minItems: 1,
+          items: {
+            type: "number",
+          },
+        },
+      },
+    },
+    response: {
+      201: {
+        description: "Successfully removed global approval.",
+      },
+      ...standard_post_errors,
+    },
+  },
 };

@@ -37,7 +37,14 @@ export interface Entities {
   id: number;
   entity_type: string | null;
   groups_entities?:
-    | { role: user_roles | null; groups: { id: number; name: string } | null }[]
+    | {
+        role: user_roles | null;
+        groups: {
+          id: number;
+          name: string;
+          global_approvals?: { is_approved: boolean } | null;
+        } | null;
+      }[]
     | null;
   features_groups_entities?: {
     groups: { id: number };

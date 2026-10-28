@@ -74,6 +74,9 @@ export const db_mock = {
   create_request_permission: vi.fn().mockName("create_request_permission"),
   remove_request_permission: vi.fn().mockName("remove_request_permission"),
   update_request_permission: vi.fn().mockName("update_request_permission"),
+  create_global_approval: vi.fn().mockName("create_global_approval"),
+  remove_global_approval: vi.fn().mockName("remove_global_approval"),
+  update_global_approval: vi.fn().mockName("update_global_approval"),
   get_headwords: vi.fn().mockName("get_headwords"),
 } as JAIPDatabase as Record<keyof JAIPDatabase, Mock>;
 

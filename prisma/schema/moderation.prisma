@@ -8,32 +8,32 @@ enum review_status {
 }
 
 model moderation_entries {
-  doi                        String                               @id @db.Text
-  iid                        String                               @unique @db.Uuid
-  title                      String                               @db.Text
-  authors                    String?                              @db.Text
-  journal                    String?                              @db.Text
-  book_title                 String?                              @db.Text
-  content_type               String?                              @db.Text
-  item_type                  String?                              @db.Text
-  restrict_reason            String?                              @db.Text  
-  review_status              review_status?
-  moderation_date            DateTime?                            @db.Timestamp(6)
-  created_at                 DateTime                             @default(now()) @db.Timestamp(6)
-  updated_at                 DateTime?                            @default(now()) @db.Timestamp(6)
-  disciplines                moderation_entry_disciplines[]
-  disc_codes                 moderation_entry_disc_codes[]
-  images                     moderation_images[]
-  flagged_text_pages         moderation_flagged_text_pages[]
+  doi                String                          @id @db.Text
+  iid                String                          @unique @db.Uuid
+  title              String                          @db.Text
+  authors            String?                         @db.Text
+  journal            String?                         @db.Text
+  book_title         String?                         @db.Text
+  content_type       String?                         @db.Text
+  item_type          String?                         @db.Text
+  restrict_reason    String?                         @db.Text
+  review_status      review_status?
+  moderation_date    DateTime?                       @db.Timestamp(6)
+  created_at         DateTime                        @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?                       @default(now()) @db.Timestamp(6)
+  disciplines        moderation_entry_disciplines[]
+  disc_codes         moderation_entry_disc_codes[]
+  images             moderation_images[]
+  flagged_text_pages moderation_flagged_text_pages[]
 
   @@map("moderation_entries")
 }
 
 model moderation_entry_disciplines {
-  id        BigInt   @id @default(autoincrement())
-  entry_doi String   @db.Text
-  discipline String   @db.Text
-  entry     moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+  id         BigInt             @id @default(autoincrement())
+  entry_doi  String             @db.Text
+  discipline String             @db.Text
+  entry      moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
 
   @@unique([entry_doi, discipline])
   @@index([entry_doi])
@@ -41,9 +41,9 @@ model moderation_entry_disciplines {
 }
 
 model moderation_entry_disc_codes {
-  id        BigInt   @id @default(autoincrement())
-  entry_doi String   @db.Text
-  disc_code String   @db.Text
+  id        BigInt             @id @default(autoincrement())
+  entry_doi String             @db.Text
+  disc_code String             @db.Text
   entry     moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
 
   @@unique([entry_doi, disc_code])
@@ -52,14 +52,14 @@ model moderation_entry_disc_codes {
 }
 
 model moderation_images {
-  id                     BigInt                                      @id @default(autoincrement())
-  entry_doi              String                                      @db.Text
-  page                   Int
-  image_index            Int
-  is_flagged             Boolean?
-  image_file             String?                                     @db.Text
-  entry                  moderation_entries                          @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
-  flagged_categories     moderation_flagged_image_categories[]
+  id                 BigInt                                @id @default(autoincrement())
+  entry_doi          String                                @db.Text
+  page               Int
+  image_index        Int
+  is_flagged         Boolean?
+  image_file         String?                               @db.Text
+  entry              moderation_entries                    @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+  flagged_categories moderation_flagged_image_categories[]
 
   @@unique([entry_doi, page, image_index])
   @@index([entry_doi])
@@ -67,9 +67,9 @@ model moderation_images {
 }
 
 model moderation_flagged_image_categories {
-  id       BigInt   @id @default(autoincrement())
+  id       BigInt            @id @default(autoincrement())
   image_id BigInt
-  category String   @db.Text
+  category String            @db.Text
   image    moderation_images @relation(fields: [image_id], references: [id], onDelete: Cascade)
 
   @@unique([image_id, category])
@@ -78,10 +78,10 @@ model moderation_flagged_image_categories {
 }
 
 model moderation_flagged_text_pages {
-  id        BigInt   @id @default(autoincrement())
-  entry_doi String   @db.Text
+  id        BigInt                             @id @default(autoincrement())
+  entry_doi String                             @db.Text
   page      Int
-  entry     moderation_entries @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
+  entry     moderation_entries                 @relation(fields: [entry_doi], references: [doi], onDelete: Cascade)
   snippets  moderation_flagged_text_snippets[]
 
   @@unique([entry_doi, page])
@@ -90,10 +90,10 @@ model moderation_flagged_text_pages {
 }
 
 model moderation_flagged_text_snippets {
-  id           BigInt   @id @default(autoincrement())
+  id           BigInt                        @id @default(autoincrement())
   text_page_id BigInt
-  category     String   @db.Text
-  snippet_text String   @db.Text
+  category     String                        @db.Text
+  snippet_text String                        @db.Text
   text_page    moderation_flagged_text_pages @relation(fields: [text_page_id], references: [id], onDelete: Cascade)
 
   @@index([text_page_id])
@@ -101,11 +101,11 @@ model moderation_flagged_text_snippets {
 }
 
 model moderation_pipeline_errors {
-  id        BigInt   @id @default(autoincrement())
-  job_id    String   @db.Uuid
-  iid       String?  @db.Text
-  stage     String?  @db.Text
-  error     String   @db.Text
+  id         BigInt   @id @default(autoincrement())
+  job_id     String   @db.Uuid
+  iid        String?  @db.Text
+  stage      String?  @db.Text
+  error      String   @db.Text
   created_at DateTime @default(now()) @db.Timestamp(6)
 
   @@index([job_id, iid])

@@ -53,6 +53,15 @@ export const get_entity_select_clause = (
             select: {
               id: true,
               name: true,
+              ...(role === user_roles.user
+                ? {
+                    global_approvals: {
+                      select: {
+                        is_approved: true,
+                      },
+                    },
+                  }
+                : {}),
             },
           },
           role: true,
@@ -112,6 +121,15 @@ export const get_many_entities_select_clause = (
             select: {
               id: true,
               name: true,
+              ...(role === user_roles.user
+                ? {
+                    global_approvals: {
+                      select: {
+                        is_approved: true,
+                      },
+                    },
+                  }
+                : {}),
             },
           },
           role: true,
@@ -191,6 +209,12 @@ export const map_entities = (user: DBEntity): User => {
           id: group.groups?.id,
           name: group.groups?.name,
           role: group.role,
+          ...(user.entities.entity_type === "facilities"
+            ? {
+                has_global_approval:
+                  group.groups?.global_approvals?.is_approved ?? false,
+              }
+            : {}),
           features:
             user.entities.features_groups_entities
               ?.filter((feature) => feature.groups.id === group.groups?.id)

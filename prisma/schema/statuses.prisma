@@ -1,3 +1,16 @@
+model global_approvals {
+  id         Int      @id @default(autoincrement())
+  entity_id  Int
+  group_id   Int      @unique
+  is_approved Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  entities   entities @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  groups     groups  @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "global_approvals_group_fkey")
+
+  @@index([id, group_id])
+}
+
 model globally_restricted_items {
   id            Int      @id @default(autoincrement())
   entity_id     Int

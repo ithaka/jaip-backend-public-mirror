@@ -3,6 +3,7 @@ import {
   Prisma,
   status_options,
 } from "../../database/prisma/client.js";
+import { FEATURES } from "../../consts/index.js";
 import { can_make_requests } from "./helpers.js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ensure_error } from "../../utils/index.js";
@@ -498,6 +499,144 @@ export const bulk_undo_handler =
           event_description: "failed to undo bulk approval",
         },
         "bulk-undo",
+        error,
+      );
+      reply.code(500).send(error.message);
+    }
+  };
+
+export const create_global_approval =
+  (fastify: FastifyInstance) =>
+  async (request: FastifyRequest, reply: FastifyReply) => {
+    const log_payload: LogPayload = {};
+    fastify.event_logger.pep_standard_log_start(
+      "create_global_approvals",
+      request,
+      {
+        ...log_payload,
+        event_description: "attempting to create global approval",
+      },
+    );
+    try {
+      const body = request.body as { group_ids: number[] };
+      const group_ids = Array.from(new Set(body.group_ids));
+
+      log_payload.group_ids = group_ids;
+
+      const has_permission_for_all_groups = group_ids.every((group_id) => {
+        const group = request.user.groups.find(
+          (group) => group.id === group_id,
+        );
+        return !!group?.features[FEATURES.bulk_approve];
+      });
+      if (!has_permission_for_all_groups) {
+        const message =
+          "forbidden: missing bulk approval permission for one or more groups";
+        reply.code(403).send(message);
+        fastify.event_logger.pep_forbidden_error(request, reply, {
+          ...log_payload,
+          event_description: message,
+        });
+        return;
+      }
+
+      const [approvals, error] = await fastify.db.create_global_approval(
+        request.user.id!,
+        group_ids,
+      );
+      if (error) throw error;
+      if (approvals.length !== group_ids.length) {
+        throw new Error("Failed to create global approvals for all groups");
+      }
+
+      fastify.event_logger.pep_standard_log_complete(
+        "pep_create_global_approval_complete",
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: `successfully created global approvals for groups ${group_ids.join(", ")}`,
+        },
+      );
+      reply.code(201);
+    } catch (err) {
+      const error = ensure_error(err);
+      fastify.event_logger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to create global approval",
+        },
+        "create_global_approvals",
+        error,
+      );
+      reply.code(500).send(error.message);
+    }
+  };
+
+export const remove_global_approval =
+  (fastify: FastifyInstance) =>
+  async (request: FastifyRequest, reply: FastifyReply) => {
+    const log_payload: LogPayload = {};
+    fastify.event_logger.pep_standard_log_start(
+      "remove_global_approvals",
+      request,
+      {
+        ...log_payload,
+        event_description: "attempting to remove global approval",
+      },
+    );
+
+    try {
+      const body = request.body as { group_ids: number[] };
+      const group_ids = Array.from(new Set(body.group_ids));
+
+      log_payload.group_ids = group_ids;
+
+      const has_permission_for_all_groups = group_ids.every((group_id) => {
+        const group = request.user.groups.find(
+          (group) => group.id === group_id,
+        );
+        return !!group?.features[FEATURES.undo_bulk_approve];
+      });
+      if (!has_permission_for_all_groups) {
+        const message =
+          "forbidden: missing undo bulk approval permission for one or more groups";
+        reply.code(403).send(message);
+        fastify.event_logger.pep_forbidden_error(request, reply, {
+          ...log_payload,
+          event_description: message,
+        });
+        return;
+      }
+
+      const error = await fastify.db.remove_global_approval(
+        request.user.id!,
+        group_ids,
+      );
+      if (error) throw error;
+
+      fastify.event_logger.pep_standard_log_complete(
+        "pep_remove_global_approval_complete",
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: `successfully removed global approvals for groups ${group_ids.join(", ")}`,
+        },
+      );
+      reply.code(201);
+    } catch (err) {
+      const error = ensure_error(err);
+      fastify.event_logger.pep_error(
+        request,
+        reply,
+        {
+          ...log_payload,
+          event_description: "failed to remove global approval",
+        },
+        "remove_global_approvals",
         error,
       );
       reply.code(500).send(error.message);

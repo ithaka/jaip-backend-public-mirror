@@ -12,7 +12,9 @@ import { get_route } from "../../utils/index.js";
 import {
   basic_admin,
   basic_facility,
+  restricted_item_subscription,
 } from "../../tests/fixtures/users/fixtures.js";
+import type { DBEntity } from "../../types/database.js";
 import {
   axios_session_data_with_code,
   axios_session_data_with_email,
@@ -62,6 +64,106 @@ test(`returns 200 and user if authenticated`, async () => {
   });
   expect(res.statusCode).toEqual(200);
   expect(res.json()).toStrictEqual(user);
+});
+
+test(`returns a facility's group approval state`, async () => {
+  const facility = structuredClone(basic_facility) as DBEntity;
+  facility.entities.groups_entities?.forEach(({ groups }) => {
+    if (groups) {
+      groups.global_approvals = { is_approved: true };
+    }
+  });
+
+  discover_mock.mockResolvedValueOnce(["http://iac-host/", null]);
+  axios.get = vi
+    .fn()
+    .mockResolvedValueOnce(iac_credential_response)
+    .mockResolvedValueOnce(iac_account_response) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(facility);
+
+  const res = await app.inject({
+    method: "GET",
+    url: route,
+    headers: { host: valid_student_subdomain },
+  });
+
+  expect(res.statusCode).toEqual(200);
+  expect(res.json().groups).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ has_global_approval: true }),
+    ]),
+  );
+  expect(db_mock.get_first_facility.mock.calls[0][0]).toMatchObject({
+    select: {
+      entities: {
+        select: {
+          groups_entities: {
+            select: {
+              groups: {
+                select: {
+                  global_approvals: {
+                    select: { is_approved: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+});
+
+test(`returns group approval states for facilities attached to an admin`, async () => {
+  const admin = structuredClone(basic_admin);
+  admin.entities.features_groups_entities.push(
+    ...restricted_item_subscription(true),
+  );
+  const facility = structuredClone(basic_facility) as DBEntity;
+  facility.entities.groups_entities?.forEach(({ groups }) => {
+    if (groups) {
+      groups.global_approvals = { is_approved: true };
+    }
+  });
+
+  discover_mock.mockResolvedValueOnce(["http://session-host/", null]);
+  axios.post = vi
+    .fn()
+    .mockResolvedValueOnce(axios_session_data_with_email) as typeof axios.post;
+  db_mock.get_first_user.mockResolvedValueOnce(admin);
+  db_mock.get_facilities.mockResolvedValueOnce([[facility], null]);
+
+  const res = await app.inject({
+    method: "GET",
+    url: route,
+    headers: { host: "admin.test-pep.jstor.org" },
+  });
+
+  expect(res.statusCode).toEqual(200);
+  expect(res.json().facilities[0].groups).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ has_global_approval: true }),
+    ]),
+  );
+  expect(db_mock.get_facilities.mock.calls[0][0]).toMatchObject({
+    select: {
+      entities: {
+        select: {
+          groups_entities: {
+            select: {
+              groups: {
+                select: {
+                  global_approvals: {
+                    select: { is_approved: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
 });
 
 test(`returns 200 and user if authenticated admin on admin subdomain`, async () => {

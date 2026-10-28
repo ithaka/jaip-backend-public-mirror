@@ -88,6 +88,25 @@ test(`requests the ${get_facilities_route} route with valid body and account man
 
   expect(db_mock.get_first_user).toHaveBeenCalledTimes(1);
   expect(db_mock.get_facilities_and_count).toHaveBeenCalledTimes(1);
+  expect(db_mock.get_facilities_and_count.mock.calls[0][1]).toMatchObject({
+    select: {
+      entities: {
+        select: {
+          groups_entities: {
+            select: {
+              groups: {
+                select: {
+                  global_approvals: {
+                    select: { is_approved: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
   expect(res.json()).toStrictEqual({
     total: 2,
     entities: expected_get_users,

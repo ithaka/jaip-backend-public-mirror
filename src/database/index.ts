@@ -8,6 +8,7 @@ import {
   globally_restricted_items,
   targeted_alerts,
   request_permissions,
+  global_approvals,
 } from "./prisma/client.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
 import { User } from "../types/entities.js";
@@ -237,4 +238,14 @@ export interface JAIPDatabase {
   update_request_permission: (
     query: Prisma.request_permissionsUpdateArgs,
   ) => Promise<[request_permissions, Error | null]>;
+
+  // GLOBAL APPROVAL
+  create_global_approval: (
+    entity_id: number,
+    group_ids: number[],
+  ) => Promise<[global_approvals[], Error | null]>;
+  remove_global_approval: (
+    entity_id: number,
+    group_ids: number[],
+  ) => Promise<Error | null>;
 }

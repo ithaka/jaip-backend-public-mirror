@@ -12,6 +12,7 @@ import {
   globally_restricted_items,
   targeted_alerts,
   request_permissions,
+  global_approvals,
 } from "../database/prisma/client.js";
 import { JAIPDatabase } from "./index.js";
 import { DBEntity, IPBypassResult, Status } from "../types/database.js";
@@ -1659,6 +1660,66 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     } catch (err) {
       const error = ensure_error(err);
       return [{} as request_permissions, error];
+    }
+  }
+
+  async create_global_approval(
+    entity_id: number,
+    group_ids: number[],
+  ): Promise<[global_approvals[], Error | null]> {
+    try {
+      const approvals = await this.client.$transaction(async (tx) => {
+        const results: global_approvals[] = [];
+        for (const group_id of group_ids) {
+          const approval = await tx.global_approvals.upsert({
+            where: { group_id },
+            create: {
+              entity_id,
+              group_id,
+              is_approved: true,
+            },
+            update: {
+              entity_id,
+              is_approved: true,
+              updated_at: new Date(),
+            },
+          });
+          results.push(approval);
+        }
+        return results;
+      });
+      return [approvals, null];
+    } catch (err) {
+      const error = ensure_error(err);
+      return [[], error];
+    }
+  }
+
+  async remove_global_approval(
+    entity_id: number,
+    group_ids: number[],
+  ): Promise<Error | null> {
+    try {
+      // We use a transaction with individual updates to ensure that if any of the
+      // requested group approvals do not exist, the entire operation fails.
+      await this.client.$transaction(async (tx) => {
+        for (const group_id of group_ids) {
+          await tx.global_approvals.update({
+            where: {
+              group_id,
+            },
+            data: {
+              entity_id,
+              is_approved: false,
+              updated_at: new Date(),
+            },
+          });
+        }
+      });
+      return null;
+    } catch (err) {
+      const error = ensure_error(err);
+      return error;
     }
   }
 }
