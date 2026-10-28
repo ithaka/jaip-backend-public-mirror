@@ -12,7 +12,7 @@ aws ssm get-parameter --name "/test/labs/jaip/jaip-backend/database/dev/url" --w
 DATABASE_URL="your_connection_string"
 
 # 3. Generate client
-yarn dlx prisma generate
+yarn prisma generate
 ```
 
 ## Environments and Roles
@@ -32,19 +32,21 @@ These roles are already established in the migration files.
 
 ## Common Commands
 
+> Run Prisma with `yarn prisma ...`, which uses the version installed in this project (see `package.json`). Do not use `yarn dlx prisma ...`: it downloads the latest Prisma release, which may not match this project's version, config, or commands.
+
 ```bash
 # Deploying
-yarn dlx prisma migrate deploy    # Apply migration to the db currently listed in the .env
+yarn prisma migrate deploy    # Apply migration to the db currently listed in the .env
 
 # Making changes
-yarn dlx prisma migrate dev       # Create migration
-yarn dlx prisma generate          # Generate client locally
+yarn prisma migrate dev       # Create migration
+yarn prisma generate          # Generate client locally
 
 # Database operations
-yarn dlx prisma studio            # Browse data
+yarn prisma studio            # Browse data
 
-# Depricated commands
-yarn dlx prisma db push           # Screws up migrations
+# Deprecated commands
+yarn prisma db push           # Screws up migrations
 ```
 
 ## Development Database
@@ -70,9 +72,9 @@ Changes to the database structure should be handled using [Prisma's migrations s
 
 A typical process for adding a new permission might look something like this:
 
-1. `yarn dlx prisma migrate dev --create-only`
+1. `yarn prisma migrate dev --create-only`
 1. That will create a new, empty migration file. You can then edit that migration file with whatever you need. E.g., `GRANT SELECT ON TABLE public.table_name TO role_name; `
-1. `yarn dlx prisma migrate dev`, which will apply
+1. `yarn prisma migrate dev`, which will apply
 
 ## Password Rotation
 
