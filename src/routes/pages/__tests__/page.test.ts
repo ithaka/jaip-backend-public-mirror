@@ -92,9 +92,20 @@ test.each(routes)(
   },
 );
 
-test.each(routes)(
-  `requests the $%s route with a facility and item approval`,
-  async (route) => {
+test.each(
+  routes.flatMap((route) =>
+    [200, 206].map((status_code) => ({ route, status_code })),
+  ),
+)(
+  "requests the $route route with a facility and item approval ($status_code)",
+  async ({ route, status_code }) => {
+    const origin =
+      "https://jaip-frontend-f85cd7a0-student.apps.test.cirrostratus.org";
+    const content_length = Buffer.byteLength(mock_image_response.data);
+    const content_range =
+      status_code === 206
+        ? `bytes 0-${content_length - 1}/${content_length * 2}`
+        : undefined;
     discover_mock.mockResolvedValue(["this text doesn't matter", null]);
     axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
     db_mock.get_first_user.mockResolvedValueOnce(basic_facility);
@@ -111,6 +122,7 @@ test.each(routes)(
     mocked_get_s3_object.mockResolvedValueOnce([
       Buffer.from(mock_image_response.data) as unknown as NodeJS.ReadableStream,
       null,
+      { content_length, content_range, accept_ranges: "bytes" },
     ]);
 
     db_mock.get_item_status.mockResolvedValueOnce([
@@ -123,14 +135,31 @@ test.each(routes)(
       url: route,
       headers: {
         host: valid_student_subdomain,
+        origin,
+        cookie: "uuid=test-session",
+        ...(status_code === 206
+          ? { range: `bytes=0-${content_length - 1}` }
+          : {}),
       },
     });
 
     expect(res.payload).toStrictEqual(mock_image_response.data);
     expect(axios.get).toHaveBeenCalledTimes(2);
     expect(mocked_get_s3_object).toHaveBeenCalledTimes(1);
+    expect(mocked_get_s3_object).toHaveBeenCalledWith(
+      expect.any(String),
+      status_code === 206 ? `bytes=0-${content_length - 1}` : undefined,
+    );
     expect(db_mock.get_item_status).toHaveBeenCalledTimes(1);
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toEqual(status_code);
+    expect(res.headers["access-control-allow-origin"]).toBe(origin);
+    expect(res.headers["access-control-allow-credentials"]).toBe("true");
+    expect(res.headers["access-control-expose-headers"]?.split(/,\s*/)).toEqual(
+      ["Accept-Ranges", "Content-Length", "Content-Range", "Content-Encoding"],
+    );
+    expect(res.headers["accept-ranges"]).toBe("bytes");
+    expect(res.headers["content-length"]).toBe(String(content_length));
+    expect(res.headers["content-range"]).toBe(content_range);
   },
 );
 

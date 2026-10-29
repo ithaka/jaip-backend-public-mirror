@@ -44,6 +44,14 @@ function build(opts = {}, route_settings: RouteSettings[]) {
     origin: [/\.jstor\.org$/, /\.cirrostratus\.org$/],
     methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
+    // Expose these headers to the client for CORS requests, so that the browser can access them
+    // in the ephemeral environment.
+    exposedHeaders: [
+      "Accept-Ranges",
+      "Content-Length",
+      "Content-Range",
+      "Content-Encoding",
+    ],
   });
 
   app.addHook("onSend", async (request, reply, payload) => {
