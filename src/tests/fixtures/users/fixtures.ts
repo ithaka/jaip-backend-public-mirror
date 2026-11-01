@@ -132,11 +132,6 @@ export const search_result_permissions = (enabled: boolean) =>
     },
     {
       enabled,
-      features: { id: 232, name: FEATURES.submit_requests, is_active: true },
-      groups: { id: 1 },
-    },
-    {
-      enabled,
       features: { id: 166, name: FEATURES.view_document, is_active: true },
       groups: { id: 1 },
     },
@@ -296,17 +291,6 @@ export const facilities_for_user: DBEntity[] = [
           features: {
             id: 35,
             name: "view_snippet",
-            is_active: true,
-          },
-          groups: {
-            id: 1,
-          },
-        },
-        {
-          enabled: true,
-          features: {
-            id: 232,
-            name: "submit_requests",
             is_active: true,
           },
           groups: {

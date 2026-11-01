@@ -154,7 +154,7 @@ test.each([
   expect(db_mock.create_request_statuses).toHaveBeenCalled();
 });
 
-test(`requests the ${request_route} route with valid body and request permissions`, async () => {
+test(`requests the ${request_route} route when facility request permissions are unset`, async () => {
   discover_mock.mockResolvedValueOnce(["this text doesn't matter", null]);
   axios.get = vi
     .fn()
@@ -173,4 +173,5 @@ test(`requests the ${request_route} route with valid body and request permission
 
   expect(res.payload).toStrictEqual("");
   expect(res.statusCode).toEqual(201);
+  expect(db_mock.create_request_statuses).toHaveBeenCalled();
 });

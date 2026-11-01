@@ -7,13 +7,6 @@ export const route_schemas = {
     route: "/request",
     description: `Submits a request for media review.`,
     tags: [SWAGGER_TAGS.private],
-    requires: {
-      any: {
-        grouped: {
-          all: [FEATURES.submit_requests],
-        },
-      },
-    },
     body: {
       type: "object",
       required: ["dois"],
