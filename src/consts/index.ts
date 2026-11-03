@@ -32,6 +32,7 @@ export const FRONTEND_LOG_EVENTS = [
   "pep_fe_end_viewing_session",
   "pep_fe_viewer_control",
   "pep_fe_api_error",
+  "pep_fe_viewer_diagnostic",
 ];
 
 export const STATUS_OPTIONS = {

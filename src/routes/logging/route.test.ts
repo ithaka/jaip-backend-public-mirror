@@ -62,6 +62,42 @@ test(`requests the ${route} route with a facility and request body`, async () =>
   expect(res.statusCode).toEqual(200);
 });
 
+test(`requests the ${route} route with a viewer_diagnostic event and nested viewer_diagnostics object`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
+
+  const res = await app.inject({
+    method: "POST",
+    url: route,
+    payload: {
+      eventtype: "pep_fe_viewer_diagnostic",
+      event_description: "Viewer diagnostic: pdf_document_loaded",
+      action: "pdf_document_loaded",
+      itemid: "abc123",
+      event_uuid: "6f1c0d52-0000-4000-8000-000000000000",
+      is_reentry_content: false,
+      total_pages: 12,
+      viewer_diagnostics: {
+        phase: "initializing_pages",
+        ms_since_mount: 4210,
+        is_retry: false,
+        load_ms: 3900,
+        num_pages: 12,
+        worker_is_real: true,
+      },
+    },
+    headers: {
+      host: valid_student_subdomain,
+    },
+  });
+
+  expect(res.statusCode).toEqual(200);
+});
+
 test(`requests the ${route} route with missing eventtype`, async () => {
   discover_mock.mockResolvedValue(["this text doesn't matter", null]);
   axios.get = vi
