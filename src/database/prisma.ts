@@ -638,6 +638,41 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     query: Prisma.statusesFindManyArgs,
   ): Promise<[Status[], Error | null]> {
     try {
+      // Optimize item/group lookups that define the latest status by ID.
+      // Other ordering rules, including search's timestamp ordering, use the original query.
+      // This helps prevent timeouts for admins with many groups (i.e., internal ITHAKA admins).
+      if (
+        Array.isArray(query.distinct) &&
+        query.distinct.includes("jstor_item_id") &&
+        query.distinct.includes("group_id") &&
+        !Array.isArray(query.orderBy) &&
+        query.orderBy?.id === "desc"
+      ) {
+        // Select current IDs in the database before loading relations, avoiding
+        // loading and deduplicating the full status history for large group lists.
+        // Keep all status values here so a newer undo supersedes an older approval.
+        const latest_statuses = await this.client.statuses.groupBy({
+          by: ["jstor_item_id", "group_id"],
+          where: query.where,
+          _max: { id: true },
+        });
+        const latest_ids = latest_statuses.flatMap((status) =>
+          status._max.id === null ? [] : [status._max.id],
+        );
+        if (!latest_ids.length) {
+          return [[], null];
+        }
+        // Each selected ID already represents one item/group. Remove distinct and
+        // fetch only those rows, preserving the caller's selection, filters, and ordering.
+        const { distinct, ...latest_query } = query;
+        void distinct;
+        const statuses = (await this.client.statuses.findMany({
+          ...latest_query,
+          where: { ...query.where, id: { in: latest_ids } },
+        })) as unknown as Status[];
+        // Return only the latest statuses for each item/group combination, as determined by the groupBy query above.
+        return [statuses, null];
+      }
       const statuses = (await this.client.statuses.findMany(
         query,
       )) as unknown as Status[];

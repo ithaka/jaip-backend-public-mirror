@@ -37,6 +37,9 @@ model statuses {
   groups          groups?          @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "statuses_group_fkey")
 
   @@index([id, jstor_item_id, jstor_item_type, status, group_id], map: "statuses_id_jstor_item_id_jstor_item_type_status_group_idx")
+  // Index for quickly looking up statuses by jstor_item_type, group_id, and jstor_item_id in descending order of id. This improves performance 
+  // when querying for the most recent status for a given jstor_item_type, group_id, and jstor_item_id combination.
+  @@index([jstor_item_type, group_id, jstor_item_id, id(sort: Desc)], map: "statuses_bulk_lookup_idx")
 }
 
 model status_details {

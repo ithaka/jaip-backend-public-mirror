@@ -34,10 +34,13 @@ import {
 } from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
+  basic_facility_with_restricted_items_subscription,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
 import { S3ServiceException } from "@aws-sdk/client-s3";
 import { PAGES_ROUTE_PREFIX } from "../../../consts/index.js";
+import { status_options } from "../../../database/prisma/client.js";
+import { DBEntity } from "../../../types/database.js";
 
 const mocked_get_s3_object = vi.mocked(get_s3_object);
 
@@ -51,6 +54,81 @@ afterEach(() => {
 const page_route = `${route_settings.options.prefix}${PAGES_ROUTE_PREFIX}${iid_path}/0`;
 const pdf_route = `${route_settings.options.prefix}${PAGES_ROUTE_PREFIX}${iid_path}`;
 const routes = [page_route, pdf_route];
+
+test.each(
+  routes.flatMap((route) =>
+    [false, true].flatMap((is_restricted) =>
+      [null, ...Object.values(status_options)].map((status) => ({
+        route,
+        is_restricted,
+        status,
+      })),
+    ),
+  ),
+)(
+  "checks global approval for $route with status=$status and restricted=$is_restricted",
+  async ({ route, is_restricted, status }) => {
+    const doi = cedar_item_view_response.find((item) => item.doi)?.doi;
+    const user = structuredClone(
+      basic_facility_with_restricted_items_subscription,
+    ) as DBEntity;
+    user.entities.groups_entities?.forEach(({ groups }) => {
+      if (groups) groups.global_approvals = { is_approved: true };
+    });
+    discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = vi.fn().mockResolvedValue(axios_session_data_with_email);
+    db_mock.get_first_user.mockResolvedValueOnce(user);
+    axios.get = vi
+      .fn()
+      .mockResolvedValueOnce({ status: 200, data: cedar_item_view_response })
+      .mockResolvedValue({ status: 200, data: ale_response });
+    db_mock.get_restricted_items.mockResolvedValueOnce([
+      is_restricted
+        ? [
+            {
+              id: 1,
+              entity_id: 3,
+              jstor_item_id: doi!,
+              reason: "Restricted item",
+              is_restricted: true,
+              created_at: new Date(),
+              updated_at: new Date(),
+            },
+          ]
+        : [],
+      null,
+    ]);
+    db_mock.get_item_status.mockResolvedValueOnce([
+      status ? { ...approved_item_response, jstor_item_id: doi, status } : null,
+      null,
+    ]);
+    mocked_get_s3_object.mockResolvedValueOnce([
+      Buffer.from(mock_image_response.data) as unknown as NodeJS.ReadableStream,
+      null,
+    ]);
+
+    const res = await app.inject({
+      method: "GET",
+      url: route,
+      headers: { host: valid_student_subdomain },
+    });
+
+    const is_forbidden = is_restricted || status === status_options.Denied;
+    expect(res.statusCode).toEqual(is_forbidden ? 403 : 200);
+    expect(res.payload).toEqual(is_forbidden ? "" : mock_image_response.data);
+    expect(db_mock.get_restricted_items).toHaveBeenCalledExactlyOnceWith({
+      where: {
+        jstor_item_id: doi,
+        is_restricted: true,
+      },
+    });
+    expect(db_mock.get_item_status).toHaveBeenCalledTimes(
+      is_restricted ? 0 : 1,
+    );
+    expect(db_mock.get_bulk_statuses).not.toHaveBeenCalled();
+    expect(mocked_get_s3_object).toHaveBeenCalledTimes(is_forbidden ? 0 : 1);
+  },
+);
 
 test.each(routes)(
   `requests the %s route without a user or facility`,

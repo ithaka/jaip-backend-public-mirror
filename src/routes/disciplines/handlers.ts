@@ -56,7 +56,7 @@ export const disciplines_handler =
         disciplines.sort((a, b) => a.label.localeCompare(b.label));
       }
 
-      const groups = request.user.groups.map((group) => group.id);
+      const groups = request.user.groups;
       fastify.log.info(
         `Retrieved disciplines/journals, getting bulk approval statuses`,
       );

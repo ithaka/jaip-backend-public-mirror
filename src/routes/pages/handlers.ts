@@ -66,6 +66,7 @@ export const page_handler =
             journal_iids,
             disc_codes,
             group_ids,
+            request.user.groups.some((group) => group.has_global_approval),
           )
         : false;
 
@@ -227,6 +228,7 @@ export const metadata_handler =
             journal_iids,
             disc_codes,
             group_ids,
+            request.user.groups.some((group) => group.has_global_approval),
           )
         : false;
 

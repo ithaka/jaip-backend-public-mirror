@@ -1,6 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { PrismaClient, status_options } from "../prisma/client.js";
 import { PrismaJAIPDatabase } from "../prisma.js";
+import { bulk_approval_query } from "../../routes/queries/bulk_approval.js";
 
 const make_database = () => {
   const tx = {
@@ -11,6 +12,7 @@ const make_database = () => {
     },
     statuses: {
       findMany: vi.fn().mockResolvedValue([]),
+      groupBy: vi.fn().mockResolvedValue([]),
       createMany: vi.fn().mockResolvedValue({ count: 0 }),
       createManyAndReturn: vi.fn().mockResolvedValue([]),
     },
@@ -50,6 +52,69 @@ const status_row = (entity_id: number, status: status_options, id: number) => ({
   entities: { id: entity_id, name: `Entity ${entity_id}` },
   groups: { id: group_id, name: "Group 7" },
   status_details: [],
+});
+
+test("bulk statuses load details only for the latest item/group IDs, including undo rows", async () => {
+  const { client, db } = make_database();
+  const query = bulk_approval_query("discipline", ["history"], [7, 8]);
+  client.statuses.groupBy.mockResolvedValue([
+    { jstor_item_id: "history", group_id: 7, _max: { id: 20 } },
+    { jstor_item_id: "history", group_id: 8, _max: { id: 21 } },
+  ]);
+  const rows = [
+    status_row(admin_id, status_options.Incomplete, 21),
+    status_row(admin_id, status_options.Approved, 20),
+  ];
+  client.statuses.findMany.mockResolvedValue(rows);
+
+  const [results, error] = await db.get_bulk_statuses(query);
+
+  expect(error).toBeNull();
+  expect(results).toEqual(rows);
+  expect(client.statuses.groupBy).toHaveBeenCalledWith({
+    by: ["jstor_item_id", "group_id"],
+    where: query.where,
+    _max: { id: true },
+  });
+  expect(client.statuses.findMany).toHaveBeenCalledWith({
+    select: query.select,
+    orderBy: query.orderBy,
+    where: { ...query.where, id: { in: [20, 21] } },
+  });
+});
+
+test("bulk statuses skip detail loading when there are no matching groups or items", async () => {
+  const { client, db } = make_database();
+
+  expect(
+    await db.get_bulk_statuses(bulk_approval_query("headid", [], [])),
+  ).toEqual([[], null]);
+  expect(client.statuses.findMany).not.toHaveBeenCalled();
+});
+
+test("bulk statuses preserve timestamp-based queries used by search", async () => {
+  const { client, db } = make_database();
+  const query = {
+    distinct: ["jstor_item_id", "group_id"] as ("jstor_item_id" | "group_id")[],
+    orderBy: { created_at: "desc" as const },
+  };
+
+  expect(await db.get_bulk_statuses(query)).toEqual([[], null]);
+  expect(client.statuses.groupBy).not.toHaveBeenCalled();
+  expect(client.statuses.findMany).toHaveBeenCalledWith(query);
+});
+
+test("bulk statuses report aggregation errors without loading history", async () => {
+  const { client, db } = make_database();
+  const failure = new Error("database unavailable");
+  client.statuses.groupBy.mockRejectedValueOnce(failure);
+
+  expect(
+    await db.get_bulk_statuses(
+      bulk_approval_query("discipline", ["history"], [7]),
+    ),
+  ).toEqual([[], failure]);
+  expect(client.statuses.findMany).not.toHaveBeenCalled();
 });
 
 test("suspending a facility updates its own Pending request despite another facility's newer Pending", async () => {

@@ -24,11 +24,15 @@ import {
 } from "../../../tests/fixtures/auth/fixtures.js";
 import {
   basic_facility,
+  basic_facility_with_restricted_items_subscription,
   basic_reviewer,
 } from "../../../tests/fixtures/users/fixtures.js";
 import { processed_search_response } from "../../../tests/fixtures/search/fixtures.js";
 import axios from "axios";
 import { status_options } from "../../../database/prisma/client.js";
+import { DBEntity } from "../../../types/database.js";
+import { MediaRecord } from "../../../types/media_record.js";
+import { STATUS_OPTIONS } from "../../../consts/index.js";
 
 const app = build_test_server([route_settings]);
 afterEach(() => {
@@ -36,6 +40,240 @@ afterEach(() => {
 });
 
 const search_route = `${route_settings.options.prefix}${get_route(route_schemas.search)}`;
+test.each(
+  [false, true].flatMap((is_admin) =>
+    [false, true].flatMap((has_bulk_approval) =>
+      [null, ...Object.values(status_options)].map((status) => ({
+        is_admin,
+        has_bulk_approval,
+        status,
+      })),
+    ),
+  ),
+)(
+  "applies global approval to $status with admin=$is_admin and bulk=$has_bulk_approval",
+  async ({ is_admin, has_bulk_approval, status }) => {
+    const user = structuredClone(
+      is_admin ? basic_reviewer : basic_facility,
+    ) as DBEntity;
+    user.entities.groups_entities?.forEach(({ groups }) => {
+      if (groups) groups.global_approvals = { is_approved: true };
+    });
+    if (is_admin) {
+      user.entities.groups_entities?.push({
+        role: "admin",
+        groups: { id: 2, name: "Other group", global_approvals: null },
+      });
+    }
+    discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = vi
+      .fn()
+      .mockResolvedValueOnce(axios_session_data_with_email)
+      .mockResolvedValueOnce({ status: 200, data: search3_results });
+    db_mock.get_first_user.mockResolvedValueOnce(user);
+    db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([
+      has_bulk_approval ? bulk_statuses : [],
+      null,
+    ]);
+    db_mock.get_statuses.mockResolvedValueOnce([
+      status ? [{ ...item_statuses[0], status }] : [],
+      null,
+    ]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: search_route,
+      payload: search_request_valid,
+      headers: is_admin ? { host: valid_admin_subdomain } : {},
+    });
+
+    expect(res.statusCode).toEqual(200);
+    const doc = res.json().docs[0] as MediaRecord;
+    expect(doc.mediaReviewStatuses?.["1"]).toMatchObject({
+      status:
+        status === status_options.Denied
+          ? status_options.Denied
+          : STATUS_OPTIONS.GloballyApproved,
+      statusLabel:
+        status === status_options.Denied
+          ? status_options.Denied
+          : STATUS_OPTIONS.GloballyApproved,
+      groupID: 1,
+    });
+    if (status !== status_options.Denied) {
+      expect(doc.mediaReviewStatuses?.["1"].statusCreatedAt).toBeNull();
+    }
+    expect(doc.history?.map((entry) => entry.status) || []).toEqual(
+      is_admin && status && status !== status_options.Suspended ? [status] : [],
+    );
+    expect(doc.mediaReviewStatuses?.["2"]).toBeUndefined();
+    if (is_admin) {
+      expect(db_mock.get_first_user.mock.calls[0][0]).toMatchObject({
+        select: {
+          entities: {
+            select: {
+              groups_entities: {
+                select: {
+                  groups: {
+                    select: {
+                      global_approvals: { select: { is_approved: true } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+  },
+);
+
+test.each(
+  [1, 2].flatMap((selected_group) =>
+    [null, status_options.Denied].map((status) => ({ selected_group, status })),
+  ),
+)(
+  "respects group selection $selected_group with global approval and item status $status",
+  async ({ selected_group, status }) => {
+    const user = structuredClone(basic_reviewer) as DBEntity;
+    user.entities.groups_entities?.forEach(({ groups }) => {
+      if (groups) groups.global_approvals = null;
+    });
+    user.entities.groups_entities?.push({
+      role: "admin",
+      groups: {
+        id: 2,
+        name: "Globally approved group",
+        global_approvals: { is_approved: true },
+      },
+    });
+    discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = vi
+      .fn()
+      .mockResolvedValueOnce(axios_session_data_with_email)
+      .mockResolvedValueOnce({ status: 200, data: search3_results });
+    db_mock.get_first_user.mockResolvedValueOnce(user);
+    db_mock.get_all_tokens.mockResolvedValueOnce([tokens, null]);
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([[], null]);
+    db_mock.get_statuses.mockResolvedValueOnce([
+      status
+        ? [
+            {
+              ...item_statuses[0],
+              status,
+              groups: { id: 2, name: "Globally approved group" },
+            },
+          ]
+        : [],
+      null,
+    ]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: search_route,
+      payload: { ...search_request_valid, groups: [selected_group] },
+      headers: { host: valid_admin_subdomain },
+    });
+
+    expect(res.statusCode).toEqual(200);
+    const doc = res.json().docs[0] as MediaRecord;
+    expect(doc.mediaReviewStatuses?.["1"]).toBeUndefined();
+    if (selected_group === 2) {
+      expect(doc.mediaReviewStatuses?.["2"]?.status).toBe(
+        status ?? STATUS_OPTIONS.GloballyApproved,
+      );
+    } else {
+      expect(doc.mediaReviewStatuses?.["2"]).toBeUndefined();
+    }
+  },
+);
+
+test.each([undefined, null, { is_approved: false }])(
+  "does not globally approve items when global_approvals is %s",
+  async (global_approvals) => {
+    const user = structuredClone(basic_facility) as DBEntity;
+    user.entities.groups_entities?.forEach(({ groups }) => {
+      if (groups) groups.global_approvals = global_approvals;
+    });
+    discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = vi
+      .fn()
+      .mockResolvedValueOnce(axios_session_data_with_email)
+      .mockResolvedValueOnce({ status: 200, data: search3_results });
+    db_mock.get_first_user.mockResolvedValueOnce(user);
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([[], null]);
+    db_mock.get_statuses.mockResolvedValueOnce([[], null]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([[], null]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: search_route,
+      payload: search_request_valid,
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.json().docs).toEqual(processed_search_response);
+  },
+);
+
+test.each([status_options.Pending, status_options.Denied])(
+  "keeps restrictions above global approval and %s",
+  async (status) => {
+    const user = structuredClone(
+      basic_facility_with_restricted_items_subscription,
+    ) as DBEntity;
+    user.entities.groups_entities?.forEach(({ groups }) => {
+      if (groups) groups.global_approvals = { is_approved: true };
+    });
+    discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+    axios.post = vi
+      .fn()
+      .mockResolvedValueOnce(axios_session_data_with_email)
+      .mockResolvedValueOnce({ status: 200, data: search3_results });
+    db_mock.get_first_user.mockResolvedValueOnce(user);
+    db_mock.get_bulk_statuses.mockResolvedValueOnce([bulk_statuses, null]);
+    db_mock.get_statuses.mockResolvedValueOnce([
+      [{ ...item_statuses[0], status }],
+      null,
+    ]);
+    db_mock.get_restricted_items.mockResolvedValueOnce([
+      [
+        {
+          id: 1,
+          entity_id: 3,
+          jstor_item_id: item_statuses[0].jstor_item_id!,
+          reason: "Restricted item",
+          is_restricted: true,
+          created_at: new Date("2026-10-01T00:00:00Z"),
+          updated_at: new Date("2026-10-01T00:00:00Z"),
+        },
+      ],
+      null,
+    ]);
+
+    const res = await app.inject({
+      method: "POST",
+      url: search_route,
+      payload: search_request_valid,
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.json().docs[0]).toMatchObject({
+      is_restricted: true,
+      mediaReviewStatuses: {
+        "1": {
+          status: "Restricted",
+          statusDetails: { reason: "Restricted item" },
+        },
+      },
+    });
+  },
+);
+
 test(`requests the ${search_route} route with no body`, async () => {
   const res = await app.inject({
     method: "POST",

@@ -160,6 +160,7 @@ export const get_is_forbidden = async (
   journal_iids: string[] = [],
   disc_codes: string[] = [],
   group_ids: number[],
+  has_global_approval: boolean = false,
 ): Promise<boolean> => {
   let is_forbidden = true;
 
@@ -195,11 +196,16 @@ export const get_is_forbidden = async (
   if (error) {
     throw error;
   }
+  if (item_status?.status === status_options.Denied) {
+    return true;
+  }
+  if (has_global_approval) {
+    return false;
+  }
   // If the item is approved, we can allow access
   if (item_status?.status === status_options.Approved) {
     is_forbidden = false;
-    // If it is denied, we can jump directly to denying access
-  } else if (item_status?.status !== status_options.Denied) {
+  } else {
     // If the item is neither denied nor approved, we need to check the journal and discipline statuses.
     const [bulk_statuses, error] = await get_bulk_statuses(
       db,

@@ -519,8 +519,25 @@ export const search_handler =
             new_doc.mediaReviewStatuses[group_id] = status;
           }
         }
+        // Apply global approval statuses for groups that have it, unless the status is explicitly Denied.
+        // This allows global approval to take precedence over Pending and Approved statuses, but not Denied.
+        for (const group of full_groups) {
+          if (
+            group.has_global_approval &&
+            new_doc.mediaReviewStatuses[group.id]?.status !==
+              status_options.Denied
+          ) {
+            new_doc.mediaReviewStatuses[group.id] = {
+              status: STATUS_OPTIONS.GloballyApproved,
+              statusLabel: STATUS_OPTIONS.GloballyApproved,
+              statusCreatedAt: null,
+              groupID: group.id,
+              groupName: group.name,
+            };
+          }
+        }
 
-        // This occurs last, as it should override any statuses, either bulk or individual.
+        // This occurs last, as it should override any statuses, either bulk or individual, including global approvals.
         if (
           block_list_items[doc.doi] &&
           request.user.groups.some(
