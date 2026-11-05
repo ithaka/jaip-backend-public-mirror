@@ -3,10 +3,7 @@ import { Status } from "../../types/database.js";
 
 export const bulk_approval_query = (
   type:
-    | jstor_types
-    | Prisma.FieldRef<"statuses", "jstor_types">
-    | null
-    | undefined,
+    jstor_types | Prisma.FieldRef<"statuses", "jstor_types"> | null | undefined,
   codes: string[],
   groups: number[],
 ): Prisma.statusesFindManyArgs => {
@@ -22,12 +19,6 @@ export const bulk_approval_query = (
         },
       },
       status: true,
-      status_details: {
-        select: {
-          type: true,
-          detail: true,
-        },
-      },
     },
     where: {
       jstor_item_type: {
@@ -49,7 +40,8 @@ export const bulk_approval_query = (
 export const map_bulk_approval_status = (bulk: Status) => {
   return {
     status: bulk.status,
-    statusDetails: bulk.status_details,
+    // Bulk approvals (discipline/headid) never have status details.
+    statusDetails: bulk.status_details ?? [],
     status_created_at: bulk.created_at,
     groupName: bulk.groups?.name,
     groupID: bulk.groups?.id,
