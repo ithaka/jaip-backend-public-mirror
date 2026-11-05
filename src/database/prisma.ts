@@ -21,6 +21,8 @@ import { ensure_error } from "../utils/index.js";
 import { Alert } from "../types/alerts.js";
 import { Subdomain } from "../types/routes.js";
 
+const REQUEST_PERMISSION_TRANSACTION_TIMEOUT_MS = 30_000;
+
 /**
  * Suspends a facility's outstanding requests by relabelling them from Pending to Suspended.
  *
@@ -1620,32 +1622,35 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
       const { facility_id, admin_id, start_date, end_date } = query.data;
       // facility_id is unique, so a facility can only have one active request permission.
       // Upsert instead of create in case a soft-deleted (past end_date) row already exists.
-      const permission = await this.client.$transaction(async (tx) => {
-        const result = await tx.request_permissions.upsert({
-          where: { facility_id: facility_id as number },
-          // If the facility_id does not exist, create a new row with the provided data.
-          create: query.data,
-          // On conflict (i.e., if a row with the same facility_id already exists), update
-          // the following values in the existing row.
-          update: {
-            admin_id,
-            start_date: start_date ?? new Date(),
-            end_date: end_date ?? null,
-            updated_at: new Date(),
-          },
-        });
-        // If requests are being disabled temporarily (end_date is not null),
-        // we don't need to suspend any pending requests.
-        if (
-          start_date &&
-          start_date <= new Date() &&
-          end_date === null &&
-          facility_id
-        ) {
-          await suspend_pending_statuses(tx, facility_id);
-        }
-        return result;
-      });
+      const permission = await this.client.$transaction(
+        async (tx) => {
+          const result = await tx.request_permissions.upsert({
+            where: { facility_id: facility_id as number },
+            // If the facility_id does not exist, create a new row with the provided data.
+            create: query.data,
+            // On conflict (i.e., if a row with the same facility_id already exists), update
+            // the following values in the existing row.
+            update: {
+              admin_id,
+              start_date: start_date ?? new Date(),
+              end_date: end_date ?? null,
+              updated_at: new Date(),
+            },
+          });
+          // If requests are being disabled temporarily (end_date is not null),
+          // we don't need to suspend any pending requests.
+          if (
+            start_date &&
+            start_date <= new Date() &&
+            end_date === null &&
+            facility_id
+          ) {
+            await suspend_pending_statuses(tx, facility_id);
+          }
+          return result;
+        },
+        { timeout: REQUEST_PERMISSION_TRANSACTION_TIMEOUT_MS },
+      );
       return [permission, null];
     } catch (err) {
       const error = ensure_error(err);
@@ -1676,21 +1681,24 @@ export class PrismaJAIPDatabase implements JAIPDatabase {
     query: Prisma.request_permissionsUpdateArgs,
   ): Promise<[request_permissions, Error | null]> {
     try {
-      const permission = await this.client.$transaction(async (tx) => {
-        const result = await tx.request_permissions.update(query);
-        const { facility_id } = query.where;
-        // If requests are being disabled temporarily (end_date is not null),
-        // we don't need to suspend any pending requests.
-        if (
-          query.data.start_date &&
-          query.data.start_date <= new Date() &&
-          query.data.end_date === null &&
-          facility_id
-        ) {
-          await suspend_pending_statuses(tx, facility_id);
-        }
-        return result;
-      });
+      const permission = await this.client.$transaction(
+        async (tx) => {
+          const result = await tx.request_permissions.update(query);
+          const { facility_id } = query.where;
+          // If requests are being disabled temporarily (end_date is not null),
+          // we don't need to suspend any pending requests.
+          if (
+            query.data.start_date &&
+            query.data.start_date <= new Date() &&
+            query.data.end_date === null &&
+            facility_id
+          ) {
+            await suspend_pending_statuses(tx, facility_id);
+          }
+          return result;
+        },
+        { timeout: REQUEST_PERMISSION_TRANSACTION_TIMEOUT_MS },
+      );
       return [permission, null];
     } catch (err) {
       const error = ensure_error(err);

@@ -9,6 +9,7 @@ const make_database = () => {
     $queryRaw: vi.fn().mockResolvedValue([]),
     request_permissions: {
       upsert: vi.fn().mockResolvedValue({ id: 1 }),
+      update: vi.fn().mockResolvedValue({ id: 1 }),
     },
     statuses: {
       findMany: vi.fn().mockResolvedValue([]),
@@ -136,6 +137,60 @@ test("suspending a facility updates its own Pending request despite another faci
   expect(statement.sql).toContain("newer.status IN (");
   expect(statement.sql).not.toContain("newer.status = ?::status_options");
 });
+
+test.each(["create", "update"] as const)(
+  "%s request permission allows 30 seconds for the atomic suspension transaction",
+  async (operation) => {
+    const { client, db, tx } = make_database();
+    const data = {
+      facility_id: facility_a,
+      admin_id,
+      start_date: new Date(Date.now() - 60_000),
+      end_date: null,
+    };
+
+    const [permission, error] =
+      operation === "create"
+        ? await db.create_request_permission({ data })
+        : await db.update_request_permission({
+            where: { facility_id: facility_a },
+            data,
+          });
+
+    expect(error).toBeNull();
+    expect(permission).toEqual({ id: 1 });
+    expect(client.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      timeout: 30_000,
+    });
+    expect(tx.$executeRaw).toHaveBeenCalledTimes(1);
+  },
+);
+
+test.each(["create", "update"] as const)(
+  "%s request permission propagates a suspension failure from the transaction",
+  async (operation) => {
+    const { db, tx } = make_database();
+    const suspension_error = new Error("suspension failed");
+    tx.$executeRaw.mockRejectedValueOnce(suspension_error);
+    const data = {
+      facility_id: facility_a,
+      admin_id,
+      start_date: new Date(Date.now() - 60_000),
+      end_date: null,
+    };
+
+    const [permission, error] =
+      operation === "create"
+        ? await db.create_request_permission({ data })
+        : await db.update_request_permission({
+            where: { facility_id: facility_a },
+            data,
+          });
+
+    expect(error).toBe(suspension_error);
+    expect(permission).toEqual({});
+  },
+);
 
 test("a facility cannot create Pending while another facility's latest status is Pending", async () => {
   const { db, tx } = make_database();
