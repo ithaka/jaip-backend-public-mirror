@@ -47,6 +47,9 @@ export const logging_handler =
         {
           log_made_by: "jaip-frontend",
           ...log,
+          // The body is already spread above as top-level fields, so drop the
+          // duplicate copy added by the request fields (also blocks client override).
+          request_body: undefined,
         },
       );
     } catch (err) {

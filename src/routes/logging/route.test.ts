@@ -142,3 +142,42 @@ test(`requests the ${route} route with invalid eventtype`, async () => {
 
   expect(res.statusCode).toEqual(401);
 });
+
+test(`${route} does not duplicate the body as request_body in frontend logs`, async () => {
+  discover_mock.mockResolvedValue(["this text doesn't matter", null]);
+  axios.get = vi
+    .fn()
+    .mockReturnValueOnce(iac_credential_response)
+    .mockReturnValueOnce(iac_account_response) as typeof axios.get;
+  db_mock.get_first_facility.mockResolvedValueOnce(basic_facility);
+  const spy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+  const res = await app.inject({
+    method: "POST",
+    url: route,
+    payload: {
+      eventtype: "pep_fe_viewer_diagnostic",
+      event_description: "no duplicate body",
+      viewer_type: "pdf",
+      request_body: "client supplied",
+    },
+    headers: { host: valid_student_subdomain },
+  });
+
+  const logs = spy.mock.calls
+    .map((c) => String(c[0]))
+    .filter((l) => l.startsWith("{"))
+    .map((l) => JSON.parse(l))
+    .filter(
+      (l) =>
+        l.eventtype === "pep_fe_viewer_diagnostic" &&
+        l.log_made_by === "jaip-frontend",
+    );
+  spy.mockRestore();
+
+  expect(res.statusCode).toEqual(200);
+  expect(logs.length).toEqual(1);
+  const logged = logs[0];
+  expect(logged.viewer_type).toEqual("pdf");
+  expect(logged).not.toHaveProperty("request_body");
+});
