@@ -93,7 +93,7 @@ sirius:
 # to true.
 #
 # For more information about Polaris, check out the documentation in Backstage:
-# https://capstan-backstage.apps.prod.cirrostratus.org/catalog/default/component/polaris/docs
+# https://bridge.ithaka.org/catalog/default/component/polaris/docs
 polaris:
   enabled: true
   debug: false
