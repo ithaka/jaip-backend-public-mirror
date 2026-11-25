@@ -45,7 +45,7 @@ export interface History {
 
 export enum StatusOptions {
   Approved = "Approved",
-  GloballyApproved = "Globally Approved",
+  GloballyApproved = "All subjects approved",
   ApprovedByDiscipline = "Approved by Discipline",
   ApprovedByJournal = "Approved by Journal",
   Denied = "Denied",

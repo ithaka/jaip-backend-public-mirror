@@ -39,7 +39,7 @@ export const STATUS_OPTIONS = {
   ...status_options,
   // Globally Approved and Restricted are not part of the database status options, but
   // are used for special handling in the application logic.
-  GloballyApproved: "Globally Approved",
+  GloballyApproved: "All subjects approved",
   Restricted: "Restricted",
 };
 
