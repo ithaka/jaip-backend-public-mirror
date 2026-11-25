@@ -17,7 +17,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     publisher: "The New York Public Library",
     date: "2026",
     type: "Text",
-    format: "PDF, 473 pages, illustrated",
+    format: "PDF, 513 pages, illustrated",
     page_count: 513,
     alternate_versions: [
       {
@@ -27,14 +27,14 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Prisoners—Services for—New York (State)—New York; Reentry—Social services—Directories; Employment, housing, health, legal aid, education for formerly incarcerated persons; Special populations: immigrants, veterans, people with disabilities, women, youth, LGBTQI+, parents/caregivers",
+      "Formerly incarcerated people—Services for—New York (State)—New York; Reentry—Social services—Directories; Employment, housing, health, legal aid, education for formerly incarcerated persons; Special populations: immigrants, veterans, people with disabilities, women, youth, LGBTQI+, parents/caregivers",
     location: "New York City",
     language: "English",
     jurisdiction: "New York State, with emphasis on New York City",
     is_national: false,
     state_code: "NY",
     subject_arr: [
-      "Prisoners—Services for—New York (State)—New York",
+      "Formerly incarcerated people—Services for—New York (State)—New York",
       "Reentry—Social services—Directories",
       "Employment, housing, health, legal aid, education for formerly incarcerated persons",
       "Special populations: immigrants, veterans, people with disabilities, women, youth, LGBTQI+, parents/caregivers",
@@ -62,14 +62,14 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Prisioneros — Servicios sociales — Nueva York (Estado) — Nueva York; Reintegración social — Servicios comunitarios — Directorios; Vivienda, empleo, educación, salud, asistencia legal y apoyo comunitario para personas anteriormente encarceladas; Recursos especializados para inmigrantes, veteranos, mujeres, personas LGBTQ+, jóvenes, padres/cuidadores y personas con discapacidades",
+      "Personas anteriormente encarceladas — Servicios sociales — Nueva York (Estado) — Nueva York; Reintegración social — Servicios comunitarios — Directorios; Vivienda, empleo, educación, salud, asistencia legal y apoyo comunitario para personas anteriormente encarceladas; Recursos especializados para inmigrantes, veteranos, mujeres, personas LGBTQ+, jóvenes, padres/cuidadores y personas con discapacidades",
     location: "New York City",
     language: "Español",
-    jurisdiction: "New York State, with emphasis on New York City",
+    jurisdiction: "Estado de Nueva York, con énfasis en la ciudad de Nueva York",
     is_national: false,
     state_code: "NY",
     subject_arr: [
-      "Prisioneros — Servicios sociales — Nueva York (Estado) — Nueva York",
+      "Personas anteriormente encarceladas — Servicios sociales — Nueva York (Estado) — Nueva York",
       "Reintegración social — Servicios comunitarios — Directorios",
       "Vivienda, empleo, educación, salud, asistencia legal y apoyo comunitario para personas anteriormente encarceladas",
       "Recursos especializados para inmigrantes, veteranos, mujeres, personas LGBTQ+, jóvenes, padres/cuidadores y personas con discapacidades",
@@ -98,14 +98,14 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Prisoner reentry—Illinois; Social services directories—Illinois; Housing; Employment; Education; Health care; Finances; Substance use treatment; Legal aid",
+      "Reentry after incarceration—Illinois; Social services directories—Illinois; Housing; Employment; Education; Health care; Finances; Substance use treatment; Legal aid",
     language: "English",
     state_code: "IL",
     location: "Illinois",
     jurisdiction: "Illinois, United States",
     is_national: false,
     subject_arr: [
-      "Prisoner reentry—Illinois",
+      "Reentry after incarceration—Illinois",
       "Social services directories—Illinois",
       "Housing",
       "Employment",
@@ -139,14 +139,14 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Reinserción de personas ex-presas—Illinois; Directorios de servicios sociales—Illinois; Vivienda; Empleo; Educación; Atención médica; Finanzas; Tratamiento por uso de sustancias; Asistencia legal",
+      "Reintegración después de la encarcelación—Illinois; Directorios de servicios sociales—Illinois; Vivienda; Empleo; Educación; Atención médica; Finanzas; Tratamiento por uso de sustancias; Asistencia legal",
     language: "Español",
     state_code: "IL",
     location: "Illinois",
     jurisdiction: "Illinois, Estados Unidos",
     is_national: false,
     subject_arr: [
-      "Reinserción de personas ex-presas—Illinois",
+      "Reintegración después de la encarcelación—Illinois",
       "Directorios de servicios sociales—Illinois",
       "Vivienda",
       "Empleo",
@@ -180,14 +180,14 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Prisoner reentry—United States; Social services directories—United States; Housing; Employment; Education; Health care; Finances; Legal aid; Community reintegration",
+      "Reentry after incarceration—United States; Social services directories—United States; Housing; Employment; Education; Health care; Finances; Legal aid; Community reintegration",
     language: "English",
     state_code: "USA",
     location: "Illinois",
     jurisdiction: "United States",
     is_national: true,
     subject_arr: [
-      "Prisoner reentry—United States",
+      "Reentry after incarceration—United States",
       "Social services directories—United States",
       "Housing",
       "Employment",
@@ -221,14 +221,14 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Reinserción de personas ex-presas—Estados Unidos; Directorios de servicios sociales—Estados Unidos; Vivienda; Empleo; Educación; Atención médica; Finanzas; Asistencia legal; Reintegración comunitaria",
+      "Reintegración después de la encarcelación—Estados Unidos; Directorios de servicios sociales—Estados Unidos; Vivienda; Empleo; Educación; Atención médica; Finanzas; Asistencia legal; Reintegración comunitaria",
     language: "Español",
     state_code: "USA",
     location: "Illinois",
     jurisdiction: "Estados Unidos",
     is_national: true,
     subject_arr: [
-      "Reinserción de personas ex-presas—Estados Unidos",
+      "Reintegración después de la encarcelación—Estados Unidos",
       "Directorios de servicios sociales—Estados Unidos",
       "Vivienda",
       "Empleo",
@@ -248,7 +248,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     thumbnail: "new-path-2025-usa-en.png",
     creator: "Education Justice Project",
     contributor:
-      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+      "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
     publisher: "University of Illinois Urbana-Champaign",
     date: "2025",
     type: "Text",
@@ -331,14 +331,14 @@ export const reentry_metadata: CollectionMetadata[] = [
     page_count: 86,
     alternate_versions: [],
     subject:
-      "Prisoner reentry—Tennessee; Social services directories—Tennessee; Housing; Employment; Education; Health care; Finances; Substance use treatment; Legal aid",
+      "Reentry after incarceration—Tennessee; Social services directories—Tennessee; Housing; Employment; Education; Health care; Finances; Substance use treatment; Legal aid",
     language: "English",
     state_code: "TN",
     location: "Tennessee",
     jurisdiction: "Tennessee",
     is_national: false,
     subject_arr: [
-      "Prisoner reentry—Tennessee",
+      "Reentry after incarceration—Tennessee",
       "Social services directories—Tennessee",
       "Housing",
       "Employment",
@@ -364,14 +364,14 @@ export const reentry_metadata: CollectionMetadata[] = [
     page_count: 172,
     alternate_versions: [],
     subject:
-      "Prisoners—Education—United States; Higher education in prison—United States; Colleges and universities—United States; Financial aid for college students; Accreditation (Education); Occupational licensing; Distance education; Student support services",
+      "Incarcerated people—Education—United States; Higher education in prison—United States; Colleges and universities—United States; Financial aid for college students; Accreditation (Education); Occupational licensing; Distance education; Student support services",
     location: "Tennessee",
     language: "English",
     jurisdiction: "United States",
     is_national: true,
     state_code: "USA",
     subject_arr: [
-      "Prisoners—Education—United States",
+      "Incarcerated people—Education—United States",
       "Higher education in prison—United States",
       "Colleges and universities—United States",
       "Financial aid for college students",
@@ -382,6 +382,36 @@ export const reentry_metadata: CollectionMetadata[] = [
     ],
   },
   {
+    title:
+      "Navigating Forward: Your Guide to Higher Education in Prison — Navigating the Transfer Process",
+    description:
+      "A guide to transferring college credits and continuing higher education during reentry, including transcript requests and holds, transferring to a traditional campus, and planning next steps.",
+    filename: "navigating-forward-2026-usa-en.pdf",
+    thumbnail: "navigating-forward-2026-usa-en.png",
+    creator: "Tennessee Higher Education Initiative (THEI)",
+    contributor: "Tennessee Higher Education Initiative (THEI)",
+    publisher: "Tennessee Higher Education Initiative (THEI)",
+    date: "2026",
+    type: "Text",
+    format: "PDF, 35 pages",
+    page_count: 35,
+    alternate_versions: [],
+    subject:
+      "Incarcerated people—Education—United States; Higher education in prison—United States; College students—Transfer—United States; College credits—United States; Transferring students—Services for—United States",
+    location: "Tennessee",
+    language: "English",
+    jurisdiction: "United States",
+    is_national: true,
+    state_code: "USA",
+    subject_arr: [
+      "Incarcerated people—Education—United States",
+      "Higher education in prison—United States",
+      "College students—Transfer—United States",
+      "College credits—United States",
+      "Transferring students—Services for—United States",
+    ],
+  },
+  {
     title: "Deportation to Honduras",
     description:
       "Updated 2026 country-specific chapter that provides detailed information for people deported from the U.S. to Honduras.",
@@ -389,7 +419,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     thumbnail: "deportation-honduras-2026-usa-en.png",
     creator: "Education Justice Project",
     contributor:
-      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+      "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
     publisher: "University of Illinois Urbana-Champaign",
     date: "2026",
     type: "Text",
@@ -403,10 +433,10 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Deportation to Honduras; immigration; reentry support; identification documents; migrant-serving organizations and shelters",
+      "Honduras; Deportation; Reintegration; Immigration law; Legal assistance; Human rights; Community support for deported individuals",
     location: "Illinois",
     language: "English",
-    jurisdiction: "United States; Honduras",
+    jurisdiction: "United States, Honduras",
     is_national: true,
     state_code: "USA",
     subject_arr: [
@@ -441,7 +471,7 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
+      "Honduras; Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
     language: "Español",
     state_code: "USA",
     location: "Illinois",
@@ -465,7 +495,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     thumbnail: "deportation-guatemala-2026-usa-en.png",
     creator: "Education Justice Project",
     contributor:
-      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+      "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
     publisher: "University of Illinois Urbana-Champaign",
     date: "2026",
     type: "Text",
@@ -479,10 +509,10 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Deportation to Guatemala; immigration; reentry support; identification documents; migrant-serving organizations and shelters",
+      "Guatemala; Deportation; Reintegration; Immigration law; Legal assistance; Human rights; Community support for deported individuals",
     location: "Illinois",
     language: "English",
-    jurisdiction: "United States; Guatemala",
+    jurisdiction: "United States, Guatemala",
     is_national: true,
     state_code: "USA",
     subject_arr: [
@@ -517,7 +547,7 @@ export const reentry_metadata: CollectionMetadata[] = [
       },
     ],
     subject:
-      "Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
+      "Guatemala; Deportación; Reintegración; Derecho migratorio; Asistencia legal; Derechos humanos; Apoyo comunitario para personas deportadas",
     language: "Español",
     state_code: "USA",
     location: "Illinois",
@@ -541,7 +571,7 @@ export const reentry_metadata: CollectionMetadata[] = [
     thumbnail: "new-path-deportation-updates-2026-usa-en.png",
     creator: "Education Justice Project",
     contributor:
-      "Programa de Recursos para la Reintegración (EJP); Reentry Guide Initiative (RGI)",
+      "Reentry Resource Program (EJP); Reentry Guide Initiative (RGI)",
     publisher: "University of Illinois Urbana-Champaign",
     date: "2026",
     type: "Text",

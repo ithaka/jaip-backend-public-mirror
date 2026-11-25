@@ -27,16 +27,18 @@ The collections system provides structured access to curated content through the
 New material can be added to the reentry collection by following these steps:
 
 1. **File Preparation**: Ensure PDFs are properly formatted (single-page preferred)
-2. **Thumbnail Creation**: Generate high-resolution PNG thumbnails with consistent dimensions
-   - Use the `makeThumbnail` script in [jaip-frontend repository](https://github.com/ithaka/jaip-frontend)
-   - Ensure that the resulting file is in the `public/thumbnails` [folder](https://github.com/ithaka/jaip-frontend/tree/main/public/thumbnails).
-3. **S3 Upload**: Add files to both production and test S3 buckets
+2. **Test S3 Upload**: Upload the PDF to the test bucket first so the thumbnail script can access it.
    - `aws s3 cp <NEWFILE>.pdf s3://ithaka-jaip/test/jaip-collections/reentry/`
+3. **Thumbnail Creation**: Generate a PNG thumbnail from the first PDF page.
+   - Run `thumbnails.zsh` from the root of the [jaip-frontend repository](https://github.com/ithaka/jaip-frontend). It reads PDFs from the test bucket and saves thumbnails to `public/thumbnails`.
+   - The script requires `qpdf`, ImageMagick, Ghostscript, and AWS CLI access to the test bucket.
+4. **Production S3 Upload**: Upload the PDF to the production bucket.
    - `aws s3 cp <NEWFILE>.pdf s3://ithaka-jaip/prod/jaip-collections/reentry/`
    - Verify uploads to S3 ithaka-jaip on AWS GUI
-4. **Metadata Generation**:
+5. **Metadata Generation**:
    - Create a metadata object following CollectionMetadata interface standards outlined below.
    - If need be, reference Dublin Core standards for guidance as to generating property values.
+   - `subject` values follow LOC-style headings, but use people-first free text (e.g. "Incarcerated people", not "Prisoners"). May need to change for LOC compatibility.
    - Add metadata objects to [`src/consts/metadata/reentry.ts`](../src/consts/metadata/reentry.ts)
 
 ### CollectionMetadata Interface
@@ -56,7 +58,7 @@ interface CollectionMetadata {
   page_count: number;
   alternate_versions: AlternateDocumentVersion[];
   subject: string;
-  location: string; // Geographic origin of the creator
+  location: string; // Publisher's location
   language: string; // Primary language
   jurisdiction: string; // Legal jurisdiction or focus of the guide
   is_national: boolean;
