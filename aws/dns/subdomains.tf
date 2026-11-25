@@ -9,6 +9,7 @@ locals {
   prod_provider_prefixes = [
     "prod-subdomain-example", 
     "orijin-ma",
+    "orijin-md",
     "orijin-ut",
     "atlo-az",
     "atlo-fl",
